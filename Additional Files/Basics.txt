@@ -21,6 +21,12 @@ Essential github Commands:
 2. "git Merge [branch_name]": merges content of [branch_name] into the branch that you are currently in
 3. "git checkout [branch_name]": leave current branch and switch to [branch_name]
 
+how to merge from changes from branch X into branch Y:
+1. go to branch Y (git checkout branchY)
+2. inside of branch Y, write "git fetch origin" (ensuring latest remote changes are available locally) 
+3. write "git merge branchX"
+4. Syncronize changes and commit changes to remote repo
+
 
 File Structure:
 A. In Client Folder:
