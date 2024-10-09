@@ -15,6 +15,7 @@ Naming Conventions:
 Github Conventions:
 1. No one under any circumstances should push to the main branch without consulting the entire team.
 2. Descriptive and to the point commit messages should be written for all commits. Each commit message must start with a verb. (Ex: Fixed X, Added Y, Adjusted Z, etc.)
+3. Merged Work between different teams(Apartments) should be implemented and tested on "test-main" branch and only when it is fully tested and bug-free should it then be pushed onto the "main" branch.
 
 Essential github Commands:
 1. "git fetch origin" : retrieves remote updates and changes from all branches in the repo wihout specifically merginf them into your current branch
