@@ -48,37 +48,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp() {
+export default function Login() {
   const classes = useStyles();
 
   const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [mobileNumber, setMobileNumber] = useState('')
-  const [nationality, setNationality] = useState('')
-  const [dateOfBirth, setDateOfBirth] = useState('')
-  const [occupation, setOccupation] = useState('')
+
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation};
+    const tourist = {username,password}
 
     console.log(tourist);
     try {
-      const response = await axios.post('http://localhost:3000/api/signUp', tourist);
-      console.log('Success:', response.data);
+      const response = await axios.post('http://localhost:3000/api/login', tourist);
+      console.log('Successful Login!', response.data);
 
       setUsername('');
-      setEmail('');
       setPassword('');
-      setConfirmPassword('');
-      setMobileNumber('');
-      setNationality('');
-      setDateOfBirth('');
-      setOccupation('');
+
+
   } catch (error) {
       console.error('Error:', error.response ? error.response.data : error.message);
   }
@@ -100,7 +91,7 @@ export default function SignUp() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign Up
+          Log In
         </Typography>
         <form className={classes.form} action='POST'  onSubmit={handleSubmit}>
         <TextField
@@ -115,19 +106,6 @@ export default function SignUp() {
             autoComplete="username"
             autoFocus
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            autoFocus
-          />
-
         
           <TextField
             variant="outlined"
@@ -141,77 +119,6 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="password"
           />
-
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            id="confirmPassword"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            autoComplete="confirmPassword"
-          />
-
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="mobileNumber"
-            label="Mobile Number"
-            type="number"
-            id="mobileNumber"
-            onChange={(e) => setMobileNumber(e.target.value)}
-            autoComplete="mobileNumber"
-          />
-
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="nationality"
-            label="Nationality"
-            type="text"
-            id="nationality"
-            onChange={(e) => setNationality(e.target.value)}
-            autoComplete="nationality"
-          />    
-
-          <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="dateOfBirth"
-          label="Date of Birth"
-          type="date"
-          id="dateOfBirth"
-          onChange={(e) => setDateOfBirth(e.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          autoComplete="DOB"
-        />  
-
-
-        
-          <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="occupation"
-          label="Occupation"
-          type="text"
-          id="occupation"
-          onChange={(e) => setOccupation(e.target.value)}
-          autoComplete="occupation"
-        /> 
-          
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
@@ -223,7 +130,7 @@ export default function SignUp() {
             color="primary"
             className={classes.submit}
           >
-            Sign Up
+            Log in
           </Button>
           <Grid container>
             <Grid item xs>
@@ -232,8 +139,8 @@ export default function SignUp() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/Login" variant="body2">
-                {"have an account? Log In"}
+              <Link href="/signUp" variant="body2">
+                {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
           </Grid>

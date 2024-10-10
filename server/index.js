@@ -1,5 +1,6 @@
 const express= require("express");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
@@ -27,13 +28,37 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 
 
 
-//Create Tourist
-app.post('/api/tourists', async (req, res) => { 
+//Create Tourist (Sign up)
+app.post('/api/signUp', async (req, res) => { 
     try {
         const tourist = await Tourist.create(req.body);
         res.status(200).json(tourist);
     } catch (err) {
         res.status(500).json({message: err.message});
+    }
+});
+
+// Login for Tourist
+app.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const tourist = await Tourist.findOne({ username });
+
+        if (!tourist) {
+            return res.status(400).json({ message: "username doesnt exist" });
+        }
+
+        const isPasswordValid = password==tourist.password;
+
+        
+
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Invalid password, Tourist pw is "+ tourist.password + " while your password is " + password });
+        }
+
+        res.status(200).json({ message: "Login successful", tourist });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
