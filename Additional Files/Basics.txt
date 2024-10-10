@@ -6,6 +6,9 @@ How to run Backend Server:
 1. Open terminal in server folder (right click on server -> open in integrated terminal)
 2. write command: "npm run dev" (might need to write "npm i" in terminal first)
 
+Important Notes:
+1. Try as much as possible to comment code with clear and concise explanations for what is happening and how the code works so that it could be easily understood by anyone in the team simply by reading the comments and the code
+
 Naming Conventions:
 1. any and all variables should be typed in camelCase format (first letter of first word always small, all following first letters of all other words are capitalized)
 2. All Variable names, file names, etc. should be clear and desciptive.
