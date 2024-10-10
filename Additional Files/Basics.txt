@@ -12,7 +12,7 @@ Important Notes:
 Naming Conventions:
 1. any and all variables should be typed in camelCase format (first letter of first word always small, all following first letters of all other words are capitalized)
 2. All Variable names, file names, etc. should be clear and desciptive.
-3. All Page file names should start with SMALL letters.
+3. All React Page/Component (.js) file names should start with CAPITAL letters. (these are the only exception to the camelCase rule, due to react's predefined conventions)
 4. All Models(schemas) in the backend should follow this same naming convention: "X.model.js" (Ex: for the tourist model, the file name would be "tourist.model.js")
 
 Github Conventions:
