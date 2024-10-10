@@ -5,10 +5,13 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
+app.use(cookieParser());
 
 
 app.get("/", (req, res) => {
@@ -56,7 +59,17 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ message: "Invalid password, Tourist pw is "+ tourist.password + " while your password is " + password });
         }
 
-        res.status(200).json({ message: "Login successful", tourist });
+         //create JWT
+        const accessToken = jwt
+        .sign(
+            {
+                id: tourist._id,
+            },
+            "secret",
+            { expiresIn: "1d" }
+        );
+
+        res.status(200).json({ message: "Login successful", tourist, accessToken: accessToken });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

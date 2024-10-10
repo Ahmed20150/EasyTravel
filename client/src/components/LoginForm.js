@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {useState} from 'react';
 import axios from 'axios';
+import { CookiesProvider, useCookies } from 'react-cookie'
+import { useNavigate } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -48,12 +50,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
+
 export default function Login() {
   const classes = useStyles();
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const [tokenCookie, setTokenCookie] = useCookies(['token']) //init cookie object, naming it "token"
+  const [loggedInUserCookie, setloggedInUserCookie] = useCookies(['username']) //init cookie object, naming it "username"
+
+
+  const navigate = useNavigate();
 
 
   const handleSubmit = async (e) => {
@@ -63,11 +73,19 @@ export default function Login() {
 
     console.log(tourist);
     try {
-      const response = await axios.post('http://localhost:3000/api/login', tourist);
+      const response = await axios.post('http://localhost:3000/api/login', tourist); //retrieve data from server
+      const accessToken = response.data.accessToken; //capture accessToken from response
       console.log('Successful Login!', response.data);
+      console.log('Access Token:', accessToken);
+      console.log('Logged in Username:', username);
+
+      setTokenCookie('token', accessToken, { path: '/', maxAge: 5 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setloggedInUserCookie('username', username, { path: '/', maxAge: 5 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
 
       setUsername('');
       setPassword('');
+
+      navigate('/home');
 
 
   } catch (error) {
