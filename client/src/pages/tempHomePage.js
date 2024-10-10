@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
+import {Link} from "react-router-dom";
 
+//TODO figure out how to make fetchData accessible globally to all project files w/o having to implement it each time
 const TempHomePage = () => {
     const navigate = useNavigate();
 
@@ -32,6 +34,7 @@ const TempHomePage = () => {
         <div>
             <h1>Welcome to the Home Page!!</h1>
             <button onClick={handleLogout}>Logout</button>
+            <Link to="/changePassword"><button>Change Password</button></Link>
         </div>
     );
 }

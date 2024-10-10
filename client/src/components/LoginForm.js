@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
+//TODO frontend responses to error and success messages, both here and in sign up and in change pw.
 
 export default function Login() {
   const classes = useStyles();
@@ -79,7 +79,7 @@ export default function Login() {
       console.log('Access Token:', accessToken);
       console.log('Logged in Username:', username);
 
-      setTokenCookie('token', accessToken, { path: '/', maxAge: 5 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setTokenCookie('token', accessToken, { path: '/', maxAge: 100000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
       setloggedInUserCookie('username', username, { path: '/', maxAge: 5 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
 
       setUsername('');

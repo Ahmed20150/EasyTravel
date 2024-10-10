@@ -75,6 +75,31 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+
+// Change Password Endpoint
+app.post('/api/changePassword', async (req, res) => {
+    const { username, password, newPassword } = req.body;
+  
+    try {
+      const tourist = await Tourist.findOne({ username });
+      if (!tourist) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const isPasswordValid = password ==  tourist.password;
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+  
+      tourist.password = newPassword;
+      await tourist.save();
+  
+      res.status(200).json({ message: 'Password changed successfully' });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
 //getting all tourists
 app.get('/api/tourists', async (req, res) => { 
     try {
