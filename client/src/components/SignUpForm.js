@@ -47,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+//TODO make dropdown for nationality
+//TODO put some restrictions on password
+  //TODO frontend responses to error and success messages
 
 export default function SignUp() {
   const classes = useStyles();

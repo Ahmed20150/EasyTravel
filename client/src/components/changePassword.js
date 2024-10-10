@@ -87,6 +87,7 @@ function ChangePassword() {
     }
   };
 
+  //TODO frontend responses to error and success messages
   return (
     <CookiesProvider>
       <Container component="main" maxWidth="xs">

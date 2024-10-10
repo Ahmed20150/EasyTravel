@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-//TODO frontend responses to error and success messages, both here and in sign up and in change pw.
+//TODO frontend responses to error and success messages
 
 export default function Login() {
   const classes = useStyles();

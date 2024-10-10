@@ -30,7 +30,7 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 });
 
 
-
+//TODO check for repeated emails / usernames
 //Create Tourist (Sign up)
 app.post('/api/signUp', async (req, res) => { 
     try {
