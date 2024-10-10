@@ -1,8 +1,14 @@
 const express= require("express");
 const mongoose = require("mongoose");
 const app = express();
+const cors = require("cors");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(cors());
+
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
@@ -24,8 +30,7 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 //Create Tourist
 app.post('/api/tourists', async (req, res) => { 
     try {
-        // const tourist = await Tourist.create(req.body);
-        const tourist = await Tourist.create({"username":"ahmed20150", "email":"a@gmail.com", "password":"123456", "mobile_number":123456789, "nationality":"Egyptian", "date_of_birth":"2000-01-01", "occupation":"student"});
+        const tourist = await Tourist.create(req.body);
         res.status(200).json(tourist);
     } catch (err) {
         res.status(500).json({message: err.message});
