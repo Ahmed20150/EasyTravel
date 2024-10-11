@@ -21,7 +21,7 @@ const ActivityForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3500/activities', formData);
+            const response = await axios.post('http://localhost:3000/activities', formData);
             console.log('Activity created:', response.data);
         } catch (error) {
             console.error('Error creating activity:', error);

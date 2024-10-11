@@ -6,7 +6,7 @@ const ActivityList = () => {
 
     useEffect(() => {
         const fetchActivities = async () => {
-            const response = await axios.get('http://localhost:3500/activities');
+            const response = await axios.get('http://localhost:3000/activities');
             setActivities(response.data);
         };
         fetchActivities();

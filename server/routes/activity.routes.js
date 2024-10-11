@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Activity = require('../models/activity');
+const Activity = require('../models/activity.model.js');
 
 // CREATE
 router.post('/', async (req, res) => {
