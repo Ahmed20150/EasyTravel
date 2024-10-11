@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 
 const activitySchema = new mongoose.Schema({
-    date: Date,
-    time: String,
+    date: { type: Date, required: true },
+    time: { type: String, required: true },
     location: {
-        address: String,
+        address: { type: String, required: true },
         coordinates: {
-            lat: Number,
-            lng: Number
+            lat: { type: Number, required: true },
+            lng: { type: Number, required: true }
         }
     },
     price: {
-        min: Number,
-        max: Number
+        min: { type: Number, required: true },
+        max: { type: Number, required: true }
     },
-    category: String,
-    tags: [String],
-    specialDiscounts: String,
-    isBookingOpen: { type: Boolean, default: true }
+    category: { type: String, required: true },
+    tags: { type: [String], default: [] },
+    specialDiscounts: { type: String },
+    isBookingOpen: { type: Boolean, required: true }
 });
 
 const Activity = mongoose.model('Activity', activitySchema);
