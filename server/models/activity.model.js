@@ -4,10 +4,10 @@ const activitySchema = new mongoose.Schema({
     date: { type: Date, required: true },
     time: { type: String, required: true },
     location: {
-        address: { type: String, required: true },
+        address: String,
         coordinates: {
-            lat: { type: Number, required: true },
-            lng: { type: Number, required: true }
+            lat: Number,
+            lng: Number
         }
     },
     price: {
@@ -15,9 +15,9 @@ const activitySchema = new mongoose.Schema({
         max: { type: Number, required: true }
     },
     category: { type: String, required: true },
-    tags: { type: [String], default: [] },
-    specialDiscounts: { type: String },
-    isBookingOpen: { type: Boolean, required: true }
+    tags: [String],
+    specialDiscounts: String,
+    isBookingOpen: { type: Boolean, default: true }
 });
 
 const Activity = mongoose.model('Activity', activitySchema);
