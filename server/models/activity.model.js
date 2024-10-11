@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const activitySchema = new mongoose.Schema({
-    date: { type: Date, required: true },
-    time: { type: String, required: true },
+    date: Date,
+    time: String,
     location: {
         address: String,
         coordinates: {
@@ -11,10 +11,10 @@ const activitySchema = new mongoose.Schema({
         }
     },
     price: {
-        min: { type: Number, required: true },
-        max: { type: Number, required: true }
+        min: Number,
+        max: Number
     },
-    category: { type: String, required: true },
+    category: String,
     tags: [String],
     specialDiscounts: String,
     isBookingOpen: { type: Boolean, default: true }

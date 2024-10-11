@@ -5,20 +5,24 @@ const Activity = require('../models/activity.model.js');
 // CREATE
 router.post('/', async (req, res) => {
     try {
+        console.log(req.body);
+
         const newActivity = new Activity(req.body);
         const savedActivity = await newActivity.save();
         res.status(201).json(savedActivity);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error(err); // Log the error for debugging
+        res.status(500).json({ error: 'An error occurred while saving the activity.' });
     }
 });
+
 
 // READ (Get all activities)
 router.get('/', async (req, res) => {
     try {
-        const activities = await Activity.find();
+         const activities = await Activity.find();
         res.status(200).json(activities);
-    } catch (err) {
+        } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });

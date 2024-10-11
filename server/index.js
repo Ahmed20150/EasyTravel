@@ -22,7 +22,6 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 });
 
 
-
 //Create Tourist
 app.post('/api/tourists', async (req, res) => { 
     try {
