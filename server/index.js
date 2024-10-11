@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const app = express();
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
+const activityRoutes = require('./routes/activity.routes.js');
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
+app.use('/activities', activityRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
