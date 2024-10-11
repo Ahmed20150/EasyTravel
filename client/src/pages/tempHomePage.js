@@ -15,6 +15,7 @@ const TempHomePage = () => {
     async function fetchData() { // Function to check if user is logged in, by checking if cookie exists
         const accessToken = Cookies.get('token');
         const loggedInUser = Cookies.get('username');
+        const userType = Cookies.get('userType');
         if (!accessToken) {
             console.log('No access token found');
             navigate("/");
@@ -22,17 +23,28 @@ const TempHomePage = () => {
         } else {
             console.log("COOKIES FOUND", accessToken);
             console.log("LOGGEDINUSER: ", loggedInUser);
+            console.log("USERTYPE: ", userType);
         }
     }
 
+    function removeAllCookies() {
+        const allCookies = Cookies.get(); // Get all cookies
+        for (let cookie in allCookies) {
+          Cookies.remove(cookie); // Remove each cookie
+        }
+      }
+
     function handleLogout() { // Logout functionality that removes cookie and calls checker (leading to redirection to login)
-        Cookies.remove('token');
+        removeAllCookies();
         fetchData();
     }
 
+
+    const [username, setUsername] = useState(Cookies.get('username'));
+    const [userType, setUserType] = useState(Cookies.get('userType'));
     return (
         <div>
-            <h1>Welcome to the Home Page!!</h1>
+            <h1>Welcome {username}, you are an {userType}!!</h1>
             <button onClick={handleLogout}>Logout</button>
             <Link to="/changePassword"><button>Change Password</button></Link>
         </div>

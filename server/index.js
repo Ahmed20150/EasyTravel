@@ -5,6 +5,11 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
+const TourismGoverner = require("./models/tourismGoverner.model.js");
+const Seller = require("./models/seller.model.js");
+const Advertiser = require("./models/advertiser.model.js");
+const Admin = require("./models/admin.model.js");
+const TourGuide = require("./models/tourGuide.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
 
 //connect admin.routes.js to index.js
@@ -44,16 +49,17 @@ app.post('/api/signUp', async (req, res) => {
          user = await Tourist.create(req.body);
         }
         else if(req.body.userType === 'tourGuide'){
-            //create tour guide
+            user = await TourGuide.create(req.body);
         }
         else if(req.body.userType === 'advertiser'){
-            //create advertiser
+            user = await Advertiser.create(req.body);
 
         }
+        else if(req.body.userType === 'seller'){
+            user = await Seller.create(req.body);
+        }
         else{
-            //create seller
-
-
+            res.status(500).json({ message: "please choose a user type!"});
         }
         res.status(200).json(user);
     } catch (err) {
@@ -61,35 +67,51 @@ app.post('/api/signUp', async (req, res) => {
     }
 });
 
-// Login for Tourist
+// Login for all users
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const tourist = await Tourist.findOne({ username });
+        const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
+            Tourist.findOne({ username }),
+            TourGuide.findOne({ username }),
+            Advertiser.findOne({ username }),
+            Seller.findOne({ username }),
+            Admin.findOne({ username }),
+            TourismGoverner.findOne({username}),
+          ]);
 
-        if (!tourist) {
+          const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
+        
+          if (!user) {
             return res.status(400).json({ message: "username doesnt exist" });
         }
 
-        const isPasswordValid = password==tourist.password;
-
-        
+         const isPasswordValid = password==user.password;
 
         if (!isPasswordValid) {
-            return res.status(400).json({ message: "Invalid password, Tourist pw is "+ tourist.password + " while your password is " + password });
+            return res.status(400).json({ message: "Invalid password, Tourist pw is "+ user.password + " while your password is " + password });
         }
+
+        let userType;
+        if (tourist) userType = 'tourist';
+        else if (tourGuide) userType = 'tourGuide';
+        else if (advertiser) userType = 'advertiser';
+        else if (seller) userType = 'seller';
+        else if (admin) userType = 'admin';
+        else if (tourismGoverner) userType = 'tourismGoverner';
+    
 
          //create JWT
         const accessToken = jwt
         .sign(
             {
-                id: tourist._id,
+                id: user._id,
             },
             "secret",
             { expiresIn: "1d" }
         );
 
-        res.status(200).json({ message: "Login successful", tourist, accessToken: accessToken });
+        res.status(200).json({ message: "Login successful", user, accessToken: accessToken, userType: userType });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -101,18 +123,27 @@ app.post('/api/changePassword', async (req, res) => {
     const { username, password, newPassword } = req.body;
   
     try {
-      const tourist = await Tourist.findOne({ username });
-      if (!tourist) {
+        const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
+            Tourist.findOne({ username }),
+            TourGuide.findOne({ username }),
+            Advertiser.findOne({ username }),
+            Seller.findOne({ username }),
+            Admin.findOne({ username }),
+            TourismGoverner.findOne({username}),
+          ]);
+
+        const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
+      if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      const isPasswordValid = password ==  tourist.password;
+      const isPasswordValid = password ==  user.password;
       if (!isPasswordValid) {
         return res.status(400).json({ message: 'Current password is incorrect' });
       }
   
-      tourist.password = newPassword;
-      await tourist.save();
+      user.password = newPassword;
+      await user.save();
   
       res.status(200).json({ message: 'Password changed successfully' });
     } catch (err) {

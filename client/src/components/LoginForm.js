@@ -61,6 +61,8 @@ export default function Login() {
 
   const [tokenCookie, setTokenCookie] = useCookies(['token']) //init cookie object, naming it "token"
   const [loggedInUserCookie, setloggedInUserCookie] = useCookies(['username']) //init cookie object, naming it "username"
+  const [loggedInUserTypeCookie, setloggedInUserTypeCookie] = useCookies(['userType']) //init cookie object, naming it "userType"
+
 
 
   const navigate = useNavigate();
@@ -69,22 +71,26 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const tourist = {username,password}
+    const user = {username,password}
 
-    console.log(tourist);
+    console.log(user);
     try {
-      const response = await axios.post('http://localhost:3000/api/login', tourist); //retrieve data from server
+      const response = await axios.post('http://localhost:3000/api/login', user); //retrieve data from server
       const accessToken = response.data.accessToken; //capture accessToken from response
+      const userType = response.data.userType;
       console.log('Successful Login!', response.data);
       console.log('Access Token:', accessToken);
       console.log('Logged in Username:', username);
 
-      setTokenCookie('token', accessToken, { path: '/', maxAge: 100000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
-      setloggedInUserCookie('username', username, { path: '/', maxAge: 5 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setTokenCookie('token', accessToken, { path: '/', maxAge: 1000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setloggedInUserCookie('username', username, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setloggedInUserTypeCookie('userType', userType, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+
 
       setUsername('');
       setPassword('');
 
+      //TODO based on userType navigate to different pages
       navigate('/home');
 
 
@@ -111,7 +117,7 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
-        <form className={classes.form} action='POST'  onSubmit={handleSubmit}>
+        <form className={classes.form} action='POST' onSubmit={handleSubmit}>
         <TextField
             variant="outlined"
             margin="normal"

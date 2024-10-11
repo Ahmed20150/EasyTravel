@@ -19,6 +19,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TouristSignUpForm from './TouristSignUpForm';
+import { useNavigate } from "react-router-dom";
 
 
 function Copyright() {
@@ -92,7 +93,7 @@ export default function GeneralSignUpForm() {
   };
 
 
-
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,6 +121,8 @@ export default function GeneralSignUpForm() {
       setNationality('');
       setDateOfBirth('');
       setOccupation('');
+
+      navigate("/login");
 
   } catch (error) {
       console.error('Error:', error.response ? error.response.data : error.message);
