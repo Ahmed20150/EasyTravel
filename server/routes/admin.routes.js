@@ -21,7 +21,7 @@ router.post('/add-tourismGoverner', async (req, res) => {
             username,
             password
         });
-        await TourismGoverner.save();
+        await newTourismGoverner.save();
         res.status(201).json({ message: 'Tourism Governer Added Successfully' });
     }
     catch (error) {
@@ -32,22 +32,24 @@ router.post('/add-tourismGoverner', async (req, res) => {
 
 //Add Admin
 router.post('/add-admin', async (req, res) => {
+
+    console.log(req.body);
     const { username, password } = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Username and Password Required' });
-    }
+    // if (!username || !password) {
+    //     return res.status(400).json({ message: 'Username and Password Required' });
+    // }
 
     try {
-        const NonUniqueUser = await TourismGoverner.findOne({ username });
+        const NonUniqueUser = await Admin.findOne({ username });
         if (NonUniqueUser) {
             return res.status(400).json({ message: 'Username already exists' });
         }
-        const newTourismGoverner = new TourismGoverner({
+        const newAdmin = new Admin({
             username,
             password
         });
-        await TourismGoverner.save();
+        await newAdmin.save();
         res.status(201).json({ message: 'Admin Account Added Successfully' });
     }
     catch (error) {
