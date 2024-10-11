@@ -1,10 +1,14 @@
-const express= require("express");
+const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
+const adminRoutes = require('./routes/admin.routes.js');
+
+//connect admin.routes.js to index.js
+app.use('/admin', adminRoutes);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
@@ -23,7 +27,8 @@ app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
 
-mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL").then(() =>{
+mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL").then(() => {
+
     console.log("Connected to the database!");
 }).catch((err) => {
     console.log("Cannot connect to the database!", err);
@@ -52,7 +57,7 @@ app.post('/api/signUp', async (req, res) => {
         }
         res.status(200).json(user);
     } catch (err) {
-        res.status(500).json({message: err.message});
+        res.status(500).json({ message: err.message });
     }
 });
 
@@ -116,11 +121,11 @@ app.post('/api/changePassword', async (req, res) => {
   });
 
 //getting all tourists
-app.get('/api/tourists', async (req, res) => { 
+app.get('/api/tourists', async (req, res) => {
     try {
         const tourists = await Tourist.find({});
         res.status(200).json(tourists);
     } catch (err) {
-        res.status(500).json({message: err.message});
+        res.status(500).json({ message: err.message });
     }
 });
