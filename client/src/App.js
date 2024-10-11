@@ -1,28 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import ActivityList from "./components/ActivityLists";
+import ActivityForm from "./components/ActivityForms";
+import ActivityDetails from "./components/ActivityDetails";
+import "./App.css";
 
-
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/" element={<ActivityList />} />
+          <Route path="/create" element={<ActivityForm />} />
+          <Route path="/edit/:id" element={<ActivityForm />} />
+          <Route path="/activity/:id" element={<ActivityDetails />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
