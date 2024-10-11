@@ -14,9 +14,9 @@ app.use(cors());
 app.use(cookieParser());
 
 
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
+// app.get("/", (req, res) => {
+//     res.send("Hello World!");
+// });
 
 
 app.listen(port, () => {
@@ -31,11 +31,26 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 
 
 //TODO check for repeated emails / usernames
-//Create Tourist (Sign up)
+//Create User (Sign up)
 app.post('/api/signUp', async (req, res) => { 
     try {
-        const tourist = await Tourist.create(req.body);
-        res.status(200).json(tourist);
+        let user;
+        if(req.body.userType === 'tourist'){
+         user = await Tourist.create(req.body);
+        }
+        else if(req.body.userType === 'tourGuide'){
+            //create tour guide
+        }
+        else if(req.body.userType === 'advertiser'){
+            //create advertiser
+
+        }
+        else{
+            //create seller
+
+
+        }
+        res.status(200).json(user);
     } catch (err) {
         res.status(500).json({message: err.message});
     }

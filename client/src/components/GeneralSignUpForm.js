@@ -14,6 +14,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {useState} from 'react';
 import axios from 'axios';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import TouristSignUpForm from './TouristSignUpForm';
+
 
 function Copyright() {
   return (
@@ -46,66 +52,118 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  radioGroup: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    width: '100%', // Adjust the width as needed
+  },
+  centeredRadio: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    marginLeft: '10px',
+  },
 }));
 //TODO make dropdown for nationality
 //TODO put some restrictions on password
   //TODO frontend responses to error and success messages
 
-export default function SignUp() {
+export default function GeneralSignUpForm() {
+
   const classes = useStyles();
 
+  //General Data for all User Types
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [mobileNumber, setMobileNumber] = useState('')
-  const [nationality, setNationality] = useState('')
-  const [dateOfBirth, setDateOfBirth] = useState('')
-  const [occupation, setOccupation] = useState('')
+  const[repeatPassword, setRepeatPassword] = useState('')
+  const [userType, setUserType] = useState('')
+
+ //Tourist Specific Extra Data
+ const [mobileNumber, setMobileNumber] = useState('')
+ const [nationality, setNationality] = useState('')
+ const [dateOfBirth, setDateOfBirth] = useState('')
+ const [occupation, setOccupation] = useState('')
+
+  const handleRadioButtonChange = (event) => {
+    const value = event.target.value;
+    setUserType(value);
+    console.log('Selected Value:', value);
+  };
+
+
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation};
+    const user = {username, email, password, userType}
+    
+    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
 
-    console.log(tourist);
+    console.log(user);
     try {
+    if(userType === 'tourist'){
       const response = await axios.post('http://localhost:3000/api/signUp', tourist);
       console.log('Success:', response.data);
+    }
+    else{
+        const response = await axios.post('http://localhost:3000/api/signUp', user);
+        console.log('Success:', response.data);
+    }
 
       setUsername('');
       setEmail('');
       setPassword('');
-      setConfirmPassword('');
+      setUserType('');
       setMobileNumber('');
       setNationality('');
       setDateOfBirth('');
       setOccupation('');
+
   } catch (error) {
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 
-
-
-
   }
 
 
-
-  
-
   return (
+
+    
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" style={{ marginBottom: '19px' }}>
           Sign Up
         </Typography>
         <form className={classes.form} action='POST'  onSubmit={handleSubmit}>
+        {/* General Info for all Account Types */}
+        <FormControl>
+
+
+      <FormLabel id="demo-row-radio-buttons-group-label">Register As:</FormLabel>
+      <RadioGroup
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        name="row-radio-buttons-group"
+        className={classes.radioGroup}
+        value={userType}
+        onChange={handleRadioButtonChange}
+      >
+        <FormControlLabel value="tourGuide" control={<Radio />} label="Tour Guide" />
+        <FormControlLabel value="advertiser" control={<Radio />} label="Advertiser" />
+        <FormControlLabel value="seller" control={<Radio />} label="Seller" />
+        <div className={classes.centeredRadio}>
+            <FormControlLabel value="tourist" control={<Radio />} label="Tourist" />
+          </div>
+      </RadioGroup>
+        </FormControl>
+          
+
         <TextField
             variant="outlined"
             margin="normal"
@@ -145,19 +203,24 @@ export default function SignUp() {
             autoComplete="password"
           />
 
-          <TextField
+            <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            name="confirmPassword"
-            label="Confirm Password"
+            name="repeatPassword"
+            label="Repeat Password"
             type="password"
-            id="confirmPassword"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            autoComplete="confirmPassword"
+            id="repeatPassword"
+            onChange={(e) => setRepeatPassword(e.target.value)}
+            autoComplete="repeatPassword"
           />
 
+          {/* Tourist Specific Sign Up Info */}
+
+
+          {userType === 'tourist' && (
+        <>
           <TextField
             variant="outlined"
             margin="normal"
@@ -170,7 +233,6 @@ export default function SignUp() {
             onChange={(e) => setMobileNumber(e.target.value)}
             autoComplete="mobileNumber"
           />
-
           <TextField
             variant="outlined"
             margin="normal"
@@ -182,39 +244,38 @@ export default function SignUp() {
             id="nationality"
             onChange={(e) => setNationality(e.target.value)}
             autoComplete="nationality"
-          />    
-
+          />
           <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="dateOfBirth"
-          label="Date of Birth"
-          type="date"
-          id="dateOfBirth"
-          onChange={(e) => setDateOfBirth(e.target.value)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          autoComplete="DOB"
-        />  
-
-
-        
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="dateOfBirth"
+            label="Date of Birth"
+            type="date"
+            id="dateOfBirth"
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            autoComplete="DOB"
+          />
           <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="occupation"
-          label="Occupation"
-          type="text"
-          id="occupation"
-          onChange={(e) => setOccupation(e.target.value)}
-          autoComplete="occupation"
-        /> 
-          
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="occupation"
+            label="Occupation"
+            type="text"
+            id="occupation"
+            onChange={(e) => setOccupation(e.target.value)}
+            autoComplete="occupation"
+          />
+        </>
+      )}
+
+
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
