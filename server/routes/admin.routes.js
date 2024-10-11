@@ -32,30 +32,32 @@ router.post('/add-tourismGoverner', async (req, res) => {
 
 //Add Admin
 router.post('/add-admin', async (req, res) => {
-
-    console.log(req.body);
-    const { username, password } = req.body;
-
-    // if (!username || !password) {
-    //     return res.status(400).json({ message: 'Username and Password Required' });
-    // }
-
-    try {
-        const NonUniqueUser = await Admin.findOne({ username });
-        if (NonUniqueUser) {
-            return res.status(400).json({ message: 'Username already exists' });
+        const { username, password } = req.body;
+    
+        // Check if username and password are provided
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and Password are required.' });
         }
-        const newAdmin = new Admin({
-            username,
-            password
-        });
-        await newAdmin.save();
-        res.status(201).json({ message: 'Admin Account Added Successfully' });
-    }
-    catch (error) {
-        res.status(500).json({ message: 'Error Creating new Admin Account', error });
-    }
-});
-
+    
+        try {
+            // Check if the username already exists
+            const existingUser = await Admin.findOne({ username });
+            if (existingUser) {
+                return res.status(400).json({ message: 'Username already exists. Please choose a different one.' });
+            }
+    
+            // Create a new Admin with the unique username
+            const newAdmin = await Admin.create(req.body);
+    
+            // Save the new Admin to the database
+            await newAdmin.save();
+    
+            // Return success message
+            res.status(201).json({ message: 'Admin account added successfully.' });
+        } catch (error) {
+            // Handle any errors that occur during the process
+            res.status(500).json({ message: 'Error adding Admin account', error });
+        }});
+    
 
 module.exports = router;
