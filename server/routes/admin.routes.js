@@ -13,7 +13,8 @@ router.post('/add-tourismGoverner', async (req, res) => {
     }
 
     try {
-        const NonUniqueUser = await TourismGoverner.findOne({ username });
+            // Check if the username already exists (case-insensitive)
+        const NonUniqueUser = await TourismGoverner.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
         if (NonUniqueUser) {
             return res.status(400).json({ message: 'Username already exists' });
         }
@@ -41,7 +42,7 @@ router.post('/add-admin', async (req, res) => {
 
     try {
         // Check if the username already exists
-        const existingUser = await Admin.findOne({ username });
+        const existingUser = await Admin.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
         if (existingUser) {
             return res.status(400).json({ message: 'Username already exists. Please choose a different one.' });
         }
