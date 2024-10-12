@@ -13,7 +13,7 @@ const AddNewAdmins = () => {
     const admin = { username, password };
 
     try {
-      const response = await axios.post('http://localhost:3000/admin/add-admin', admin);
+      const response = await axios.post('http://localhost:8000/admin/add-admin', admin);
       console.log('Admin Added:', response.data);
       window.alert(`Admin added successfully: ${response.data.message}`);
       setUsername('');
