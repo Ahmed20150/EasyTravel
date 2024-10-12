@@ -41,3 +41,13 @@ app.get('/api/tourists', async (req, res) => {
         res.status(500).json({message: err.message});
     }
 });
+
+// getting all tour guides
+app.get('/api/tourGuide', async (req, res) => { 
+    try {
+        const touristGuides = await TouristGuide.find({});
+        res.status(200).json(touristGuides);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
