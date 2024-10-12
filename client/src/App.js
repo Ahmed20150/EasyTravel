@@ -21,6 +21,9 @@ function App() {
             <Route path="/changePassword"element={<ChangePassword />}/>
             <Route path="/home"element={<TempHomePage />}/>
             <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
+            <Route path="/create-profile" element={<CreateProfilePage />} />
+            <Route path="/view-profile/:email" element={<ViewProfilePage />} />
+            <Route path="/edit-profile/:email" element={<EditProfilePage />} />
           </Routes>
       </BrowserRouter>
     </div>
