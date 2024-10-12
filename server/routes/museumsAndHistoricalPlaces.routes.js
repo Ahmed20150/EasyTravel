@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 router.use(express.json());
+const cors = require("cors");
+router.use(cors());
 const Museum = require("../models/museumsAndHistoricalPlaces.model.js");
 
 // Create a new museum entry

@@ -1,0 +1,242 @@
+/* museumList.css */
+
+:root {
+  --primary-color: #7357B8;
+  --secondary-color: #6A6A93;
+  --accent-color: #E98B43;
+  --basic-dark: #2C2C2D;
+  --basic-light: #FFFFFF;
+  --other-color: #F4F4F7;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--other-color);
+  margin: 0;
+  padding: 0;
+}
+
+.museums-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: var(--basic-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+.loader {
+  text-align: center;
+  font-size: 24px;
+  color: var(--secondary-color);
+  margin: 20px 0;
+}
+
+.museums-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.museum-card {
+  padding: 10px;
+  background-color: var(--basic-light);
+  color: var(--basic-dark);
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.museum-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.museum-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.museum-details {
+  padding: 15px;
+  text-align: left;
+}
+
+.museum-details input,
+.museum-details textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid var(--basic-dark);
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.museum-name {
+  font-size: 20px;
+  color: var(--accent-color);
+  margin: 0 0 5px;
+}
+
+.museum-location {
+  font-size: 14px;
+  color: var(--secondary-color);
+  margin: 0;
+}
+
+.museum-description {
+  font-size: 12px;
+  color: var(--basic-dark);
+  margin: 10px 0;
+}
+
+.museum-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--basic-dark);
+  border-top: 1px solid var(--basic-dark);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.museum-footer .edit {
+  background-color: var(--primary-color);
+  color: var(--basic-light);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.museum-footer .delete {
+  background-color: brown;
+  color: var(--basic-light);
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.museum-footer button:hover {
+  background-color: var(--accent-color);
+}
+
+/* Existing styles ... */
+
+/* Styles for the museum card when in edit mode */
+.museum-card.edit-mode {
+  background-color: var(--basic-light); /* Change background to accent color */
+  border: 1px solid var(--primary-color); /* Add border for emphasis */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+}
+
+/* Input and textarea styles */
+.museum-details input,
+.museum-details textarea {
+  width: calc(100% - 20px); /* Full width minus padding */
+  padding: 10px; /* Add padding for better touch */
+  margin: 5px 0; /* Add margin for spacing */
+  border: 1px solid var(--secondary-color); /* Change border color */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  font-size: 14px; /* Font size for readability */
+}
+
+/* Styles for update and cancel buttons */
+.museum-details .update {
+  background-color: green; /* Primary button color */
+  color: var(--basic-light); /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for button */
+  cursor: pointer; /* Change cursor to pointer */
+  margin-left: 5px; /* Space between buttons */
+  transition: background-color 0.2s; /* Smooth transition */
+}
+
+.museum-details .cancel {
+  background-color: brown; /* Primary button color */
+  color: var(--basic-light); /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for button */
+  cursor: pointer; /* Change cursor to pointer */
+  margin-left: 5px; /* Space between buttons */
+  transition: background-color 0.2s; /* Smooth transition */
+}
+
+/* Hover effect for buttons */
+.museum-details button:hover {
+  background-color: var(--accent-color); /* Change on hover */
+}
+
+/* Additional styles for loader and title if needed */
+.loader {
+  text-align: center; /* Center loader */
+  font-size: 24px; /* Larger font for loader */
+  color: var(--secondary-color); /* Secondary color for loader text */
+}
+
+.title {
+  text-align: center; /* Center title */
+  color: var(--primary-color); /* Title color */
+  margin-bottom: 20px; /* Space below title */
+}
+
+.addMuseum {
+  background-color: var(--primary-color); /* Primary button color */
+  color: var(--basic-light); /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for button */
+  cursor: pointer; /* Change cursor to pointer */
+  margin-left: 5px; /* Space between buttons */
+  transition: background-color 0.2s; /* Smooth transition */
+}
+.addMuseum:hover {
+  background-color: var(--accent-color); /* Change on hover */
+}
+
+.museum-card input,
+.museum-card textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid var(--basic-dark);
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.museum-card .update {
+  background-color: green; /* Primary button color */
+  color: var(--basic-light); /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for button */
+  cursor: pointer; /* Change cursor to pointer */
+  margin-left: 5px; /* Space between buttons */
+  transition: background-color 0.2s; /* Smooth transition */
+}
+
+.museum-card .cancel {
+  background-color: brown; /* Primary button color */
+  color: var(--basic-light); /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for button */
+  cursor: pointer; /* Change cursor to pointer */
+  margin-left: 5px; /* Space between buttons */
+  transition: background-color 0.2s; /* Smooth transition */
+}
