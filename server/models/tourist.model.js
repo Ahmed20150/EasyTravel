@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const touristSchema = new mongoose.Schema({
     username: {
         type:String,

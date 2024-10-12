@@ -20,6 +20,21 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TouristSignUpForm from './TouristSignUpForm';
 import { useNavigate } from "react-router-dom";
+import { styled } from '@mui/material/styles';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 
 function Copyright() {
@@ -128,7 +143,52 @@ export default function GeneralSignUpForm() {
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 
+
+  // const formData = new FormData();
+  // formData.append('myfile',this.state.file);
+  // const config = {
+  //     headers: {
+  //         'content-type': 'multipart/form-data'
+  //     }
+  // };
+  // axios.post("http://localhost:3000/upload",formData,config)
+  //     .then((response) => {
+  //         alert("The file is successfully uploaded");
+  //     }).catch((error) => {
+  // });
+
   }
+
+  const [file, setFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState('');
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleFileUpload = async (event) => {
+    event.preventDefault();
+
+    console.log("DOC UPLOAD")
+    // if (!selectedFile) {
+    //   setUploadStatus('Please select a file to upload.');
+    //   return;
+    // }
+
+    // const formData = new FormData();
+    // formData.append('file', selectedFile);
+
+    // try {
+    //   const response = await axios.post('http://localhost:3000/api/upload', formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //     },
+    //   });
+    //   setUploadStatus('File uploaded successfully.');
+    // } catch (error) {
+    //   setUploadStatus('File upload failed.');
+    // }
+  };
 
 
   return (
@@ -277,6 +337,27 @@ export default function GeneralSignUpForm() {
           />
         </>
       )}
+
+<div>
+      <h2>File Upload</h2>
+       
+      <input
+            type="file"
+            onChange={handleFileChange}
+          />
+
+          {/* <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Confirm Upload
+          </Button> */}
+
+
+
+    </div>
 
 
           <FormControlLabel

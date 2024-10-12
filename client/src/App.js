@@ -6,10 +6,10 @@ import TouristSignUpForm from './components/TouristSignUpForm';
 import LoginForm from './components/LoginForm';
 import LandingPage from './pages/LandingPage';
 import ChangePassword from './components/changePassword';
-import ForgotPassword from './components/forgotPassword';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
 
 
 
@@ -21,9 +21,9 @@ function App() {
             <Route path="/" element={<LandingPage />}/>
             <Route path="/signUp"element={<GeneralSignUpForm />}/>
             <Route path="/login"element={<LoginForm />}/>
-            <Route path="/forgotPassword"element={<ForgotPassword />}/>
             <Route path="/changePassword"element={<ChangePassword />}/>
             <Route path="/home"element={<TempHomePage />}/>
+            <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
           </Routes>
       </BrowserRouter>
     </div>

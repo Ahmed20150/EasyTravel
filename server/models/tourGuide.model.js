@@ -13,6 +13,11 @@ const tourGuideSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    //TODO change to string accepted, pending, rejected
+    accepted:{
+        type: Boolean,
+        default:false
+    },
 });
 
 const TourGuide = mongoose.model("TourGuide", tourGuideSchema); //store in table "Tourist"

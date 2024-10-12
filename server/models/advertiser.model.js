@@ -13,6 +13,10 @@ const advertiserSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    accepted:{
+        type: Boolean,
+        default:false
+    },
 });
 
 const Advertiser = mongoose.model("Advertiser", advertiserSchema); //store in table "Tourist"
