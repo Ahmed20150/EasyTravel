@@ -13,9 +13,34 @@ const advertiserSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    accepted:{
-        type: Boolean,
-        default:false
+    firstName:{
+        type:String,
+        required:false
+    },
+    lastName:{
+        type:String,
+        required:false
+    },
+    mobileNumber:{
+        type:Number,
+        required:false
+    },
+    yearsOfExperience:{
+        type:Number,
+        required:false
+    },
+    previousWork:{
+        type:String,
+        required:false
+    },
+    dateOfBirth:{
+        type:Date,
+        required:false
+    },
+    status: {
+        type: String,
+        enum: ['accepted', 'rejected', 'pending'],
+        default: 'pending'
     },
 });
 

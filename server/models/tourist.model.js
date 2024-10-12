@@ -26,7 +26,7 @@ const touristSchema = new mongoose.Schema({
         type:Date,
         required:true
     },
-    occupation:{ //enum?
+    occupation:{ // TODO enum?
         type:String,
         required:true
     }, 
