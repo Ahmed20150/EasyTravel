@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const cors = require("cors");
 const Activity = require("../models/activity.model.js");
 router.use(express.json());
+router.use(cors()); // This allows requests from any origin
 
 // CREATE
 router.post("/", async (req, res) => {

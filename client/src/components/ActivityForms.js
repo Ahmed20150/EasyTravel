@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
-const ActivityForms = ({ activityId, onSave }) => {
+const ActivityForm = ({ onSave }) => {
   const [activityData, setActivityData] = useState({
     date: "",
     time: "",
     location: {
       address: "",
-      coordinates: {
-        lat: 0,
-        lng: 0,
-      },
+      coordinates: { lat: 0, lng: 0 },
     },
     price: { min: 0, max: 0 },
     category: "",
@@ -19,117 +16,151 @@ const ActivityForms = ({ activityId, onSave }) => {
     isBookingOpen: true,
   });
 
-  useEffect(() => {
-    if (activityId) {
-      fetchActivity(activityId);
-    }
-  }, [activityId]);
-
-  const fetchActivity = async (id) => {
-    try {
-      const response = await axios.get(`/api/activities/${id}`);
-      setActivityData(response.data);
-    } catch (error) {
-      console.error("Error fetching activity:", error);
-    }
-  };
-
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setActivityData({ ...activityData, [name]: value });
+    const nameParts = name.split(".");
+
+    if (nameParts.length > 1) {
+      // Handle nested fields (like location.address)
+      setActivityData((prevData) => ({
+        ...prevData,
+        [nameParts[0]]: {
+          ...prevData[nameParts[0]],
+          [nameParts[1]]: value,
+        },
+      }));
+    } else {
+      setActivityData({ ...activityData, [name]: value });
+    }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the default form submission
     try {
-      if (activityId) {
-        await axios.put(`/api/activities/${activityId}`, activityData);
-      } else {
-        await axios.post("/api/activities", activityData);
+      // Send a POST request to create a new activity
+      const response = await axios.post(
+        "http://localhost:3000/activities",
+        activityData
+      );
+
+      // Handle the response (e.g., display success message)
+      console.log("Activity created successfully:", response.data);
+
+      // Trigger the onSave callback if provided
+      if (onSave) {
+        onSave();
       }
-      onSave();
+
+      // Reset the form after successful submission
+      setActivityData({
+        date: "",
+        time: "",
+        location: {
+          address: "",
+          coordinates: { lat: 0, lng: 0 },
+        },
+        price: { min: 0, max: 0 },
+        category: "",
+        tags: [],
+        specialDiscounts: "",
+        isBookingOpen: true,
+      });
     } catch (error) {
-      console.error("Error saving activity:", error);
+      console.error("Error creating activity:", error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
-        Date:{" "}
+      <h2>Create New Activity</h2>
+      {/* Form fields... */}
+      <div>
+        <label>Date: </label>
         <input
           type="date"
           name="date"
           value={activityData.date}
           onChange={handleChange}
+          required
         />
-      </label>
-      <label>
-        Time:{" "}
+      </div>
+      <div>
+        <label>Time: </label>
         <input
           type="text"
           name="time"
           value={activityData.time}
           onChange={handleChange}
+          required
         />
-      </label>
-      <label>
-        Address:{" "}
+      </div>
+      <div>
+        <label>Address: </label>
         <input
           type="text"
           name="location.address"
           value={activityData.location.address}
           onChange={handleChange}
+          required
         />
-      </label>
-      <label>
-        Latitude:{" "}
+      </div>
+      <div>
+        <label>Latitude: </label>
         <input
           type="number"
           name="location.coordinates.lat"
           value={activityData.location.coordinates.lat}
           onChange={handleChange}
+          step="any"
+          required
         />
-      </label>
-      <label>
-        Longitude:{" "}
+      </div>
+      <div>
+        <label>Longitude: </label>
         <input
           type="number"
           name="location.coordinates.lng"
           value={activityData.location.coordinates.lng}
           onChange={handleChange}
+          step="any"
+          required
         />
-      </label>
-      <label>
-        Price Min:{" "}
+      </div>
+      <div>
+        <label>Price Min: </label>
         <input
           type="number"
           name="price.min"
           value={activityData.price.min}
           onChange={handleChange}
+          required
         />
-      </label>
-      <label>
-        Price Max:{" "}
+      </div>
+      <div>
+        <label>Price Max: </label>
         <input
           type="number"
           name="price.max"
           value={activityData.price.max}
           onChange={handleChange}
+          required
         />
-      </label>
-      <label>
-        Category:{" "}
+      </div>
+      <div>
+        <label>Category: </label>
         <input
           type="text"
           name="category"
           value={activityData.category}
           onChange={handleChange}
+          required
         />
-      </label>
-      <button type="submit">{activityId ? "Update" : "Create"} Activity</button>
+      </div>
+      <button type="submit">Create Activity</button>
     </form>
   );
 };
 
-export default ActivityForms;
+export default ActivityForm;

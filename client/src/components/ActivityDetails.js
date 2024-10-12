@@ -12,7 +12,9 @@ const ActivityDetails = () => {
 
   const fetchActivity = async () => {
     try {
-      const response = await axios.get(`/api/activities/${id}`);
+      const response = await axios.get(
+        `http://localhost:3000/activities/${id}`
+      );
       setActivity(response.data);
     } catch (error) {
       console.error("Error fetching activity:", error);

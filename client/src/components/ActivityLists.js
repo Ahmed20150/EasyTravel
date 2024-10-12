@@ -2,27 +2,19 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const ActivityLists = () => {
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState([]); // State to hold activities
 
   useEffect(() => {
-    fetchActivities();
+    fetchActivities(); // Fetch activities when the component mounts
   }, []);
 
+  // Function to fetch activities from the backend
   const fetchActivities = async () => {
     try {
-      const response = await axios.get("/api/activities");
-      setActivities(response.data);
+      const response = await axios.get("http://localhost:3000/activities"); // Make sure to use the full URL since backend is running on port 3500
+      setActivities(response.data); // Store the activities in state
     } catch (error) {
       console.error("Error fetching activities:", error);
-    }
-  };
-
-  const deleteActivity = async (id) => {
-    try {
-      await axios.delete(`/api/activities/${id}`);
-      setActivities(activities.filter((activity) => activity._id !== id));
-    } catch (error) {
-      console.error("Error deleting activity:", error);
     }
   };
 
@@ -33,11 +25,10 @@ const ActivityLists = () => {
         {activities.map((activity) => (
           <li key={activity._id}>
             <h3>{activity.category}</h3>
-            <p>{activity.location.address}</p>
+            <p>{activity.location?.address}</p>
             <p>
-              Price: ${activity.price.min} - ${activity.price.max}
+              Price: ${activity.price?.min} - ${activity.price?.max}
             </p>
-            <button onClick={() => deleteActivity(activity._id)}>Delete</button>
           </li>
         ))}
       </ul>
