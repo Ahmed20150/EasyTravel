@@ -13,8 +13,7 @@ const TourGuide = require("./models/tourGuide.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
-const sendEmail = require('./sendEmail');
-const upload = require('./middleware/upload');
+const sendEmail = require('./sendEmail')
 
 
 
@@ -47,66 +46,60 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 });
 
 
-//TODO arrange routes in their seperate files, keep index clean
-//TODO store sendEmail & generateOTP Files in a folder
+
 //TODO check for repeated emails / usernames
+//Create User (Sign up)
+app.post('/api/signUp', async (req, res) => { 
+    try {
+        let user;
+        if(req.body.userType === 'tourist'){
+         user = await Tourist.create(req.body);
+        }
+        else if(req.body.userType === 'tourGuide'){
+            user = await TourGuide.create(req.body);
+        }
+        else if(req.body.userType === 'advertiser'){
+            user = await Advertiser.create(req.body);
 
-// Create User (Sign up)
-app.post('/api/signUp', upload.single('file'), async (req, res) => {
-  try {
-    let user;
-    const { userType, ...userData } = req.body;
-    const file = req.file;
-
-    if (file) {
-      userData.file = file.path; // Add file path to user data
+        }
+        else if(req.body.userType === 'seller'){
+            user = await Seller.create(req.body);
+        }
+        else{
+            res.status(500).json({ message: "please choose a user type!"});
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
-
-    if (userType === 'tourist') {
-      user = await Tourist.create(userData);
-    } else if (userType === 'tourGuide') {
-      user = await TourGuide.create(userData);
-    } else if (userType === 'advertiser') {
-      user = await Advertiser.create(userData);
-    } else if (userType === 'seller') {
-      user = await Seller.create(userData);
-    } else {
-      return res.status(400).json({ message: "Please choose a user type!" });
-    }
-
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
 
+// //Upload File
+// const multer = require('multer');
+// const path = require('path');
 
-// Endpoint to handle file upload
-app.post('/api/upload', upload.single('file'), async (req, res) => {
-  const { name, dateOfBirth } = req.body;
-  const file = req.file;
+// // Configure multer storage
+// const storage = multer.diskStorage({
+//   destination: "./public/",
+//   filename: function(req, file, cb){
+//      cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
+//   }
+// });
 
-  if (!file) {
-    return res.status(400).json({ message: 'File is required' });
-  }
+// const upload = multer({
+//   storage: storage,
+//   limits:{fileSize: 1000000},
+// }).single("myfile");
 
-  try {
-    const tourist = new Tourist({
-      name,
-      dateOfBirth,
-      file: file.path // Store the file path in the database
-    });
+// //uploading files
+// app.post('/upload', upload.single('file'), (req, res) => {
+//     try {
+//       res.json({ message: 'File uploaded successfully', name: req.file.filename });
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   });
 
-    await tourist.save();
-    res.status(201).json({ message: 'Tourist created successfully', tourist });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to create tourist', error });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
 // Login for all users
 app.post('/api/login', async (req, res) => {
     try {

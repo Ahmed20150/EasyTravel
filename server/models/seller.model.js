@@ -43,10 +43,6 @@ const sellerSchema = new mongoose.Schema({
         enum: ['accepted', 'rejected', 'pending'],
         default: 'pending'
     },
-    file: {
-        type: String, // store the file path or URL as a string
-        required: false
-    },
     // id: fileSchema,
     // taxCard: fileSchema,
 });

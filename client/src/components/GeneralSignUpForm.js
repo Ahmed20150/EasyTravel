@@ -113,37 +113,19 @@ export default function GeneralSignUpForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('userType', userType);
-
-    if (file && userType !== 'tourist') {
-      formData.append('file', file);
-    }
-    // const user = {username, email, password, userType}
+    const user = {username, email, password, userType}
     
-    // const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
+    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
 
-    console.log(formData);
+    console.log(user);
     try {
     if(userType === 'tourist'){
-      formData.append('mobileNumber', mobileNumber);
-      formData.append('nationality', nationality);
-      formData.append('dateOfBirth', dateOfBirth);
-      formData.append('occupation', occupation);
-      const response = await axios.post('http://localhost:3000/api/signUp', formData);
+      const response = await axios.post('http://localhost:3000/api/signUp', tourist);
       console.log('Success:', response.data);
     }
     else{
-      const response = await axios.post('http://localhost:3000/api/signUp', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+        const response = await axios.post('http://localhost:3000/api/signUp', user);
         console.log('Success:', response.data);
-        setUploadStatus('Sign up successful.');
     }
 
       setUsername('');
@@ -158,7 +140,6 @@ export default function GeneralSignUpForm() {
       navigate("/login");
 
   } catch (error) {
-    setUploadStatus('Sign up failed.');
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 
@@ -183,7 +164,6 @@ export default function GeneralSignUpForm() {
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
-    console.log("uploaded file: " + file);
   };
 
   const handleFileUpload = async (event) => {
@@ -358,7 +338,6 @@ export default function GeneralSignUpForm() {
         </>
       )}
 
-{userType !== 'tourist' && (
 <div>
       <h2>File Upload</h2>
        
@@ -366,8 +345,6 @@ export default function GeneralSignUpForm() {
             type="file"
             onChange={handleFileChange}
           />
-
-{uploadStatus && <p>{uploadStatus}</p>}
 
           {/* <Button
             type="submit"
@@ -381,7 +358,7 @@ export default function GeneralSignUpForm() {
 
 
     </div>
-)}
+
 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
