@@ -30,7 +30,6 @@ const touristSchema = new mongoose.Schema({
         type:String,
         required:true
     }, 
-
 });
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
