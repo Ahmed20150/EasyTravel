@@ -109,7 +109,7 @@ export default function GeneralSignUpForm() {
 
 
   const navigate = useNavigate();
-
+//submit wihout file upload
   const handleSubmit = async (e) => {
     e.preventDefault();
 
