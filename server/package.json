@@ -5,17 +5,23 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "client": "cd ../client && npm start",
+    "server": "npm run dev",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
     "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.1",
     "index": "^0.4.0",
     "mongoose": "^8.7.1",
     "node": "^20.18.0",
     "nodemon": "^3.1.7"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
   }
 }

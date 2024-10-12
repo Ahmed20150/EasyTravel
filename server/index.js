@@ -1,9 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 const Tourist = require("./models/tourist.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
+
+const cors = require('cors');
+app.use(cors());
+
 
 //connect admin.routes.js to index.js
 app.use('/admin', adminRoutes);
