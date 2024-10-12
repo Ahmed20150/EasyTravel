@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 
 const ActivityForm = () => {
@@ -22,7 +24,7 @@ const ActivityForm = () => {
     specialDiscounts: "",
     isBookingOpen: true,
   });
-
+  const navigate = useNavigate();
   // Simplified handleChange function to handle basic form input
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,11 +35,11 @@ const ActivityForm = () => {
   const handleButtonClick = async (e) => {
     e.preventDefault();
     try {
-      alert("yes entered");
       const response = await axios.post("http://localhost:3000/activities", {
         ...formData,
         tags: formData.tags.split(",").map((tag) => tag.trim()), // Process tags as an array
       });
+      navigate(`/activities`);
       console.log("Activity created:", response.data);
     } catch (error) {
       console.error("Error creating activity:", error);
