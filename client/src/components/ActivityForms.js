@@ -1,165 +1,212 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 
-const ActivityForm = ({ onSave }) => {
-  const [activityData, setActivityData] = useState({
+const ActivityForm = () => {
+  const [formData, setFormData] = useState({
     date: "",
     time: "",
     location: {
       address: "",
-      coordinates: { lat: 0, lng: 0 },
+      coordinates: {
+        lat: "",
+        lng: "",
+      },
     },
-    price: { min: 0, max: 0 },
+    price: {
+      min: "",
+      max: "",
+    },
     category: "",
-    tags: [],
+    tags: "",
     specialDiscounts: "",
     isBookingOpen: true,
   });
 
-  // Handle input changes
+  // Simplified handleChange function to handle basic form input
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const nameParts = name.split(".");
-
-    if (nameParts.length > 1) {
-      // Handle nested fields (like location.address)
-      setActivityData((prevData) => ({
-        ...prevData,
-        [nameParts[0]]: {
-          ...prevData[nameParts[0]],
-          [nameParts[1]]: value,
-        },
-      }));
-    } else {
-      setActivityData({ ...activityData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission
+  const handleButtonClick = async (e) => {
+    e.preventDefault();
     try {
-      // Send a POST request to create a new activity
-      const response = await axios.post(
-        "http://localhost:3000/activities",
-        activityData
-      );
-
-      // Handle the response (e.g., display success message)
-      console.log("Activity created successfully:", response.data);
-
-      // Trigger the onSave callback if provided
-      if (onSave) {
-        onSave();
-      }
-
-      // Reset the form after successful submission
-      setActivityData({
-        date: "",
-        time: "",
-        location: {
-          address: "",
-          coordinates: { lat: 0, lng: 0 },
-        },
-        price: { min: 0, max: 0 },
-        category: "",
-        tags: [],
-        specialDiscounts: "",
-        isBookingOpen: true,
+      alert("yes entered");
+      const response = await axios.post("http://localhost:3000/activities", {
+        ...formData,
+        tags: formData.tags.split(",").map((tag) => tag.trim()), // Process tags as an array
       });
+      console.log("Activity created:", response.data);
     } catch (error) {
       console.error("Error creating activity:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Create New Activity</h2>
-      {/* Form fields... */}
-      <div>
-        <label>Date: </label>
+    <div className="activity-form">
+      {" "}
+      {/* Added class here */}
+      <h2>Create a New Activity</h2>
+      <label>
+        Date:
         <input
           type="date"
           name="date"
-          value={activityData.date}
+          value={formData.date}
           onChange={handleChange}
           required
         />
-      </div>
-      <div>
-        <label>Time: </label>
+      </label>
+      <label>
+        Time:
         <input
           type="text"
           name="time"
-          value={activityData.time}
+          value={formData.time}
           onChange={handleChange}
           required
         />
-      </div>
-      <div>
-        <label>Address: </label>
+      </label>
+      <label>
+        Location Address:
         <input
           type="text"
           name="location.address"
-          value={activityData.location.address}
-          onChange={handleChange}
-          required
+          value={formData.location.address}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              location: {
+                ...formData.location,
+                address: e.target.value,
+              },
+            })
+          }
         />
-      </div>
-      <div>
-        <label>Latitude: </label>
+      </label>
+      <label>
+        Latitude:
         <input
           type="number"
+          step="any"
           name="location.coordinates.lat"
-          value={activityData.location.coordinates.lat}
-          onChange={handleChange}
-          step="any"
-          required
+          value={formData.location.coordinates.lat}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              location: {
+                ...formData.location,
+                coordinates: {
+                  ...formData.location.coordinates,
+                  lat: e.target.value,
+                },
+              },
+            })
+          }
         />
-      </div>
-      <div>
-        <label>Longitude: </label>
+      </label>
+      <label>
+        Longitude:
         <input
           type="number"
-          name="location.coordinates.lng"
-          value={activityData.location.coordinates.lng}
-          onChange={handleChange}
           step="any"
-          required
+          name="location.coordinates.lng"
+          value={formData.location.coordinates.lng}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              location: {
+                ...formData.location,
+                coordinates: {
+                  ...formData.location.coordinates,
+                  lng: e.target.value,
+                },
+              },
+            })
+          }
         />
-      </div>
-      <div>
-        <label>Price Min: </label>
+      </label>
+      <label>
+        Minimum Price:
         <input
           type="number"
           name="price.min"
-          value={activityData.price.min}
-          onChange={handleChange}
+          value={formData.price.min}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              price: {
+                ...formData.price,
+                min: e.target.value,
+              },
+            })
+          }
           required
         />
-      </div>
-      <div>
-        <label>Price Max: </label>
+      </label>
+      <label>
+        Maximum Price:
         <input
           type="number"
           name="price.max"
-          value={activityData.price.max}
-          onChange={handleChange}
+          value={formData.price.max}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              price: {
+                ...formData.price,
+                max: e.target.value,
+              },
+            })
+          }
           required
         />
-      </div>
-      <div>
-        <label>Category: </label>
+      </label>
+      <label>
+        Category:
         <input
           type="text"
           name="category"
-          value={activityData.category}
+          value={formData.category}
           onChange={handleChange}
           required
         />
-      </div>
-      <button type="submit">Create Activity</button>
-    </form>
+      </label>
+      <label>
+        Tags (comma-separated):
+        <input
+          type="text"
+          name="tags"
+          value={formData.tags}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Special Discounts:
+        <input
+          type="text"
+          name="specialDiscounts"
+          value={formData.specialDiscounts}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Is Booking Open:
+        <input
+          type="checkbox"
+          name="isBookingOpen"
+          checked={formData.isBookingOpen}
+          onChange={(e) =>
+            setFormData({ ...formData, isBookingOpen: e.target.checked })
+          }
+        />
+      </label>
+      <button type="button" onClick={handleButtonClick}>
+        Create
+      </button>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../css/ActivityLists.css";
 
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]); // State to hold activities
@@ -18,20 +19,33 @@ const ActivityLists = () => {
     }
   };
 
+  // Function to handle deletion of an activity
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/activities/${id}`); // Send delete request
+      // Update state to remove the deleted activity
+      setActivities(activities.filter((activity) => activity._id !== id));
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+    }
+  };
+
   return (
-    <div>
+    <div className="activity-list">
       <h1>Activities</h1>
-      <ul>
+      <div className="card-container">
         {activities.map((activity) => (
-          <li key={activity._id}>
+          <div className="card" key={activity._id}>
             <h3>{activity.category}</h3>
             <p>{activity.location?.address}</p>
             <p>
               Price: ${activity.price?.min} - ${activity.price?.max}
             </p>
-          </li>
+            <button onClick={() => handleDelete(activity._id)}>Delete</button>{" "}
+            {/* Delete button */}
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
