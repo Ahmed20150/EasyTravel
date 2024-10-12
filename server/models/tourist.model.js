@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const touristSchema = new mongoose.Schema({
     username: {
         type:String,
@@ -13,7 +14,7 @@ const touristSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    mobile_number:{
+    mobileNumber:{
         type:Number,
         required:true
     },
@@ -21,11 +22,11 @@ const touristSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    date_of_birth:{
+    dateOfBirth:{
         type:Date,
         required:true
     },
-    occupation:{ //enum?
+    occupation:{ // TODO enum?
         type:String,
         required:true
     }, 
