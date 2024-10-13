@@ -4,12 +4,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
 const activityRoutes = require("./routes/activity.routes.js");
+const itineraryRoutes = require("./routes/itinerary.routes.js");
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
 app.use("/activities", activityRoutes);
+app.use("/itinerary", itineraryRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -25,32 +27,3 @@ mongoose
   .catch((err) => {
     console.log("Cannot connect to the database!", err);
   });
-
-//Create Tourist
-app.post("/api/tourists", async (req, res) => {
-  try {
-    // const tourist = await Tourist.create(req.body);
-    const tourist = await Tourist.create({
-      username: "ahmed20150",
-      email: "a@gmail.com",
-      password: "123456",
-      mobile_number: 123456789,
-      nationality: "Egyptian",
-      date_of_birth: "2000-01-01",
-      occupation: "student",
-    });
-    res.status(200).json(tourist);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-//getting all tourists
-app.get("/api/tourists", async (req, res) => {
-  try {
-    const tourists = await Tourist.find({});
-    res.status(200).json(tourists);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});

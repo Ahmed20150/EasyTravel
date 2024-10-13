@@ -1,0 +1,105 @@
+.itinerary-card {
+    border: 1px solid #ddd;
+    /* Light border for card */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 16px;
+    /* Spacing inside the card */
+    margin: 10px;
+    /* Margin between cards */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    background-color: #ffffff;
+    /* White background */
+    transition: transform 0.2s;
+    /* Smooth transform on hover */
+}
+
+.itinerary-card:hover {
+    transform: scale(1.02);
+    /* Slightly enlarge the card on hover */
+}
+
+.itinerary-title {
+    font-size: 1.5em;
+    /* Larger font for title */
+    margin-bottom: 10px;
+    /* Space below title */
+}
+
+.itinerary-duration,
+.itinerary-price,
+.itinerary-language,
+.itinerary-timeline {
+    font-size: 1em;
+    /* Regular font size */
+    margin: 5px 0;
+    /* Space above and below */
+}
+
+.locations-list,
+.dates-list {
+    list-style-type: none;
+    /* Remove bullet points */
+    padding: 0;
+    /* Remove padding */
+}
+
+.locations-list li,
+.dates-list li {
+    background: #f7f7f7;
+    /* Light background for list items */
+    border: 1px solid #eee;
+    /* Light border for list items */
+    border-radius: 4px;
+    /* Rounded corners */
+    padding: 8px;
+    /* Padding inside list items */
+    margin: 5px 0;
+    /* Space between list items */
+}
+
+.button-container {
+    margin-top: 15px;
+    /* Space above the buttons */
+}
+
+.edit-button,
+.delete-button {
+    padding: 10px 15px;
+    /* Padding inside buttons */
+    margin-right: 10px;
+    /* Space between buttons */
+    border: none;
+    /* Remove default border */
+    border-radius: 4px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    font-size: 1em;
+    /* Regular font size */
+}
+
+.edit-button {
+    background-color: #4CAF50;
+    /* Green background for edit */
+    color: white;
+    /* White text */
+}
+
+.delete-button {
+    background-color: #f44336;
+    /* Red background for delete */
+    color: white;
+    /* White text */
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
+}
+
+.delete-button:hover {
+    background-color: #e53935;
+    /* Darker red on hover */
+}
