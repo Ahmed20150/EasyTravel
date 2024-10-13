@@ -23,19 +23,27 @@ const tourGuideSchema = new mongoose.Schema({
     },
     mobileNumber:{
         type:Number,
-        required:false
+        required:false,
+        default: null
     },
     yearsOfExperience:{
         type:Number,
-        required:false
+        required:false,
+        default: null
     },
     previousWork:{
         type:String,
-        required:false
+        required:false,
+        default: null
     },
     dateOfBirth:{
         type:Date,
-        required:false
+        required:false,
+        default: null
+    },
+    profilePicture: {
+        type: String, // Store image as base64 string
+        required: false
     },
     status: {
         type: String,

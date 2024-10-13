@@ -1,17 +1,17 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
-import ProfileForm from '../components/ProfileForm';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ProfileFormSeller from '../components/ProfileFormSeller';
 
-const CreateProfilePage = () => {
-  const location = useLocation(); // Get the location state
-  const navigate = useNavigate(); // Initialize navigate
-  const { username, isEditingProfile } = location.state || {}; // Fallback to {} in case state is undefined
+const CreateProfilePageSeller = () => {
+  const location = useLocation(); 
+  const navigate = useNavigate();
+  const { username, isEditingProfile } = location.state || {};
 
   const [formData, setFormData] = useState({
     mobileNumber: '',
-    yearsOfExperience: '',
-    previousWork: '',
+    firstLastName: '',
+    description: '',
     dateOfBirth: '',
     profilePicture: ''
   });
@@ -19,6 +19,8 @@ const CreateProfilePage = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  // Function to handle image change and convert to base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -36,6 +38,7 @@ const CreateProfilePage = () => {
       reader.readAsDataURL(file); // Convert image to base64
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,34 +46,41 @@ const CreateProfilePage = () => {
       alert("Username is missing. Please log in again.");
       return;
     }
-
+  
     try {
-      await axios.post('http://localhost:3000/api/profile', {
-        username, // Send the username from state
-        ...formData // Spread the form data
+      await axios.post('http://localhost:3000/api/seller/profileSeller', {
+        username,
+        ...formData
       });
       alert('Profile updated successfully!');
-
-      // Redirect to ViewProfilePage after successful update
-      navigate('/view-profile', { state: { username } }); // Pass username to the view profile page
+      navigate('/view-profileSeller', { state: { username } });
     } catch (err) {
-      console.error(err.response.data);
-      alert('Error updating profile: ' + err.response.data.error);
+      // Check if err.response exists before accessing err.response.data
+      if (err.response && err.response.data) {
+        console.error(err.response.data);
+        alert('Error updating profile: ' + err.response.data.error);
+      } else {
+        // Handle cases where no response or data is available (e.g., network error)
+        console.error(err.message);
+        alert('Error updating profile: ' + err.message);
+      }
     }
   };
+  
+  
 
   return (
     <div>
       <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2> 
-      <ProfileForm
+      <ProfileFormSeller
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        handleImageChange={handleImageChange}
+        handleImageChange={handleImageChange} // Pass image handler
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
       />
     </div>
   );
 };
 
-export default CreateProfilePage;
+export default CreateProfilePageSeller;

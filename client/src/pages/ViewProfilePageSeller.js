@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
-import ProfileDetails from '../components/ProfileDetails';
+import ProfileDetails from '../components/ProfileDetailsSeller';
 
-const ViewProfilePage = () => {
+const ViewProfileSellerPage = () => {
   const location = useLocation(); // Access location object
   const navigate = useNavigate(); // Initialize navigate
   const { username } = location.state || {}; // Retrieve username from location state
@@ -13,7 +13,7 @@ const ViewProfilePage = () => {
     if (username) {
       const fetchProfile = async () => {
         try {
-          const res = await axios.get(`http://localhost:3000/api/profile/${username}`); // Fetch profile by username
+          const res = await axios.get(`http://localhost:3000/api/seller/profileSeller/${username}`); // Fetch profile by username
           setProfile(res.data);
         } catch (err) {
           console.error(err);
@@ -26,7 +26,7 @@ const ViewProfilePage = () => {
 
   const handleEditClick = () => {
     if (profile) {
-      navigate('/edit-profile/', { state: { username, isEditingProfile: true } }); // Use navigate to go to edit profile
+      navigate('/edit-profileSeller/', { state: { username, isEditingProfile: true } }); // Use navigate to go to edit profile
     }
   };
 
@@ -37,4 +37,4 @@ const ViewProfilePage = () => {
   );
 };
 
-export default ViewProfilePage;
+export default ViewProfileSellerPage;

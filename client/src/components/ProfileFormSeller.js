@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,buttonText }) => {
+const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageChange, buttonText }) => {
   // Custom handleChange to monitor the mobile number length
   const handleMobileChange = (e) => {
     if (e.target.value.length <= 11) {
@@ -11,6 +11,22 @@ const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,b
   return (
     <form onSubmit={handleSubmit}>
       <input
+        type="text"
+        name="firstLastName"
+        placeholder="Name"
+        value={formData.firstLastName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="description"
+        placeholder="Description"
+        value={formData.description}
+        onChange={handleChange}
+        required
+      />
+      <input
         type="tel"
         name="mobileNumber"
         placeholder="Mobile"
@@ -18,21 +34,6 @@ const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,b
         onChange={handleMobileChange} // Use the custom handler for mobile number
         disabled={formData.mobileNumber.length === 11} // Disable if 11 digits reached
         required
-      />
-      <input
-        type="number"
-        name="yearsOfExperience"
-        placeholder="Years of Experience"
-        value={formData.yearsOfExperience}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="text"
-        name="previousWork"
-        placeholder="Previous Work"
-        value={formData.previousWork}
-        onChange={handleChange}
       />
       <input
         type="date"
@@ -52,4 +53,4 @@ const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,b
   );
 };
 
-export default ProfileForm;
+export default ProfileFormSeller;

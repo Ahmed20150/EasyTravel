@@ -51,12 +51,12 @@ const useStyles = makeStyles((theme) => ({
 
 
 //TODO frontend responses to error and success messages
-
 export default function Login() {
   const classes = useStyles();
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  
 
   const [tokenCookie, setTokenCookie] = useCookies(['token']) //init cookie object, naming it "token"
   const [loggedInUserCookie, setloggedInUserCookie] = useCookies(['username']) //init cookie object, naming it "username"
@@ -90,12 +90,18 @@ export default function Login() {
       setPassword('');
 
       // TODO based on userType navigate to different pages
-      // if (userType == "tourGuide"){
-      navigate('/create-profile');
-      // }
-      // else{
-      //   navigate('/home');
-      // }
+      if (userType == "tourGuide"){
+        navigate('/create-profile', { state: { username } });
+      }
+      else if(userType == "advertiser"){
+        navigate('/create-profileAdv', { state: { username } });
+      }
+      else if(userType == "seller"){
+        navigate('/view-profileSeller', { state: { username } });
+      }
+      else{
+        navigate('/home');
+      }
       
 
 

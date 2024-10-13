@@ -13,29 +13,33 @@ const advertiserSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    firstName:{
-        type:String,
-        required:false
-    },
-    lastName:{
-        type:String,
-        required:false
-    },
     mobileNumber:{
         type:Number,
-        required:false
-    },
-    yearsOfExperience:{
-        type:Number,
-        required:false
-    },
-    previousWork:{
-        type:String,
         required:false
     },
     dateOfBirth:{
         type:Date,
         required:false
+    },
+    companyName: {
+        type: String,
+        required: false
+    },
+    website: {
+        type: String,
+        required: false
+    },
+    hotline: {
+        type: String,
+        required: false
+    },
+    companyProfile: {
+        type: String,
+        required: false
+    },
+    profilePicture: {
+        type: String, // Store image as base64 string
+        required: false
     },
     status: {
         type: String,

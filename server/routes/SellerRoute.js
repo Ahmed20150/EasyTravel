@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const TourGuide = require('../models/tourGuide.model');
+const Seller = require('../models/seller.model');
 
 // Create or Update Profile
-router.post('/profile', async (req, res) => {
-  const { username, mobileNumber, yearsOfExperience, previousWork, dateOfBirth,profilePicture } = req.body;
+router.post('/profileSeller', async (req, res) => {
+  const { username, mobileNumber, firstLastName,description, dateOfBirth,profilePicture } = req.body;
   try {
-    let profile = await TourGuide.findOne({ username });
-      // Update the existing profile
-    profile.yearsOfExperience = yearsOfExperience;
-    profile.previousWork = previousWork;
+    let profile = await Seller.findOne({ username });
     profile.dateOfBirth = dateOfBirth;
+    profile.firstLastName = firstLastName;
+    profile.description = description;
     profile.mobileNumber = mobileNumber;
     if (profilePicture) {
       profile.profilePicture = profilePicture; // Save the base64 image string
@@ -24,10 +23,10 @@ router.post('/profile', async (req, res) => {
 });
 
 // Add a GET route to fetch profile by username
-router.get('/profile/:username', async (req, res) => {
+router.get('/profileSeller/:username', async (req, res) => {
   const { username } = req.params; // Get the username from the URL params
   try {
-    const profile = await TourGuide.findOne({ username });
+    const profile = await Seller.findOne({ username });
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
     }

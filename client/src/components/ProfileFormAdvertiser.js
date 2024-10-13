@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,buttonText }) => {
+const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleImageChange,buttonText }) => {
   // Custom handleChange to monitor the mobile number length
   const handleMobileChange = (e) => {
     if (e.target.value.length <= 11) {
@@ -20,25 +20,40 @@ const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,b
         required
       />
       <input
-        type="number"
-        name="yearsOfExperience"
-        placeholder="Years of Experience"
-        value={formData.yearsOfExperience}
+        type="date"
+        name="dateOfBirth"
+        value={formData.dateOfBirth}
         onChange={handleChange}
         required
       />
       <input
         type="text"
-        name="previousWork"
-        placeholder="Previous Work"
-        value={formData.previousWork}
+        name="companyName"
+        placeholder="Company Name"
+        value={formData.companyName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="website"
+        placeholder="Website"
+        value={formData.website}
         onChange={handleChange}
       />
       <input
-        type="date"
-        name="dateOfBirth"
-        value={formData.dateOfBirth}
+        type="text"
+        name="hotline"
+        placeholder="Hotline"
+        value={formData.hotline}
         onChange={handleChange}
+      />
+      <input
+        type="url" // Change to URL input type for company profile
+        name="companyProfile"
+        placeholder="Company Profile Link" // Update placeholder to reflect the change
+        value={formData.companyProfile}
+        onChange={handleChange} // Handle link change
         required
       />
       <input
@@ -52,4 +67,4 @@ const ProfileForm = ({ formData, handleChange, handleSubmit, handleImageChange,b
   );
 };
 
-export default ProfileForm;
+export default ProfileFormAdvertiser;

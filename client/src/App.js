@@ -5,9 +5,14 @@ import ChangePassword from './components/changePassword';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import LoginForm from './components/LoginForm';
-import CreateProfilePage from './pages/CreateProfilePage';
+import { default as CreateProfilePage, default as EditProfilePage } from './pages/CreateProfilePage';
+import { default as CreateProfilePageAdv, default as EditProfilePageAdv } from './pages/CreateProfilePageAdvertiser';
+import { default as CreateProfilePageSeller, default as EditProfilePageSeller } from './pages/CreateProfilePageSeller';
 import LandingPage from './pages/LandingPage';
 import TempHomePage from './pages/tempHomePage';
+import ViewProfilePage from './pages/ViewProfilePage';
+import ViewProfilePageAdv from './pages/ViewProfilePageAdv';
+import ViewProfilePageSeller from './pages/ViewProfilePageSeller';
 // import EditProfilePage from './pages/';
 
 
@@ -24,6 +29,14 @@ function App() {
             <Route path="/home"element={<TempHomePage />}/>
             <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
             <Route path='/create-profile' element={<CreateProfilePage />} />
+            <Route path='/view-profile' element={<ViewProfilePage />} />
+            <Route path='/edit-profile' element={<EditProfilePage />} />
+            <Route path='/create-profileAdv' element={<CreateProfilePageAdv />} />
+            <Route path='/view-profileAdv' element={<ViewProfilePageAdv />} />
+            <Route path='/edit-profileAdv' element={<EditProfilePageAdv />} />
+            <Route path='/create-profileSeller' element={<CreateProfilePageSeller />} />
+            <Route path='/view-profileSeller' element={<ViewProfilePageSeller />} />
+            <Route path='/edit-profileSeller' element={<EditProfilePageSeller />} />
             {/* <Route path="/create-profile" element={<CreateProfilePage />}>
             <Route path="/view-profile/:email" element={<ViewProfilePage />} /> */}
             {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}

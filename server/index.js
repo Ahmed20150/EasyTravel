@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const app = express();
+app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
@@ -12,6 +14,8 @@ const Admin = require("./models/admin.model.js");
 const TourGuide = require("./models/tourGuide.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
 const tourGuideRoutes = require('./routes/tour_guideRoute.js');
+const advRoutes = require('./routes/AdvertiserRoute.js');
+const sellerRoutes = require('./routes/SellerRoute.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail')
@@ -291,5 +295,7 @@ app.get('/api/tourists', async (req, res) => {
 // });
 
 app.use('/api', tourGuideRoutes);
+app.use('/api/Adv', advRoutes);
+app.use('/api/seller', sellerRoutes);
 // app.listen(3000, () => console.log('Server running on port 3000'));
 
