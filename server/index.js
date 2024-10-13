@@ -16,9 +16,23 @@ const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
 const upload = require('./middleware/upload');
 
+/////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
+const bodyParser = require('body-parser');
+const fileRoutes = require('./routes/file.routes.js');
+const Grid = require('gridfs-stream');
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+
+require('./config/db');
+
+app.use('/api/files', fileRoutes);
 
 
 
+/////////////////////////////////////////////////////////////////////////
 //connect admin.routes.js to index.js
 app.use('/admin', adminRoutes);
 const jwt = require("jsonwebtoken");
@@ -39,13 +53,15 @@ app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
 
-mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL").then(() => {
+// const conn = mongoose.createConnection("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL", { useNewUrlParser: true,
+//   useUnifiedTopology: true,});
 
-    console.log("Connected to the database!");
-}).catch((err) => {
-    console.log("Cannot connect to the database!", err);
-});
-
+// let gfs;
+// conn.once('open', () => {
+//   gfs = Grid(conn.db, mongoose.mongo);
+//   gfs.collection('uploads');
+//   console.log('Connected to GridFS');
+// });
 
 //TODO arrange routes in their seperate files, keep index clean
 //TODO store sendEmail & generateOTP Files in a folder
@@ -104,9 +120,6 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
 // Login for all users
 app.post('/api/login', async (req, res) => {
     try {

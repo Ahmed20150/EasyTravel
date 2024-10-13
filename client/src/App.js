@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
+import FileUpload from './components/fileUpload';
 
 
 
@@ -18,7 +19,7 @@ function App() {
     <div className="App">
     <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LandingPage />}/>
+            <Route path="/" element={<FileUpload />}/>
             <Route path="/signUp"element={<GeneralSignUpForm />}/>
             <Route path="/login"element={<LoginForm />}/>
             <Route path="/changePassword"element={<ChangePassword />}/>
