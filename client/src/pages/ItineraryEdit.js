@@ -138,10 +138,13 @@ const ItineraryEdit = () => {
       <ul>
         {formData.activities.map((activity, index) => (
           <li key={index}>
-            <strong>Activity ID:</strong> {activity._id} <br />
-            <strong>Location:</strong> {activity.location} <br />
-            <strong>Price:</strong> {activity.price} <br />
-            {/* Add other properties as needed */}
+            <div>
+              Price: Min: {activity.price.min}, Max: {activity.price.max}
+            </div>
+            <div>Date: {new Date(activity.date).toLocaleDateString()}</div>
+            <div>Time: {activity.time}</div>
+            <div>Category: {activity.category}</div>
+            <div>Is Booking Open: {activity.isBookingOpen ? "Yes" : "No"}</div>
           </li>
         ))}
       </ul>
