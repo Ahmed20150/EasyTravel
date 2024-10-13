@@ -3,7 +3,7 @@ const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
 const crypto = require('crypto');
 const path = require('path');
-const { conn, gfs , mongoURI} = require('../config/db');
+let { conn, gfs , mongoURI} = require('../config/db');
 const File = require('../models/file.model');
 
 const router = express.Router();
