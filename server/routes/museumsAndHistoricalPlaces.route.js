@@ -8,17 +8,22 @@ const Museum = require("../models/museumsAndHistoricalPlaces.model.js");
 // Create a new museum entry
 router.post("/", async (req, res) => {
   try {
-    const { name, description, location, openingHours, ticketPrice, picture } =
-      req.body;
+    const {
+      name,
+      description,
+      location,
+      openingHours,
+      ticketPrices,
+      picture,
+      tags,
+    } = req.body;
 
-    // Ensure all required fields are provided
-    if (!name || !description || !location || !openingHours || !ticketPrice) {
+    if (!name || !description || !location || !openingHours || !ticketPrices) {
       return res
         .status(400)
         .json({ message: "All required fields must be filled." });
     }
 
-    // Check for existing museum with the same name
     const existingMuseum = await Museum.findOne({ name });
     if (existingMuseum) {
       return res
@@ -31,8 +36,9 @@ router.post("/", async (req, res) => {
       description,
       location,
       openingHours,
-      ticketPrice,
+      ticketPrices, // Includes prices for foreigner, native, and student
       picture: picture || "",
+      tags: tags || [], // Option to add tags
     });
 
     res.status(201).json(museum);
@@ -67,17 +73,22 @@ router.get("/:id", async (req, res) => {
 // Update a museum by ID
 router.put("/:id", async (req, res) => {
   try {
-    const { name, description, location, openingHours, ticketPrice, picture } =
-      req.body;
+    const {
+      name,
+      description,
+      location,
+      openingHours,
+      ticketPrices,
+      picture,
+      tags,
+    } = req.body;
 
-    // Ensure the updated fields are provided
-    if (!name || !description || !location || !openingHours || !ticketPrice) {
+    if (!name || !description || !location || !openingHours || !ticketPrices) {
       return res
         .status(400)
         .json({ message: "All required fields must be filled." });
     }
 
-    // Check for duplicate name or location
     const existingMuseumByName = await Museum.findOne({
       name,
       _id: { $ne: req.params.id },
@@ -88,23 +99,14 @@ router.put("/:id", async (req, res) => {
         .json({ message: "A museum with this name already exists." });
     }
 
-    const existingMuseumByLocation = await Museum.findOne({
-      location,
-      _id: { $ne: req.params.id },
-    });
-    if (existingMuseumByLocation) {
-      return res
-        .status(400)
-        .json({ message: "A museum with this location already exists." });
-    }
-
     const updatedData = {
       name,
       description,
       location,
       openingHours,
-      ticketPrice,
-      picture: picture || "", // Optional field for the picture
+      ticketPrices, // Update prices
+      picture: picture || "",
+      tags: tags || [], // Update tags
     };
 
     const museum = await Museum.findByIdAndUpdate(req.params.id, updatedData, {

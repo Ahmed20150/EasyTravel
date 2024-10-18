@@ -18,18 +18,33 @@ const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  ticketPrice: {
-    type: Number,
-    required: true,
+  ticketPrices: {
+    foreigner: {
+      type: Number,
+      required: true,
+    },
+    native: {
+      type: Number,
+      required: true,
+    },
+    student: {
+      type: Number,
+      required: true,
+    },
   },
   picture: {
     type: String,
   }, // Optional field for picture
+  tags: [
+    {
+      type: String, // e.g., Monuments, Museums, Religious Sites, Palaces/Castles
+    },
+  ],
 });
 
 const MuseumsAndHistoricalPlaces = mongoose.model(
   "MuseumsAndHistoricalPlaces",
   museumsAndHistoricalPlacesSchema
-); //store in table "MuseumsAndHistoricalPlaces"
+);
 
-module.exports = MuseumsAndHistoricalPlaces; //export for use in other files
+module.exports = MuseumsAndHistoricalPlaces;

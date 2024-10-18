@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const museumRoutes = require("./routes/museumsAndHistoricalPlaces.routes.js");
+const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
 

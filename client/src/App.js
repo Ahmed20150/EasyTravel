@@ -1,5 +1,5 @@
 import React from "react";
-import MuseumsList from "./components/museumsList";
+import MuseumsList from "./pages/museumsList";
 import "./App.css"; // Importing CSS for App
 
 function App() {
