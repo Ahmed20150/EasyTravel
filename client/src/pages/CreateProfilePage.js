@@ -1,12 +1,12 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import ProfileForm from '../components/ProfileForm';
 
 const CreateProfilePage = () => {
   const location = useLocation(); // Get the location state
   const navigate = useNavigate(); // Initialize navigate
-  const { username, isEditingProfile } = location.state || {}; // Fallback to {} in case state is undefined
+  const { username, isEditingProfile, existingData } = location.state || {}; // Include existing data
 
   const [formData, setFormData] = useState({
     mobileNumber: '',
@@ -16,13 +16,28 @@ const CreateProfilePage = () => {
     profilePicture: ''
   });
 
+  useEffect(() => {
+    if (isEditingProfile && username) {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/profile/${username}`);
+          setFormData(response.data); // Set the existing data
+        } catch (error) {
+          console.error('Error fetching profile data:', error);
+        }
+      };
+      fetchData();
+    }
+  }, [isEditingProfile, username]);
+
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check if the file size exceeds a certain limit (e.g., 5MB)
       const fileSizeMB = file.size / 1024 / 1024;
       if (fileSizeMB > 5) {
         alert('File size exceeds the limit of 5MB.');
@@ -31,9 +46,9 @@ const CreateProfilePage = () => {
       
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, profilePicture: reader.result }); // Set base64 string
+        setFormData({ ...formData, profilePicture: reader.result });
       };
-      reader.readAsDataURL(file); // Convert image to base64
+      reader.readAsDataURL(file);
     }
   };
 
@@ -46,13 +61,11 @@ const CreateProfilePage = () => {
 
     try {
       await axios.post('http://localhost:3000/api/profile', {
-        username, // Send the username from state
-        ...formData // Spread the form data
+        username,
+        ...formData
       });
       alert('Profile updated successfully!');
-
-      // Redirect to ViewProfilePage after successful update
-      navigate('/view-profile', { state: { username } }); // Pass username to the view profile page
+      navigate('/view-profile', { state: { username } });
     } catch (err) {
       console.error(err.response.data);
       alert('Error updating profile: ' + err.response.data.error);
@@ -68,6 +81,7 @@ const CreateProfilePage = () => {
         handleSubmit={handleSubmit}
         handleImageChange={handleImageChange}
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
+        isEditing={isEditingProfile}
       />
     </div>
   );

@@ -13,7 +13,7 @@ const ProfileDetails = ({ profile, onEditClick }) => {
       )}
       <p>Username: {profile.username}</p>
       <p>Mobile: {profile.mobileNumber ? `0${profile.mobileNumber}` : 'Not provided'}</p>
-      <p>Years of Experience: {profile.yearsOfExperience}</p>
+      <p>Years of Experience: {profile.yearsOfExperience || 'None'}</p>
       <p>Previous Work: {profile.previousWork || 'None'}</p>
       <p>Date of Birth: {new Date(profile.dateOfBirth).toLocaleDateString()}</p>
       <button onClick={onEditClick}>Edit Profile</button>

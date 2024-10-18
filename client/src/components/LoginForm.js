@@ -91,7 +91,7 @@ export default function Login() {
 
       // TODO based on userType navigate to different pages
       if (userType == "tourGuide"){
-        navigate('/create-profile', { state: { username } });
+        navigate('/view-profile', { state: { username } });
       }
       else if(userType == "advertiser"){
         navigate('/view-profileAdv', { state: { username } });
