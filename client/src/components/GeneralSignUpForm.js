@@ -21,7 +21,8 @@ import FormLabel from '@mui/material/FormLabel';
 import { useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -100,6 +101,8 @@ export default function GeneralSignUpForm() {
  const [dateOfBirth, setDateOfBirth] = useState('')
  const [occupation, setOccupation] = useState('')
 
+ const [uploadText, setUploadText] = useState('')
+
   const handleRadioButtonChange = (event) => {
     const value = event.target.value;
     setUserType(value);
@@ -117,6 +120,7 @@ export default function GeneralSignUpForm() {
     formData.append('email', email);
     formData.append('password', password);
     formData.append('userType', userType);
+    formData.append('repeatPassword', repeatPassword);
 
     if (file && userType !== 'tourist') {
       formData.append('file', file);
@@ -133,12 +137,12 @@ export default function GeneralSignUpForm() {
       formData.append('dateOfBirth', dateOfBirth);
       formData.append('occupation', occupation);
       const response = await axios.post('http://localhost:3000/auth/signUp', formData);
-      console.log('Success:', response.data);
+      toast.success('Sign up Successful!');
     }
     else{
       handleUpload();
       const response = await axios.post('http://localhost:3000/auth/signUp', formData);
-        console.log('Success:', response.data);
+      toast.success('Sign up Successful!');
 
     }
 
@@ -153,11 +157,14 @@ export default function GeneralSignUpForm() {
       setBase64('');
       setFile(null);
 
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); 
 
   } catch (error) {
 
-      console.error('Error:', error.response ? error.response.data : error.message);
+    toast.error('Sign up Failed: ' + error.response.data.message);
+    console.error('Error:', error.response ? error.response.data : error.message);
   }
 
 
@@ -178,8 +185,9 @@ export default function GeneralSignUpForm() {
         base64: base64,
       });
       setUploadedFile(response.data.file);
-      alert('File uploaded successfully');
+      setUploadText('File uploaded successfully');
     } catch (error) {
+      setUploadText('Error uploading file');
       console.error('Error uploading file:', error);
       alert('Error uploading file');
     }
@@ -348,6 +356,7 @@ export default function GeneralSignUpForm() {
             <div>
               <h2>File Upload</h2>
               <input type="file" accept="application/pdf" onChange={handleFileChange} required />
+              <p>{uploadText}</p>
             </div>
           )}
 {/* 
@@ -381,6 +390,7 @@ export default function GeneralSignUpForm() {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <ToastContainer/>
     </Container>
   );
 }

@@ -10,6 +10,9 @@ import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import FileUpload from './components/fileUpload';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 //TODO add navigation buttons between all pages
 
@@ -17,6 +20,10 @@ import FileUpload from './components/fileUpload';
 function App() {
   return (
     <div className="App">
+     {/* for notifications across all pages */}
+     <ToastContainer/>
+
+     
     <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />}/>

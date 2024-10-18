@@ -16,12 +16,46 @@ const cookieParser = require("cookie-parser");
 
 
 /// Create User (Sign up)
-//TODO remove upload.single w/o breaking route
 router.post('/signUp', upload.single('file'), async (req, res) => {
     try {
       let user;
       const { userType, ...userData } = req.body;
+      const username = req.body.username;
+      const password = req.body.password;
+      const repeatPassword = req.body.repeatPassword;
+
+      
+    // Check if username already exists
+    let existingUser;
+    if (userType === 'tourist') {
+      existingUser = await Tourist.findOne({ username });
+    } else if (userType === 'tourGuide') {
+      existingUser = await TourGuide.findOne({ username });
+    } else if (userType === 'advertiser') {
+      existingUser = await Advertiser.findOne({ username });
+    } else if (userType === 'seller') {
+      existingUser = await Seller.findOne({ username });
+    } else {
+      return res.status(400).json({ message: "Please choose a user type!" });
+    }
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists." });
+    }
+
+      if (!password || password.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters long." });
+      }
+
+      if (password !== repeatPassword) {
+        return res.status(400).json({ message: "Passwords do not match." });S
+      }
   
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+_])[A-Za-z\d@$!%*?&+_]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        return res.status(400).json({ message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character." });
+      }
+
       if (userType === 'tourist') {
         user = await Tourist.create(userData);
       } else if (userType === 'tourGuide') {
@@ -39,8 +73,6 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   });
-  
-  
   
   
   // Login for all users
