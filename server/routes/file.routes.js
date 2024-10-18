@@ -63,18 +63,18 @@ router.post('/upload', async (req, res) => {
 
 
 // // Delete All Records Route
-// router.delete('/deleteAll', async (req, res) => {
-//   try {
-//     const db = mongoose.connection.db;
-//     await db.collection('uploads.chunks').deleteMany({});
-//     await db.collection('uploads.files').deleteMany({});
-//     await db.collection('files').deleteMany({});
-//     res.status(200).send('All records deleted');
-//   } catch (error) {
-//     console.error('Error deleting records:', error);
-//     res.status(500).send('Error deleting records');
-//   }
-// });
+router.delete('/deleteAll', async (req, res) => {
+  try {
+    const db = mongoose.connection.db;
+    await db.collection('uploads.chunks').deleteMany({});
+    await db.collection('uploads.files').deleteMany({});
+    await db.collection('files').deleteMany({});
+    res.status(200).send('All records deleted');
+  } catch (error) {
+    console.error('Error deleting records:', error);
+    res.status(500).send('Error deleting records');
+  }
+});
 
 // Fetch Base64 String Route
 router.get('/getbasestring', async (req, res) => {

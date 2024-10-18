@@ -1,0 +1,3 @@
+TODO Create naviigation to create profile / view profile based on firstime login or not
+TODO Ensure user cant login without admin approval (check acc status)
+TODO ensure routing to terms & conditions on firsttimelogin

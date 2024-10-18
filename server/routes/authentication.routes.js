@@ -22,26 +22,45 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
       const { userType, ...userData } = req.body;
       const username = req.body.username;
       const password = req.body.password;
+      const email = req.body.email;
       const repeatPassword = req.body.repeatPassword;
 
       
     // Check if username already exists
     let existingUser;
     if (userType === 'tourist') {
-      existingUser = await Tourist.findOne({ username });
+      existingUser = await Tourist.findOne( {$or: [{ username }, { email }]} );
     } else if (userType === 'tourGuide') {
-      existingUser = await TourGuide.findOne({ username });
+      existingUser = await TourGuide.findOne( {$or: [{ username }, { email }]});
     } else if (userType === 'advertiser') {
-      existingUser = await Advertiser.findOne({ username });
+      existingUser = await Advertiser.findOne({$or: [{ username }, { email }]});
     } else if (userType === 'seller') {
-      existingUser = await Seller.findOne({ username });
+      existingUser = await Seller.findOne({$or: [{ username }, { email }]});
     } else {
       return res.status(400).json({ message: "Please choose a user type!" });
     }
 
     if (existingUser) {
-      return res.status(400).json({ message: "Username already exists." });
+      return res.status(400).json({ message: "Username / Email already exists." });
     }
+
+    if (/\s/.test(username)) {
+      return res.status(400).json({ message: "Username must not contain spaces." });
+    }
+
+    if (/\s/.test(email)) {
+      return res.status(400).json({ message: "Email must not contain spaces." });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format. Email must be in the format name@[email].com." });
+    }
+
+    if (/\s/.test(password)) {
+      return res.status(400).json({ message: "Password must not contain spaces." });
+    }
+    
 
       if (!password || password.length < 8) {
         return res.status(400).json({ message: "Password must be at least 8 characters long." });

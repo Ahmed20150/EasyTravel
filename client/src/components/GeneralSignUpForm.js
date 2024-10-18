@@ -140,8 +140,8 @@ export default function GeneralSignUpForm() {
       toast.success('Sign up Successful!');
     }
     else{
-      handleUpload();
       const response = await axios.post('http://localhost:3000/auth/signUp', formData);
+      handleUpload();
       toast.success('Sign up Successful!');
 
     }
