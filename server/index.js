@@ -20,20 +20,31 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World!");
 }); 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-}); 
-app.post("/api/giftitems",async(req,res)=> {
-  try{
-    const giftitem = await GiftItem.create(req.body);
 
-    res.status(200).json(product); 
-  } catch(error){
-    res.status(500).json({message: error.message});
-  }
+//app.post("/api/giftitems",async(req,res)=> {
+  //try{
+    //const giftitem = await GiftItem.create(req.body);
+
+    //res.status(200).json(product); 
+  //} catch(error){
+   // res.status(500).json({message: error.message});
+  //}
   
 
+//}); 
+app.post('/api/giftitems', async (req, res) => {
+  try {
+    const giftItem = new GiftItem(req.body);
+    await giftItem.save();
+    res.status(201).json(giftItem);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
+
+
+
+
 mongoose.connect(
   "mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL"
 ).then(() => {
@@ -42,9 +53,6 @@ mongoose.connect(
   console.log("Cannot connect to the database!", err);
 }); 
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
 
 
 
@@ -65,12 +73,17 @@ app.listen(port, () => {
 app.use('/admin', adminRoutes);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const { error } = require("server/router.js");
+//const { error } = require("server/router.js");
 
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(cors());
+const corsOptions ={
+  origin:'http://localhost:3000', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 
