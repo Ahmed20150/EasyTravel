@@ -217,6 +217,12 @@ export default function GeneralSignUpForm() {
         <Typography component="h1" variant="h5" style={{ marginBottom: '19px' }}>
           Sign Up
         </Typography>
+        <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/')}
+      >
+        Back to Landing Page
+      </button>
         <form className={classes.form} action='POST'  onSubmit={handleSubmit}>
         {/* General Info for all Account Types */}
         <FormControl>

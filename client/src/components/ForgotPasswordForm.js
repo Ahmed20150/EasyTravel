@@ -127,6 +127,12 @@ const handleChangePassword = async () => {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
+        <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/')}
+      >
+        Back to Landing Page
+      </button>
         <Typography component="h1" variant="h5">
           Forget Password
         </Typography>
@@ -228,12 +234,12 @@ const handleChangePassword = async () => {
           </form>
         )}
           <Grid container>
-            <Grid item xs>
+            {/* <Grid item xs>
               <Link href='/forgotPasswordForm'>
                 Forgot password?
               </Link>
-            </Grid>
-            <Grid item>
+            </Grid> */}
+            <Grid item xs>
               <Link href="/signUp" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>

@@ -105,6 +105,12 @@ function ChangePassword() {
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
+          <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/home')}
+      >
+        Back to Home Page
+      </button>
           <Typography component="h1" variant="h5">
             Change Password
           </Typography>
@@ -157,10 +163,7 @@ function ChangePassword() {
               onChange={(e) => setRepeatNewPassword(e.target.value)}
               autoComplete="newPassword"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+          
             <Button
               type="submit"
               fullWidth
@@ -170,7 +173,7 @@ function ChangePassword() {
             >
               Change Password
             </Button>
-            <Grid container>
+            {/* <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   Forgot password?
@@ -181,7 +184,7 @@ function ChangePassword() {
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
-            </Grid>
+            </Grid> */}
           </form>
         </div>
         <Box mt={8}>

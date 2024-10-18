@@ -122,6 +122,12 @@ export default function Login() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
+        <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/')}
+      >
+        Back to Landing Page
+      </button>
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
@@ -151,10 +157,10 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="password"
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
