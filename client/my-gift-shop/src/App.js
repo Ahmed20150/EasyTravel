@@ -1,30 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import GiftList from './GiftList'; // Import the GiftList component
+// src/GiftList.js
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <main>
-        <GiftList /> {/* Add the GiftList component here */}
-      </main>
-    </div>
-  );
-}
+const GiftList = () => {
+    const [gifts, setGifts] = useState([]);
 
-export default App;
+    useEffect(() => {
+        const fetchGifts = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/gift'); // Adjust based on your backend URL
+                setGifts(response.data);
+            } catch (error) {
+                console.error('Error fetching gifts:', error);
+            }
+        };
+        fetchGifts();
+    }, []);
+
+    const handlePurchase = async (id) => {
+        try {
+            const response = await axios.post(`http://localhost:3000/gift/purchase/${id}`);
+            console.log(response.data.message);
+
+            // Update the local state to increment the purchase count for the specific gift
+            setGifts((prevGifts) => 
+                prevGifts.map((gift) => 
+                    gift._id === id ? { ...gift, purchases: gift.purchases + 1 } : gift
+                )
+            );
+        } catch (error) {
+            console.error('Error purchasing gift:', error);
+        }
+    };
+
+    return (
+        <div>
+            <h1>Gift Items</h1>
+            <ul>
+                {gifts.map(gift => (
+                    <li key={gift._id}>
+                        <h2>{gift.name}</h2>
+                        <img src={gift.image} alt={gift.name} width="100" />
+                        <p>{gift.description}</p>
+                        <p>Price: ${gift.price}</p>
+                        <p>Purchases: {gift.purchases}</p> {/* Use the updated state here */}
+                        <button onClick={() => handlePurchase(gift._id)}>Buy</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default GiftList;
