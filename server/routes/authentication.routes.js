@@ -267,8 +267,22 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
   
           const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
         if (!user) {
-          return res.status(404).json({ message: 'User not found' });
+          return res.status(404).json({ message: 'No User is associated with this Email Address' });
         }
+
+        if (/\s/.test(newPassword)) {
+          return res.status(400).json({ message: "Password must not contain spaces." });
+        }
+        
+    
+        if (!newPassword || newPassword.length < 8) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long." });
+          }
+
+          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+_])[A-Za-z\d@$!%*?&+_]{8,}$/;
+          if (!passwordRegex.test(newPassword)) {
+            return res.status(400).json({ message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character." });
+          }
     
         user.password = newPassword;
         await user.save();

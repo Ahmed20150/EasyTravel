@@ -16,6 +16,8 @@ import {useState} from 'react';
 import axios from 'axios';
 import { CookiesProvider, useCookies } from 'react-cookie'
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Copyright() {
   return (
@@ -80,7 +82,8 @@ export default function ForgotPasswordForm() {
         setShowOtpForm(true);
     } 
   catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+    toast.error('Error: ' + error.response.data.message);
+    console.error('Error:', error.response ? error.response.data : error.message);
   }
 }
 
@@ -94,6 +97,7 @@ const handleVerifyOtp = async (e) => {
 
     } 
   catch (error) {
+    toast.error('Error: ' + error.response.data.message);
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 }
@@ -101,10 +105,16 @@ const handleVerifyOtp = async (e) => {
 
 const handleChangePassword = async () => {
     try {
+      if(repeatPassword !== newPassword) {
+        toast.error('Passwords do not match!');
+        return;
+      }
       await axios.post('http://localhost:3000/auth/changeForgotPassword', { email, newPassword });
-      alert('Password changed successfully');
-      navigate('/login')
-    } catch (error) {
+      toast.success('Password changed successfully');
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);    } catch (error) {
+      toast.error('Failed to change password: ' + error.response.data.message);
       console.error('Failed to change password:', error);
     }
   };
