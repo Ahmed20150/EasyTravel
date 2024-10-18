@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT || 8000;
 const Tourist = require("./models/tourist.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
+const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
 
 const cors = require('cors');
 app.use(cors());
@@ -11,6 +12,9 @@ app.use(cors());
 
 //connect admin.routes.js to index.js
 app.use('/admin', adminRoutes);
+
+//connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
+app.use('/Tourist_TourGuide_Advertiser_Seller', Tourist_TourGuide_Advertiser_Seller);
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
