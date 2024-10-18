@@ -11,6 +11,7 @@ const Advertiser = require("./models/advertiser.model.js");
 const Admin = require("./models/admin.model.js");
 const TourGuide = require("./models/tourGuide.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
+const touristRoutes = require('./routes/touristRoutes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail')
@@ -19,7 +20,7 @@ const sendEmail = require('./sendEmail')
 
 
 //connect admin.routes.js to index.js
-app.use('/admin', adminRoutes);
+
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
@@ -28,7 +29,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use(cookieParser());
 
-
+app.use('/admin', adminRoutes);
+app.use('/api', touristRoutes);
 // app.get("/", (req, res) => {
 //     res.send("Hello World!");
 // });

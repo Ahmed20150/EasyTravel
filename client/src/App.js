@@ -10,6 +10,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
+import PendingRequestsPage from './pages/PendingRequestsPage';
+import TouristProfile from './pages/TouristProfile';
+
+
+
 
 
 
@@ -24,6 +29,8 @@ function App() {
             <Route path="/changePassword"element={<ChangePassword />}/>
             <Route path="/home"element={<TempHomePage />}/>
             <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
+            <Route path='/pendingRequestsPage' element={<PendingRequestsPage />} />
+            <Route path='/TouristProfile' element={<TouristProfile />} />
           </Routes>
       </BrowserRouter>
     </div>

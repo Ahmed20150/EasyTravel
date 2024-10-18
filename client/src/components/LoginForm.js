@@ -91,7 +91,7 @@ export default function Login() {
       setPassword('');
 
       //TODO based on userType navigate to different pages
-      navigate('/home');
+      navigate('/TouristProfile', { state: { username } });
 
 
   } catch (error) {

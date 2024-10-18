@@ -30,6 +30,9 @@ const sellerSchema = new mongoose.Schema({
         type:Number,
         required:false
     },
+    acceptedTerms: { 
+        type: Boolean, 
+        default: false },
     previousWork:{
         type:String,
         required:false
@@ -38,6 +41,10 @@ const sellerSchema = new mongoose.Schema({
         type:Date,
         required:false
     },
+    firstTimeLogin: { 
+        type: Number,
+         default: 0
+         },
     status: {
         type: String,
         enum: ['accepted', 'rejected', 'pending'],

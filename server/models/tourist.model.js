@@ -18,6 +18,10 @@ const touristSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    wallet: {
+        type: Number,
+        default: 0 // Set default value to 0 for the wallet
+    },
     nationality:{
         type:String,
         required:true
@@ -30,6 +34,10 @@ const touristSchema = new mongoose.Schema({
         type:String,
         required:true
     }, 
+    firstTimeLogin: { 
+        type: Number,
+         default: 0
+         },
 
 });
 

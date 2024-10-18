@@ -29,6 +29,10 @@ const advertiserSchema = new mongoose.Schema({
         type:Number,
         required:false
     },
+    firstTimeLogin: { 
+        type: Number,
+         default: 0
+         },
     previousWork:{
         type:String,
         required:false
@@ -37,6 +41,9 @@ const advertiserSchema = new mongoose.Schema({
         type:Date,
         required:false
     },
+    acceptedTerms: { 
+        type: Boolean, 
+        default: false }, //new
     status: {
         type: String,
         enum: ['accepted', 'rejected', 'pending'],
