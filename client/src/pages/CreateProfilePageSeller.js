@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProfileFormSeller from '../components/ProfileFormSeller';
 
@@ -16,15 +16,28 @@ const CreateProfilePageSeller = () => {
     profilePicture: ''
   });
 
+  // Fetch existing user data if editing
+  useEffect(() => {
+    if (isEditingProfile && username) {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/seller/profileSeller/${username}`);
+          setFormData(response.data); // Set the existing data
+        } catch (error) {
+          console.error('Error fetching profile data:', error);
+        }
+      };
+      fetchData();
+    }
+  }, [isEditingProfile, username]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Function to handle image change and convert to base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check if the file size exceeds a certain limit (e.g., 5MB)
       const fileSizeMB = file.size / 1024 / 1024;
       if (fileSizeMB > 5) {
         alert('File size exceeds the limit of 5MB.');
@@ -33,12 +46,11 @@ const CreateProfilePageSeller = () => {
       
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, profilePicture: reader.result }); // Set base64 string
+        setFormData({ ...formData, profilePicture: reader.result });
       };
-      reader.readAsDataURL(file); // Convert image to base64
+      reader.readAsDataURL(file);
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,20 +67,16 @@ const CreateProfilePageSeller = () => {
       alert('Profile updated successfully!');
       navigate('/view-profileSeller', { state: { username } });
     } catch (err) {
-      // Check if err.response exists before accessing err.response.data
       if (err.response && err.response.data) {
         console.error(err.response.data);
         alert('Error updating profile: ' + err.response.data.error);
       } else {
-        // Handle cases where no response or data is available (e.g., network error)
         console.error(err.message);
         alert('Error updating profile: ' + err.message);
       }
     }
   };
   
-  
-
   return (
     <div>
       <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2> 
@@ -76,8 +84,9 @@ const CreateProfilePageSeller = () => {
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        handleImageChange={handleImageChange} // Pass image handler
+        handleImageChange={handleImageChange}
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
+        isEditing={isEditingProfile}
       />
     </div>
   );

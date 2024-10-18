@@ -1,10 +1,9 @@
 import React from 'react';
 
-const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageChange, buttonText }) => {
-  // Custom handleChange to monitor the mobile number length
+const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageChange, buttonText, isEditing }) => {
   const handleMobileChange = (e) => {
-    if (e.target.value.length <= 11) {
-      handleChange(e); // Only update state if the value is less than or equal to 11 digits
+    if (/^\d*$/.test(e.target.value) && e.target.value.length <= 11) {
+      handleChange(e);
     }
   };
 
@@ -16,7 +15,7 @@ const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageCh
         placeholder="Name"
         value={formData.firstLastName}
         onChange={handleChange}
-        required
+        required={isEditing ? false : true} // Make required only if not editing
       />
       <input
         type="text"
@@ -24,30 +23,43 @@ const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageCh
         placeholder="Description"
         value={formData.description}
         onChange={handleChange}
-        required
+        required={isEditing ? false : true} // Make required only if not editing
       />
       <input
         type="tel"
         name="mobileNumber"
         placeholder="Mobile"
         value={formData.mobileNumber}
-        onChange={handleMobileChange} // Use the custom handler for mobile number
-        disabled={formData.mobileNumber.length === 11} // Disable if 11 digits reached
-        required
+        onChange={handleMobileChange}
+        required={isEditing ? false : true} // Make required only if not editing
       />
       <input
         type="date"
         name="dateOfBirth"
         value={formData.dateOfBirth}
         onChange={handleChange}
-        required
+        required={isEditing ? false : true} // Make required only if not editing
       />
+      {/* Profile Picture Input */}
+      {isEditing ? (
+        <p>Current Picture uploaded. To change, please upload a new one.</p>
+      ):(
       <input
         type="file"
         name="profilePicture"
         accept="image/*"
         onChange={handleImageChange} // Handle image change
+        required
       />
+      )}
+      {isEditing ? (
+      <input
+      type="file"
+      name="profilePicture"
+      accept="image/*"
+      onChange={handleImageChange} // Handle image change
+    />
+      ):null}
       <button type="submit">{buttonText}</button>
     </form>
   );
