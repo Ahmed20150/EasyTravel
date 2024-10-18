@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 
-// Define the product schema
-const productSchema = new mongoose.Schema({
+// Define the gift schema with timestamps
+const giftSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        index: true  // Add index for faster searching
     },
     image: {
         type: String,  // Usually, this will be a URL to the image
@@ -19,20 +20,15 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
-        min: 0  // Ensure the price cannot be negative
+        min: [0, 'Price must be a positive number']  // Custom error message
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-
-    ,amountOfPurchases: {
+    amountOfPurchases: {
         type: Number,
-       default: 0  // Initialize with 0 purchases
+        default: 0  // Initialize with 0 purchases
     }
-});
+}, { timestamps: true });  // Automatically adds createdAt and updatedAt
 
 // Create a model from the schema
-const Product = mongoose.model('Product', productSchema);
+const gift = mongoose.model('gift', giftSchema);
 
-module.exports = Product;
+module.exports = gift;
