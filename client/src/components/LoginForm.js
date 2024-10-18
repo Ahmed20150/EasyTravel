@@ -94,7 +94,7 @@ export default function Login() {
         navigate('/create-profile', { state: { username } });
       }
       else if(userType == "advertiser"){
-        navigate('/create-profileAdv', { state: { username } });
+        navigate('/view-profileAdv', { state: { username } });
       }
       else if(userType == "seller"){
         navigate('/view-profileSeller', { state: { username } });

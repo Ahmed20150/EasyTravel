@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleImageChange,buttonText }) => {
+const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleImageChange, handleFileChange, buttonText, isEditing }) => {
   // Custom handleChange to monitor the mobile number length
   const handleMobileChange = (e) => {
     if (e.target.value.length <= 11) {
@@ -10,22 +10,32 @@ const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleIma
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Mobile Number Input */}
       <input
         type="tel"
         name="mobileNumber"
         placeholder="Mobile"
         value={formData.mobileNumber}
-        onChange={handleMobileChange} // Use the custom handler for mobile number
-        disabled={formData.mobileNumber.length === 11} // Disable if 11 digits reached
+        onChange={handleMobileChange} // Custom handler for mobile number length
         required
       />
-      <input
+
+      {/* Date of Birth Input */}
+       {/* Date of Birth Input */}
+       <input
         type="date"
         name="dateOfBirth"
         value={formData.dateOfBirth}
         onChange={handleChange}
-        required
+        required={!isEditing} // Make it required only if not editing
       />
+      {isEditing && (
+        <p style={{ color: 'gray' }}>
+          You do not need to change the date of birth as it is already saved.
+        </p>
+      )}
+
+      {/* Company Name Input */}
       <input
         type="text"
         name="companyName"
@@ -34,6 +44,8 @@ const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleIma
         onChange={handleChange}
         required
       />
+
+      {/* Website Input */}
       <input
         type="text"
         name="website"
@@ -41,6 +53,8 @@ const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleIma
         value={formData.website}
         onChange={handleChange}
       />
+
+      {/* Hotline Input */}
       <input
         type="text"
         name="hotline"
@@ -48,20 +62,50 @@ const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleIma
         value={formData.hotline}
         onChange={handleChange}
       />
-      <input
-        type="url" // Change to URL input type for company profile
+
+      {/* PDF Company Profile Input (Only for new profiles) */}
+      {isEditing ? (
+        <p>Current PDF uploaded. To change, please upload a new one.</p>
+      ) : (
+        <input
+          type="file"
+          name="companyProfile"
+          accept="application/pdf" // Accept PDF files
+          onChange={handleFileChange} // Handle PDF file change
+          required
+        />
+      )}
+      {isEditing ? (
+        <input
+        type="file"
         name="companyProfile"
-        placeholder="Company Profile Link" // Update placeholder to reflect the change
-        value={formData.companyProfile}
-        onChange={handleChange} // Handle link change
-        required
+        accept="application/pdf" // Accept PDF files
+        onChange={handleFileChange} // Handle PDF file change
       />
+      ) : null}
+
+      {/* Profile Picture Input */}
+      {isEditing ? (
+        <p>Current Picture uploaded. To change, please upload a new one.</p>
+      ):(
       <input
         type="file"
         name="profilePicture"
         accept="image/*"
         onChange={handleImageChange} // Handle image change
+        required
       />
+      )}
+      {isEditing ? (
+      <input
+      type="file"
+      name="profilePicture"
+      accept="image/*"
+      onChange={handleImageChange} // Handle image change
+    />
+      ):null}
+
+      {/* Submit Button */}
       <button type="submit">{buttonText}</button>
     </form>
   );

@@ -1,12 +1,12 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
-import ProfileFormAdvertiser from '../components/ProfileFormAdvertiser'; // Update import to the correct form component
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ProfileFormAdvertiser from '../components/ProfileFormAdvertiser';
 
 const CreateProfilePageAdvertiser = () => {
-  const location = useLocation(); // Get the location state
-  const navigate = useNavigate(); // Initialize navigate
-  const { username, isEditingProfile } = location.state || {}; // Fallback to {} in case state is undefined
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { username, isEditingProfile } = location.state || {};
 
   const [formData, setFormData] = useState({
     companyName: '',
@@ -14,30 +14,71 @@ const CreateProfilePageAdvertiser = () => {
     dateOfBirth: '',
     website: '',
     hotline: '',
-    companyProfile: '',
+    companyProfile: null, // This will store the file itself (PDF)
     profilePicture: ''
   });
 
+  // Fetch existing profile data if editing
+  useEffect(() => {
+    if (isEditingProfile && username) {
+      const fetchProfile = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/adv/profileAdv/${username}`);
+          const profile = response.data;
+
+          // Initialize form data with fetched profile data
+          setFormData({
+            companyName: profile.companyName || '',
+            mobileNumber: profile.mobileNumber || '',
+            dateOfBirth: profile.dateOfBirth || '',
+            website: profile.website || '',
+            hotline: profile.hotline || '',
+            companyProfile: null, // Reset for new file upload
+            profilePicture: profile.profilePicture || ''
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Error fetching profile data.');
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [isEditingProfile, username]);
+
   // Handle changes in the form inputs
   const handleChange = (e) => {
-    const { name, value } = e.target; // Destructure name and value from the target
-    setFormData({ ...formData, [name]: value }); // Update state with the new value
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
+
+  // Handle PDF file change
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        alert('Please upload a valid PDF file for the company profile.');
+        return;
+      }
+      setFormData({ ...formData, companyProfile: file }); // Store the file directly
+    }
+  };
+
+  // Handle image change (profile picture)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check if the file size exceeds a certain limit (e.g., 5MB)
       const fileSizeMB = file.size / 1024 / 1024;
       if (fileSizeMB > 5) {
         alert('File size exceeds the limit of 5MB.');
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, profilePicture: reader.result }); // Set base64 string
+        setFormData({ ...formData, profilePicture: reader.result });
       };
-      reader.readAsDataURL(file); // Convert image to base64
+      reader.readAsDataURL(file); // Convert image to base64 string
     }
   };
 
@@ -57,19 +98,20 @@ const CreateProfilePageAdvertiser = () => {
     formDataToSend.append('hotline', formData.hotline);
     formDataToSend.append('dateOfBirth', formData.dateOfBirth);
     formDataToSend.append('profilePicture', formData.profilePicture);
-    formDataToSend.append('companyProfile', formData.companyProfile); // Append the link
+
+    if (formData.companyProfile) {
+      formDataToSend.append('companyProfile', formData.companyProfile); // Append PDF file
+    }
 
     try {
-      // Post the form data to the server
       await axios.post('http://localhost:3000/api/adv/profileAdv', formDataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data' // Ensure the correct content type for file uploads
+          'Content-Type': 'multipart/form-data'
         }
       });
       alert('Profile updated successfully!');
 
-      // Redirect to ViewProfilePage after successful update
-      navigate('/view-profileAdv', { state: { username } }); // Pass username to the view profile page
+      navigate('/view-profileAdv', { state: { username } });
     } catch (err) {
       console.error(err.response.data);
       alert('Error updating profile: ' + (err.response.data.error || 'An error occurred.'));
@@ -83,8 +125,10 @@ const CreateProfilePageAdvertiser = () => {
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        handleImageChange={handleImageChange} // Pass image handler
+        handleFileChange={handleFileChange} // Handle the PDF upload
+        handleImageChange={handleImageChange} 
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
+        isEditing={isEditingProfile}
       />
     </div>
   );
