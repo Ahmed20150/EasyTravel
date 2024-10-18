@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const port = process.env.PORT || 3000;
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const giftRoutes = require('./routes/gift.routes'); // Ensure this file exists with the appropriate routes
@@ -14,6 +15,7 @@ const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
 const GiftItem = require("./models/giftitem.model.js"); 
+const app = express();
 
 app.use(cors());
 app.use(express.json()); 
@@ -21,17 +23,11 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 }); 
 
-app.post("/api/giftitems",async(req,res)=> {
-  try{
-    const giftitem = await GiftItem.create(req.body);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
 
-    res.status(200).json(giftitem); 
-  } catch(error){
-   res.status(500).json({message: error.message});
-  }
-  
-
-}); 
+ 
 
 
 
@@ -40,7 +36,7 @@ app.post("/api/giftitems",async(req,res)=> {
 mongoose.connect(
   "mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL"
 ).then(() => {
-  console.log("Connected to the database!");
+  console.log("Connected to the database!" );
 }).catch((err) => {
   console.log("Cannot connect to the database!", err);
 }); 
@@ -90,7 +86,7 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
 
 // Routes
 app.use('/admin', adminRoutes);
-app.use('/api/gift', giftRoutes); // Include product routes
+app.use('/gift', giftRoutes); // Include product routes
 
 // Create User (Sign up)
 app.post('/api/signUp', async (req, res) => {
