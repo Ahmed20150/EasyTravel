@@ -3,8 +3,17 @@ import React from 'react';
 const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleImageChange, handleFileChange, buttonText, isEditing }) => {
   // Custom handleChange to monitor the mobile number length
   const handleMobileChange = (e) => {
-    if (e.target.value.length <= 11) {
-      handleChange(e); // Only update state if the value is less than or equal to 11 digits
+    // Ensure the input is numeric and within the length limit
+    if (/^\d*$/.test(e.target.value) && e.target.value.length <= 11) {
+      handleChange(e); // Only update state if the value is a number and <= 11 digits
+    }
+  };
+
+  // Custom handleChange for hotline
+  const handleHotlineChange = (e) => {
+    // Ensure the input is numeric
+    if (/^\d*$/.test(e.target.value)) {
+      handleChange(e); // Only update state if the value is a number
     }
   };
 
@@ -60,7 +69,7 @@ const ProfileFormAdvertiser = ({ formData, handleChange, handleSubmit, handleIma
         name="hotline"
         placeholder="Hotline"
         value={formData.hotline}
-        onChange={handleChange}
+        onChange={handleHotlineChange}
       />
 
       {/* PDF Company Profile Input (Only for new profiles) */}
