@@ -6,7 +6,6 @@ import "../css/ItineraryEdit.css"; // Import the CSS file
 const ItineraryEdit = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation
   const { id } = useParams(); // Get itinerary ID from the URL
-
   const [formData, setFormData] = useState({
     activities: [], // Keep this as an array to store Activity IDs
     locationsToVisit: [],
@@ -73,7 +72,7 @@ const ItineraryEdit = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the default form submission
     console.log("Updating itinerary:", formData);
 
     try {
@@ -89,6 +88,7 @@ const ItineraryEdit = () => {
         updatedFormData
       );
       console.log("Itinerary updated successfully:", response.data);
+      alert("Itinerary updated successfully!");
       navigate("/itinerary"); // Redirect to the itinerary list page
     } catch (error) {
       if (error.response) {
@@ -102,19 +102,39 @@ const ItineraryEdit = () => {
     }
   };
 
-  const handleChooseActivities = () => {
+  const handleChooseActivities = async () => {
+    const updatedFormData = {
+      ...formData,
+      activities: formData.activities.map((activity) => ({
+        activity,
+      })), // Create an array of objects for the activities
+    };
+
+    const response = await axios.put(
+      `http://localhost:3000/itinerary/${id}`,
+      updatedFormData
+    );
     const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string
     navigate(
       `/itinerary/create/selectActivity?locations=${encodeURIComponent(
         locationsQuery
-      )}`
+      )}`,
+      {
+        state: {
+          returnTo: "edit", // Indicate that this is from the edit page
+          selectedActivities: formData.activities, // Pass current selected activities
+          formData: { ...formData }, // Pass the full form data
+          itineraryId: id,
+        },
+      }
     );
   };
+
   console.log("Activities:", formData.activities);
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Edit Itinerary</h2>
+      <h2>Edit Itinerary {id}</h2>
       <label>
         Locations to Visit (comma-separated):
         <input

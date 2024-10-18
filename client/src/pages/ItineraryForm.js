@@ -6,34 +6,39 @@ import "../css/ItineraryForm.css"; // Import the CSS file
 
 const ItineraryForm = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation
-  const [formData, setFormData] = useState({
-    activities: [], // Keep this as an array to store Activity IDs
+  const location = useLocation();
+  const { state } = location;
+  const selectedActivities = state?.selectedActivities || [];
+  const initialFormData = state?.formData || {
+    // Use formData from state if available
+    activities: [],
     locationsToVisit: [],
     timeline: "",
     duration: "",
     languageOfTour: "",
     priceOfTour: "",
-    availableDates: [], // Initialize as an array
-    availableTimes: [], // Initialize as an array
+    availableDates: [],
+    availableTimes: [],
     accessibility: "",
     pickupLocation: "",
     dropoffLocation: "",
-  });
-  const location = useLocation();
-  const { state } = location;
-  const selectedActivities = state?.selectedActivities || [];
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
   const [activityCategories, setActivityCategories] = useState([]);
+
   useEffect(() => {
     if (selectedActivities.length > 0) {
       setActivityCategories(
         selectedActivities.map((activity) => activity.category)
-      ); // Assuming each activity has a category field
+      );
       setFormData((prevState) => ({
         ...prevState,
         activities: selectedActivities.map((activity) => activity._id), // Store the selected activity IDs
       }));
     }
   }, [selectedActivities]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -65,7 +70,7 @@ const ItineraryForm = () => {
         ...formData,
         activities: selectedActivities.map((activity) => ({
           activity: activity._id,
-        })), // Create an array of objects
+        })),
       };
 
       const response = await axios.post(
@@ -90,11 +95,18 @@ const ItineraryForm = () => {
   };
 
   const handleChooseActivities = () => {
-    const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string
+    const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string with comma
     navigate(
       `/itinerary/create/selectActivity?locations=${encodeURIComponent(
         locationsQuery
-      )}`
+      )}`,
+      {
+        state: {
+          selectedActivities,
+          formData,
+          returnTo: "create", // Indicate that the source is from the edit
+        },
+      } // Pass the selected activities and form data
     );
   };
 
@@ -106,7 +118,7 @@ const ItineraryForm = () => {
         <input
           type="text"
           name="locationsToVisit"
-          value={formData.locationsToVisit.join(", ")} // This will work now as locationsToVisit is an array
+          value={formData.locationsToVisit.join(", ")} // Join for display with comma
           onChange={handleChange}
         />
       </label>
@@ -124,7 +136,7 @@ const ItineraryForm = () => {
       <ul>
         {selectedActivities.map((activity) => (
           <li key={activity._id}>
-            Category: {activity.category || "N/A"}-location:{" "}
+            Category: {activity.category || "N/A"} - Location:{" "}
             {activity.location.address || "N/A"}
           </li>
         ))}
