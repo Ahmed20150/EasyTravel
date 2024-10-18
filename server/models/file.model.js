@@ -6,6 +6,10 @@ const fileSchema = new Schema({
     type: String,
     required: true,
   },
+  username:{
+    type: String,
+    required: true,
+  },
   contentType: {
     type: String,
     required: true,
@@ -18,6 +22,7 @@ const fileSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  base64: { type: String, required: true }, 
   metadata: {
     type: Object,
   },

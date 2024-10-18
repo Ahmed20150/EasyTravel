@@ -11,10 +11,21 @@ mongoose.connect(mongoURI, {
 
 const conn = mongoose.connection;
 let gfs;
-conn.once('open', () => {
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection('uploads');
-  console.log('Connected to GridFS');
+const initGridFS = new Promise((resolve, reject) => {
+  const conn = mongoose.connection;
+  conn.once('open', () => {
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection('uploads');
+    console.log('Connected to GridFS');
+    resolve(gfs);
+  });
 });
 
-module.exports = { conn, gfs , mongoURI};
+const getGFS = async () => {
+  if (!gfs) {
+    await initGridFS;
+  }
+  return gfs;
+};
+
+module.exports = { initGridFS, getGFS, conn, gfs , mongoURI};

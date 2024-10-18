@@ -3,7 +3,8 @@ const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
 const crypto = require('crypto');
 const path = require('path');
-let { conn, gfs , mongoURI} = require('../config/db');
+const mongoose = require('mongoose');
+let { conn, gfs , mongoURI, getGFS} = require('../config/db');
 const File = require('../models/file.model');
 
 const router = express.Router();
@@ -30,18 +31,23 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage });
 
-// Upload Route
-router.post('/upload', upload.single('file'), async (req, res) => {
+
+
+//upload Route
+router.post('/upload', async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).send('No file uploaded.');
+    const { filename, username, contentType, base64 } = req.body;
+
+    if (!filename || !contentType || !base64) {
+      return res.status(400).send('Missing required fields');
     }
 
-    const { originalname, mimetype, size } = req.file;
     const file = new File({
-      filename: originalname,
-      contentType: mimetype,
-      length: size,
+      filename,
+      username,
+      contentType,
+      length: Buffer.byteLength(base64, 'base64'),
+      base64,
       metadata: req.body.metadata || {},
     });
 
@@ -54,85 +60,39 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// Download Route
-// router.get('/download/:id', async (req, res) => {
-//   try {
-//     const file = await File.findById(req.params.id);
-//     if (!file) {
-//       return res.status(404).json({ err: 'No file exists' });
-//     }
 
-//     gfs.files.findOne({ filename: file.filename }, (err, gridFile) => {
-//       if (!gridFile || gridFile.length === 0) {
-//         return res.status(404).json({ err: 'No file exists in GridFS' });
-//       }
 
-//       const readstream = gfs.createReadStream({ filename: file.filename });
-//       res.set('Content-Type', file.contentType);
-//       res.set('Content-Disposition', `attachment; filename="${file.filename}"`);
-//       readstream.pipe(res);
-//     });
-//   } catch (error) {
-//     console.error('Error downloading file:', error);
-//     res.status(500).send('Error downloading file');
-//   }
-// });
+// Delete All Records Route
+router.delete('/deleteAll', async (req, res) => {
+  try {
+    const db = mongoose.connection.db;
+    await db.collection('uploads.chunks').deleteMany({});
+    await db.collection('uploads.files').deleteMany({});
+    await db.collection('files').deleteMany({});
+    res.status(200).send('All records deleted');
+  } catch (error) {
+    console.error('Error deleting records:', error);
+    res.status(500).send('Error deleting records');
+  }
+});
 
-// // Download Last Uploaded File Route
-// router.get('/download/latest', async (req, res) => {
-//     try {
-//       const file = await File.findOne().sort({ uploadDate: -1 });
-//       if (!file) {
-//         return res.status(404).json({ err: 'No file exists' });
-//       }
-  
-//       gfs.file.findOne({ filename: file.filename }, (err, gridFile) => {
-//         if (!gridFile || gridFile.length === 0) {
-//           return res.status(404).json({ err: 'No file exists in GridFS' });
-//         }
-  
-//         const readstream = gfs.createReadStream({ filename: file.filename });
-//         res.set('Content-Type', file.contentType);
-//         res.set('Content-Disposition', `attachment; filename="${file.filename}"`);
-//         readstream.pipe(res);
-//       });
-//     } catch (error) {
-//       console.error('Error downloading file:', error);
-//       res.status(500).send('Error downloading file');
-//     }
-//   });
+// Fetch Base64 String Route
+router.get('/getbasestring', async (req, res) => {
+  try {
+    const {username}  = req.query;
+    const file = await File.findOne({ username });
 
-// Download File by Filename Route
-router.get('/download/filename/:filename', async (req, res) => {
-    try {
-      const { filename } = req.params;
-      const file = await File.findOne({ filename });
-      if (!file) {
-        return res.status(404).json({ err: 'No file exists' });
-      }
-  
-      if (!gfs) {
-        return res.status(500).send('GridFS not initialized');
-      }
-  
-      gfs.files.findOne({ filename: file.filename }, (err, gridFile) => {
-        if(err){
-            console.error('Error finding file in GridFS:', err);
-            return res.status(500).send('Error finding file in GridFS');
-        }
-        if (!gridFile || gridFile.length === 0) {
-          return res.status(404).json({ err: 'No file exists in GridFS' });
-        }
-  
-        const readstream = gfs.createReadStream({ filename: file.filename });
-        res.set('Content-Type', file.contentType);
-        res.set('Content-Disposition', `attachment; filename="${file.filename}"`);
-        readstream.pipe(res);
-      });
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      res.status(500).send('Error downloading file');
+    if (!file) {
+      return res.status(404).json({ err: 'NO FILE IS THERE' });
     }
-  });
+
+    res.status(200).json({ base64: file.base64 });
+  } catch (error) {
+    console.error('Error fetching file:', error);
+    res.status(500).send('Error fetching file');
+  }
+});
+
+
 
 module.exports = router;

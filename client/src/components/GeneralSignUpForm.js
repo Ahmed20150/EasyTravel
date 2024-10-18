@@ -137,13 +137,14 @@ export default function GeneralSignUpForm() {
       console.log('Success:', response.data);
     }
     else{
+      handleUpload();
       const response = await axios.post('http://localhost:3000/api/signUp', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
         console.log('Success:', response.data);
-        setUploadStatus('Sign up successful.');
+
     }
 
       setUsername('');
@@ -158,56 +159,44 @@ export default function GeneralSignUpForm() {
       navigate("/login");
 
   } catch (error) {
-    setUploadStatus('Sign up failed.');
+
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 
 
-  // const formData = new FormData();
-  // formData.append('myfile',this.state.file);
-  // const config = {
-  //     headers: {
-  //         'content-type': 'multipart/form-data'
-  //     }
-  // };
-  // axios.post("http://localhost:3000/upload",formData,config)
-  //     .then((response) => {
-  //         alert("The file is successfully uploaded");
-  //     }).catch((error) => {
-  // });
-
   }
 
+  //file upload-related code
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
+  const [base64, setBase64] = useState('');
+  const [uploadedFile, setUploadedFile] = useState(null);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-    console.log("uploaded file: " + file);
+  const handleUpload = async (e) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/files/upload', {
+        filename: file.name,
+        username: username,
+        contentType: file.type,
+        base64: base64,
+      });
+      setUploadedFile(response.data.file);
+      alert('File uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+    }
   };
 
-  const handleFileUpload = async (event) => {
-    event.preventDefault();
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
 
-    console.log("DOC UPLOAD")
-    // if (!selectedFile) {
-    //   setUploadStatus('Please select a file to upload.');
-    //   return;
-    // }
-
-    // const formData = new FormData();
-    // formData.append('file', selectedFile);
-
-    // try {
-    //   const response = await axios.post('http://localhost:3000/api/upload', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   });
-    //   setUploadStatus('File uploaded successfully.');
-    // } catch (error) {
-    //   setUploadStatus('File upload failed.');
-    // }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setBase64(reader.result.split(',')[1]); // Extract base64 string
+    };
+    reader.readAsDataURL(selectedFile);
   };
 
 
@@ -241,7 +230,7 @@ export default function GeneralSignUpForm() {
         <FormControlLabel value="advertiser" control={<Radio />} label="Advertiser" />
         <FormControlLabel value="seller" control={<Radio />} label="Seller" />
         <div className={classes.centeredRadio}>
-            <FormControlLabel value="tourist" control={<Radio />} label="Tourist" />
+            <FormControlLabel value="tourist" control={<Radio />} label="Tourist"/>
           </div>
       </RadioGroup>
         </FormControl>
@@ -357,36 +346,18 @@ export default function GeneralSignUpForm() {
           />
         </>
       )}
-
-{userType !== 'tourist' && (
-<div>
-      <h2>File Upload</h2>
-       
-      <input
-            type="file"
-            onChange={handleFileChange}
-          />
-
-{uploadStatus && <p>{uploadStatus}</p>}
-
-          {/* <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Confirm Upload
-          </Button> */}
-
-
-
-    </div>
-)}
-
+ {/* File Upload for Non-Tourist Users */}
+ {userType !== 'tourist' && (
+            <div>
+              <h2>File Upload</h2>
+              <input type="file" accept="application/pdf" onChange={handleFileChange} required />
+            </div>
+          )}
+{/* 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth

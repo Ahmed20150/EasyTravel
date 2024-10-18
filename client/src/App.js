@@ -19,7 +19,8 @@ function App() {
     <div className="App">
     <BrowserRouter>
           <Routes>
-            <Route path="/" element={<FileUpload />}/>
+            <Route path="/" element={<LandingPage />}/>
+            <Route path="/fileUpload" element={<FileUpload />}/>
             <Route path="/signUp"element={<GeneralSignUpForm />}/>
             <Route path="/login"element={<LoginForm />}/>
             <Route path="/changePassword"element={<ChangePassword />}/>
