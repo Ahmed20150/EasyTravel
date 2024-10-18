@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Map from "../components/Map";
 import "../css/ActivityForm.css"; // Adjusted path to the CSS file
+import mapboxgl from "mapbox-gl";
+
+// Set your Mapbox access token
+mapboxgl.accessToken =
+  "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
 
 const ActivityForm = () => {
   const [formData, setFormData] = useState({
@@ -24,11 +29,28 @@ const ActivityForm = () => {
     specialDiscounts: "",
     isBookingOpen: true,
   });
+
   const navigate = useNavigate();
-  // Simplified handleChange function to handle basic form input
+
+  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle location coordinates change
+  const handleCoordinatesChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      location: {
+        ...formData.location,
+        coordinates: {
+          ...formData.location.coordinates,
+          [name]: value,
+        },
+      },
+    });
   };
 
   // Handle form submission
@@ -37,7 +59,7 @@ const ActivityForm = () => {
     try {
       const response = await axios.post("http://localhost:3000/activities", {
         ...formData,
-        tags: formData.tags.split(",").map((tag) => tag.trim()), // Process tags as an array
+        tags: formData.tags.split(",").map((tag) => tag.trim()),
       });
       navigate(`/activities`);
       console.log("Activity created:", response.data);
@@ -46,10 +68,33 @@ const ActivityForm = () => {
     }
   };
 
+  // Handle location selection from Map component
+  const handleLocationSelect = async (lng, lat) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
+      );
+      const data = await response.json();
+      const address = data.features[0].place_name;
+
+      // Update formData with the selected address and coordinates
+      setFormData({
+        ...formData,
+        location: {
+          address: address,
+          coordinates: {
+            lat: lat,
+            lng: lng,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  };
+
   return (
     <div className="activity-form">
-      {" "}
-      {/* Added class here */}
       <h2>Create a New Activity</h2>
       <label>
         Date:
@@ -73,19 +118,13 @@ const ActivityForm = () => {
       </label>
       <label>
         Location Address:
+        <Map onLocationSelect={handleLocationSelect} />
         <input
           type="text"
-          name="location.address"
-          value={formData.location.address}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              location: {
-                ...formData.location,
-                address: e.target.value,
-              },
-            })
-          }
+          name="location"
+          placeholder="Location"
+          value={formData.location.address} // Corrected to display selected address
+          readOnly
         />
       </label>
       <label>
@@ -93,20 +132,9 @@ const ActivityForm = () => {
         <input
           type="number"
           step="any"
-          name="location.coordinates.lat"
+          name="lat" // Adjusted here
           value={formData.location.coordinates.lat}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              location: {
-                ...formData.location,
-                coordinates: {
-                  ...formData.location.coordinates,
-                  lat: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={handleCoordinatesChange}
         />
       </label>
       <label>
@@ -114,20 +142,9 @@ const ActivityForm = () => {
         <input
           type="number"
           step="any"
-          name="location.coordinates.lng"
+          name="lng" // Adjusted here
           value={formData.location.coordinates.lng}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              location: {
-                ...formData.location,
-                coordinates: {
-                  ...formData.location.coordinates,
-                  lng: e.target.value,
-                },
-              },
-            })
-          }
+          onChange={handleCoordinatesChange}
         />
       </label>
       <label>
