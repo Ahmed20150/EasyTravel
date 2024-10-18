@@ -147,7 +147,7 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
   
   // Change Password Endpoint
   router.post('/changePassword', async (req, res) => {
-      const { username, password, newPassword } = req.body;
+      const { username, oldPassword, newPassword } = req.body;
     
       try {
           const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
@@ -164,10 +164,26 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
           return res.status(404).json({ message: 'User not found' });
         }
     
-        const isPasswordValid = password ==  user.password;
+        const isPasswordValid = oldPassword ==  user.password;
         if (!isPasswordValid) {
-          return res.status(400).json({ message: 'Current password is incorrect' });
+          return res.status(400).json({ message: 'Old password is incorrect' });
         }
+
+        if (/\s/.test(newPassword)) {
+          return res.status(400).json({ message: "Password must not contain spaces." });
+        }
+        
+    
+        if (!newPassword || newPassword.length < 8) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long." });
+          }
+
+          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+_])[A-Za-z\d@$!%*?&+_]{8,}$/;
+          if (!passwordRegex.test(newPassword)) {
+            return res.status(400).json({ message: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character." });
+          }
+
+
     
         user.password = newPassword;
         await user.save();

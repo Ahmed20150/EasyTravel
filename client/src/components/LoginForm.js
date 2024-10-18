@@ -16,6 +16,9 @@ import {useState} from 'react';
 import axios from 'axios';
 import { CookiesProvider, useCookies } from 'react-cookie'
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Copyright() {
   return (
@@ -80,6 +83,7 @@ export default function Login() {
       const accessToken = response.data.accessToken; //capture accessToken from response
       const userType = response.data.userType;
       console.log('Successful Login!', response.data);
+      toast.success('Successful Login!');
       console.log('Access Token:', accessToken);
       console.log('Logged in Username:', username);
 
@@ -92,10 +96,13 @@ export default function Login() {
       setPassword('');
 
       //TODO based on userType navigate to different pages
-      navigate('/home');
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000); 
 
 
   } catch (error) {
+      toast.error('Invalid Username or Password');
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 
