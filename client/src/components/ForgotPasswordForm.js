@@ -53,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-//TODO frontend responses to error and success messages
 
 export default function ForgotPasswordForm() {
   const classes = useStyles();

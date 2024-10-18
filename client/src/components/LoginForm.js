@@ -54,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-//TODO frontend responses to error and success messages
 
 export default function Login() {
   const classes = useStyles();
@@ -68,7 +67,6 @@ export default function Login() {
 
 
 
-//TODO adjust navigate to navigate to waiting got verification screen,and ensure no url access to home page without login
   const navigate = useNavigate();
 
 

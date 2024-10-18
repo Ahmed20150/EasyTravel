@@ -23,6 +23,9 @@ import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Autocomplete from '@mui/material/Autocomplete';
+import countries from '../data/countries';
+
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -81,8 +84,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 //TODO make dropdown for nationality
-//TODO put some restrictions on password
-  //TODO frontend responses to error and success messages
 
 export default function GeneralSignUpForm() {
 
@@ -97,9 +98,11 @@ export default function GeneralSignUpForm() {
 
  //Tourist Specific Extra Data
  const [mobileNumber, setMobileNumber] = useState('')
+ const [countryCode, setCountryCode] = useState(''); 
  const [nationality, setNationality] = useState('')
  const [dateOfBirth, setDateOfBirth] = useState('')
- const [occupation, setOccupation] = useState('')
+ const [occupation, setOccupation] = useState('Student')
+ const [otherOccupation, setOtherOccupation] = useState(''); 
 
  const [uploadText, setUploadText] = useState('')
 
@@ -132,10 +135,10 @@ export default function GeneralSignUpForm() {
     console.log(formData);
     try {
     if(userType === 'tourist'){
-      formData.append('mobileNumber', mobileNumber);
+      formData.append('mobileNumber', `${countryCode}${mobileNumber}`);
       formData.append('nationality', nationality);
       formData.append('dateOfBirth', dateOfBirth);
-      formData.append('occupation', occupation);
+      formData.append('occupation', occupation === 'Other' ? otherOccupation : occupation);
       const response = await axios.post('http://localhost:3000/auth/signUp', formData);
       toast.success('Sign up Successful!');
     }
@@ -151,9 +154,11 @@ export default function GeneralSignUpForm() {
       setPassword('');
       setUserType('');
       setMobileNumber('');
+      setCountryCode(''); 
       setNationality('');
       setDateOfBirth('');
-      setOccupation('');
+      setOccupation('Student');
+      setOtherOccupation('');
       setBase64('');
       setFile(null);
 
@@ -206,9 +211,9 @@ export default function GeneralSignUpForm() {
 
 
   return (
-
     
     <Container component="main" maxWidth="xs">
+     
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -304,6 +309,38 @@ export default function GeneralSignUpForm() {
 
           {userType === 'tourist' && (
         <>
+        <Autocomplete
+      id="country-select-demo"
+      sx={{ width: 300 }}
+      options={countries}
+      autoHighlight
+      getOptionLabel={(option) => option.label}
+      onChange={(event, value) => {
+        setNationality(value ? value.label : '');
+        setCountryCode(value ? value.phone : ''); 
+      }}      renderOption={(props, option) => (
+        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+          <img
+            loading="lazy"
+            width="20"
+            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+            alt=""
+          />
+          {option.label} ({option.code}) +{option.phone}
+        </Box>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Choose a country"
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: 'new-password', // disable autocomplete and autofill
+          }}
+        />
+      )}
+    />
           <TextField
             variant="outlined"
             margin="normal"
@@ -313,21 +350,11 @@ export default function GeneralSignUpForm() {
             label="Mobile Number"
             type="number"
             id="mobileNumber"
-            onChange={(e) => setMobileNumber(e.target.value)}
+            value={`${countryCode}${mobileNumber}`}
+            onChange={(e) => setMobileNumber(e.target.value.replace(countryCode, ''))}
             autoComplete="mobileNumber"
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="nationality"
-            label="Nationality"
-            type="text"
-            id="nationality"
-            onChange={(e) => setNationality(e.target.value)}
-            autoComplete="nationality"
-          />
+         
           <TextField
             variant="outlined"
             margin="normal"
@@ -343,18 +370,28 @@ export default function GeneralSignUpForm() {
             }}
             autoComplete="DOB"
           />
+          <FormControl component="fieldset" margin="normal">
+          <FormLabel id="demo-row-radio-buttons-group-label">Occupation:</FormLabel>
+          <RadioGroup
+            aria-label="occupation"
+            name="occupation"
+            value={occupation}
+            onChange={(e) => setOccupation(e.target.value)}
+          >
+            <FormControlLabel value="Student" control={<Radio />} label="Student" />
+            <FormControlLabel value="Other" control={<Radio />} label="Other" />
+          </RadioGroup>
+        </FormControl>
+        {occupation === 'Other' && (
           <TextField
-            variant="outlined"
+            label="Specify Occupation"
+            value={otherOccupation}
+            onChange={(e) => setOtherOccupation(e.target.value)}
+            fullWidth
             margin="normal"
             required
-            fullWidth
-            name="occupation"
-            label="Occupation"
-            type="text"
-            id="occupation"
-            onChange={(e) => setOccupation(e.target.value)}
-            autoComplete="occupation"
           />
+        )}
         </>
       )}
  {/* File Upload for Non-Tourist Users */}

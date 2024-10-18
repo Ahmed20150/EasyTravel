@@ -48,8 +48,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 //TODO make dropdown for nationality
-//TODO put some restrictions on password
-  //TODO frontend responses to error and success messages
 
 export default function TouristSignUpForm() {
   const classes = useStyles();
