@@ -16,31 +16,24 @@ const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
 const GiftItem = require("./models/giftitem.model.js"); 
 
+app.use(cors());
 app.use(express.json()); 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 }); 
 
-//app.post("/api/giftitems",async(req,res)=> {
-  //try{
-    //const giftitem = await GiftItem.create(req.body);
+app.post("/api/giftitems",async(req,res)=> {
+  try{
+    const giftitem = await GiftItem.create(req.body);
 
-    //res.status(200).json(product); 
-  //} catch(error){
-   // res.status(500).json({message: error.message});
-  //}
+    res.status(200).json(giftitem); 
+  } catch(error){
+   res.status(500).json({message: error.message});
+  }
   
 
-//}); 
-app.post('/api/giftitems', async (req, res) => {
-  try {
-    const giftItem = new GiftItem(req.body);
-    await giftItem.save();
-    res.status(201).json(giftItem);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+}); 
+
 
 
 
@@ -78,12 +71,16 @@ const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-const corsOptions ={
-  origin:'http://localhost:3000', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+
+
+
+
+  app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    next();
+  })
 app.use(cookieParser());
 
 
