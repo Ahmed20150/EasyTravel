@@ -65,6 +65,7 @@ export default function Login() {
 
 
 
+//TODO adjust navigate to navigate to waiting got verification screen,and ensure no url access to home page without login
   const navigate = useNavigate();
 
 
@@ -75,7 +76,7 @@ export default function Login() {
 
     console.log(user);
     try {
-      const response = await axios.post('http://localhost:3000/api/login', user); //retrieve data from server
+      const response = await axios.post('http://localhost:3000/auth/login', user); //retrieve data from server
       const accessToken = response.data.accessToken; //capture accessToken from response
       const userType = response.data.userType;
       console.log('Successful Login!', response.data);

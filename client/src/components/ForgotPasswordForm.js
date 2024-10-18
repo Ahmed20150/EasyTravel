@@ -75,7 +75,7 @@ export default function ForgotPasswordForm() {
   const handleSendEmail = async (e) => {
     e.preventDefault();
     try{
-        const response = await axios.post('http://localhost:3000/api/forgotPassword', {email});
+        const response = await axios.post('http://localhost:3000/auth/forgotPassword', {email});
         console.log(response);
         setShowOtpForm(true);
     } 
@@ -88,7 +88,7 @@ export default function ForgotPasswordForm() {
 const handleVerifyOtp = async (e) => {
     e.preventDefault();
     try{
-        const response = await axios.post('http://localhost:3000/api/verifyOtp', {email, otp});
+        const response = await axios.post('http://localhost:3000/auth/verifyOtp', {email, otp});
         console.log(response);
         setShowChangePasswordForm(true);
 
@@ -101,7 +101,7 @@ const handleVerifyOtp = async (e) => {
 
 const handleChangePassword = async () => {
     try {
-      await axios.post('http://localhost:3000/api/changeForgotPassword', { email, newPassword });
+      await axios.post('http://localhost:3000/auth/changeForgotPassword', { email, newPassword });
       alert('Password changed successfully');
       navigate('/login')
     } catch (error) {

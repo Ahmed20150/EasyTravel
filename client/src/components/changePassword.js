@@ -75,7 +75,7 @@ function ChangePassword() {
       const user = { username, password, newPassword };
 
     try {
-      const response = await axios.post('http://localhost:3000/api/changePassword', user);
+      const response = await axios.post('http://localhost:3000/auth/changePassword', user);
       console.log('Password changed successfully!', response.data);
 
       // Optionally, update cookies or handle navigation

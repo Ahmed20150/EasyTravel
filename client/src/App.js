@@ -2,7 +2,6 @@ import logo from './logo.svg';
 import './App.css';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import TouristSignUpForm from './components/TouristSignUpForm';
 import LoginForm from './components/LoginForm';
 import LandingPage from './pages/LandingPage';
 import ChangePassword from './components/changePassword';
@@ -12,6 +11,7 @@ import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import FileUpload from './components/fileUpload';
 
+//TODO add navigation buttons between all pages
 
 
 function App() {

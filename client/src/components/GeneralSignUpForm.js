@@ -18,7 +18,6 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import TouristSignUpForm from './TouristSignUpForm';
 import { useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -133,16 +132,12 @@ export default function GeneralSignUpForm() {
       formData.append('nationality', nationality);
       formData.append('dateOfBirth', dateOfBirth);
       formData.append('occupation', occupation);
-      const response = await axios.post('http://localhost:3000/api/signUp', formData);
+      const response = await axios.post('http://localhost:3000/auth/signUp', formData);
       console.log('Success:', response.data);
     }
     else{
       handleUpload();
-      const response = await axios.post('http://localhost:3000/api/signUp', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post('http://localhost:3000/auth/signUp', formData);
         console.log('Success:', response.data);
 
     }
@@ -155,6 +150,8 @@ export default function GeneralSignUpForm() {
       setNationality('');
       setDateOfBirth('');
       setOccupation('');
+      setBase64('');
+      setFile(null);
 
       navigate("/login");
 
