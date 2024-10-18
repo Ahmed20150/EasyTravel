@@ -13,7 +13,50 @@ const TourGuide = require("./models/tourGuide.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
-const sendEmail = require('./sendEmail')
+const sendEmail = require('./sendEmail');
+const GiftItem = require("./models/giftitem.model.js"); 
+
+app.use(express.json()); 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+}); 
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+}); 
+app.post("/api/giftitems",async(req,res)=> {
+  try{
+    const giftitem = await GiftItem.create(req.body);
+
+    res.status(200).json(product); 
+  } catch(error){
+    res.status(500).json({message: error.message});
+  }
+  
+
+});
+mongoose.connect(
+  "mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL"
+).then(() => {
+  console.log("Connected to the database!");
+}).catch((err) => {
+  console.log("Cannot connect to the database!", err);
+}); 
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -22,6 +65,8 @@ const sendEmail = require('./sendEmail')
 app.use('/admin', adminRoutes);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const { error } = require("server/router.js");
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -278,3 +323,15 @@ app.get('/api/tourists', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
