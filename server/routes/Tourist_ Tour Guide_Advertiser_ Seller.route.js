@@ -26,8 +26,8 @@ const getUserModelByRole = (role) => {
 };
 
 // Route to submit account deletion request based on username and role
-router.post('/requestDelete', async (req, res) => {
-    const { username, role } = req.body;
+router.post('/requestDelete/:username/:role', async (req, res) => {
+    const { username, role } = req.params;
 
     try {
         // Get the correct user model based on the role

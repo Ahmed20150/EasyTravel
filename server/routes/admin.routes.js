@@ -10,6 +10,13 @@ router.use(express.json());
 router.post('/add-tourismGoverner', async (req, res) => {
     const { username, password } = req.body;
 
+      if(username.includes(" ")){
+        return res.status(400).json({ message: 'Username is Invalid.' });
+    }
+      if(password.includes(" ")){
+        return res.status(400).json({ message: 'Password is Invalid.' });
+    }
+
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password Required' });
     }
@@ -38,6 +45,13 @@ router.post('/add-admin', async (req, res) => {
     const { username, password } = req.body;
 
     // Check if username and password are provided
+    if(username.includes(" ")){
+        return res.status(400).json({ message: 'Username is Invalid.' });
+    }
+    if(password.includes(" ")){
+        return res.status(400).json({ message: 'Password is Invalid.' });
+    }
+
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password are required.' });
     }
@@ -75,14 +89,16 @@ const getUserModelByRole = (role) => {
             return Advertiser;
         case 'Seller':
             return Seller;
+        case 'Toursim Governer':
+            return TourismGoverner;
         default:
             return Tourist;
     }
 };
 
 //Delete User
-router.delete('/delete-user', async (req, res) => {
-    const { username, role } = req.body;
+router.delete('/delete-user/:username/:role', async (req, res) => {
+    const { username, role } = req.params;
     try {
         const UserModel = getUserModelByRole(role);
 
@@ -171,5 +187,55 @@ router.get('/viewAllUsers', async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 });
+
+// Route to view all users from all schemas
+router.get('/viewRequests', async (req, res) => {
+    try {
+        // Fetch users from all models
+        const Requests= await getAllUsersFromModel(DeletionRequest)
+        //const tourGuides = await getAllUsersFromModel(TourGuide);
+        //const advertisers = await getAllUsersFromModel(Advertiser);
+        //const sellers = await getAllUsersFromModel(Seller);
+
+        // Combine users with specific fields into a single array
+        const allUsers = [
+            ...Requests.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'Tourist'
+            })),
+            // ...governer.map(user => ({
+            //     username: user.username,
+            //     role: 'Toursim Governer'
+            // }))
+            // ...tourGuides.map(user => ({
+            //     username: user.username,
+            //     email: user.email,
+            //     mobile_number: user.mobile_number,
+            //     role: 'TourGuide'
+            // })),
+            // ...advertisers.map(user => ({
+            //     username: user.username,
+            //     email: user.email,
+            //     mobile_number: user.mobile_number,
+            //     role: 'Advertiser'
+            // })),
+            // ...sellers.map(user => ({
+            //     username: user.username,
+            //     email: user.email,
+            //     mobile_number: user.mobile_number,
+            //     role: 'Seller'
+            // }))
+        ];
+
+        // Return combined result
+        return res.status(200).json(allUsers);
+    } catch (error) {
+        console.error("Error fetching all users:", error);
+        return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+});
+
 
 module.exports = router;

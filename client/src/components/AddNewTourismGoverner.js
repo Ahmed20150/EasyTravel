@@ -12,7 +12,7 @@ const AddTourismGoverner = () => {
     const governer = { username, password };
 
     try {
-      const response = await axios.post('http://localhost:8000/admin/add-tourismGoverner', governer);
+      const response = await axios.post('http://localhost:3000/admin/add-tourismGoverner', governer);
       console.log('Tourism Governer Added:', response.data);
       window.alert(`Tourism Governer added successfully: ${response.data.message}`);
       setUsername('');
