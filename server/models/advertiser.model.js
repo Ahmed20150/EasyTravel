@@ -41,6 +41,9 @@ const advertiserSchema = new mongoose.Schema({
       type: String, // Store image as base64 string
       required: false
     },
+    acceptedTerms: { 
+        type: Boolean, 
+        default: false }, //new
     status: {
       type: String,
       enum: ['accepted', 'rejected', 'pending'],

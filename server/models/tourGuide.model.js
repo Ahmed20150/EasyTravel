@@ -9,6 +9,9 @@ const tourGuideSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    acceptedTerms: { 
+        type: Boolean, 
+        default: false }, //
     password:{
         type:String,
         required:true
@@ -36,6 +39,10 @@ const tourGuideSchema = new mongoose.Schema({
         required:false,
         default: null
     },
+    firstTimeLogin: { 
+        type: Number,
+         default: 0
+         },
     dateOfBirth:{
         type:Date,
         required:false,

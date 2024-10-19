@@ -20,6 +20,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 //TODO add navigation buttons between all pages
+import GeneralSignUpForm from './components/GeneralSignUpForm';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
+import PendingRequestsPage from './pages/PendingRequestsPage';
+import TouristProfile from './pages/TouristProfile';
+
+
+
+
 
 
 function App() {
@@ -50,6 +58,8 @@ function App() {
             {/* <Route path="/create-profile" element={<CreateProfilePage />}>
             <Route path="/view-profile/:email" element={<ViewProfilePage />} /> */}
             {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
+            <Route path='/pendingRequestsPage' element={<PendingRequestsPage />} />
+            <Route path='/TouristProfile' element={<TouristProfile />} />
           </Routes>
       </BrowserRouter>
     </div>
