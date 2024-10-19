@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../css/ItineraryForm.css"; // Import the CSS file
 
 const ItineraryForm = () => {
@@ -77,6 +76,7 @@ const ItineraryForm = () => {
         "http://localhost:3000/itinerary",
         updatedFormData
       );
+
       console.log("Itinerary created successfully:", response.data);
       navigate("/itinerary"); // Redirect to the itinerary list page
     } catch (error) {
@@ -96,6 +96,10 @@ const ItineraryForm = () => {
 
   const handleChooseActivities = () => {
     const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string with comma
+    const selectedActivityIds = selectedActivities.map(
+      (activity) => activity._id // Directly map from selectedActivities to get IDs
+    );
+    console.log(selectedActivityIds);
     navigate(
       `/itinerary/create/selectActivity?locations=${encodeURIComponent(
         locationsQuery
@@ -103,13 +107,17 @@ const ItineraryForm = () => {
       {
         state: {
           selectedActivities,
+          selectedActivityIds,
           formData,
           returnTo: "create", // Indicate that the source is from the edit
         },
       } // Pass the selected activities and form data
     );
   };
-
+  const handleCancel = () => {
+    localStorage.clear();
+    navigate("/itinerary");
+  };
   return (
     <form onSubmit={handleSubmit}>
       <h2>Create New Itinerary</h2>
@@ -229,6 +237,9 @@ const ItineraryForm = () => {
           required
         />
       </label>
+      <button type="button" onClick={handleCancel}>
+        Cancel
+      </button>
       <button type="submit">Create Itinerary</button>
     </form>
   );

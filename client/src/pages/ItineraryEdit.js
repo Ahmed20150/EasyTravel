@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../css/ItineraryEdit.css"; // Import the CSS file
 
 const ItineraryEdit = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation
   const { id } = useParams(); // Get itinerary ID from the URL
+  const location = useLocation();
   const [formData, setFormData] = useState({
     activities: [], // Keep this as an array to store Activity IDs
     locationsToVisit: [],
@@ -23,25 +24,57 @@ const ItineraryEdit = () => {
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/itinerary/${id}`
-        );
+        // Check for existing data in local storage
+        const existingData = localStorage.getItem("formData");
 
-        const itinerary = response.data;
-        // Populate the form with existing data
-        setFormData({
-          activities: itinerary.activities.map((activity) => activity.activity),
-          locationsToVisit: itinerary.locationsToVisit,
-          timeline: itinerary.timeline,
-          duration: itinerary.duration,
-          languageOfTour: itinerary.languageOfTour,
-          priceOfTour: itinerary.priceOfTour,
-          availableDates: itinerary.availableDates,
-          availableTimes: itinerary.availableTimes,
-          accessibility: itinerary.accessibility,
-          pickupLocation: itinerary.pickupLocation,
-          dropoffLocation: itinerary.dropoffLocation,
-        });
+        if (existingData) {
+          // If local storage has data, parse it and set the form data
+          const parsedData = JSON.parse(existingData);
+          setFormData(parsedData);
+          console.log("Loaded data from local storage:", parsedData);
+        } else {
+          // If no data in local storage, fetch from API
+          const response = await axios.get(
+            `http://localhost:3000/itinerary/${id}`
+          );
+          const itinerary = response.data;
+
+          // Populate the form with existing data
+          const fetchedFormData = {
+            activities: itinerary.activities.map(
+              (activity) => activity.activity
+            ),
+            locationsToVisit: Array.isArray(itinerary.locationsToVisit)
+              ? itinerary.locationsToVisit
+              : [],
+            timeline: itinerary.timeline,
+            duration: itinerary.duration,
+            languageOfTour: itinerary.languageOfTour,
+            priceOfTour: itinerary.priceOfTour,
+            availableDates: itinerary.availableDates,
+            availableTimes: itinerary.availableTimes,
+            accessibility: itinerary.accessibility,
+            pickupLocation: itinerary.pickupLocation,
+            dropoffLocation: itinerary.dropoffLocation,
+          };
+
+          // Set the fetched data as the form data
+          setFormData(fetchedFormData);
+
+          // Save to local storage for future use
+          localStorage.setItem("formData", JSON.stringify(fetchedFormData));
+          console.log(
+            `Local storage data set: ${JSON.stringify(fetchedFormData)}`
+          );
+        }
+
+        // If there are selected activities passed back, update the activities
+        if (location.state?.selectedActivities) {
+          setFormData((prevState) => ({
+            ...prevState,
+            activities: location.state.selectedActivities, // Update with selected activities
+          }));
+        }
       } catch (error) {
         console.error("Error fetching itinerary:", error);
         alert("Failed to fetch itinerary data.");
@@ -49,11 +82,13 @@ const ItineraryEdit = () => {
     };
 
     fetchItinerary();
-  }, [id]);
+  }, [id, location.state]); // Add location.state as a dependency
+  // Add location.state as a dependency
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Update the formData accordingly based on input name
     if (
       name === "locationsToVisit" ||
       name === "availableDates" ||
@@ -61,7 +96,7 @@ const ItineraryEdit = () => {
     ) {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: value.split(",").map((item) => item.trim()),
+        [name]: value, // Store the full input as a string
       }));
     } else {
       setFormData((prevState) => ({
@@ -72,17 +107,30 @@ const ItineraryEdit = () => {
   };
 
   const handleSubmit = async (e) => {
+    localStorage.clear();
+
     e.preventDefault(); // Prevent the default form submission
     console.log("Updating itinerary:", formData);
 
-    try {
-      const updatedFormData = {
-        ...formData,
-        activities: formData.activities.map((activity) => ({
-          activity,
-        })), // Create an array of objects for the activities
-      };
+    // Prepare updatedFormData
+    const updatedFormData = {
+      ...formData,
+      // If locationsToVisit is an array, you might want to keep it as is
+      locationsToVisit: Array.isArray(formData.locationsToVisit)
+        ? formData.locationsToVisit // Keep as is if already an array
+        : formData.locationsToVisit.split(",").map((item) => item.trim()), // Otherwise, split as needed
+      availableDates: Array.isArray(formData.availableDates)
+        ? formData.availableDates // Keep as is if already an array
+        : formData.availableDates.split(",").map((item) => item.trim()), // Split if it's not an array
+      availableTimes: Array.isArray(formData.availableTimes)
+        ? formData.availableTimes // Keep as is if already an array
+        : formData.availableTimes.split(",").map((item) => item.trim()), // Split if it's not an array
+      activities: formData.activities.map((activity) => ({
+        activity,
+      })), // Map activities to the required format
+    };
 
+    try {
       const response = await axios.put(
         `http://localhost:3000/itinerary/${id}`,
         updatedFormData
@@ -102,19 +150,15 @@ const ItineraryEdit = () => {
     }
   };
 
-  const handleChooseActivities = async () => {
-    const updatedFormData = {
-      ...formData,
-      activities: formData.activities.map((activity) => ({
-        activity: activity,
-      })),
-    };
-
-    const response = await axios.put(
-      `http://localhost:3000/itinerary/${id}`,
-      updatedFormData
+  const handleChooseActivities = () => {
+    // Store the current formData in local storage
+    localStorage.setItem("formData", JSON.stringify(formData));
+    alert("Activities saved to local storage!");
+    const locationsQuery = formData.locationsToVisit.join(",");
+    const selectedActivityIds = formData.activities.map(
+      (activity) => activity._id // Ensure you are mapping to the correct property
     );
-    const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string
+
     navigate(
       `/itinerary/create/selectActivity?locations=${encodeURIComponent(
         locationsQuery
@@ -122,7 +166,7 @@ const ItineraryEdit = () => {
       {
         state: {
           returnTo: "edit", // Indicate that this is from the edit page
-          selectedActivities: formData.activities, // Pass current selected activities
+          selectedActivityIds, // Pass current selected activity IDs
           formData: { ...formData }, // Pass the full form data
           itineraryId: id,
         },
@@ -130,7 +174,10 @@ const ItineraryEdit = () => {
     );
   };
 
-  console.log("Activities:", formData.activities);
+  const handleCancel = () => {
+    localStorage.clear();
+    navigate("/itinerary");
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -140,7 +187,7 @@ const ItineraryEdit = () => {
         <input
           type="text"
           name="locationsToVisit"
-          value={formData.locationsToVisit.join(", ")}
+          value={formData.locationsToVisit} // Use the string value directly
           onChange={handleChange}
         />
       </label>
@@ -214,7 +261,7 @@ const ItineraryEdit = () => {
         <input
           type="text"
           name="availableDates"
-          value={formData.availableDates.join(", ")} // join for display
+          value={formData.availableDates} // Use the string value directly
           onChange={handleChange}
         />
       </label>
@@ -223,7 +270,7 @@ const ItineraryEdit = () => {
         <input
           type="text"
           name="availableTimes"
-          value={formData.availableTimes.join(", ")} // join for display
+          value={formData.availableTimes} // Use the string value directly
           onChange={handleChange}
         />
       </label>
@@ -257,6 +304,9 @@ const ItineraryEdit = () => {
           required
         />
       </label>
+      <button type="button" onClick={handleCancel}>
+        Cancel Changes
+      </button>
       <button type="submit">Update Itinerary</button>
     </form>
   );

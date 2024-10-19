@@ -15,13 +15,13 @@ const SelectActivity = () => {
     : []; // Split the string into an array
 
   const { state } = location; // Get state from location
-  const initialSelectedActivities = state?.selectedActivities || []; // Get selected activities from state
+  const initialSelectedActivities = state?.selectedActivityIds || []; // Get selected activities from state
   const initialFormData = state?.formData || {}; // Get form data from state
 
   const [activities, setActivities] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState(
     initialSelectedActivities
-  ); // Set initial selected activities
+  );
 
   useEffect(() => {
     // Fetch all activities from the API

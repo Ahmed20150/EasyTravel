@@ -87,6 +87,10 @@ const ActivityForm = () => {
       console.error("Error creating activity:", error);
     }
   };
+  const handleCancel = () => {
+    localStorage.clear();
+    navigate("/activities");
+  };
   return (
     <div className="activity-form">
       <h2>Create a New Activity</h2>
@@ -196,6 +200,9 @@ const ActivityForm = () => {
           }
         />
       </label>
+      <button type="button" onClick={handleCancel}>
+        Cancel
+      </button>
       <button type="button" onClick={handleButtonClick}>
         Create
       </button>

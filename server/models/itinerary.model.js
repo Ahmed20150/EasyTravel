@@ -7,19 +7,73 @@ const itinerarySchema = new mongoose.Schema({
       activity: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Activity",
-      }, // Reference to the Activity model
+        required: true, // Ensure that an activity reference is provided
+      },
     },
   ],
-  locationsToVisit: [String], // Array of location names or addresses
-  timeline: { type: String, required: true },
-  duration: { type: Number, required: true }, // Duration in hours
-  languageOfTour: { type: String, required: true },
-  priceOfTour: { type: Number, required: true },
-  availableDates: [Date], // Array of available dates
-  availableTimes: [String], // Array of available times
-  accessibility: { type: String, required: true }, // Accessibility details
-  pickupLocation: { type: String, required: true },
-  dropoffLocation: { type: String, required: true },
+  locationsToVisit: {
+    type: [String],
+    validate: {
+      validator: (v) => v.every((location) => typeof location === "string"), // Ensure all locations are strings
+    },
+  },
+  timeline: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (v) => typeof v === "string", // Ensure it's a string
+    },
+  },
+  duration: {
+    type: Number,
+    required: true,
+    min: 0, // Duration cannot be negative
+  },
+  languageOfTour: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (v) => typeof v === "string", // Ensure it's a string
+    },
+  },
+  priceOfTour: {
+    type: Number,
+    required: true,
+    min: 0, // Price cannot be negative
+  },
+  availableDates: {
+    type: [Date],
+    validate: {
+      validator: (v) => v.every((date) => date instanceof Date), // Ensure all dates are valid Date objects
+    },
+  },
+  availableTimes: {
+    type: [String],
+    validate: {
+      validator: (v) => v.every((time) => typeof time === "string"), // Ensure all times are strings
+    },
+  },
+  accessibility: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (v) => typeof v === "string", // Ensure it's a string
+    },
+  },
+  pickupLocation: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (v) => typeof v === "string", // Ensure it's a string
+    },
+  },
+  dropoffLocation: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (v) => typeof v === "string", // Ensure it's a string
+    },
+  },
 });
 
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);

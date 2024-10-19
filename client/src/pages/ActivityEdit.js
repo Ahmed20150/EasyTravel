@@ -100,7 +100,10 @@ const ActivityEdit = () => {
   if (!activity) {
     return <div>Loading...</div>; // Display loading state while fetching
   }
-
+  const handleCancel = () => {
+    localStorage.clear();
+    navigate("/activities");
+  };
   return (
     <div className="activity">
       <h1>Edit Activity</h1>
@@ -204,6 +207,9 @@ const ActivityEdit = () => {
             onChange={handleChange}
           />
         </div>
+        <button type="button" onClick={handleCancel}>
+          Cancel
+        </button>
         <button type="submit">Save Changes</button>
       </form>
     </div>
