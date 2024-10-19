@@ -31,15 +31,12 @@ const sellerSchema = new mongoose.Schema({
     },
     acceptedTerms: { 
         type: Boolean, 
-        default: false },
+        default: false 
+    },
     profilePicture: {
         type: String, // Store image as base64 string
         required: false
     },
-    firstTimeLogin: { 
-        type: Number,
-         default: 0
-         },
     status: {
         type: String,
         enum: ['accepted', 'rejected', 'pending'],

@@ -17,13 +17,11 @@ import ViewProfilePageSeller from './pages/ViewProfilePageSeller';
 import FileUpload from './components/fileUpload';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PendingRequestsPage from './pages/PendingRequestsPage';
+import TouristProfile from './pages/TouristProfile';
 
 
 //TODO add navigation buttons between all pages
-import GeneralSignUpForm from './components/GeneralSignUpForm';
-import ForgotPasswordForm from './components/ForgotPasswordForm';
-import PendingRequestsPage from './pages/PendingRequestsPage';
-import TouristProfile from './pages/TouristProfile';
 
 
 
