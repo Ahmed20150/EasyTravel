@@ -278,3 +278,345 @@ app.get('/api/tourists', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
+
+
+
+
+////////////// category ////////////
+app.post("/api/category", async (req, res) => {
+  try {
+    // Check if category already exists
+    const existingCategory = await Category.findOne({ name: req.body.name });
+    
+    if (existingCategory) {
+      return res.status(400).json({ message: "Category already exists" });
+    }
+
+    // Create the new category
+    const category = await Category.create(req.body);
+    res.status(200).json(category);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+app.get("/api/category", async (req, res) =>{
+  try{
+    const category = await Category.find({});
+    res.status(200).json(category);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+app.put("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedCategory = await Category.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated category
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+app.delete("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Perform the deletion
+    await Category.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+////////// preference /////////
+
+app.post("/api/preference", async (req, res) => {
+  try {
+    // Check if the preference category already exists
+    const existingPreference = await Preference.findOne({ name: req.body.name });
+    
+    if (existingPreference) {
+      return res.status(400).json({ message: "preference already exists" });
+    }
+
+    // Create a new preference if it doesn't exist
+    const preference = await Preference.create(req.body);
+    res.status(200).json(preference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/api/preference", async (req, res) =>{
+  try{
+    const preference = await Preference.find({});
+    res.status(200).json(preference);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+
+
+
+app.put("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedPreference = await Preference.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated preference
+    res.status(200).json(updatedPreference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+////////////// category ////////////
+app.post("/api/category", async (req, res) => {
+  try {
+    // Check if category already exists
+    const existingCategory = await Category.findOne({ name: req.body.name });
+    
+    if (existingCategory) {
+      return res.status(400).json({ message: "Category already exists" });
+    }
+
+    // Create the new category
+    const category = await Category.create(req.body);
+    res.status(200).json(category);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+app.get("/api/category", async (req, res) =>{
+  try{
+    const category = await Category.find({});
+    res.status(200).json(category);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+app.put("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedCategory = await Category.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated category
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+app.delete("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Perform the deletion
+    await Category.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+////////// preference /////////
+
+app.post("/api/preference", async (req, res) => {
+  try {
+    // Check if the preference category already exists
+    const existingPreference = await Preference.findOne({ name: req.body.name });
+    
+    if (existingPreference) {
+      return res.status(400).json({ message: "preference already exists" });
+    }
+
+    // Create a new preference if it doesn't exist
+    const preference = await Preference.create(req.body);
+    res.status(200).json(preference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/api/preference", async (req, res) =>{
+  try{
+    const preference = await Preference.find({});
+    res.status(200).json(preference);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+
+
+
+app.put("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedPreference = await Preference.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated preference
+    res.status(200).json(updatedPreference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+app.delete("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Perform the deletion
+    await Preference.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Preference tag deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Perform the deletion
+    await Preference.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Preference tag deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
