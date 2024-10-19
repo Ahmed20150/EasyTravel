@@ -15,20 +15,25 @@ app.use('/admin', adminRoutes);
 
 //connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
 app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
+const activityRoutes = require("./routes/activity.routes.js");
+const itineraryRoutes = require("./routes/itinerary.routes.js");
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+  res.send("Hello World!");
 });
 
+app.use("/activities", activityRoutes);
+app.use("/itinerary", itineraryRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL").then(() => {
 
     console.log("Connected to the database!");
-}).catch((err) => {
+  })
+  .catch((err) => {
     console.log("Cannot connect to the database!", err);
 });
 

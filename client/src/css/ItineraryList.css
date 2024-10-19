@@ -1,0 +1,80 @@
+/* src/components/Itineraries/ItineraryList.css */
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin: 20px 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+li {
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #2980b9;
+}
+
+p {
+  margin: 5px 0;
+  font-size: 1em;
+  color: #34495e;
+}
+.itinerary-list {
+    display: flex;
+    /* Use flexbox */
+    flex-wrap: wrap;
+    /* Allow wrapping to the next line */
+    justify-content: space-between;
+    /* Adjust space distribution */
+    gap: 0;
+    /* Set gap to 0 to remove space between cards */
+    padding: 10px;
+    /* Padding around the list */
+}
+
+.itinerary-card {
+    flex: 1 1 calc(45% - 0px);
+    /* Set each card to take about 45% of the container */
+    max-width: 400px;
+    /* Optional: Set a maximum width for the cards */
+    min-width: 300px;
+    /* Minimum width */
+    box-sizing: border-box;
+    /* Ensure padding and border are included in width/height */
+    border: 1px solid #bdc3c7;
+    /* Optional: Add a border to the cards */
+    border-radius: 8px;
+    /* Rounded corners */
+    padding: 10px;
+    /* Padding inside cards */
+    background-color: #ecf0f1;
+    /* Card background color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    margin: 0;
+    /* Remove any margin */
+}
+
+@media (max-width: 600px) {
+    .itinerary-card {
+        flex: 1 1 100%;
+        /* Full width on small screens */
+    }
+}
+.button-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
