@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
 const adminRoutes = require('./routes/admin.routes.js');
@@ -21,7 +22,7 @@ const itineraryRoutes = require("./routes/itinerary.routes.js");
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-
+app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 
@@ -35,9 +36,7 @@ mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.
   })
   .catch((err) => {
     console.log("Cannot connect to the database!", err);
-});
-
-
+  });
 
 //Create Tourist
 app.post('/api/tourists', async (req, res) => {

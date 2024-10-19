@@ -12,6 +12,7 @@ import ItineraryEdit from "./pages/ItineraryEdit";
 import ItineraryForm from "./pages/ItineraryForm";
 import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
+import MuseumsList from "./pages/museumsList";
 import "./App.css";
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/add-tourismGoverner" element={<AddNewTourismGoverner />} />
           <Route path="/view-users" element={<ViewUsers />} />
           <Route path="/view-requests" element={<ViewRequest />} />
+          <Route path="/museums" element={<MuseumsList />} />
         </Routes>
       </div>
     </Router>
