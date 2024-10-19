@@ -42,6 +42,13 @@ const advertiserSchema = new mongoose.Schema({
         enum: ['accepted', 'rejected', 'pending'],
         default: 'pending'
     },
+    firstTimeLogin: {  //used to determine if terms & conditions will be displayed & if user will be redirected to change password
+        type: Number,
+        default: 0 //Possible values: 0 (account pending), -1(account rejected),
+                    //1 (account accepted, but has not accepted terms), 2 (account accepted and terms accepted (first time login)),
+                    //3 (Regular User (Not first time Login))
+    },
+
 });
 
 const Advertiser = mongoose.model("Advertiser", advertiserSchema); //store in table "Tourist"

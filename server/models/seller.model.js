@@ -43,12 +43,13 @@ const sellerSchema = new mongoose.Schema({
         enum: ['accepted', 'rejected', 'pending'],
         default: 'pending'
     },
-    file: {
-        type: String, // store the file path or URL as a string
-        required: false
+    firstTimeLogin: {  //used to determine if terms & conditions will be displayed & if user will be redirected to change password
+        type: Number,
+        default: 0 //Possible values: 0 (account pending), -1(account rejected),
+                    //1 (account accepted, but has not accepted terms), 2 (account accepted and terms accepted (first time login)),
+                    //3 (Regular User (Not first time Login))
     },
-    // id: fileSchema,
-    // taxCard: fileSchema,
+
 });
 
 const Seller = mongoose.model("Seller", sellerSchema); //store in table "Tourist"
