@@ -10,8 +10,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
-
-
+import Categories from './pages/Categories';
+import PreferencePage from './pages/PreferencePage';
 
 function App() {
   return (
@@ -24,6 +24,8 @@ function App() {
             <Route path="/changePassword"element={<ChangePassword />}/>
             <Route path="/home"element={<TempHomePage />}/>
             <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
+            <Route path='/Categorycontrol' element={< Categories/>} />
+            <Route path="/preferences" element={<PreferencePage />} />
           </Routes>
       </BrowserRouter>
     </div>

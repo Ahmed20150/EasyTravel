@@ -15,8 +15,8 @@ const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail')
 
-
-
+const Category= require("./models/category.model.js");
+const Preference= require("./models/preference.model.js");
 
 //connect admin.routes.js to index.js
 app.use('/admin', adminRoutes);
