@@ -18,10 +18,21 @@ router.post("/", async (req, res) => {
       tags,
     } = req.body;
 
-    if (!name || !description || !location || !openingHours || !ticketPrices) {
+    // Ensure openingHours has both 'from' and 'to' values
+    if (
+      !name ||
+      !description ||
+      !location ||
+      !openingHours.from ||
+      !openingHours.to ||
+      !ticketPrices
+    ) {
       return res
         .status(400)
-        .json({ message: "All required fields must be filled." });
+        .json({
+          message:
+            "All required fields must be filled, including opening hours.",
+        });
     }
 
     const existingMuseum = await Museum.findOne({ name });
@@ -35,7 +46,7 @@ router.post("/", async (req, res) => {
       name,
       description,
       location,
-      openingHours,
+      openingHours, // Include 'from' and 'to' times
       ticketPrices, // Includes prices for foreigner, native, and student
       picture: picture || "",
       tags: tags || [], // Option to add tags
@@ -83,10 +94,21 @@ router.put("/:id", async (req, res) => {
       tags,
     } = req.body;
 
-    if (!name || !description || !location || !openingHours || !ticketPrices) {
+    // Ensure openingHours has both 'from' and 'to' values
+    if (
+      !name ||
+      !description ||
+      !location ||
+      !openingHours.from ||
+      !openingHours.to ||
+      !ticketPrices
+    ) {
       return res
         .status(400)
-        .json({ message: "All required fields must be filled." });
+        .json({
+          message:
+            "All required fields must be filled, including opening hours.",
+        });
     }
 
     const existingMuseumByName = await Museum.findOne({
@@ -103,7 +125,7 @@ router.put("/:id", async (req, res) => {
       name,
       description,
       location,
-      openingHours,
+      openingHours, // Update 'from' and 'to' times
       ticketPrices, // Update prices
       picture: picture || "",
       tags: tags || [], // Update tags

@@ -341,3 +341,17 @@ button:hover {
   text-align: center;
 }
 
+.time-range{
+  text-align: left;
+  color: gray;
+  padding-bottom: 10px;
+}
+
+input[type="time"] {
+  border: 1px solid #bfc9e2;
+  border-radius: 5px;
+  height: 28px;
+  padding: 5px;
+  background: transparent;
+  width: 20%;
+}

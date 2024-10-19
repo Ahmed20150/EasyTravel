@@ -14,7 +14,10 @@ const AddMuseumForm = ({ refreshMuseums }) => {
     name: "",
     location: "",
     description: "",
-    openingHours: "",
+    openingHours: {
+      from: "",
+      to: "",
+    },
     picture: "", // Add picture URL field
     ticketPrices: {
       foreigner: "",
@@ -33,7 +36,8 @@ const AddMuseumForm = ({ refreshMuseums }) => {
       !newMuseum.name ||
       !newMuseum.location ||
       !newMuseum.description ||
-      !newMuseum.openingHours ||
+      !newMuseum.openingHours.from || // Validate openingHours from time
+      !newMuseum.openingHours.to || // Validate openingHours to time
       !newMuseum.picture || // Validate picture URL
       !newMuseum.ticketPrices.foreigner ||
       !newMuseum.ticketPrices.native ||
@@ -51,7 +55,10 @@ const AddMuseumForm = ({ refreshMuseums }) => {
           name: "",
           location: "",
           description: "",
-          openingHours: "",
+          openingHours: {
+            from: "",
+            to: "",
+          },
           picture: "",
           ticketPrices: {
             foreigner: "",
@@ -105,15 +112,36 @@ const AddMuseumForm = ({ refreshMuseums }) => {
         rows="4"
         required
       />
-      <input
-        type="text"
-        value={newMuseum.openingHours}
-        onChange={(e) =>
-          setNewMuseum({ ...newMuseum, openingHours: e.target.value })
-        }
-        placeholder="Opening Hours"
-        required
-      />
+
+      {/* Time range for opening hours */}
+      <div className="time-range">
+        <label>Opening Hours From:</label>
+        <input
+          type="time"
+          value={newMuseum.openingHours.from}
+          onChange={(e) =>
+            setNewMuseum({
+              ...newMuseum,
+              openingHours: { ...newMuseum.openingHours, from: e.target.value },
+            })
+          }
+          required
+        />
+
+        <label>To:</label>
+        <input
+          type="time"
+          value={newMuseum.openingHours.to}
+          onChange={(e) =>
+            setNewMuseum({
+              ...newMuseum,
+              openingHours: { ...newMuseum.openingHours, to: e.target.value },
+            })
+          }
+          required
+        />
+      </div>
+
       <input
         type="text"
         value={newMuseum.picture} // Input for image URL

@@ -15,8 +15,14 @@ const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
     required: true,
   },
   openingHours: {
-    type: String,
-    required: true,
+    from: {
+      type: String,
+      required: true,
+    },
+    to: {
+      type: String,
+      required: true,
+    },
   },
   ticketPrices: {
     foreigner: {

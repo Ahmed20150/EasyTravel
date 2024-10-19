@@ -98,20 +98,46 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
             />
             <input
               type="text"
-              value={newData.openingHours}
-              onChange={(e) =>
-                setNewData({ ...newData, openingHours: e.target.value })
-              }
-              placeholder="Opening Hours"
-            />
-            <input
-              type="text"
               value={newData.picture} // Input for image URL
               onChange={(e) =>
                 setNewData({ ...newData, picture: e.target.value })
               }
               placeholder="Image URL"
             />
+            {/* Time range for opening hours */}
+            <div className="time-range">
+              <label>Opening Hours From:</label>
+              <input
+                type="time"
+                value={newData.openingHours.from}
+                onChange={(e) =>
+                  setNewData({
+                    ...newData,
+                    openingHours: {
+                      ...newData.openingHours,
+                      from: e.target.value,
+                    },
+                  })
+                }
+                required
+              />
+              <label>To:</label>
+              <input
+                type="time"
+                value={newData.openingHours.to}
+                onChange={(e) =>
+                  setNewData({
+                    ...newData,
+                    openingHours: {
+                      ...newData.openingHours,
+                      to: e.target.value,
+                    },
+                  })
+                }
+                required
+              />
+            </div>
+
             <input
               type="number"
               value={newData.ticketPrices.foreigner}
@@ -181,7 +207,10 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
             <h2>{museum.name}</h2>
             <p>{museum.location}</p>
             <p>{museum.description}</p>
-            <p>Opening Hours: {museum.openingHours}</p>
+            <p>
+              Opening Hours: {museum.openingHours.from} -{" "}
+              {museum.openingHours.to}
+            </p>{" "}
             <p>
               Ticket: Foreigner = ${museum.ticketPrices.foreigner}
               <br />
