@@ -1,28 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import ActivityList from "./pages/ActivityList";
+import ActivityForm from "./pages/ActivityForm";
+import ActivityEdit from "./pages/ActivityEdit";
+import ItineraryEdit from "./pages/ItineraryEdit";
+import ItineraryForm from "./pages/ItineraryForm";
+import ItineraryList from "./pages/ItineraryList";
+import SelectActivity from "./pages/SelectActivity";
+import "./App.css";
 
-
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/activities" element={<ActivityList />} />
+          <Route path="/activities/create" element={<ActivityForm />} />
+          <Route path="/activities/edit/:id" element={<ActivityEdit />} />
+          <Route path="/itinerary" element={<ItineraryList />} />
+          <Route path="/itinerary/create" element={<ItineraryForm />} />
+          <Route
+            path="/itinerary/create/selectActivity"
+            element={<SelectActivity />}
+          />
+          <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
