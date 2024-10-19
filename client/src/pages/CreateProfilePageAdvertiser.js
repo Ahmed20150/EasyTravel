@@ -82,6 +82,10 @@ const CreateProfilePageAdvertiser = () => {
     }
   };
 
+  const handleCancelEdit = (e) => {
+    navigate('/view-profileAdv', { state: { username } });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username) {
@@ -130,6 +134,8 @@ const CreateProfilePageAdvertiser = () => {
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
         isEditing={isEditingProfile}
       />
+
+      <button onClick={handleCancelEdit}>Cancel</button>
     </div>
   );
 };

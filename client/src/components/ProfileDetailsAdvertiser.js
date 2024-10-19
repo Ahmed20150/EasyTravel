@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ProfileDetailsAdvertiser = ({ profile, onEditClick }) => {
 
@@ -65,6 +66,7 @@ const ProfileDetailsAdvertiser = ({ profile, onEditClick }) => {
       )}
       
       <button onClick={onEditClick}>Edit Profile</button>
+      <Link to="/home"><button>Back</button> </Link>
     </div>
   );
 };

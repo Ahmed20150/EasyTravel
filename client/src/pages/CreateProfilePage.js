@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useLocation, useNavigate, Link } from 'react-router-dom'; // Import useNavigate
 import ProfileForm from '../components/ProfileForm';
 
 const CreateProfilePage = () => {
@@ -72,6 +72,10 @@ const CreateProfilePage = () => {
     }
   };
 
+  const handleCancelEdit = (e) => {
+    navigate('/view-profile', { state: { username } });
+  };
+
   return (
     <div>
       <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2> 
@@ -83,6 +87,8 @@ const CreateProfilePage = () => {
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
         isEditing={isEditingProfile}
       />
+      <button onClick={handleCancelEdit}>Cancel</button>
+
     </div>
   );
 };

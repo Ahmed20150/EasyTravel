@@ -35,6 +35,8 @@ const ViewProfileSellerPage = () => {
   ) : (
     <p>Loading...</p>
   );
+
+  
 };
 
 export default ViewProfileSellerPage;

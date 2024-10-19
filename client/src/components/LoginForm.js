@@ -80,6 +80,7 @@ export default function Login() {
       const response = await axios.post('http://localhost:3000/auth/login', user); //retrieve data from server
       const accessToken = response.data.accessToken; //capture accessToken from response
       const userType = response.data.userType;
+      const firstTimeLogin = response.data.firstTimeLogin;
       console.log('Successful Login!', response.data);
       toast.success('Successful Login!');
       console.log('Access Token:', accessToken);
@@ -94,20 +95,61 @@ export default function Login() {
       setPassword('');
 
       // TODO based on userType navigate to different pages
-      if (userType == "tourGuide"){
-        navigate('/view-profile', { state: { username } });
+
+      console.log('User Type:', userType, 'First Time Login:', firstTimeLogin);
+      if(firstTimeLogin === 2){ // forward to home page (add to it view profile page)      
+        setTimeout(() => {
+          navigate("/home" , { state: { username } });
+        }, 2000); 
       }
-      else if(userType == "advertiser"){
-        navigate('/view-profileAdv', { state: { username } });
+      else if(firstTimeLogin === 1){ //forward to terms and conditions page, then create profile, then home page
+        
+      if (userType === "tourGuide"){
+        navigate('/create-profile', { state: { username } });
       }
-      else if(userType == "seller"){
-        navigate('/view-profileSeller', { state: { username } });
+      else if(userType === "advertiser"){
+        navigate('/create-profileAdv', { state: { username } });
+      }
+      else if(userType === "seller"){ // forward to terms and conditions page, then create profile
+        navigate('/create-profileSeller', { state: { username } });
       }
       else{
         setTimeout(() => {
-          navigate("/login");
+          navigate("/home");
         }, 2000); 
 }
+      }
+      else if(firstTimeLogin === 0){ //Account is still pending
+        toast.error('Account is still pending');
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }
+      else{
+        toast.error('Account has been rejected');
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }
+
+
+
+
+
+//       if (userType === "tourGuide"){
+//         navigate('/view-profile', { state: { username } });
+//       }
+//       else if(userType === "advertiser"){
+//         navigate('/view-profileAdv', { state: { username } });
+//       }
+//       else if(userType === "seller" &&  firstTimeLogin === 1){ // forward to terms and conditions page, then create profile
+//         navigate('/create-profileSeller', { state: { username } });
+//       }
+//       else{
+//         setTimeout(() => {
+//           navigate("/home");
+//         }, 2000); 
+// }
  } catch (error) {
       toast.error('Invalid Username or Password');
       console.error('Error:', error.response ? error.response.data : error.message);

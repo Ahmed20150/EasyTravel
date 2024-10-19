@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ProfileDetails = ({ profile, onEditClick }) => {
   return (
@@ -17,6 +18,7 @@ const ProfileDetails = ({ profile, onEditClick }) => {
       <p>Previous Work: {profile.previousWork || 'None'}</p>
       <p>Date of Birth: {new Date(profile.dateOfBirth).toLocaleDateString()}</p>
       <button onClick={onEditClick}>Edit Profile</button>
+      <Link to="/home"><button>Back</button></Link>
     </div>
   );
 };

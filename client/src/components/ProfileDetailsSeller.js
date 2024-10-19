@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
 const ProfileDetailsSeller = ({ profile, onEditClick }) => {
   return (
@@ -17,6 +18,8 @@ const ProfileDetailsSeller = ({ profile, onEditClick }) => {
       <p>Mobile: {profile.mobileNumber ? `0${profile.mobileNumber}` : 'Not provided'}</p>
       <p>Date of Birth: {new Date(profile.dateOfBirth).toLocaleDateString()}</p>
       <button onClick={onEditClick}>Edit Profile</button>
+      <Link to="/home"><button>Back</button></Link>
+
     </div>
   );
 };

@@ -64,6 +64,25 @@ const TempHomePage = () => {
         // console.log(fileName);
       };
 
+      const handleViewProfile = () => {
+        const loggedInUser = Cookies.get('username');
+        const userType = Cookies.get('userType');
+        if (loggedInUser) {
+          if(userType === "tourGuide"){
+            navigate('/view-profile', { state: { username: loggedInUser } });
+          }
+          else if(userType === "advertiser"){
+            navigate('/view-profileAdv', { state: { username: loggedInUser } });
+          }
+          else if(userType === "seller"){
+            navigate('/view-profileSeller', { state: { username: loggedInUser } });
+          }
+          else{
+            console.log("User Type not found");
+          }
+      }
+    }
+
     const [username, setUsername] = useState(Cookies.get('username'));
     const [userType, setUserType] = useState(Cookies.get('userType'));
     return (
@@ -71,6 +90,7 @@ const TempHomePage = () => {
             <h1>Welcome {username}, you are an {userType}!!</h1>
             <button onClick={handleLogout}>Logout</button>
             <Link to="/changePassword"><button>Change Password</button></Link>
+            <button onClick={handleViewProfile}>View profile</button>
             <iframe
             src={`data:application/pdf;base64,${base64}`}
             width="100%"

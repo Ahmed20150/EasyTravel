@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProfileFormSeller from '../components/ProfileFormSeller';
+import {Link} from "react-router-dom";
 
 const CreateProfilePageSeller = () => {
   const location = useLocation(); 
@@ -76,6 +77,12 @@ const CreateProfilePageSeller = () => {
       }
     }
   };
+
+  
+  const handleCancelEdit = (e) => {
+    navigate('/view-profileSeller', { state: { username } });
+  };
+
   
   return (
     <div>
@@ -88,6 +95,8 @@ const CreateProfilePageSeller = () => {
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
         isEditing={isEditingProfile}
       />
+      <button onClick={handleCancelEdit}>Cancel</button>
+
     </div>
   );
 };
