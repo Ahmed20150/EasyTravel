@@ -105,13 +105,10 @@ export default function Login() {
       }
       else{
         setTimeout(() => {
-        navigate("/home");
-      }
-      
-      }, 2000); 
-
-
-  } catch (error) {
+          navigate("/login");
+        }, 2000); 
+}
+ } catch (error) {
       toast.error('Invalid Username or Password');
       console.error('Error:', error.response ? error.response.data : error.message);
   }

@@ -45,7 +45,7 @@ const advertiserSchema = new mongoose.Schema({
       type: String,
       enum: ['accepted', 'rejected', 'pending'],
       default: 'pending'
-    }
+    },
     firstTimeLogin: {  //used to determine if terms & conditions will be displayed & if user will be redirected to change password
         type: Number,
         default: 0 //Possible values: 0 (account pending), -1(account rejected),
