@@ -106,8 +106,8 @@ const ItineraryEdit = () => {
     const updatedFormData = {
       ...formData,
       activities: formData.activities.map((activity) => ({
-        activity,
-      })), // Create an array of objects for the activities
+        activity: activity,
+      })),
     };
 
     const response = await axios.put(

@@ -29,10 +29,32 @@ const ActivityForm = () => {
     specialDiscounts: "",
     isBookingOpen: true,
   });
-
   const navigate = useNavigate();
 
-  // Handle form input change
+  const handleLocationSelect = async (lng, lat) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
+      );
+      const data = await response.json();
+      const address = data.features[0].place_name;
+
+      // Update location only without re-rendering entire form
+      setFormData((prevState) => ({
+        ...prevState,
+        location: {
+          address,
+          coordinates: {
+            lat,
+            lng,
+          },
+        },
+      }));
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -52,8 +74,6 @@ const ActivityForm = () => {
       },
     });
   };
-
-  // Handle form submission
   const handleButtonClick = async (e) => {
     e.preventDefault();
     try {
@@ -67,32 +87,6 @@ const ActivityForm = () => {
       console.error("Error creating activity:", error);
     }
   };
-
-  // Handle location selection from Map component
-  const handleLocationSelect = async (lng, lat) => {
-    try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
-      );
-      const data = await response.json();
-      const address = data.features[0].place_name;
-
-      // Update formData with the selected address and coordinates
-      setFormData({
-        ...formData,
-        location: {
-          address: address,
-          coordinates: {
-            lat: lat,
-            lng: lng,
-          },
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    }
-  };
-
   return (
     <div className="activity-form">
       <h2>Create a New Activity</h2>
@@ -125,26 +119,6 @@ const ActivityForm = () => {
           placeholder="Location"
           value={formData.location.address} // Corrected to display selected address
           readOnly
-        />
-      </label>
-      <label>
-        Latitude:
-        <input
-          type="number"
-          step="any"
-          name="lat" // Adjusted here
-          value={formData.location.coordinates.lat}
-          onChange={handleCoordinatesChange}
-        />
-      </label>
-      <label>
-        Longitude:
-        <input
-          type="number"
-          step="any"
-          name="lng" // Adjusted here
-          value={formData.location.coordinates.lng}
-          onChange={handleCoordinatesChange}
         />
       </label>
       <label>

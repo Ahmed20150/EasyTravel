@@ -1,30 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import "../css/ActivityEdit.css";
+import Map from "../components/Map";
+import "../css/ActivityForm.css"; // Adjusted path to the CSS file
+import mapboxgl from "mapbox-gl";
+
+// Set your Mapbox access token
+mapboxgl.accessToken =
+  "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
 
 const ActivityEdit = () => {
   const { id } = useParams(); // Get the ID from URL params
   const [activity, setActivity] = useState(null); // State to hold a single activity
   const navigate = useNavigate(); // Use useNavigate for navigation
 
+  // Fetch activity data when the component mounts
   useEffect(() => {
-    fetchActivity(); // Fetch activity when the component mounts
-  }, [id]); // Run the effect when the ID changes
+    const fetchActivity = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/activities/${id}`
+        );
+        setActivity(response.data); // Store the activity in state
+      } catch (error) {
+        console.error("Error fetching activity:", error);
+      }
+    };
 
-  // Function to fetch a single activity from the backend
-  const fetchActivity = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/activities/${id}`
-      );
-      setActivity(response.data); // Store the activity in state
-    } catch (error) {
-      console.error("Error fetching activity:", error);
-    }
-  };
+    fetchActivity();
+  }, [id]);
 
-  // Function to handle input changes
+  // Handle form changes (for location, price, and other fields)
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -54,16 +61,41 @@ const ActivityEdit = () => {
     }
   };
 
-  // Function to handle form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     try {
-      await axios.put(`http://localhost:3000/activities/${id}`, activity); // Update the activity
+      await axios.put(`http://localhost:3000/activities/${id}`, activity);
       navigate(`/activities`); // Navigate back to the activities list after update
     } catch (error) {
       console.error("Error updating activity:", error);
     }
   };
+
+  // Handle location selection from the map
+  const handleLocationSelect = useCallback(async (lng, lat) => {
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`
+      );
+      const data = await response.json();
+      const address = data.features[0].place_name;
+
+      // Update the activity location with the selected address and coordinates
+      setActivity((prevActivity) => ({
+        ...prevActivity,
+        location: {
+          address,
+          coordinates: {
+            lat,
+            lng,
+          },
+        },
+      }));
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  }, []);
 
   if (!activity) {
     return <div>Loading...</div>; // Display loading state while fetching
@@ -103,25 +135,10 @@ const ActivityEdit = () => {
             required
           />
         </div>
+        {/* Add the Map component here */}
         <div>
-          <label>Latitude:</label>
-          <input
-            type="number"
-            name="location.coordinates.lat"
-            value={activity.location?.coordinates.lat || ""}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Longitude:</label>
-          <input
-            type="number"
-            name="location.coordinates.lng"
-            value={activity.location?.coordinates.lng || ""}
-            onChange={handleChange}
-            required
-          />
+          <label>Select Location on Map:</label>
+          <Map onLocationSelect={handleLocationSelect} />
         </div>
         <div>
           <label>Price Min:</label>
