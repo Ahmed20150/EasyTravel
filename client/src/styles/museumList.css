@@ -45,6 +45,10 @@ body {
   justify-content: space-between;
 }
 
+.location{
+  color: #6a6a93;
+}
+
 .museum-card:hover {
   transform: scale(1.03);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -348,6 +352,7 @@ button:hover {
 }
 
 input[type="time"] {
+  color: #6c6c7a;
   border: 1px solid #bfc9e2;
   border-radius: 5px;
   height: 28px;

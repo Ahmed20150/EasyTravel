@@ -205,7 +205,7 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
         ) : (
           <div>
             <h2>{museum.name}</h2>
-            <p>{museum.location}</p>
+            <p className="location">{museum.location}</p>
             <p>{museum.description}</p>
             <p>
               Opening Hours: {museum.openingHours.from} -{" "}
