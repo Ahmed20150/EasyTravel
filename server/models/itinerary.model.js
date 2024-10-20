@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const activitySchema = require("./activity.model.js"); // Import the activitySchema
+const { time } = require("console");
 
 const itinerarySchema = new mongoose.Schema({
   activities: [
@@ -25,7 +26,7 @@ const itinerarySchema = new mongoose.Schema({
     },
   },
   duration: {
-    type: Number,
+    type: String,
     required: true,
     min: 0, // Duration cannot be negative
   },

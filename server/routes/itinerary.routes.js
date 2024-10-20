@@ -50,7 +50,8 @@ router.put("/:id", async (req, res) => {
     const updatedItinerary = await Itinerary.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true } // Run validators to ensure schema rules are met
+      { new: true, runValidators: true }
+      // Run validators to ensure schema rules are met
     );
     if (!updatedItinerary) {
       return res.status(404).json({ error: "Itinerary not found." });

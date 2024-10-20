@@ -5,7 +5,7 @@ import Map from "../components/Map";
 import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 import mapboxgl from "mapbox-gl";
 
-//TODO time input should be of type time not string 
+//TODO time input should be of type time not string
 // Set your Mapbox access token
 mapboxgl.accessToken =
   "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
@@ -108,7 +108,7 @@ const ActivityForm = () => {
       <label>
         Time:
         <input
-          type="text"
+          type="time"
           name="time"
           value={formData.time}
           onChange={handleChange}
@@ -184,7 +184,7 @@ const ActivityForm = () => {
       <label>
         Special Discounts:
         <input
-          type="text"
+          type="number"
           name="specialDiscounts"
           value={formData.specialDiscounts}
           onChange={handleChange}

@@ -121,7 +121,7 @@ const ActivityEdit = () => {
         <div>
           <label>Time:</label>
           <input
-            type="text"
+            type="time"
             name="time"
             value={activity.time}
             onChange={handleChange}
@@ -192,7 +192,7 @@ const ActivityEdit = () => {
         <div>
           <label>Special Discounts:</label>
           <input
-            type="text"
+            type="number"
             name="specialDiscounts"
             value={activity.specialDiscounts || ""}
             onChange={handleChange}

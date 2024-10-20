@@ -44,17 +44,26 @@ const activitySchema = new mongoose.Schema({
     },
   },
   specialDiscounts: {
-    type: String,
-    validate: {
-      validator: (v) => typeof v === "string" || v === null, // Ensure it's a string or null
-    },
+    type: Number,
+    min: 0, // Minimum special discount should be 0
+    max: 100, // Maximum special discount should be 100
   },
   isBookingOpen: { type: Boolean, default: true },
 });
 
-// Custom validation for min and max prices
 activitySchema.pre("save", function (next) {
   if (this.price.min > this.price.max) {
+    return next(
+      new Error("Minimum price cannot be greater than maximum price.")
+    );
+  }
+  next();
+});
+
+// Apply the same validation logic for update operations
+activitySchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update.price && update.price.min > update.price.max) {
     return next(
       new Error("Minimum price cannot be greater than maximum price.")
     );

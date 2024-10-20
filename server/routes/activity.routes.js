@@ -46,7 +46,7 @@ router.put("/:id", async (req, res) => {
     const updatedActivity = await Activity.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     );
     res.status(200).json(updatedActivity);
   } catch (err) {
