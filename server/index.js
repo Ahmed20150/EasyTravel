@@ -367,3 +367,34 @@ app.post('/api/activities', async (req, res) => {
       res.status(500).json({ message: err.message });
   }
 });
+
+app.post('/api/itineraries', async (req, res) => {
+  try {
+      const it  = await itineraries.create(req.body);
+      res.status(200).json(it);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+app.put('/api/itineraries/:id', async (req, res) => {
+  try {
+    // Find the itinerary by id and update it with the new data from req.body
+    const updatedItinerary = await Itinerary.findByIdAndUpdate(
+      req.params.id,
+      req.body, // The updated data
+      { new: true, runValidators: true } // Options: return the new document, run validators on update
+    );
+
+    // If itinerary not found, send a 404 error
+    if (!updatedItinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Respond with the updated itinerary
+    res.status(200).json(updatedItinerary);
+  } catch (err) {
+    // If an error occurs, respond with a 500 status and the error message
+    res.status(500).json({ message: err.message });
+  }
+});

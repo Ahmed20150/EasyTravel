@@ -202,6 +202,7 @@ function ViewTables() {
                 <p>Pickup Location: {item.pickupLocation || 'N/A'}</p>
                 <p>Dropoff Location: {item.dropoffLocation || 'N/A'}</p>
                 <p>Number of Purchases: {item.numofpurchases !== undefined ? item.numofpurchases : 'N/A'}</p>
+                <p>status : {item.status || 'activated'}</p>
               </li>
             ))}
           </ul>
