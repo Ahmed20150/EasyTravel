@@ -39,6 +39,11 @@ A. In Client Folder:
 3. All frontend pages should be in "pages" folder 
 
 
+Types of Events in our System:
+1. Activities (Posted by Advertiser)
+2. Itenrary (Posted by tour Guide)
+3. Museums & Historical Places (Posted by Tourism Governor)
+
 Useful resources:
 1. MERN Stack crash course: https://www.youtube.com/watch?v=98BzS5Oz5E4&list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&index=1&ab_channel=NetNinja
 2. MaterialUI docuemntation: https://mui.com/material-ui/getting-started/
