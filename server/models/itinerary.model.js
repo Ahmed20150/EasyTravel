@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const activitySchema = require("./activities.model.js"); // Import the activitySchema
+const activitySchema = require("./activity.model.js"); // Import the activitySchema
 
 const itinerarySchema = new mongoose.Schema({
   activities: [
@@ -20,7 +20,7 @@ const itinerarySchema = new mongoose.Schema({
   accessibility: { type: String, required: true }, // Accessibility details
   pickupLocation: { type: String, required: true },
   dropoffLocation: { type: String, required: true },
-  numofpurchases:{type: Number, default: false}
+  numofpurchases:{type: Number, default: 1},
 });
 
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);

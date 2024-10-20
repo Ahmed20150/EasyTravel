@@ -16,9 +16,9 @@ const activitySchema = new mongoose.Schema({
     },
     category: { type: String, required: true },
     tags: [String],
-    specialDiscounts: String,
     isBookingOpen: { type: Boolean, default: true },
-    numofpurchases:{type: Number, default: false}
+    numofpurchases:{type: Number, default: 1},
+    specialDiscounts: { type: Number, default: 0 }
 });
 
 const Activity = mongoose.model('Activity', activitySchema);

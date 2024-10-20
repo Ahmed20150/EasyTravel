@@ -56,18 +56,37 @@ function ViewTables() {
       // Calculate total itineraries revenue
       itineraries.forEach((itinerary) => {
         const priceOfTour = itinerary.priceOfTour || 0; // Default to 0 if undefined
-        const numofpurchases = itinerary.numofpurchases || 0; // Default to 0 if undefined
+        const numofpurchases = itinerary.numofpurchases || 1; // Default to 0 if undefined
         const subtotal = priceOfTour * numofpurchases;
         it_totalRevenue += subtotal;
       });
 
       // Calculate total museums revenue
       museums.forEach((museum) => {
-        const ticketPrice = museum.ticketPrice || 0; // Default to 0 if undefined
-        const numofpurchases = museum.numofpurchases || 0; // Default to 0 if undefined
-        const subtotal2 = ticketPrice * numofpurchases;
-        museums_totalRevenue += subtotal2;
+        let ticketPrice = 0;
+      
+        // Check the type and assign the correct ticket price
+        switch (museum.type) {
+          case "foreigner":
+            ticketPrice = museum.ticketPrices.foreigner;
+            break;
+          case "native":
+            ticketPrice = museum.ticketPrices.native;
+            break;
+          case "student":
+            ticketPrice = museum.ticketPrices.student;
+            break;
+          default:
+            ticketPrice = 0; // If type is not one of the expected values, default to 0
+        }
+      
+        const numofpurchases = museum.numofpurchases || 1; // Default to 1 if undefined
+        const subtotal2 = ticketPrice * numofpurchases; // Calculate subtotal for this museum
+        museums_totalRevenue += subtotal2; // Add subtotal to total revenue
+        alert(ticketPrice);
+        alert(museums_totalRevenue);
       });
+      
 
       // Update state with the calculated total revenue
       setit_TotalRevenue(it_totalRevenue.toFixed(2)); // Store as a formatted string
@@ -126,6 +145,14 @@ function ViewTables() {
                 <p>Name: {item.name}</p>
                 <p>Description: {item.description}</p>
                 <p>Location: {item.location}</p>
+                <p>
+                  Prices: 
+                  Foreigner: {item.ticketPrices.foreigner}, 
+                  Native: {item.ticketPrices.native}, 
+                  Student: {item.ticketPrices.student}
+                </p>
+
+                <p>Type: {item.type}</p>
                 <p>Number of Purchases: {item.numofpurchases !== undefined ? item.numofpurchases : 'N/A'}</p>
               </li>
             ))}
@@ -171,7 +198,7 @@ function ViewTables() {
                 <p>Price: {JSON.stringify(item.price)}</p>
                 <p>Category: {item.category}</p>
                 <p>Tags: {item.tags.join(', ')}</p>
-                <p>Special Discounts: {item.specialDiscounts || "N/A"}</p>
+                <p>Special Discounts: {item.specialDiscounts || 0}</p>
                 <p>Is Booking Open: {item.isBookingOpen ? "Yes" : "No"}</p>
                 <p>Number of Purchases: {item.numofpurchases !== undefined ? item.numofpurchases : 'N/A'}</p>
               </li>

@@ -14,11 +14,11 @@ const adminRoutes = require('./routes/admin.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail')
-const Actt = require("./models/actt.model.js");
+//const Actt = require("./models/actt.model.js");
 
-const museumsandhistoricalplaces = require("./models/museumsandhistoricalplaces.model.js");
-const activities = require("./models/activities.model.js");
-const itineraries = require("./models/itineraries.model.js");
+const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
+const activities = require("./models/activity.model.js");
+const itineraries = require("./models/itinerary.model.js");
 
 //itineraries
 //museumsandhistoricalplaces
@@ -28,7 +28,7 @@ const itineraries = require("./models/itineraries.model.js");
 
 
 
-//connect admin.routes.js to index.js
+//connect admin.routes.js to index.j
 app.use('/admin', adminRoutes);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
@@ -347,3 +347,23 @@ app.post("/api/actt", async (req,res) => {
     res.status(500).json({ message: err.message });
 }
 })
+
+
+app.post('/api/museums', async (req, res) => {
+  try {
+      const museums  = await museumsandhistoricalplaces.create(req.body);
+      res.status(200).json(museums);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+app.post('/api/activities', async (req, res) => {
+  try {
+      const acts  = await activities.create(req.body);
+      res.status(200).json(acts);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});

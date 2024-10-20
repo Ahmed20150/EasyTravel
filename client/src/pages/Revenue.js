@@ -30,23 +30,39 @@ function Revenue() {
       // Calculate total itineraries revenue
       itineraries.forEach((itinerary) => {
         const priceOfTour = itinerary.priceOfTour || 0;
-        const numofpurchases = itinerary.numofpurchases || 0;
+        const numofpurchases = itinerary.numofpurchases || 1;
         const subtotal = priceOfTour * numofpurchases;
         it_totalRevenue += subtotal;
       });
 
-      // Calculate total museums revenue
       museums.forEach((museum) => {
-        const ticketPrice = museum.ticketPrice || 0;
-        const numofpurchases = museum.numofpurchases || 0;
-        const subtotal2 = ticketPrice * numofpurchases;
-        museums_totalRevenue += subtotal2;
+        let ticketPrice = 0;
+      
+        // Check the type and assign the correct ticket price
+        switch (museum.type) {
+          case "foreigner":
+            ticketPrice = museum.ticketPrices.foreigner;
+            break;
+          case "native":
+            ticketPrice = museum.ticketPrices.native;
+            break;
+          case "student":
+            ticketPrice = museum.ticketPrices.student;
+            break;
+          default:
+            ticketPrice = 0; // If type is not one of the expected values, default to 0
+        }
+      
+        const numofpurchases = museum.numofpurchases || 1; // Default to 0 if undefined
+        const subtotal2 = ticketPrice * numofpurchases; // Calculate subtotal for this museum
+        museums_totalRevenue += subtotal2; // Add subtotal to total revenue
       });
-
       // Calculate total activities revenue
       acts.forEach((act) => {
-        const Price = act.price.min || 0;
-        const numofpurchases = act.numofpurchases || 0;
+
+        const discount = (act.specialDiscounts || 0) / 100;
+        const Price = act.price.min ? act.price.min * (1 - discount) : 0;
+        const numofpurchases = act.numofpurchases || 1;
         const subtotal2 = Price * numofpurchases;
         act_totalRevenue += subtotal2;
       });

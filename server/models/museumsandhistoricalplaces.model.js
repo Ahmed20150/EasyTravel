@@ -1,37 +1,60 @@
 const mongoose = require("mongoose");
 
-const actSchema  = new mongoose.Schema({
-    name: {
-        type:String,
-        required:true
-    },
+const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
+  type:{
+    type: String,
+    required: true,
+    enum: ["foreigner", "native", "student"],
+    default: "foreigner"
+  },
 
-    description:{
-        type:String,
-        required:true
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  openingHours: {
+    type: String,
+    required: true,
+  },
+  ticketPrices: {
+    foreigner: {
+      type: Number,
+      required: true,
     },
+    native: {
+      type: Number,
+      required: true,
+    },
+    student: {
+      type: Number,
+      required: true,
+    },
+  },
+  picture: {
+    type: String,
+  }, // Optional field for picture
 
-    location:{
-        type:String,
-        required:true
-    },
-    openingHours:{
-        type:String,
-        required:true
-    },
-    ticketPrice:{
-        type:Number,
-        required:true
-        
-    },
-    picture:{
-        type:String,
-        required:false
-    },
+  numofpurchases:{type: Number, default: 1},
 
-    numofpurchases:{type: Number, default: false}
+  tags: [
+    {
+      type: String, // e.g., Monuments, Museums, Religious Sites, Palaces/Castles
+    },
+  ],
 });
 
-const museumsandhistoricalplaces = mongoose.model("museumsandhistoricalplaces", actSchema); //store in table "Tourist"
+const MuseumsAndHistoricalPlaces = mongoose.model(
+  "MuseumsAndHistoricalPlaces",
+  museumsAndHistoricalPlacesSchema
+);
 
-module.exports =  museumsandhistoricalplaces; //export for use in other files
+module.exports = MuseumsAndHistoricalPlaces;
