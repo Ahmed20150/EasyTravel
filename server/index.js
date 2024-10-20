@@ -64,9 +64,7 @@ app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
 const activityRoutes = require("./routes/activity.routes.js");
 const itineraryRoutes = require("./routes/itinerary.routes.js");
 app.use('/api', touristRoutes);
-// app.get("/", (req, res) => {
-//   res.send("Hello World!");
-// });
+
 app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
@@ -100,15 +98,6 @@ app.get('/api/tourists', async (req, res) => {
     }
 });
 
-// // getting all tour guides
-// app.get('/api/tourGuide', async (req, res) => { 
-//     try {
-//         const touristGuides = await TouristGuide.find({});
-//         res.status(200).json(touristGuides);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// });
 
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
