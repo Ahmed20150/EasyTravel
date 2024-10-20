@@ -7,6 +7,13 @@ const Student = require("./routes/task1.route");
 const cors = require('cors');
 app.use(cors());
 
+const bodyParser = require('body-parser');
+const courseRoutes = require('./routes/task2.routes');
+
+
+app.use(bodyParser.json());
+app.use('/courses', courseRoutes);
+ 
 
 //connect student.routes.js to index.js
 app.use('/student', Student);
