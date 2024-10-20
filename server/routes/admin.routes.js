@@ -189,10 +189,13 @@ router.put('/reject-seller/:id', async (req, res) => {
 });
 
 // Endpoint to accept terms for Tour Guides
-router.put('/tour-guide/:id/accept-terms', async (req, res) => {
+router.put('/tourGuide/:id/accept-terms', async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedGuide = await TourGuide.findByIdAndUpdate(id, { firstTimeLogin: 2 }, { new: true });
+        const updatedGuide = await TourGuide.findByIdAndUpdate( 
+            id,
+            { firstTimeLogin: false, acceptedTerms: true }, 
+            { new: true });
         if (!updatedGuide) {
             return res.status(404).json({ message: 'Tour guide not found' });
         }
@@ -206,7 +209,9 @@ router.put('/tour-guide/:id/accept-terms', async (req, res) => {
 router.put('/advertiser/:id/accept-terms', async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedAdvertiser = await Advertiser.findByIdAndUpdate(id, { firstTimeLogin: 2 }, { new: true });
+        const updatedAdvertiser = await Advertiser.findByIdAndUpdate( id,
+            { firstTimeLogin: false, acceptedTerms: true }, 
+            { new: true });
         if (!updatedAdvertiser) {
             return res.status(404).json({ message: 'Advertiser not found' });
         }
@@ -220,7 +225,9 @@ router.put('/advertiser/:id/accept-terms', async (req, res) => {
 router.put('/seller/:id/accept-terms', async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedSeller = await Seller.findByIdAndUpdate(id, { firstTimeLogin: 2 }, { new: true });
+        const updatedSeller = await Seller.findByIdAndUpdate( id,
+            { firstTimeLogin: false, acceptedTerms: true }, 
+            { new: true });
         if (!updatedSeller) {
             return res.status(404).json({ message: 'Seller not found' });
         }

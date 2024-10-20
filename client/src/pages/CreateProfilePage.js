@@ -73,7 +73,7 @@ const CreateProfilePage = () => {
   };
 
   const handleCancelEdit = (e) => {
-    navigate('/view-profile', { state: { username } });
+    navigate('/home', { state: { username } });
   };
 
   return (

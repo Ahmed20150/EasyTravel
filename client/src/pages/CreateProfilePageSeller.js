@@ -80,7 +80,7 @@ const CreateProfilePageSeller = () => {
 
   
   const handleCancelEdit = (e) => {
-    navigate('/view-profileSeller', { state: { username } });
+    navigate('/home', { state: { username } });
   };
 
   

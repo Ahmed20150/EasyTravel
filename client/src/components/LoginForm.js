@@ -64,6 +64,8 @@ export default function Login() {
   const [tokenCookie, setTokenCookie] = useCookies(['token']) //init cookie object, naming it "token"
   const [loggedInUserCookie, setloggedInUserCookie] = useCookies(['username']) //init cookie object, naming it "username"
   const [loggedInUserTypeCookie, setloggedInUserTypeCookie] = useCookies(['userType']) //init cookie object, naming it "userType"
+  const [acceptedTermsCookie, setAcceptedTermsCookie] = useCookies(['acceptedTerms']) //init cookie object, naming it "acceptedTerms"
+
 
 
 
@@ -78,17 +80,31 @@ export default function Login() {
     console.log(user);
     try {
       const response = await axios.post('http://localhost:3000/auth/login', user); //retrieve data from server
+      
       const accessToken = response.data.accessToken; //capture accessToken from response
       const userType = response.data.userType;
       const firstTimeLogin = response.data.firstTimeLogin;
+      const acceptedTerms = response.data.acceptedTerms;
+      const status = response.data.status;
+      const userId = response.data.userId;
+
+      if(userType==='admin'){
+        toast.success('Successful Login!');
+        setTimeout(() => {
+          navigate("/home", { state: { username } });
+        }, 2000);
+        return;
+      }
+
       console.log('Successful Login!', response.data);
-      toast.success('Successful Login!');
       console.log('Access Token:', accessToken);
       console.log('Logged in Username:', username);
+      console.log('acceptedTerms:', acceptedTerms);
 
       setTokenCookie('token', accessToken, { path: '/', maxAge: 1000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
       setloggedInUserCookie('username', username, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
       setloggedInUserTypeCookie('userType', userType, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setAcceptedTermsCookie('acceptedTerms', acceptedTerms, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
 
 
       setUsername('');
@@ -97,59 +113,47 @@ export default function Login() {
       // TODO based on userType navigate to different pages
 
       console.log('User Type:', userType, 'First Time Login:', firstTimeLogin);
-      if(firstTimeLogin === 2){ // forward to home page (add to it view profile page)      
+      
+
+
+      if(status === 'rejected'){
+        toast.error('Account has been rejected');
+        setTimeout(() => {
+          navigate("/");
+        }, 2000); 
+        return;
+      }
+      else if(status === 'pending'){
+        toast.error('Account is still pending, Please wait for admin approval');
+        // setTimeout(() => {
+        //   navigate("/");
+        // }, 2000);
+        return;
+      }
+
+      toast.success('Successful Login!');
+
+      if(firstTimeLogin === false){ // forward to home page (add to it view profile page)      
         setTimeout(() => {
           navigate("/home" , { state: { username } });
         }, 2000); 
       }
-      else if(firstTimeLogin === 1){ //forward to terms and conditions page, then create profile, then home page
+      else if(firstTimeLogin === true){ //forward to terms and conditions page, then create profile, then home page
         
-      if (userType === "tourGuide"){
-        navigate('/create-profile', { state: { username } });
-      }
-      else if(userType === "advertiser"){
-        navigate('/create-profileAdv', { state: { username } });
-      }
-      else if(userType === "seller"){ // forward to terms and conditions page, then create profile
-        navigate('/create-profileSeller', { state: { username } });
-      }
-      else{
+      if(userType==="tourist"){
         setTimeout(() => {
           navigate("/home");
         }, 2000); 
-}
-      }
-      else if(firstTimeLogin === 0){ //Account is still pending
-        toast.error('Account is still pending');
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
       }
       else{
-        toast.error('Account has been rejected');
         setTimeout(() => {
-          navigate("/");
-        }, 2000);
+          navigate("/termsAndConditions", {state: { userId, userType }});
+        }, 2000);       }
+
       }
+     
 
 
-
-
-
-//       if (userType === "tourGuide"){
-//         navigate('/view-profile', { state: { username } });
-//       }
-//       else if(userType === "advertiser"){
-//         navigate('/view-profileAdv', { state: { username } });
-//       }
-//       else if(userType === "seller" &&  firstTimeLogin === 1){ // forward to terms and conditions page, then create profile
-//         navigate('/create-profileSeller', { state: { username } });
-//       }
-//       else{
-//         setTimeout(() => {
-//           navigate("/home");
-//         }, 2000); 
-// }
  } catch (error) {
       toast.error('Invalid Username or Password');
       console.error('Error:', error.response ? error.response.data : error.message);
@@ -167,6 +171,7 @@ export default function Login() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      <ToastContainer/>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />

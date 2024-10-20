@@ -24,14 +24,16 @@ const TempHomePage = () => {
         const accessToken = Cookies.get('token');
         const loggedInUser = Cookies.get('username');
         const userType = Cookies.get('userType');
-        if (!accessToken) {
-            console.log('No access token found');
+        const acceptedTerms = Cookies.get('acceptedTerms');
+        if (!accessToken || acceptedTerms==="false") {
+            console.log('Should not have access to home!');
             navigate("/");
             return;
         } else {
             console.log("COOKIES FOUND", accessToken);
             console.log("LOGGEDINUSER: ", loggedInUser);
             console.log("USERTYPE: ", userType);
+            console.log("ACCEPTEDTERMS:", acceptedTerms);
         }
     }
 
@@ -78,7 +80,7 @@ const TempHomePage = () => {
             navigate('/view-profileSeller', { state: { username: loggedInUser } });
           }
           else{
-            console.log("User Type not found");
+            navigate('/TouristProfile', { state: { username: loggedInUser } });
           }
       }
     }
@@ -89,14 +91,25 @@ const TempHomePage = () => {
         <div>
             <h1>Welcome {username}, you are an {userType}!!</h1>
             <button onClick={handleLogout}>Logout</button>
+            {userType !== 'admin' ? (
+              <>
             <Link to="/changePassword"><button>Change Password</button></Link>
             <button onClick={handleViewProfile}>View profile</button>
-            <iframe
-            src={`data:application/pdf;base64,${base64}`}
-            width="100%"
-            height="600px"
-            title="PDF Viewer"
-          />
+            </>
+          ) : (
+          <>
+            <Link to="/pendingRequestsPage"><button>Pending Requests</button></Link>
+
+            </>
+          )}
+            {userType !== 'tourist' && userType !== 'admin' && (
+        <iframe
+          src={`data:application/pdf;base64,${base64}`}
+          width="100%"
+          height="600px"
+          title="PDF Viewer"
+        />
+      )}
         </div>
     );
 }

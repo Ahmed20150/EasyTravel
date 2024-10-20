@@ -19,6 +19,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PendingRequestsPage from './pages/PendingRequestsPage';
 import TouristProfile from './pages/TouristProfile';
+import TermsAndConditions from './pages/TermsAndConditions';
 
 
 //TODO add navigation buttons between all pages
@@ -58,6 +59,8 @@ function App() {
             {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
             <Route path='/pendingRequestsPage' element={<PendingRequestsPage />} />
             <Route path='/TouristProfile' element={<TouristProfile />} />
+            <Route path='/termsAndConditions' element={<TermsAndConditions />} />
+
           </Routes>
       </BrowserRouter>
     </div>

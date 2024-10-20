@@ -138,7 +138,7 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
               { expiresIn: "1d" }
           );
   
-          res.status(200).json({ message: "Login successful", user, accessToken: accessToken, userType: userType , firstTimeLogin: user.firstTimeLogin});
+          res.status(200).json({ message: "Login successful", user, accessToken: accessToken, userType: userType , firstTimeLogin: user.firstTimeLogin, status: user.status, userId: user._id, acceptedTerms: user.acceptedTerms});
       } catch (err) {
           res.status(500).json({ message: err.message });
       }

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const PendingRequests = () => {
     const [pendingGuides, setPendingGuides] = useState([]);
     const [pendingAdvertisers, setPendingAdvertisers] = useState([]);
     const [pendingSellers, setPendingSellers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null); // State to hold the selected user data
+    const [base64, setBase64] = useState(''); //holds base64 of uploaded pdf document
+    const [uploadedFile, setUploadedFile] = useState(null);
 
     useEffect(() => {
         const fetchPendingRequests = async () => {
@@ -46,6 +50,7 @@ const PendingRequests = () => {
 
     const handleShow = (user) => {
         setSelectedUser(user); // Set the selected user data to display
+        fetchBase64(user.username);
     };
 
     const updatePendingRequests = (type, id) => {
@@ -64,9 +69,24 @@ const PendingRequests = () => {
         }
     };
 
+    const fetchBase64 = async (username) => {
+        try {
+          const response = await axios.get(`http://localhost:3000/api/files/getbasestring`, {
+            params: { username: username }
+          });      
+          setBase64(response.data.base64);
+          setUploadedFile(response.data);
+        } catch (error) {
+          console.error('Error fetching file:', error);
+          alert('Error fetching file');
+        }
+    };
+
+
     return (
         <div>
             <h1>Pending Requests</h1>
+            <Link to="/home"><button>Back</button></Link>
 
             <h2>Pending Tour Guides</h2>
             <ul>
@@ -115,6 +135,13 @@ const PendingRequests = () => {
                             <p><strong>Website:</strong> <a href={selectedUser.website} target="_blank" rel="noopener noreferrer">{selectedUser.website}</a></p>
                             <p><strong>Profile Picture:</strong></p>
                             <img src={selectedUser.profilePicture} alt={selectedUser.username} style={{ width: '100px', height: '100px' }} />
+                            <p><strong>Uploaded Document:</strong></p>
+                            <iframe
+                            src={`data:application/pdf;base64,${base64}`}
+                            width="100%"
+                            height="600px"
+                            title="PDF Viewer"
+                            />
                         </>
                     ) : selectedUser.mobileNumber ? ( // Check if the user is a seller
                         <>
@@ -123,6 +150,13 @@ const PendingRequests = () => {
                             <p><strong>Mobile Number:</strong> {selectedUser.mobileNumber}</p>
                             <p><strong>Profile Picture:</strong></p>
                             <img src={selectedUser.profilePicture} alt={selectedUser.username} style={{ width: '100px', height: '100px' }} />
+                            <p><strong>Uploaded Document:</strong></p>
+                            <iframe
+                            src={`data:application/pdf;base64,${base64}`}
+                            width="100%"
+                            height="600px"
+                            title="PDF Viewer"
+                            />
                         </>
                     ) : ( // Otherwise, it’s a tour guide
                         <>
@@ -132,6 +166,13 @@ const PendingRequests = () => {
                             <p><strong>Description:</strong> {selectedUser.description}</p>
                             <p><strong>Mobile Number:</strong> {selectedUser.mobileNumber}</p>
                             <img src={selectedUser.profilePicture} alt={selectedUser.username} style={{ width: '100px', height: '100px' }} />
+                            <p><strong>Uploaded Document:</strong></p>
+                            <iframe
+                            src={`data:application/pdf;base64,${base64}`}
+                            width="100%"
+                            height="600px"
+                            title="PDF Viewer"
+                            />
                         </>
                     )}
                 </div>

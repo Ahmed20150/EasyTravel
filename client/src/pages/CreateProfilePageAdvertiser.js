@@ -83,7 +83,7 @@ const CreateProfilePageAdvertiser = () => {
   };
 
   const handleCancelEdit = (e) => {
-    navigate('/view-profileAdv', { state: { username } });
+    navigate('/home', { state: { username } });
   };
 
   const handleSubmit = async (e) => {
