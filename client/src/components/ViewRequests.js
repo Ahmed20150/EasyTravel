@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
 import "../css/ActivityLists.css";
 
 const UserList = () => {
@@ -40,6 +40,7 @@ const UserList = () => {
   return (
     <div className="activity-list">
       <h1>Delete Requests </h1>
+      <Link to="/adminAccountManagement"><button>Back</button></Link>
       <div className="button-container"></div>
       <div className="card-container">
         {users.map((user) => (

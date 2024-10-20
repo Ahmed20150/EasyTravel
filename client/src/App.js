@@ -20,6 +20,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import PendingRequestsPage from './pages/PendingRequestsPage';
 import TouristProfile from './pages/TouristProfile';
 import TermsAndConditions from './pages/TermsAndConditions';
+import AddNewAdmin from './components/AddNewAdmins'; 
+import AddNewTourismGoverner from './components/AddNewTourismGoverner'; 
+import ViewUsers from './components/ViewUsersAndDelete';
+import ViewRequest from './components/ViewRequests';
+import AdminAccountManagement from './pages/AdminAccountManagement';
+// import { CookiesProvider } from 'react-cookie';
+import ActivityList from "./pages/ActivityList";
+import ActivityForm from "./pages/ActivityForm";
+import ActivityEdit from "./pages/ActivityEdit";
+import ItineraryEdit from "./pages/ItineraryEdit";
+import ItineraryForm from "./pages/ItineraryForm";
+import ItineraryList from "./pages/ItineraryList";
+import SelectActivity from "./pages/SelectActivity";
+import MuseumsList from "./pages/museumsList";
 
 
 //TODO add navigation buttons between all pages
@@ -57,14 +71,28 @@ function App() {
             {/* <Route path="/create-profile" element={<CreateProfilePage />}>
             <Route path="/view-profile/:email" element={<ViewProfilePage />} /> */}
             {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
+            <Route path='/adminAccountManagement' element={<AdminAccountManagement />} />
             <Route path='/pendingRequestsPage' element={<PendingRequestsPage />} />
             <Route path='/TouristProfile' element={<TouristProfile />} />
             <Route path='/termsAndConditions' element={<TermsAndConditions />} />
+            <Route path="/view-users" element={<ViewUsers />} />
+            <Route path="/view-requests" element={<ViewRequest />} />
+            <Route path="/add-tourismGoverner" element={<AddNewTourismGoverner />} />
+            <Route path="/add-admin" element={<AddNewAdmin />} />
+            <Route path="/activities" element={<ActivityList />} />           
+            <Route path="/activities/create" element={<ActivityForm />} />
+            <Route path="/activities/edit/:id" element={<ActivityEdit />} />
+            <Route path="/itinerary" element={<ItineraryList />} />
+            <Route path="/itinerary/create" element={<ItineraryForm />} />
+            <Route path="/itinerary/create/selectActivity" element={<SelectActivity />}/>
+            <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
+            <Route path="/museums" element={<MuseumsList />} />
+
 
           </Routes>
       </BrowserRouter>
     </div>
   );
-};
+}
 
 export default App;

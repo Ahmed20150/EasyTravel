@@ -93,13 +93,14 @@ export default function Login() {
       setloggedInUserTypeCookie('userType', userType, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
       setAcceptedTermsCookie('acceptedTerms', acceptedTerms, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
 
-      if(userType==='admin'){
+      if(userType==='admin' || userType==='tourismGoverner'){
         toast.success('Successful Login!');
         setTimeout(() => {
           navigate("/home", { state: { username } });
         }, 2000);
         return;
       }
+      
 
       console.log('Successful Login!', response.data);
       console.log('Access Token:', accessToken);

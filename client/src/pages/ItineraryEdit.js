@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import "../css/ItineraryEdit.css"; // Import the CSS file
+// import "../css/ItineraryEdit.css"; // Import the CSS file
+//TODO error when clicking on edit, price is null
+
 
 const ItineraryEdit = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation

@@ -3,7 +3,10 @@ import axios from "axios";
 import MuseumCard from "../components/museumCard";
 import AddMuseumForm from "../components/AddMuseumForm";
 import "../styles/museumList.css"; // Import CSS styles
+import { Link } from "react-router-dom";
 
+//TODO make image upload instead of image URL
+//TODO fix css to make it local only and not affect other pages 
 const MuseumsList = () => {
   const [museums, setMuseums] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +54,7 @@ const MuseumsList = () => {
         </div>
       )}
       <AddMuseumForm refreshMuseums={fetchMuseums} />
+      <Link to="/home"><button>Back</button></Link>
     </div>
   );
 };

@@ -31,12 +31,9 @@ router.post('/add-tourismGoverner', async (req, res) => {
             return res.status(400).json({ message: 'Username already exists' });
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         const newTourismGoverner = new TourismGoverner({
             username,
-            password: hashedPassword
+            password,
         });
 
         await newTourismGoverner.save();

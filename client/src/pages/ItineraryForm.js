@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../css/ItineraryForm.css"; // Import the CSS file
+// import "../css/ItineraryForm.css"; // Import the CSS file
 
 const ItineraryForm = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation

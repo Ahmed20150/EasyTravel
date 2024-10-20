@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../css/ActivityLists.css";
+
 
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]); // State to hold activities
@@ -47,6 +48,7 @@ const ActivityLists = () => {
        <button className="create-button" onClick={() => handleCreate()}>
          Create New Activity
        </button>
+       <Link to="/home"><button>Back</button></Link>
      </div>
      <div className="card-container">
        {activities.map((activity) => (

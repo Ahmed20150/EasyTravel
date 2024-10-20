@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
 const AddTourismGoverner = () => {
   const [username, setUsername] = useState('');
@@ -55,6 +56,9 @@ const AddTourismGoverner = () => {
           Add Tourism Governer
         </button>
       </form>
+
+
+      <Link to="/adminAccountManagement"><button>Back</button></Link>
     </div>
   );
 };

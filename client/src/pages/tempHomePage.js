@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {Link} from "react-router-dom";
 import axios from 'axios';
 
+//TODO make dynamic button placement with custom text for each user type more efficient
 //TODO figure out how to make fetchData accessible globally to all project files w/o having to implement it each time
 const TempHomePage = () => {
     const navigate = useNavigate();
@@ -90,25 +91,32 @@ const TempHomePage = () => {
         <div className="container">
             <h1>Welcome {username}, you are an {userType}!!</h1>
             <button onClick={handleLogout}>Logout</button>
-            {userType !== 'admin' ? (
-              <>
             <Link to="/changePassword"><button>Change Password</button></Link>
-            <button onClick={handleViewProfile}>View profile</button>
-            </>
-          ) : (
-          <>
-            <Link to="/pendingRequestsPage"><button>Pending Requests</button></Link>
+            
+            
+            {userType !== 'admin' && userType !== 'tourismGoverner' && (
+        <button onClick={handleViewProfile}>View profile</button>
+      )}
 
-            </>
-          )}
-            {/* {userType !== 'tourist' && userType !== 'admin' && (
-        <iframe
-          src={`data:application/pdf;base64,${base64}`}
-          width="100%"
-          height="600px"
-          title="PDF Viewer"
-        />
-      )} */}
+        {userType === 'tourismGoverner' && (
+          <>
+           <Link to="/museums"><button>Museums & Historical Places</button></Link>
+          </>
+      )}
+
+        {userType === 'admin' && (
+          <>
+           <Link to="/pendingRequestsPage"><button>Pending Requests</button></Link>
+           <Link to="/adminAccountManagement"><button>Account Management</button></Link>
+          </>
+      )}
+            {userType === 'advertiser' && (
+            <Link to="/activities"><button>View Activities</button></Link>
+      )}
+
+      {userType === 'tourGuide' && (
+            <Link to="/itinerary"><button>View Itineraries</button></Link>
+      )}
         </div>
     );
 }

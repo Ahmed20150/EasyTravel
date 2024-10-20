@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../css/ItineraryList.css"; // Import the CSS file
 
 const ItineraryList = () => {
@@ -57,6 +57,7 @@ const ItineraryList = () => {
         <button className="create-button" onClick={() => handleCreate()}>
           Create New Activity
         </button>
+        <Link to="/home"><button>Back</button></Link>
       </div>
       <div className="itinerary-list">
         {itineraries.map((itinerary) => (

@@ -1,6 +1,4 @@
 *{
-  /* display:flex;
-  flex-direction: column; */
   justify-content:center;
   align-items:center;
 }
@@ -41,7 +39,7 @@ button:hover {
   background-color: #49299b;
 }
 
-/* container to center its items on screen */
+
 .container { 
   display: flex;
   flex-direction:column;
