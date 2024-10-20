@@ -3,16 +3,16 @@ const mongoose = require("mongoose");
 
 const touristSchema = new mongoose.Schema({
     username: {
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
-    email:{
-        type:String,
-        required:true
+    email: {
+        type: String,
+        required: true
     },
-    password:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
     mobileNumber:{
         type:Number,
@@ -44,4 +44,4 @@ const touristSchema = new mongoose.Schema({
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
 
-module.exports =  Tourist; //export for use in other files
+module.exports = Tourist; //export for use in other files

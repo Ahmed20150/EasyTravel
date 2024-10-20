@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const cors = require("cors");
+const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
 const TourismGoverner = require("./models/tourismGoverner.model.js");
@@ -40,7 +41,12 @@ app.use('/auth', authRoutes);
 
 
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
+
+const cors = require('cors');
+app.use(cors());
+
+
 //connect admin.routes.js to index.js
 
 const jwt = require("jsonwebtoken");
@@ -52,14 +58,21 @@ app.use(cors());
 app.use(cookieParser());
 
 app.use('/admin', adminRoutes);
+
+//connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
+app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
+const activityRoutes = require("./routes/activity.routes.js");
+const itineraryRoutes = require("./routes/itinerary.routes.js");
 app.use('/api', touristRoutes);
 // app.get("/", (req, res) => {
-//     res.send("Hello World!");
+//   res.send("Hello World!");
 // });
-
+app.use("/museums", museumRoutes);
+app.use("/activities", activityRoutes);
+app.use("/itinerary", itineraryRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 // const conn = mongoose.createConnection("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL", { useNewUrlParser: true,
