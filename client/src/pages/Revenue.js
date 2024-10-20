@@ -37,7 +37,7 @@ function Revenue() {
 
       museums.forEach((museum) => {
         let ticketPrice = 0;
-      
+
         // Check the type and assign the correct ticket price
         switch (museum.type) {
           case "foreigner":
@@ -52,14 +52,14 @@ function Revenue() {
           default:
             ticketPrice = 0; // If type is not one of the expected values, default to 0
         }
-      
+
         const numofpurchases = museum.numofpurchases || 1; // Default to 0 if undefined
         const subtotal2 = ticketPrice * numofpurchases; // Calculate subtotal for this museum
         museums_totalRevenue += subtotal2; // Add subtotal to total revenue
       });
+
       // Calculate total activities revenue
       acts.forEach((act) => {
-
         const discount = (act.specialDiscounts || 0) / 100;
         const Price = act.price.min ? act.price.min * (1 - discount) : 0;
         const numofpurchases = act.numofpurchases || 1;
@@ -109,8 +109,29 @@ function Revenue() {
     fontSize: '18px', // Adjust font size if needed
   };
 
+  const backButtonStyle = {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    padding: '10px 20px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '16px',
+    borderRadius: '5px',
+  };
+
   return (
     <div style={containerStyle}>
+      {/* Back Button */}
+      <button
+        style={backButtonStyle}
+        onClick={() => (window.location.href = 'http://localhost:3001/view')}
+      >
+        Back
+      </button>
+
       <button
         style={buttonStyle}
         onMouseOver={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
