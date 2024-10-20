@@ -4,7 +4,6 @@ import axios from "axios";
 // import "../css/ItineraryEdit.css"; // Import the CSS file
 //TODO error when clicking on edit, price is null
 
-
 const ItineraryEdit = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation
   const { id } = useParams(); // Get itinerary ID from the URL
@@ -39,6 +38,7 @@ const ItineraryEdit = () => {
           const response = await axios.get(
             `http://localhost:3000/itinerary/${id}`
           );
+          console.log("Fetching itinerary from API:", response.data);
           const itinerary = response.data;
 
           // Populate the form with existing data
@@ -207,13 +207,21 @@ const ItineraryEdit = () => {
       <ul>
         {formData.activities.map((activity, index) => (
           <li key={index}>
-            <div>
-              Price: Min: {activity.price.min}, Max: {activity.price.max}
-            </div>
-            <div>Date: {new Date(activity.date).toLocaleDateString()}</div>
-            <div>Time: {activity.time}</div>
-            <div>Category: {activity.category}</div>
-            <div>Is Booking Open: {activity.isBookingOpen ? "Yes" : "No"}</div>
+            {activity && activity.price ? (
+              <>
+                <div>
+                  Price: Min: {activity.price.min}, Max: {activity.price.max}
+                </div>
+                <div>Date: {new Date(activity.date).toLocaleDateString()}</div>
+                <div>Time: {activity.time}</div>
+                <div>Category: {activity.category}</div>
+                <div>
+                  Is Booking Open: {activity.isBookingOpen ? "Yes" : "No"}
+                </div>
+              </>
+            ) : (
+              <div>No price information available for this activity.</div>
+            )}
           </li>
         ))}
       </ul>

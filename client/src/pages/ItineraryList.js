@@ -36,6 +36,7 @@ const ItineraryList = () => {
   };
 
   const handleEdit = (id) => {
+    localStorage.clear();
     navigate(`/itinerary/edit/${id}`);
   };
   const handleCreate = () => {
@@ -57,7 +58,9 @@ const ItineraryList = () => {
         <button className="create-button" onClick={() => handleCreate()}>
           Create New Activity
         </button>
-        <Link to="/home"><button>Back</button></Link>
+        <Link to="/home">
+          <button>Back</button>
+        </Link>
       </div>
       <div className="itinerary-list">
         {itineraries.map((itinerary) => (
