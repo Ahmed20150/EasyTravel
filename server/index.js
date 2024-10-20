@@ -14,7 +14,17 @@ const adminRoutes = require('./routes/admin.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail')
+const Actt = require("./models/actt.model.js");
 
+const museumsandhistoricalplaces = require("./models/museumsandhistoricalplaces.model.js");
+const activities = require("./models/activities.model.js");
+const itineraries = require("./models/itineraries.model.js");
+
+//itineraries
+//museumsandhistoricalplaces
+// const activities = require("./models/activities.model.js");
+// const itinerarie = require("./models/itinerarie.model.js");
+// const Activity = require("./models/actt.model.js");
 
 
 
@@ -278,3 +288,62 @@ app.get('/api/tourists', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+
+
+
+// get all activities 
+app.get('/api/activities', async (req, res) => {
+  try {
+      const activity = await activities.find({});
+      res.status(200).json(activity);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+// get all itineraries
+
+app.get('/api/itineraries', async (req, res) => {
+  try {
+      const itinerarie = await itineraries.find({});
+      res.status(200).json(itinerarie);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+// get all museumsandhistoricalplaces
+
+app.get('/api/museums', async (req, res) => {
+  try {
+      const museums  = await museumsandhistoricalplaces.find({});
+      res.status(200).json(museums);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+// get all actts
+app.get('/api/actt', async (req, res) => {
+  try {
+      const actts = await Actt.find({});
+      res.status(200).json(actts);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+// adding a table actt 
+app.post("/api/actt", async (req,res) => {
+  try {
+    const actt =  await Actt.create(req.body);
+    res.status(200).json(actt);
+} catch (err) {
+    res.status(500).json({ message: err.message });
+}
+})
