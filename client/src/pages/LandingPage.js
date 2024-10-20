@@ -4,7 +4,7 @@ const landingPage = () => {
 
     
     return (  
-        <div>
+        <div className="container">
             <h1>Welcome!</h1>
             <Link to="/signUp"><button >Sign up</button> </Link>
             <Link to="/login"><button >Log in</button> </Link>

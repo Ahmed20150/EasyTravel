@@ -88,6 +88,11 @@ export default function Login() {
       const status = response.data.status;
       const userId = response.data.userId;
 
+      setTokenCookie('token', accessToken, { path: '/', maxAge: 1000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setloggedInUserCookie('username', username, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setloggedInUserTypeCookie('userType', userType, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setAcceptedTermsCookie('acceptedTerms', acceptedTerms, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+
       if(userType==='admin'){
         toast.success('Successful Login!');
         setTimeout(() => {
@@ -100,11 +105,6 @@ export default function Login() {
       console.log('Access Token:', accessToken);
       console.log('Logged in Username:', username);
       console.log('acceptedTerms:', acceptedTerms);
-
-      setTokenCookie('token', accessToken, { path: '/', maxAge: 1000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
-      setloggedInUserCookie('username', username, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
-      setloggedInUserTypeCookie('userType', userType, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
-      setAcceptedTermsCookie('acceptedTerms', acceptedTerms, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
 
 
       setUsername('');
@@ -226,7 +226,7 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href='/forgotPasswordForm'>
+              <Link href='/forgotPassword'>
                 Forgot password?
               </Link>
             </Grid>

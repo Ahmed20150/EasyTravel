@@ -44,7 +44,7 @@ function App() {
             <Route path="/login"element={<LoginForm />}/>
             <Route path="/changePassword"element={<ChangePassword />}/>
             <Route path="/home"element={<TempHomePage />}/>
-            <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
+            <Route path='/forgotPassword' element={<ForgotPasswordForm />} />
             <Route path='/create-profile' element={<CreateProfilePage />} />
             <Route path='/view-profile' element={<ViewProfilePage />} />
             <Route path='/edit-profile' element={<EditProfilePage />} />

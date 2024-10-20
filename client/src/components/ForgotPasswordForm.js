@@ -238,7 +238,7 @@ const handleChangePassword = async () => {
                 Forgot password?
               </Link>
             </Grid> */}
-            <Grid item xs>
+            <Grid item >
               <Link href="/signUp" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>

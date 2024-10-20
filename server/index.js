@@ -41,10 +41,8 @@ app.use('/auth', authRoutes);
 
 
 
-/////////////////////////////////////////////////////////////////////////const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
+const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
 
-const cors = require('cors');
-app.use(cors());
 
 
 //connect admin.routes.js to index.js

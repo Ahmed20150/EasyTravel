@@ -16,7 +16,7 @@ const TempHomePage = () => {
     useEffect(() => {
         // "fetchData()" is called when the component mounts (i.e when page is first opened)
         fetchData();
-        fetchBase64();
+        // fetchBase64();
 
     }, []); // Add empty dependency array to run only once on mount
 
@@ -60,7 +60,6 @@ const TempHomePage = () => {
           setUploadedFile(response.data);
         } catch (error) {
           console.error('Error fetching file:', error);
-          alert('Error fetching file');
         }
     
         // console.log(fileName);
@@ -88,7 +87,7 @@ const TempHomePage = () => {
     const [username, setUsername] = useState(Cookies.get('username'));
     const [userType, setUserType] = useState(Cookies.get('userType'));
     return (
-        <div>
+        <div className="container">
             <h1>Welcome {username}, you are an {userType}!!</h1>
             <button onClick={handleLogout}>Logout</button>
             {userType !== 'admin' ? (
@@ -102,14 +101,14 @@ const TempHomePage = () => {
 
             </>
           )}
-            {userType !== 'tourist' && userType !== 'admin' && (
+            {/* {userType !== 'tourist' && userType !== 'admin' && (
         <iframe
           src={`data:application/pdf;base64,${base64}`}
           width="100%"
           height="600px"
           title="PDF Viewer"
         />
-      )}
+      )} */}
         </div>
     );
 }
