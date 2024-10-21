@@ -441,6 +441,142 @@ app.delete("/api/preference/:name", async (req, res) => {
 });
 
 
+// get all activities 
+app.get('/api/activities', async (req, res) => {
+  try {
+      const activity = await activities.find({});
+      res.status(200).json(activity);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+// get all itineraries
+
+app.get('/api/itineraries', async (req, res) => {
+  try {
+      const itinerarie = await itineraries.find({});
+      res.status(200).json(itinerarie);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+// get all museumsandhistoricalplaces
+
+app.get('/api/museums', async (req, res) => {
+  try {
+      const museums  = await museumsandhistoricalplaces.find({});
+      res.status(200).json(museums);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+// get all actts
+app.get('/api/actt', async (req, res) => {
+  try {
+      const actts = await Actt.find({});
+      res.status(200).json(actts);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+// adding a table actt 
+app.post("/api/actt", async (req,res) => {
+  try {
+    const actt =  await Actt.create(req.body);
+    res.status(200).json(actt);
+} catch (err) {
+    res.status(500).json({ message: err.message });
+}
+})
+
+
+app.post('/api/museums', async (req, res) => {
+  try {
+      const museums  = await museumsandhistoricalplaces.create(req.body);
+      res.status(200).json(museums);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+
+app.post('/api/activities', async (req, res) => {
+  try {
+      const acts  = await activities.create(req.body);
+      res.status(200).json(acts);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+app.post('/api/itineraries', async (req, res) => {
+  try {
+      const it  = await itineraries.create(req.body);
+      res.status(200).json(it);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});
+
+app.put('/api/itineraries/:id', async (req, res) => {
+  try {
+    // Find the itinerary by id and update it with the new data from req.body
+    const updatedItinerary = await Itinerary.findByIdAndUpdate(
+      req.params.id,
+      req.body, // The updated data
+      { new: true, runValidators: true } // Options: return the new document, run validators on update
+    );
+
+    // If itinerary not found, send a 404 error
+    if (!updatedItinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Respond with the updated itinerary
+    res.status(200).json(updatedItinerary);
+  } catch (err) {
+    // If an error occurs, respond with a 500 status and the error message
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.get('/api/giftitems', async (req, res) => {
+  try {
+      const giftItems = await GiftItem.find(); // Assuming you have a GiftItem model
+      res.json(giftItems);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch gift items' });
+  }
+}); 
+
+app.get('/api/giftitems', async (req, res) => {
+  try {
+    const { purchases } = req.query;
+
+    // Build a filter object
+    let filter = {};
+    if (purchases) {
+      filter.purchases = { $gte: parseInt(purchases, 10) }; // Filter by minimum number of purchases
+    }
+
+    // Fetch filtered gift items from the database
+    const giftItems = await GiftItem.find(filter);
+    res.status(200).json(giftItems);
+  } catch (error) {
+    console.error('Error fetching gift items:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
 app.use('/api/seller', sellerRoutes);

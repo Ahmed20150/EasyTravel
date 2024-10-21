@@ -1,13 +1,6 @@
 const mongoose = require("mongoose");
 
 const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
-  type:{
-    type: String,
-    required: true,
-    enum: ["foreigner", "native", "student"],
-    default: "foreigner"
-  },
-
   name: {
     type: String,
     required: true,
@@ -22,8 +15,14 @@ const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
     required: true,
   },
   openingHours: {
-    type: String,
-    required: true,
+    from: {
+      type: String,
+      required: true,
+    },
+    to: {
+      type: String,
+      required: true,
+    },
   },
   ticketPrices: {
     foreigner: {
@@ -42,14 +41,12 @@ const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
   picture: {
     type: String,
   }, // Optional field for picture
-
-  numofpurchases:{type: Number, default: 1},
-
   tags: [
     {
       type: String, // e.g., Monuments, Museums, Religious Sites, Palaces/Castles
     },
   ],
+  numofpurchases:{type: Number, default: 1},
 });
 
 const MuseumsAndHistoricalPlaces = mongoose.model(
