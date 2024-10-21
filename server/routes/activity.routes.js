@@ -1,14 +1,15 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const router = express.Router();
 const cors = require("cors");
 const Activity = require("../models/activity.model.js");
 router.use(express.json());
+router.use(cookieParser());
 router.use(cors()); // This allows requests from any origin
 
 // CREATE
 router.post("/", async (req, res) => {
   try {
-    console.log(req.body);
     const newActivity = new Activity(req.body);
     const savedActivity = await newActivity.save();
     res.status(201).json(savedActivity);

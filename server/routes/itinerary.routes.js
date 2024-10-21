@@ -74,5 +74,26 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { itineraryCounter } = req.body;
+  console.log(` this is ${itineraryCounter} , and ${id} `);
+  try {
+    const updatedItinerary = await Itinerary.findByIdAndUpdate(
+      id,
+      { $set: { bookingCounter: itineraryCounter } },
+      { new: true }
+    );
+
+    if (!updatedItinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    res.status(200).json(updatedItinerary);
+  } catch (err) {
+    console.error("Error updating bookingCounter:", err); // Print the error to the console
+    res.status(500).json({ message: "Server error", error: err.message }); // Include the error message in the response
+  }
+});
 
 module.exports = router;

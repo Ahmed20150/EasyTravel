@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-// import "../css/ItineraryForm.css"; // Import the CSS file
+import { useCookies } from "react-cookie";
+
+//import "../css/ItineraryForm.css"; // Import the CSS file
 
 const ItineraryForm = () => {
   const navigate = useNavigate(); // Use useNavigate for navigation
   const location = useLocation();
   const { state } = location;
   const selectedActivities = state?.selectedActivities || [];
+  const [cookies] = useCookies(["username"]);
   const initialFormData = state?.formData || {
     // Use formData from state if available
     activities: [],
@@ -65,11 +68,13 @@ const ItineraryForm = () => {
 
     try {
       // Transform activities to match the itinerary schema
+      alert(`username: ${cookies.username}`);
       const updatedFormData = {
         ...formData,
         activities: selectedActivities.map((activity) => ({
           activity: activity._id,
         })),
+        creator: cookies.username || "default_username",
       };
 
       const response = await axios.post(

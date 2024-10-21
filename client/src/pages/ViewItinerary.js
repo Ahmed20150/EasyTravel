@@ -1,0 +1,134 @@
+// src/components/Itineraries/ItineraryList.jsx
+// src/components/Itineraries/ItineraryList.jsx
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
+import { useNavigate } from "react-router-dom";
+//import "../css/ItineraryList.css"; // Import the CSS file
+import { useCookies } from "react-cookie";
+
+const ViewItinerary = () => {
+  const [itineraries, setItineraries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
+  const userType = cookies.userType; // Access the userType
+  const username = cookies.username; // Access the username
+
+  const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
+
+  useEffect(() => {
+    const fetchItineraries = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/itinerary"); // Replace with your API endpoint
+        setItineraries(response.data); // Store the itineraries in state
+
+        // Fetch the tourist's booked itineraries
+        const tourist = await axios.get(
+          `http://localhost:3000/api/tourist/${username}`
+        );
+        setBookedItineraries(tourist.data.bookedItineraries || []); // Store the booked itineraries in state
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItineraries();
+  }, [username]);
+
+  if (loading) {
+    return <p>Loading itineraries...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  const handleBook = async (id) => {
+    try {
+      console.log(`username: ${username}, itinerary id: ${id} `);
+      const itinerary = await axios.get(
+        `http://localhost:3000/itinerary/${id}`
+      );
+      const itineraryCounter = itinerary.data.bookingCounter + 1; // Increment the booking counter by 1
+      await axios.patch(`http://localhost:3000/itinerary/${id}`, {
+        itineraryCounter,
+      });
+      const tourist = await axios.get(
+        `http://localhost:3000/api/tourist/${username}`
+      );
+      const newBookedItineraries = [...tourist.data.bookedItineraries, id]; // Add the new itinerary ID
+
+      // Update the user's booked itineraries on the server
+      const response = await axios.patch(
+        "http://localhost:3000/api/bookItinerary",
+        {
+          username,
+          newBookedItineraries,
+        }
+      );
+      console.log("Booking response:", response.data);
+
+      // Update the booked itineraries state
+      setBookedItineraries(newBookedItineraries);
+    } catch (error) {
+      console.error(
+        "Error booking itinerary:",
+        error.response?.data || error.message
+      );
+    }
+  };
+  const handleUnbook = async (id) => {
+    try {
+      console.log(`Unbooking itinerary: ${id} for user ${username}`);
+      const itinerary = await axios.get(
+        `http://localhost:3000/itinerary/${id}`
+      );
+      const itineraryCounter = itinerary.data.bookingCounter - 1;
+
+      await axios.patch(`http://localhost:3000/itinerary/${id}`, {
+        itineraryCounter,
+      });
+      // Remove the itinerary ID from bookedItineraries array
+      const newBookedItineraries = bookedItineraries.filter(
+        (itineraryId) => itineraryId !== id
+      );
+
+      // Update the user's booked itineraries on the server
+      const response = await axios.patch(
+        "http://localhost:3000/api/bookItinerary",
+        {
+          username,
+          newBookedItineraries,
+        }
+      );
+      console.log("Unbooking response:", response.data);
+
+      // Update the booked itineraries state
+      setBookedItineraries(newBookedItineraries);
+    } catch (error) {
+      console.error(
+        "Error unbooking itinerary:",
+        error.response?.data || error.message
+      );
+    }
+  };
+  return (
+    <div>
+      {itineraries.map((itinerary) => (
+        <ItineraryItem
+          key={itinerary._id}
+          itinerary={itinerary}
+          onBook={handleBook}
+          onUnbook={handleUnbook} // Pass the onBook function to ItineraryItem
+          userType={userType} // Pass the userType prop
+          isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
+        />
+      ))}
+    </div>
+  );
+};
+
+export default ViewItinerary;

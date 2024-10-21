@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Map from "../components/Map";
 import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 import mapboxgl from "mapbox-gl";
+import { useCookies } from "react-cookie";
 
 //TODO time input should be of type time not string
 // Set your Mapbox access token
@@ -16,10 +17,6 @@ const ActivityForm = () => {
     time: "",
     location: {
       address: "",
-      coordinates: {
-        lat: "",
-        lng: "",
-      },
     },
     price: {
       min: "",
@@ -31,6 +28,7 @@ const ActivityForm = () => {
     isBookingOpen: true,
   });
   const navigate = useNavigate();
+  const [cookies] = useCookies(["username"]);
 
   const handleLocationSelect = async (lng, lat) => {
     try {
@@ -61,26 +59,14 @@ const ActivityForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle location coordinates change
-  const handleCoordinatesChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      location: {
-        ...formData.location,
-        coordinates: {
-          ...formData.location.coordinates,
-          [name]: value,
-        },
-      },
-    });
-  };
   const handleButtonClick = async (e) => {
     e.preventDefault();
     try {
+      alert(`username: ${cookies.username}`);
       const response = await axios.post("http://localhost:3000/activities", {
         ...formData,
         tags: formData.tags.split(",").map((tag) => tag.trim()),
+        creator: cookies.username || "default_username", // Pass the username from cookies
       });
       navigate(`/activities`);
       console.log("Activity created:", response.data);

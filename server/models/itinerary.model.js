@@ -3,6 +3,9 @@ const activitySchema = require("./activity.model.js"); // Import the activitySch
 const { time } = require("console");
 
 const itinerarySchema = new mongoose.Schema({
+  creator: {
+    type: String,
+  },
   activities: [
     {
       activity: {
@@ -74,6 +77,11 @@ const itinerarySchema = new mongoose.Schema({
     validate: {
       validator: (v) => typeof v === "string", // Ensure it's a string
     },
+  },
+  bookingCounter: {
+    type: Number,
+    default: 0,
+    min: 0,
   },
 });
 
