@@ -19,6 +19,7 @@ const sendEmail = require('./sendEmail')
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
+const GiftItem = require("./models/giftitem.model.js");
 
 //itineraries
 //museumsandhistoricalplaces
@@ -396,5 +397,33 @@ app.put('/api/itineraries/:id', async (req, res) => {
   } catch (err) {
     // If an error occurs, respond with a 500 status and the error message
     res.status(500).json({ message: err.message });
+  }
+});
+
+app.get('/api/giftitems', async (req, res) => {
+  try {
+      const giftItems = await GiftItem.find(); // Assuming you have a GiftItem model
+      res.json(giftItems);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch gift items' });
+  }
+}); 
+
+app.get('/api/giftitems', async (req, res) => {
+  try {
+    const { purchases } = req.query;
+
+    // Build a filter object
+    let filter = {};
+    if (purchases) {
+      filter.purchases = { $gte: parseInt(purchases, 10) }; // Filter by minimum number of purchases
+    }
+
+    // Fetch filtered gift items from the database
+    const giftItems = await GiftItem.find(filter);
+    res.status(200).json(giftItems);
+  } catch (error) {
+    console.error('Error fetching gift items:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });

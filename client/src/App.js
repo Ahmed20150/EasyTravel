@@ -12,6 +12,7 @@ import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import Revenue from './pages/Revenue';
+import GiftItemForm  from './pages/GiftItemPage';
 
 
 
@@ -28,6 +29,7 @@ function App() {
             <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} />
             <Route path="/view" element={<ViewTables />}/>
             <Route path="/revenue" element={<Revenue />}/>
+            <Route path="/giftitem" element={<GiftItemForm />}/>
           </Routes>
       </BrowserRouter>
     </div>

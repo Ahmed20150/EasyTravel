@@ -6,6 +6,7 @@ function ViewTables() {
   const [museumsData, setMuseumsData] = useState([]);             // State to store museums data
   const [itinerariesData, setItinerariesData] = useState([]);     // State to store itineraries data
   const [activitiesData, setActivitiesData] = useState([]);       // State to store activities data
+  const [giftItemsData, setGiftItemsData] = useState([]);      // State to store gift item sales
   const [it_totalRevenue, setit_TotalRevenue] = useState(null);    // State to store itineraries total revenue
   const [museum_totalRevenue, setmuseum_TotalRevenue] = useState(null); // State to store museums total revenue
 
@@ -49,6 +50,16 @@ function ViewTables() {
     } catch (error) {
       console.error('Error fetching Itineraries data:', error);
       setNoItinerariesMessage('Error fetching Itineraries data.');
+    }
+  };
+
+  // Function to fetch Gift Shop sales data
+  const handleGiftItemsClick = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/giftitems');
+      setGiftItemsData(response.data);
+    } catch (error) {
+      console.error('Error fetching Gift Items data:', error);
     }
   };
 
@@ -140,6 +151,9 @@ function ViewTables() {
         </button>
         <button className="custom-button" onClick={handleActivitiesClick}>
           Activities
+        </button>
+        <button className="custom-button" onClick={handleGiftItemsClick}>
+          Gift Shop Sales
         </button>
         <button className="custom-button" onClick={redirectToPage}>
           Show Revenue details
@@ -243,6 +257,26 @@ function ViewTables() {
         <p>{noActivitiesMessage}</p>
       ) : null}
 
+
+
+
+    {giftItemsData.length > 0 && (
+            <div className="giftitems-data">
+              <h2>Gift Shop Sales:</h2>
+              <ul>
+                {giftItemsData.map((item) => (
+                  <li key={item._id}>
+                    <p>Name: {item.name}</p>
+                    <p>Description: {item.description}</p>
+                    <p>Price: ${item.price.toFixed(2)}</p>
+                    <p>Purchases: {item.purchases}</p>
+                    {/* Calculate and display revenue */}
+                    <p>Revenue: ${(item.price * item.purchases).toFixed(2)}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
     </div>
   );
 }
