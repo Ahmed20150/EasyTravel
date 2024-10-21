@@ -94,7 +94,7 @@ const TempHomePage = () => {
             <Link to="/changePassword"><button>Change Password</button></Link>
             
             
-            {userType !== 'admin' && userType !== 'tourismGoverner' && (
+      {userType !== 'admin' && userType !== 'tourismGoverner' && (
         <button onClick={handleViewProfile}>View profile</button>
       )}
 
@@ -112,12 +112,16 @@ const TempHomePage = () => {
            <Link to="/preferences"><button>Manage Prefrence Tags</button></Link>
           </>
       )}
-            {userType === 'advertiser' && (
+      {userType === 'advertiser' && (
             <Link to="/activities"><button>View Activities</button></Link>
       )}
 
       {userType === 'tourGuide' && (
             <Link to="/itinerary"><button>View Itineraries</button></Link>
+      )}
+
+      {userType === 'tourist' && (
+            <Link to="/GiftList"><button>Gift Shop</button></Link>
       )}
         </div>
     );

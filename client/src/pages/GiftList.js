@@ -1,7 +1,9 @@
 // src/GiftList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 
+//TODO add giftItem form(for admin to add items) that has dynamic image uploading
 const GiftList = () => {
     const [gifts, setGifts] = useState([]);
 
@@ -37,6 +39,7 @@ const GiftList = () => {
     return (
         <div>
             <h1>Gift Items</h1>
+            <Link to="/home"><button>Back</button></Link>
             <ul>
                 {gifts.map(gift => (
                     <li key={gift._id}>

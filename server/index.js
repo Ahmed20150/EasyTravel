@@ -21,7 +21,9 @@ const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
-const sendEmail = require('./sendEmail')
+const sendEmail = require('./sendEmail');
+const giftRoutes = require('./routes/gift.routes.js');
+
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
 const bodyParser = require('body-parser');
@@ -65,6 +67,7 @@ app.use('/api', touristRoutes);
 app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
+app.use("/gift", giftRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
