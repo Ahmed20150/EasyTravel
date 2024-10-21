@@ -21,6 +21,7 @@ import LandingPage from "./pages/LandingPage";
 import TempHomePage from "./pages/tempHomePage";
 import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
+import ViewTables from './pages/viewTables';
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
 // import EditProfilePage from './pages/';
 import FileUpload from "./components/fileUpload";
@@ -52,7 +53,9 @@ import GiftList from './pages/GiftList';
 
 
 import Categories from './pages/Categories';
-import PreferencePage from './pages/PreferencePage';
+import PreferencePage from './pages/PreferencePage';import Revenue from './pages/Revenue';
+import GiftItemForm  from './pages/GiftItemPage';
+
 
 
 function App() {
@@ -117,6 +120,9 @@ function App() {
 
             <Route path="/giftlist"element={<GiftList />}/>
 
+            <Route path="/view" element={<ViewTables />}/>
+            <Route path="/revenue" element={<Revenue />}/>
+            <Route path="/giftitem" element={<GiftItemForm />}/>
           </Routes>
       </BrowserRouter>
     </div>
