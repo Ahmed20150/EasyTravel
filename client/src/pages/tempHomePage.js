@@ -126,14 +126,13 @@ const TempHomePage = () => {
         </Link>
       )}
       {userType === "tourist" && (
-        <Link to="/ViewAllItinerary">
-          <button>View Itineraries</button>
-        </Link>
+        <>
+        <Link to="/ViewAllItinerary"><button>View Itineraries</button></Link>
+        <Link to="/GiftList"><button>Gift Shop</button></Link>
+        </>
       )}
 
-      {userType === 'tourist' && (
-            <Link to="/GiftList"><button>Gift Shop</button></Link>
-      )}
+
         </div>
     );
 }

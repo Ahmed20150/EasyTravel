@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 //import "../css/ItineraryList.css"; // Import the CSS file
 import { useCookies } from "react-cookie";
 
@@ -147,6 +147,8 @@ const ViewItinerary = () => {
     }
   };
   return (
+    <div>
+   <h1>All Available Itenraries</h1>
     <div style={{display:"flex" }}>
       {itineraries.map((itinerary) => (
         <ItineraryItem
@@ -158,6 +160,10 @@ const ViewItinerary = () => {
           isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
         />
       ))}
+
+    </div>
+    <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
+
     </div>
   );
 };

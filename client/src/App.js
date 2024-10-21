@@ -102,6 +102,7 @@ function App() {
             <Route path="/activities" element={<ActivityList />} />           
             <Route path="/activities/create" element={<ActivityForm />} />
             <Route path="/activities/edit/:id" element={<ActivityEdit />} />
+            <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
             <Route path="/itinerary" element={<ItineraryList />} />
             <Route path="/itinerary/create" element={<ItineraryForm />} />
             <Route path="/itinerary/create/selectActivity" element={<SelectActivity />}/>
