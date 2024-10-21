@@ -21,6 +21,7 @@ const itinerarySchema = new mongoose.Schema({
   pickupLocation: { type: String, required: true },
   dropoffLocation: { type: String, required: true },
   numofpurchases:{type: Number, default: 1},
+  touristsBooked: { type: [String] },
     status: { 
         type: String, 
         enum: ['activated', 'deactivated'], 
