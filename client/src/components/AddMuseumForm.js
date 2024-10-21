@@ -9,7 +9,7 @@ const predefinedTags = [
   "Palaces/Castles",
 ];
 
-const AddMuseumForm = ({ refreshMuseums }) => {
+const AddMuseumForm = ({ username, refreshMuseums }) => {
   const [newMuseum, setNewMuseum] = useState({
     name: "",
     location: "",
@@ -63,9 +63,14 @@ const AddMuseumForm = ({ refreshMuseums }) => {
       setErrorMessage("Please fill in all fields."); // Set error message
       return;
     }
+    // Add the username to the creator field before making the POST request
+    const museumWithCreator = {
+      ...newMuseum,
+      creator: username, // Set the creator field dynamically
+    };
 
     axios
-      .post("http://localhost:3000/museums", newMuseum)
+      .post("http://localhost:3000/museums", museumWithCreator)
       .then(() => {
         refreshMuseums();
         setNewMuseum({
