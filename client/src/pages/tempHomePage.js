@@ -118,7 +118,16 @@ const TempHomePage = () => {
           </>
       )}
       {userType === 'advertiser' && (
+        <>
             <Link to="/activities"><button>View Activities</button></Link>
+            <Link to="/revenue"><button>Financial Report</button></Link>
+        </>
+      )}
+
+      {userType === 'seller' && (
+        <>
+            <Link to="/revenue"><button>Financial Report</button></Link>
+        </>
       )}
 
       {userType === "tourGuide" && (
