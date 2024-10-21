@@ -43,7 +43,6 @@ import MuseumsList from "./pages/museumsList";
 import Categories from './pages/Categories';
 import PreferencePage from './pages/PreferencePage';
 
-import GiftItemForm from './pages/GiftItemPage';
 
 function App() {
   return (
@@ -94,7 +93,6 @@ function App() {
             <Route path='/Categorycontrol' element={< Categories/>} />
             <Route path="/preferences" element={<PreferencePage />} />
 
-            <Route path="/test" element={<GiftItemForm />}/>
           </Routes>
       </BrowserRouter>
     </div>
