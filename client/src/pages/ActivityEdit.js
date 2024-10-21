@@ -14,6 +14,7 @@ const ActivityEdit = () => {
   const { id } = useParams(); // Get the ID from URL params
   const [activity, setActivity] = useState(null); // State to hold a single activity
   const navigate = useNavigate(); // Use useNavigate for navigation
+  const [errors, setErrors] = useState([]); // State to store validation errors
 
   // Fetch activity data when the component mounts
   useEffect(() => {
@@ -67,8 +68,13 @@ const ActivityEdit = () => {
     try {
       await axios.put(`http://localhost:3000/activities/${id}`, activity);
       navigate(`/activities`); // Navigate back to the activities list after update
-    } catch (error) {
-      console.error("Error updating activity:", error);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
+      } else {
+        console.error("An error occurred:", err);
+      }
     }
   };
 

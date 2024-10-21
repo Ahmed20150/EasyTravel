@@ -12,6 +12,7 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
 
 const ActivityForm = () => {
+  const [errors, setErrors] = useState([]); // State to store validation errors
   const [formData, setFormData] = useState({
     date: "",
     time: "",
@@ -62,7 +63,6 @@ const ActivityForm = () => {
   const handleButtonClick = async (e) => {
     e.preventDefault();
     try {
-      alert(`username: ${cookies.username}`);
       const response = await axios.post("http://localhost:3000/activities", {
         ...formData,
         tags: formData.tags.split(",").map((tag) => tag.trim()),
@@ -70,8 +70,13 @@ const ActivityForm = () => {
       });
       navigate(`/activities`);
       console.log("Activity created:", response.data);
-    } catch (error) {
-      console.error("Error creating activity:", error);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
+      } else {
+        console.error("An error occurred:", err);
+      }
     }
   };
   const handleCancel = () => {

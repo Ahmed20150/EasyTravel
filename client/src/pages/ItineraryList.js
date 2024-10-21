@@ -47,8 +47,8 @@ const ItineraryList = () => {
         await axios.delete(`http://localhost:3000/itinerary/${id}`); // Make sure to update the endpoint
         setItineraries(itineraries.filter((itinerary) => itinerary._id !== id)); // Update the state
       } else {
-        console.log(
-          `Cannot delete an itinerary with bookings ${itinerary.data.bookingCounter}`
+        alert(
+          `Cannot delete an itinerary with ${itinerary.data.bookingCounter} bookings `
         );
       }
     } catch (err) {

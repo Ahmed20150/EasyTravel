@@ -6,6 +6,7 @@ import { useCookies } from "react-cookie";
 //import "../css/ItineraryForm.css"; // Import the CSS file
 
 const ItineraryForm = () => {
+  const [errors, setErrors] = useState([]); // State to store validation errors
   const navigate = useNavigate(); // Use useNavigate for navigation
   const location = useLocation();
   const { state } = location;
@@ -84,17 +85,12 @@ const ItineraryForm = () => {
 
       console.log("Itinerary created successfully:", response.data);
       navigate("/itinerary"); // Redirect to the itinerary list page
-    } catch (error) {
-      if (error.response) {
-        console.error("Error status:", error.response.status);
-        console.error("Error data:", error.response.data);
-        alert(`Error: ${error.response.data.message || "An error occurred!"}`);
-      } else if (error.request) {
-        console.error("No response received:", error.request);
-        alert("No response received from the server.");
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
       } else {
-        console.error("Error message:", error.message);
-        alert(`Error: ${error.message}`);
+        console.error("An error occurred:", err);
       }
     }
   };

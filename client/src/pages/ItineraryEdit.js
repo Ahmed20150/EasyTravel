@@ -5,6 +5,7 @@ import axios from "axios";
 //TODO error when clicking on edit, price is null
 
 const ItineraryEdit = () => {
+  const [errors, setErrors] = useState([]); // State to store validation errors
   const navigate = useNavigate(); // Use useNavigate for navigation
   const { id } = useParams(); // Get itinerary ID from the URL
   const location = useLocation();
@@ -140,14 +141,12 @@ const ItineraryEdit = () => {
       console.log("Itinerary updated successfully:", response.data);
       alert("Itinerary updated successfully!");
       navigate("/itinerary"); // Redirect to the itinerary list page
-    } catch (error) {
-      if (error.response) {
-        console.error("Error status:", error.response.status);
-        console.error("Error data:", error.response.data);
-        alert(`Error: ${error.response.data.message || "An error occurred!"}`);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
       } else {
-        console.error("Error message:", error.message);
-        alert(`Error: ${error.message}`);
+        console.error("An error occurred:", err);
       }
     }
   };

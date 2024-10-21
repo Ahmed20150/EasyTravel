@@ -13,8 +13,12 @@ router.post("/", async (req, res) => {
     const newActivity = new Activity(req.body);
     const savedActivity = await newActivity.save();
     res.status(201).json(savedActivity);
-  } catch (err) {
-    console.error(err); // Log the error for debugging
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).send({ errors });
+    }
+    console.error(error);
     res
       .status(500)
       .json({ error: "An error occurred while saving the activity." });
@@ -50,8 +54,12 @@ router.put("/:id", async (req, res) => {
       { new: true, runValidators: true }
     );
     res.status(200).json(updatedActivity);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).send({ errors });
+    }
+    res.status(500).json({ error: error.message });
   }
 });
 
