@@ -34,6 +34,7 @@ import ItineraryForm from "./pages/ItineraryForm";
 import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
+import GiftList from './pages/GiftList';
 
 
 //TODO add navigation buttons between all pages
@@ -92,6 +93,10 @@ function App() {
 
             <Route path='/Categorycontrol' element={< Categories/>} />
             <Route path="/preferences" element={<PreferencePage />} />
+
+            
+
+            <Route path="/giftlist"element={<GiftList />}/>
 
           </Routes>
       </BrowserRouter>
