@@ -48,18 +48,45 @@ const ViewItinerary = () => {
 
   const handleBook = async (id) => {
     try {
-      console.log(`username: ${username}, itinerary id: ${id} `);
+      console.log(`username: ${username}, itinerary id: ${id}`);
+
+      // Fetch the tourist data first to check the age
+      const tourist = await axios.get(
+        `http://localhost:3000/api/tourist/${username}`
+      );
+      const { dateOfBirth, bookedItineraries } = tourist.data;
+
+      // Calculate age
+      const currentDate = new Date();
+      const birthDate = new Date(dateOfBirth);
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+      const isBirthdayPassed =
+        currentDate.getMonth() > birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() &&
+          currentDate.getDate() >= birthDate.getDate());
+
+      if (!isBirthdayPassed) {
+        age--; // Adjust age if birthday hasn't occurred yet this year
+      }
+
+      // If user is under 18, prevent the booking process
+      if (age < 18) {
+        console.error("User is under 18 and cannot book an itinerary.");
+        alert("You must be 18 or older to book an itinerary.");
+        return; // Stop the booking process
+      }
+
+      // Proceed with booking if age is 18 or above
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
       const itineraryCounter = itinerary.data.bookingCounter + 1; // Increment the booking counter by 1
+
       await axios.patch(`http://localhost:3000/itinerary/${id}`, {
         itineraryCounter,
       });
-      const tourist = await axios.get(
-        `http://localhost:3000/api/tourist/${username}`
-      );
-      const newBookedItineraries = [...tourist.data.bookedItineraries, id]; // Add the new itinerary ID
+
+      const newBookedItineraries = [...bookedItineraries, id]; // Add the new itinerary ID
 
       // Update the user's booked itineraries on the server
       const response = await axios.patch(
@@ -80,6 +107,7 @@ const ViewItinerary = () => {
       );
     }
   };
+
   const handleUnbook = async (id) => {
     try {
       console.log(`Unbooking itinerary: ${id} for user ${username}`);
