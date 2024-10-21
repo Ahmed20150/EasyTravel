@@ -11,7 +11,7 @@ import TempHomePage from './pages/tempHomePage';
 import GeneralSignUpForm from './components/GeneralSignUpForm';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import GiftItemForm from './pages/GiftItemPage';
-
+import GiftList from './pages/GiftList';
 
 
 function App() {
@@ -25,7 +25,8 @@ function App() {
             <Route path="/changePassword"element={<ChangePassword />}/>
             <Route path="/home"element={<TempHomePage />}/>
             <Route path='/forgotPasswordForm' element={<ForgotPasswordForm />} /> 
-            <Route path="/test" element={<GiftItemForm />}/>
+            {/* <Route path="/test" element={<GiftItemForm />}/> */}
+            <Route path="/giftlist"element={<GiftList />}/>
           </Routes>
       </BrowserRouter>
     </div>
