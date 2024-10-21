@@ -18,7 +18,7 @@ const AddMuseumForm = ({ refreshMuseums }) => {
       from: "",
       to: "",
     },
-    picture: "", // Add picture URL field
+    picture: "", // Add picture field to store base64 string
     ticketPrices: {
       foreigner: "",
       native: "",
@@ -27,6 +27,23 @@ const AddMuseumForm = ({ refreshMuseums }) => {
     tags: [],
   });
   const [errorMessage, setErrorMessage] = useState("");
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const fileSizeMB = file.size / 1024 / 1024;
+      if (fileSizeMB > 5) {
+        alert("File size exceeds the limit of 5MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewMuseum({ ...newMuseum, picture: reader.result }); // Set picture as base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,7 +55,7 @@ const AddMuseumForm = ({ refreshMuseums }) => {
       !newMuseum.description ||
       !newMuseum.openingHours.from || // Validate openingHours from time
       !newMuseum.openingHours.to || // Validate openingHours to time
-      !newMuseum.picture || // Validate picture URL
+      !newMuseum.picture || // Validate picture field
       !newMuseum.ticketPrices.foreigner ||
       !newMuseum.ticketPrices.native ||
       !newMuseum.ticketPrices.student
@@ -142,15 +159,27 @@ const AddMuseumForm = ({ refreshMuseums }) => {
         />
       </div>
 
-      <input
-        type="text"
-        value={newMuseum.picture} // Input for image URL
-        onChange={(e) =>
-          setNewMuseum({ ...newMuseum, picture: e.target.value })
-        }
-        placeholder="Image URL"
-        required
-      />
+      {/* File input for image upload */}
+      <div className="image-upload">
+        <input
+          type="file"
+          name="profilePicture"
+          accept="image/*"
+          onChange={handleImageChange}
+          id="image-upload" // Add an id for the file input
+          required
+        />
+        <label htmlFor="image-upload">Upload Image</label>
+        {newMuseum.picture && (
+          <img
+            src={newMuseum.picture}
+            alt="Uploaded Preview"
+            className={newMuseum.picture ? "active" : ""}
+          />
+        )}{" "}
+        {/* Display uploaded image */}
+      </div>
+
       <input
         type="number"
         value={newMuseum.ticketPrices.foreigner}
