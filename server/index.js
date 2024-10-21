@@ -7,6 +7,9 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const cors = require("cors");
 const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const port = process.env.PORT || 3000;
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const giftRoutes = require('./routes/gift.routes'); // Ensure this file exists with the appropriate routes
 const Tourist = require("./models/tourist.model.js");
 const TourismGoverner = require("./models/tourismGoverner.model.js");
 const Seller = require("./models/seller.model.js");
@@ -48,10 +51,21 @@ const Preference= require("./models/preference.model.js");
 
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+//const { error } = require("server/router.js");
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(cors());
+
+
+
+
+  app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    next();
+  })
 app.use(cookieParser());
 
 app.use('/admin', adminRoutes);
@@ -65,6 +79,7 @@ app.use('/api', touristRoutes);
 app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
+app.use('/gift', giftRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
