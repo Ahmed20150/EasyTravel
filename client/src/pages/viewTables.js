@@ -55,6 +55,7 @@ function ViewTables() {
 
   // Function to fetch Gift Shop sales data
   const handleGiftItemsClick = async () => {
+    resetData(); // Clear previous data and messages
     try {
       const response = await axios.get('http://localhost:3000/api/giftitems');
       setGiftItemsData(response.data);
