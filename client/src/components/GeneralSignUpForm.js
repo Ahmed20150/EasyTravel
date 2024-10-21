@@ -114,7 +114,7 @@ export default function GeneralSignUpForm() {
 
 
   const navigate = useNavigate();
-
+//submit wihout file upload
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -130,9 +130,9 @@ export default function GeneralSignUpForm() {
     }
     // const user = {username, email, password, userType}
     
-    // const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
+    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
 
-    console.log(formData);
+    console.log(user);
     try {
     if(userType === 'tourist'){
       formData.append('mobileNumber', `${countryCode}${mobileNumber}`);

@@ -40,8 +40,8 @@ import MuseumsList from "./pages/museumsList";
 
 
 
-
-
+import Categories from './pages/Categories';
+import PreferencePage from './pages/PreferencePage';
 
 function App() {
   return (
@@ -89,6 +89,8 @@ function App() {
             <Route path="/museums" element={<MuseumsList />} />
 
 
+            <Route path='/Categorycontrol' element={< Categories/>} />
+            <Route path="/preferences" element={<PreferencePage />} />
           </Routes>
       </BrowserRouter>
     </div>
