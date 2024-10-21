@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 
 function Revenue() {
   const [it_totalRevenue, setItTotalRevenue] = useState(0);
@@ -14,6 +15,8 @@ function Revenue() {
   const [museums, setMuseums] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
+
+  const navigate = useNavigate();
 
   // Utility function for formatting dates
   const formatDate = (dateString) => {
@@ -242,7 +245,7 @@ function Revenue() {
        {/* Back Button */}
        <button
         style={backButtonStyle}
-        onClick={() => (window.location.href = 'http://localhost:3001/view')}
+        onClick={() => navigate("/home")}
       >
         Back
       </button>

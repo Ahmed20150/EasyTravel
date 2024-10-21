@@ -59,6 +59,7 @@ const activitySchema = new mongoose.Schema({
     max: [100, "Special discount cannot exceed 100"], // Maximum special discount should be 100
   },
   isBookingOpen: { type: Boolean, default: true },
+  numofpurchases:{type: Number, default: 0},
 });
 
 // Middleware to validate that min price is not greater than max price on save

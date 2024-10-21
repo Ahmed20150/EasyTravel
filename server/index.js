@@ -13,6 +13,7 @@ const Seller = require("./models/seller.model.js");
 const Advertiser = require("./models/advertiser.model.js");
 const Admin = require("./models/admin.model.js");
 const TourGuide = require("./models/tourGuide.model.js");
+const GiftItem = require("./models/giftitem.model.js"); 
 const adminRoutes = require('./routes/admin.routes.js');
 const tourGuideRoutes = require('./routes/tour_guideRoute.js');
 const advRoutes = require('./routes/AdvertiserRoute.js');
@@ -23,6 +24,9 @@ const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
 const giftRoutes = require('./routes/gift.routes.js');
+const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
+const activities = require("./models/activity.model.js");
+const itineraries = require("./models/itinerary.model.js");
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
