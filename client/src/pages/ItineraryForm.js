@@ -25,6 +25,7 @@ const ItineraryForm = () => {
     accessibility: "",
     pickupLocation: "",
     dropoffLocation: "",
+    touristsBooked: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);

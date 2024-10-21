@@ -23,7 +23,6 @@ const ItineraryList = () => {
         const filteredItineraries = response.data.filter(
           (itinerary) => itinerary.creator === username
         );
-
         setItineraries(filteredItineraries); // Store the filtered itineraries in state
       } catch (err) {
         setError(err.message);
@@ -43,12 +42,12 @@ const ItineraryList = () => {
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
-      if (itinerary.data.bookingCounter == 0) {
+      if (itinerary.data.touristsBooked.length == 0) {
         await axios.delete(`http://localhost:3000/itinerary/${id}`); // Make sure to update the endpoint
         setItineraries(itineraries.filter((itinerary) => itinerary._id !== id)); // Update the state
       } else {
         alert(
-          `Cannot delete an itinerary with ${itinerary.data.bookingCounter} bookings `
+          `Cannot delete an itinerary with ${itinerary.data.touristsBooked.length} bookings `
         );
       }
     } catch (err) {

@@ -84,11 +84,7 @@ const itinerarySchema = new mongoose.Schema({
       message: "Dropoff location must be a string", // Custom error message
     },
   },
-  bookingCounter: {
-    type: Number,
-    default: 0,
-    min: [0, "Booking counter cannot be negative"], // Custom error message for negative values
-  },
+  touristsBooked: { type: [String] },
 });
 
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);

@@ -100,5 +100,29 @@ router.patch("/:id", async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message }); // Include the error message in the response
   }
 });
+router.patch("/:id/touristsBook", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { touristsBooked } = req.body; // Update this to handle the array correctly
+
+    const updatedBookingList = await Itinerary.findByIdAndUpdate(
+      id, // Use the correct identifier for MongoDB
+      { touristsBooked: touristsBooked }, // Update bookedItineraries array
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedBookingList) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    res.status(200).json({
+      message: "Itinerary booked successfully",
+      touristsBooked: updatedBookingList.touristsBooked,
+    });
+  } catch (error) {
+    console.error("Error updating booked itineraries:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

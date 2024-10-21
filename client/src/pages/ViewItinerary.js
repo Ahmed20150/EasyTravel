@@ -80,10 +80,10 @@ const ViewItinerary = () => {
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
-      const itineraryCounter = itinerary.data.bookingCounter + 1; // Increment the booking counter by 1
+      const touristsBook = [...itinerary.data.touristsBooked, username];
 
-      await axios.patch(`http://localhost:3000/itinerary/${id}`, {
-        itineraryCounter,
+      await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
+        touristsBooked: touristsBook,
       });
 
       const newBookedItineraries = [...bookedItineraries, id]; // Add the new itinerary ID
@@ -114,11 +114,14 @@ const ViewItinerary = () => {
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
-      const itineraryCounter = itinerary.data.bookingCounter - 1;
+      const touristsBook = itinerary.data.touristsBooked.filter(
+        (user) => user != username
+      );
 
-      await axios.patch(`http://localhost:3000/itinerary/${id}`, {
-        itineraryCounter,
+      await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
+        touristsBooked: touristsBook,
       });
+
       // Remove the itinerary ID from bookedItineraries array
       const newBookedItineraries = bookedItineraries.filter(
         (itineraryId) => itineraryId !== id
