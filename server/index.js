@@ -126,8 +126,8 @@ app.post("/api/category", async (req, res) => {
   }
 });
 
-
-app.get("/api/category", async (req, res) =>{
+//get all categories
+app.get("/api/categories", async (req, res) =>{
   try{
     const category = await Category.find({});
     res.status(200).json(category);

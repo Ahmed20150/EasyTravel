@@ -30,6 +30,7 @@ const ActivityForm = () => {
   });
   const navigate = useNavigate();
   const [cookies] = useCookies(["username"]);
+  const [categories, setCategories] = useState([]);
 
   const handleLocationSelect = async (lng, lat) => {
     try {
@@ -83,6 +84,21 @@ const ActivityForm = () => {
     localStorage.clear();
     navigate("/activities");
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+
   return (
     <div className="activity-form">
       <h2>Create a New Activity</h2>
@@ -153,15 +169,21 @@ const ActivityForm = () => {
           required
         />
       </label>
-      <label>
+       <label>
         Category:
-        <input
-          type="text"
+        <select
           name="category"
           value={formData.category}
           onChange={handleChange}
           required
-        />
+        >
+          <option value="">Select a category</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </label>
       <label>
         Tags (comma-separated):
@@ -173,7 +195,7 @@ const ActivityForm = () => {
         />
       </label>
       <label>
-        Special Discounts:
+        Special Discounts (in %):
         <input
           type="number"
           name="specialDiscounts"
