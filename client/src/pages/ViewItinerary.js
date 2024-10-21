@@ -147,7 +147,7 @@ const ViewItinerary = () => {
     }
   };
   return (
-    <div>
+    <div style={{display:"flex" }}>
       {itineraries.map((itinerary) => (
         <ItineraryItem
           key={itinerary._id}
