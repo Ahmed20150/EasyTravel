@@ -37,7 +37,7 @@ import MuseumsList from "./pages/museumsList";
 
 
 //TODO add navigation buttons between all pages
-
+//
 
 
 import Categories from './pages/Categories';
