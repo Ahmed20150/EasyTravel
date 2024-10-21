@@ -79,6 +79,7 @@ app.use('/api', touristRoutes);
 app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
+app.use('/gift', giftRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
