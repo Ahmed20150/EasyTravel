@@ -20,6 +20,22 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
     setNewData(museum); // Reset newData to the original museum data on cancel
     setErrorMessage(""); // Clear error message on cancel
   };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const fileSizeMB = file.size / 1024 / 1024;
+      if (fileSizeMB > 5) {
+        alert("File size exceeds the limit of 5MB.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewData({ ...newData, picture: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleUpdate = () => {
     // Simple validation check
@@ -28,7 +44,6 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
       !newData.location ||
       !newData.description ||
       !newData.openingHours ||
-      !newData.picture || // Validate picture URL
       !newData.ticketPrices.foreigner ||
       !newData.ticketPrices.native ||
       !newData.ticketPrices.student
@@ -96,14 +111,25 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
               placeholder="Description"
               rows="4"
             />
-            <input
-              type="text"
-              value={newData.picture} // Input for image URL
-              onChange={(e) =>
-                setNewData({ ...newData, picture: e.target.value })
-              }
-              placeholder="Image URL"
-            />
+            <div className="image-upload">
+              <input
+                type="file"
+                name="profilePicture"
+                accept="image/*"
+                onChange={handleImageChange}
+                id="image-upload" // Add an id for the file input
+                required
+              />
+              <label htmlFor="image-upload">Upload Image</label>
+              {newData.picture && (
+                <img
+                  src={newData.picture}
+                  alt="Uploaded Preview"
+                  className={newData.picture ? "active" : ""}
+                />
+              )}{" "}
+              {/* Display uploaded image */}
+            </div>
             {/* Time range for opening hours */}
             <div className="time-range">
               <label>Opening Hours From:</label>
@@ -212,11 +238,11 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
               {museum.openingHours.to}
             </p>{" "}
             <p>
-              Ticket: Foreigner = ${museum.ticketPrices.foreigner}
+              Ticket: Foreigner: ${museum.ticketPrices.foreigner}
               <br />
-              Native = ${museum.ticketPrices.native}
+              Native: ${museum.ticketPrices.native}
               <br />
-              Student = ${museum.ticketPrices.student}
+              Student: ${museum.ticketPrices.student}
             </p>
             {/* Display Tags */}
             <div className="tags-container">

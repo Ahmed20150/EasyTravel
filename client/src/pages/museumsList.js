@@ -4,12 +4,15 @@ import MuseumCard from "../components/museumCard";
 import AddMuseumForm from "../components/AddMuseumForm";
 import "../styles/museumList.css"; // Import CSS styles
 import { Link } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 //TODO make image upload instead of image URL
-//TODO fix css to make it local only and not affect other pages 
+//TODO fix css to make it local only and not affect other pages
 const MuseumsList = () => {
   const [museums, setMuseums] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cookies] = useCookies(["username"]);
+  const username = cookies.username;
 
   useEffect(() => {
     fetchMuseums();
@@ -20,7 +23,9 @@ const MuseumsList = () => {
     axios
       .get("http://localhost:3000/museums")
       .then((response) => {
-        setMuseums(response.data);
+        setMuseums(
+          response.data.filter((museum) => museum.creator === username)
+        );
         setLoading(false);
       })
       .catch((error) => {
@@ -53,8 +58,10 @@ const MuseumsList = () => {
           ))}
         </div>
       )}
-      <AddMuseumForm refreshMuseums={fetchMuseums} />
-      <Link to="/home"><button>Back</button></Link>
+      <AddMuseumForm username={username} refreshMuseums={fetchMuseums} />
+      <Link to="/home">
+        <button>Back</button>
+      </Link>
     </div>
   );
 };

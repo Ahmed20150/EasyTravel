@@ -46,6 +46,9 @@ const museumsAndHistoricalPlacesSchema = new mongoose.Schema({
       type: String, // e.g., Monuments, Museums, Religious Sites, Palaces/Castles
     },
   ],
+  creator: {
+    type: String,
+  },
   numofpurchases:{type: Number, default: 0},
 });
 
