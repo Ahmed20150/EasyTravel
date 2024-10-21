@@ -378,25 +378,16 @@ app.post('/api/itineraries', async (req, res) => {
   }
 });
 
-app.put('/api/itineraries/:id', async (req, res) => {
+app.put("/api/itineraries/:id", async (req, res) => {
   try {
-    // Find the itinerary by id and update it with the new data from req.body
-    const updatedItinerary = await Itinerary.findByIdAndUpdate(
-      req.params.id,
-      req.body, // The updated data
-      { new: true, runValidators: true } // Options: return the new document, run validators on update
-    );
-
-    // If itinerary not found, send a 404 error
-    if (!updatedItinerary) {
-      return res.status(404).json({ message: 'Itinerary not found' });
-    }
-
-    // Respond with the updated itinerary
+    const { id } = req.params;
+    const itinerarie = await itineraries.findByIdAndUpdate(id,req.body);
+    if(!itinerarie)
+      return res.status(404).json({message:"itinerary not found"})
+    const updatedItinerary = await itineraries.findById(id);
     res.status(200).json(updatedItinerary);
-  } catch (err) {
-    // If an error occurs, respond with a 500 status and the error message
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
