@@ -62,7 +62,7 @@ function Revenue() {
 
       
 
-      const it_revenue = itineraries.reduce((total, itinerary) => total + (itinerary.priceOfTour * (itinerary.numofpurchases || 1)), 0);
+      const it_revenue = itineraries.reduce((total, itinerary) => total + (itinerary.priceOfTour * (itinerary.touristsBooked.length || 1)), 0);
       const museum_revenue = museums_totalRevenue;
       const act_revenue = acts.reduce((total, act) => total + (act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1)), 0);
       const gift_revenue = giftItems.reduce((total, gift) => total + (gift.price * (gift.purchases || 0)), 0);
