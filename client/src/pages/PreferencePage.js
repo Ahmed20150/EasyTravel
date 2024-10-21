@@ -1,8 +1,11 @@
 // src/PreferencePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './PreferencePage.css'; // Import the CSS file for styling
+import {Link} from 'react-router-dom';
+// import './PreferencePage.css'; // Import the CSS file for styling
 
+
+//TODO fix create prefrence, accepts only Shopping??
 const PreferencePage = () => {
   const [preferenceName, setPreferenceName] = useState('');
   const [preferences, setPreferences] = useState([]);
@@ -77,6 +80,7 @@ const PreferencePage = () => {
     <div className="preferences-container">
       <div className="form-section">
         <h2>Create Preference</h2>
+        <Link to="/home"><button>Back</button></Link>
         <input
           type="text"
           placeholder="Enter preference name"

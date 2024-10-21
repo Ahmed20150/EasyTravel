@@ -128,11 +128,7 @@ export default function GeneralSignUpForm() {
     if (file && userType !== 'tourist') {
       formData.append('file', file);
     }
-    // const user = {username, email, password, userType}
-    
-    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
 
-    console.log(user);
     try {
     if(userType === 'tourist'){
       formData.append('mobileNumber', `${countryCode}${mobileNumber}`);

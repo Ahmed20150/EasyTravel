@@ -1,7 +1,8 @@
 // src/Categories.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Categories.css'; // Import the CSS file for styling
+import {Link} from 'react-router-dom';
+// import './Categories.css'; // Import the CSS file for styling
 
 const Categories = () => {
   const [categoryName, setCategoryName] = useState('');
@@ -73,6 +74,7 @@ const Categories = () => {
     <div className="categories-container">
       <div className="form-section">
         <h2>Create Category</h2>
+        <Link to="/home"><button>Back</button></Link>
         <input
           type="text"
           placeholder="Enter category name"
