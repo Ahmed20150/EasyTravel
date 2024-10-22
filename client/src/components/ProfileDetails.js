@@ -12,6 +12,12 @@ const ProfileDetails = ({ profile, onEditClick }) => {
       const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
       // Update state to remove the deleted user
       window.alert(`Request sent successfully: ${response.data.message}`);
+
+
+      const deleteResponse = await axios.put(`http://localhost:3000/itinerary/deactivateAll/${username}`);
+      window.alert(`Iteneraries deactivated successfully: ${deleteResponse.data.message}`);
+
+      
       // Filter out the deleted user from the UI
     } catch (error) {
       console.error("Error deleting user:", error);

@@ -47,7 +47,7 @@ const ProfileDetailsAdvertiser = ({ profile, onEditClick }) => {
 
 
       //delete all activities that were created by this user using username
-      const deleteResponse = await axios.delete(`http://localhost:3000/activities/deleteAll/  ${username}`);
+      const deleteResponse = await axios.delete(`http://localhost:3000/activities/deleteAll/${username}`);
       window.alert(`Activities deleted successfully: ${deleteResponse.data.message}`);
 
       // Filter out the deleted user from the UI

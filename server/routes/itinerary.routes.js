@@ -141,4 +141,39 @@ router.patch("/:id/touristsBook", async (req, res) => {
   }
 });
 
+// deactivate all itineraries by username
+router.put("/deactivateAll/:username", async (req, res) => {
+  try {
+    const username = req.params.username;
+    console.log(`Deactivating itineraries for username: ${username}`);
+
+    const result = await Itinerary.updateMany(
+      { creator: req.params.username },
+      { $set: { activated: false } }
+    );
+    console.log(`Update result: ${JSON.stringify(result)}`);
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ message: "All itineraries deactivated" });
+    } else {
+      res.status(404).json({ message: "No itineraries found for the given username" });
+    }
+  } catch (err) {
+    console.error("Error deactivating itineraries:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// delete all itinraries by username
+router.delete("/deleteAll/:username", async (req, res) => {
+  try {
+    await Itinerary.deleteMany({ creator: req.params.username });
+    res.status(200).json({ message: "All Itineraries deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;
