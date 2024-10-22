@@ -59,6 +59,7 @@ async function checkAllItinerariesByCreator(creatorUsername) {
                 return true; // Found activities created by the user
             }
         }
+        console.log("ARRAY IS EMPTY");
         return false; // No matching activities found
     } catch (err) {
         console.error("Error in checking itineraries:", err);
@@ -166,8 +167,7 @@ router.post('/requestDelete/:username/:role', async (req, res) => {
         let check2 = false;
         let check3 = false;
         if (role.toLowerCase() === 'advertiser') {
-            check1 = checkAllItinerariesByCreator(username);
-            console.log(check1);
+            check1 = await checkAllItinerariesByCreator(username);  
         }
         if (role.toLowerCase() == 'tourguide') {
             check2 = await hasTouristsBooked(username);
