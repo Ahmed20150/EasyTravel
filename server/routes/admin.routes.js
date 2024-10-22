@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Admin = require('../models/admin.model');
-const TourGuide = require('../models/tourGuide.model'); 
-const Advertiser = require('../models/advertiser.model'); 
-const Seller = require('../models/seller.model'); 
+const TourGuide = require('../models/tourGuide.model');
+const Advertiser = require('../models/advertiser.model');
+const Seller = require('../models/seller.model');
 const TourismGoverner = require('../models/tourismGoverner.model');
 const bcrypt = require('bcrypt');
 const Tourist = require('../models/tourist.model')
@@ -13,15 +13,24 @@ router.use(express.json());
 router.post('/add-tourismGoverner', async (req, res) => {
     const { username, password } = req.body;
 
-      if(username.includes(" ")){
+    if (username.includes(" ")) {
         return res.status(400).json({ message: 'Username is Invalid.' });
     }
-      if(password.includes(" ")){
+    if (password.includes(" ")) {
         return res.status(400).json({ message: 'Password is Invalid.' });
     }
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password Required' });
+    }
+
+    check1 = await Tourist.findOne({ username });
+    check2 = await Advertiser.findOne({ username });
+    check3 = await Seller.findOne({ username });
+    check4 = await TourGuide.findOne({ username });
+    check4 = await Admin.findOne({ username });
+    if (check1 || check2 || check3 || check4) {
+        return res.status(400).json({ message: 'Username already exists in database. Please choose a different one.' });
     }
 
     try {
@@ -48,15 +57,24 @@ router.post('/add-admin', async (req, res) => {
     const { username, password } = req.body;
 
     // Check if username and password are provided
-    if(username.includes(" ")){
+    if (username.includes(" ")) {
         return res.status(400).json({ message: 'Username is Invalid.' });
     }
-    if(password.includes(" ")){
+    if (password.includes(" ")) {
         return res.status(400).json({ message: 'Password is Invalid.' });
     }
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password are required.' });
+    }
+
+    check1 = await Tourist.findOne({ username });
+    check2 = await Advertiser.findOne({ username });
+    check3 = await Seller.findOne({ username });
+    check4 = await TourGuide.findOne({ username });
+    check4 = await TourismGoverner.findOne({ username });
+    if (check1 || check2 || check3 || check4) {
+        return res.status(400).json({ message: 'Username already exists in database. Please choose a different one.' });
     }
 
     try {
@@ -85,7 +103,7 @@ router.post('/add-admin', async (req, res) => {
 const getUserModelByRole = (role) => {
     const role2 = role.toLowerCase();
     switch (role2) {
-        case 'tourist' :
+        case 'tourist':
             return Tourist;
         case 'tourguide':
             return TourGuide;
@@ -112,15 +130,15 @@ router.delete('/delete-user/:username/:role', async (req, res) => {
 
         // Find the user by username in the appropriate collection/model
         // Find the user by _id and delete them
-        const deletedUser = await UserModel.deleteOne({ username});
+        const deletedUser = await UserModel.deleteOne({ username });
 
         if (deletedUser.deletedCount === 0) {
             return res.status(404).json({ message: "User not found." });
         }
 
-        const request=await DeletionRequest.findOne({username,role})
-        if(request){
-            await DeletionRequest.deleteOne({username,role});
+        const request = await DeletionRequest.findOne({ username, role })
+        if (request) {
+            await DeletionRequest.deleteOne({ username, role });
         }
 
         // Respond with success message
@@ -151,7 +169,7 @@ router.get('/viewAllUsers', async (req, res) => {
         const tourGuides = await getAllUsersFromModel(TourGuide);
         const advertisers = await getAllUsersFromModel(Advertiser);
         const sellers = await getAllUsersFromModel(Seller);
-   
+
 
         // Combine users with specific fields into a single array
         const allUsers = [
@@ -197,7 +215,7 @@ router.get('/viewAllUsers', async (req, res) => {
 router.get('/viewRequests', async (req, res) => {
     try {
         // Fetch users from all models
-        const Requests= await getAllUsersFromModel(DeletionRequest)
+        const Requests = await getAllUsersFromModel(DeletionRequest)
 
         // Combine users with specific fields into a single array
         const allUsers = [
@@ -344,9 +362,9 @@ router.put('/reject-seller/:id', async (req, res) => {
 router.put('/tourGuide/:id/accept-terms', async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedGuide = await TourGuide.findByIdAndUpdate( 
+        const updatedGuide = await TourGuide.findByIdAndUpdate(
             id,
-            { firstTimeLogin: false, acceptedTerms: true }, 
+            { firstTimeLogin: false, acceptedTerms: true },
             { new: true });
         if (!updatedGuide) {
             return res.status(404).json({ message: 'Tour guide not found' });
@@ -361,8 +379,8 @@ router.put('/tourGuide/:id/accept-terms', async (req, res) => {
 router.put('/advertiser/:id/accept-terms', async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedAdvertiser = await Advertiser.findByIdAndUpdate( id,
-            { firstTimeLogin: false, acceptedTerms: true }, 
+        const updatedAdvertiser = await Advertiser.findByIdAndUpdate(id,
+            { firstTimeLogin: false, acceptedTerms: true },
             { new: true });
         if (!updatedAdvertiser) {
             return res.status(404).json({ message: 'Advertiser not found' });
@@ -377,8 +395,8 @@ router.put('/advertiser/:id/accept-terms', async (req, res) => {
 router.put('/seller/:id/accept-terms', async (req, res) => {
     const { id } = req.params;
     try {
-        const updatedSeller = await Seller.findByIdAndUpdate( id,
-            { firstTimeLogin: false, acceptedTerms: true }, 
+        const updatedSeller = await Seller.findByIdAndUpdate(id,
+            { firstTimeLogin: false, acceptedTerms: true },
             { new: true });
         if (!updatedSeller) {
             return res.status(404).json({ message: 'Seller not found' });

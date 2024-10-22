@@ -3,20 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TouristForm from '../components/TouristForm';
-import { useLocation, Link} from 'react-router-dom'; 
+import { useLocation, Link } from 'react-router-dom';
 import { useCookies } from "react-cookie";
 
 
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
-const userType = cookies.userType; // Access the userType
+    const userType = cookies.userType; // Access the userType
 
     const [tourist, setTourist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
-    const location = useLocation(); 
-    const { username } = location.state || {}; 
+    const location = useLocation();
+    const { username } = location.state || {};
 
 
     useEffect(() => {
@@ -38,24 +38,28 @@ const userType = cookies.userType; // Access the userType
         fetchTouristProfile();
     }, [username]); // Use username as dependency
 
-    const handleRequest = async (username,role) => {
+    const handleRequest = async (username, role) => {
         //const input = { username, role };
         try {
             // Construct the URL with the username and role as query parameters
-            const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`); 
+            const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
             // Update state to remove the deleted user
             window.alert(`Request sent successfully: ${response.data.message}`);
-             // Filter out the deleted user from the UI
+            // Filter out the deleted user from the UI
         } catch (error) {
             console.error("Error deleting user:", error);
-            alert("Request already sent or Failed to sent request"); // Inform user of the error
+            if (error.response) {
+                alert(error.response.data.message);
+            } else {
+                alert("An unexpected error occurred: " + error.message);
+            }
         }
     };
 
 
     const handleUpdate = async (updatedTourist) => {
         try {
-            const response = await axios.put(`http://localhost:3000/api/tourist/${username}`, updatedTourist); 
+            const response = await axios.put(`http://localhost:3000/api/tourist/${username}`, updatedTourist);
             setTourist(response.data);
             setIsEditing(false);
         } catch (err) {
@@ -86,11 +90,11 @@ const userType = cookies.userType; // Access the userType
                     <p>wallet: {tourist.wallet}</p>
                     <button onClick={() => setIsEditing(true)}>Edit Profile</button>
                     <button
-                                className="delete-button"
-                                onClick={()=>{handleRequest(tourist.username,userType)}}  // Pass the correct user details
-                            >
-                                Request Delete
-                            </button>
+                        className="delete-button"
+                        onClick={() => { handleRequest(tourist.username, userType) }}  // Pass the correct user details
+                    >
+                        Request Delete
+                    </button>
                     <Link to="/home"><button>Back</button></Link>
                 </div>
             )}
