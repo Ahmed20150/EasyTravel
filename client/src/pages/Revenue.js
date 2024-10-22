@@ -99,108 +99,6 @@ function Revenue() {
     }
   };
   // Filter Data Based on Selected Filter
-  // const handleFilterClick = async () => {
-  //   try {
-  //     const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
-  //       axios.get('http://localhost:3000/api/itineraries'),
-  //       axios.get('http://localhost:3000/api/museums'),
-  //       axios.get('http://localhost:3000/api/activities'),
-  //     ]);
-  
-  //     const itineraries = itinerariesResponse.data;
-  //     const museums = museumsResponse.data;
-  //     const acts = actResponse.data;
-  
-  //     let filteredItineraries = itineraries;
-  //     let filteredActs = acts;
-  
-  //     if (userType === 'tourGuide') {
-  //       filteredItineraries = itineraries.filter(itinerary => itinerary.creator === username);
-  //     } else if (userType === 'advertiser') {
-  //       filteredActs = acts.filter(act => act.creator === username);
-  //     }
-  
-  //     setItineraries(filteredItineraries);
-  //     setMuseums(museums);
-  //     setActs(filteredActs);
-  
-  //     let filtered = [];
-  //     if (filter === 'activity') {
-  //       filtered = filteredActs.map((act) => ({
-  //         type: 'Activity',
-  //         name: act.name,
-  //         category: act.category,
-  //         revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
-  //       }));
-  //     } else if (filter === 'itinerary') {
-  //       filtered = filteredItineraries.map((itinerary) => ({
-  //         type: 'Itinerary',
-  //         name: itinerary.name,
-  //         category: itinerary.category,
-  //         revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
-  //       }));
-  //     } else if (filter === 'date' && selectedDate) {
-  //       const activityResults = filteredActs
-  //         .filter((act) => act.date && act.date.startsWith(selectedDate))
-  //         .map((act) => ({
-  //           type: 'Activity',
-  //           name: act.name,
-  //           category: act.category,
-  //           revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
-  //           date: act.date,
-  //         }));
-  
-  //       const itineraryResults = filteredItineraries
-  //         .filter((itinerary) => itinerary.availableDates && itinerary.availableDates.includes(selectedDate))
-  //         .map((itinerary) => ({
-  //           type: 'Itinerary',
-  //           name: itinerary.name,
-  //           category: itinerary.category,
-  //           revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
-  //           date: selectedDate,
-  //         }));
-  
-  //       filtered = [...activityResults, ...itineraryResults];
-  //     } else if (filter === 'month' && selectedMonth) {
-  //       const monthRevenue = filteredActs.filter((act) => {
-  //         const activityMonth = new Date(act.date).getMonth() + 1;
-  //         return activityMonth === parseInt(selectedMonth);
-  //       });
-  
-  //       const itineraryResults = filteredItineraries.filter((itinerary) => {
-  //         const itineraryMonth = new Date(itinerary.availableDates[0]).getMonth() + 1;
-  //         return itineraryMonth === parseInt(selectedMonth);
-  //       });
-  
-  //       const activityRevenue = monthRevenue.map((act) => ({
-  //         type: 'Activity',
-  //         name: act.name,
-  //         category: act.category,
-  //         revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
-  //         date: act.date,
-  //       }));
-  
-  //       const itineraryRevenue = itineraryResults.map((itinerary) => ({
-  //         type: 'Itinerary',
-  //         name: itinerary.name,
-  //         category: itinerary.category,
-  //         revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
-  //         date: itinerary.availableDates[0],
-  //       }));
-  
-  //       filtered = [...activityRevenue, ...itineraryRevenue];
-  //     }
-  
-  //     if ((filter === 'date' || filter === 'month') && filtered.length === 0) {
-  //       alert(`There is no revenue for the selected ${filter === 'date' ? 'date' : 'month'}.`);
-  //     }
-  
-  //     setFilterData(filtered);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // };
-
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
@@ -208,24 +106,24 @@ function Revenue() {
         axios.get('http://localhost:3000/api/museums'),
         axios.get('http://localhost:3000/api/activities'),
       ]);
-
+  
       const itineraries = itinerariesResponse.data;
       const museums = museumsResponse.data;
       const acts = actResponse.data;
-
+  
       let filteredItineraries = itineraries;
       let filteredActs = acts;
-
+  
       if (userType === 'tourGuide') {
         filteredItineraries = itineraries.filter(itinerary => itinerary.creator === username);
       } else if (userType === 'advertiser') {
         filteredActs = acts.filter(act => act.creator === username);
       }
-
+  
       setItineraries(filteredItineraries);
       setMuseums(museums);
       setActs(filteredActs);
-
+  
       let filtered = [];
       if (filter === 'activity') {
         filtered = filteredActs.map((act) => ({
@@ -242,11 +140,13 @@ function Revenue() {
           revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
         }));
       } else if (filter === 'date' && selectedDate) {
-        // Ensure selectedDate is in yyyy-mm-dd format
-        const formattedSelectedDate = new Date(selectedDate).toISOString().split('T')[0];
-
+        const selectedDateFormatted = new Date(selectedDate).toISOString().split('T')[0]; // Format selectedDate
+  
         const activityResults = filteredActs
-          .filter((act) => act.date && act.date.startsWith(formattedSelectedDate))
+          .filter((act) => {
+            const actDate = new Date(act.date).toISOString().split('T')[0]; // Format activity date
+            return actDate === selectedDateFormatted; // Compare dates without time
+          })
           .map((act) => ({
             type: 'Activity',
             name: act.name,
@@ -254,52 +154,25 @@ function Revenue() {
             revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
             date: act.date,
           }));
-
+  
         const itineraryResults = filteredItineraries
-          .filter((itinerary) => itinerary.availableDates && itinerary.availableDates.includes(formattedSelectedDate))
+          .filter((itinerary) => {
+            return itinerary.availableDates.some(date => {
+              const availableDate = new Date(date).toISOString().split('T')[0]; // Format available date
+              return availableDate === selectedDateFormatted;
+            });
+          })
           .map((itinerary) => ({
             type: 'Itinerary',
             name: itinerary.name,
             category: itinerary.category,
             revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
-            date: formattedSelectedDate,
+            date: selectedDate,
           }));
-
+  
         filtered = [...activityResults, ...itineraryResults];
-      } else if (filter === 'month' && selectedMonth) {
-        const monthRevenue = filteredActs.filter((act) => {
-          const activityMonth = new Date(act.date).getMonth() + 1;
-          return activityMonth === parseInt(selectedMonth);
-        });
-
-        const itineraryResults = filteredItineraries.filter((itinerary) => {
-          const itineraryMonth = new Date(itinerary.availableDates[0]).getMonth() + 1;
-          return itineraryMonth === parseInt(selectedMonth);
-        });
-
-        const activityRevenue = monthRevenue.map((act) => ({
-          type: 'Activity',
-          name: act.name,
-          category: act.category,
-          revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
-          date: act.date,
-        }));
-
-        const itineraryRevenue = itineraryResults.map((itinerary) => ({
-          type: 'Itinerary',
-          name: itinerary.name,
-          category: itinerary.category,
-          revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
-          date: itinerary.availableDates[0],
-        }));
-
-        filtered = [...activityRevenue, ...itineraryRevenue];
       }
-
-      if ((filter === 'date' || filter === 'month') && filtered.length === 0) {
-        alert(`There is no revenue for the selected ${filter === 'date' ? 'date' : 'month'}.`);
-      }
-
+  
       setFilterData(filtered);
     } catch (error) {
       console.error('Error fetching data:', error);
