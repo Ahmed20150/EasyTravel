@@ -85,6 +85,7 @@ const itinerarySchema = new mongoose.Schema({
     },
   },
   touristsBooked: { type: [String] },
+  activated: { type: Boolean, default: true },
 });
 
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);

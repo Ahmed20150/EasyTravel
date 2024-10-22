@@ -21,7 +21,14 @@ const ViewItinerary = () => {
     const fetchItineraries = async () => {
       try {
         const response = await axios.get("http://localhost:3000/itinerary"); // Replace with your API endpoint
-        setItineraries(response.data); // Store the itineraries in state
+
+        // Filter only activated itineraries
+        const activatedItineraries = response.data.filter(
+          (itinerary) => itinerary.activated
+        );
+
+        // Store the activated itineraries in state
+        setItineraries(activatedItineraries);
 
         // Fetch the tourist's booked itineraries
         const tourist = await axios.get(

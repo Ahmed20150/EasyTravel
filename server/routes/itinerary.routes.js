@@ -67,6 +67,22 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.put("/toggleActivation/:id", async (req, res) => {
+  try {
+    const itinerary = await Itinerary.findById(req.params.id);
+    if (!itinerary) {
+      return res.status(404).send("Itinerary not found");
+    }
+
+    // Toggle the 'activated' status
+    itinerary.activated = !itinerary.activated;
+    await itinerary.save();
+    res.send(itinerary);
+  } catch (error) {
+    res.status(500).send("Error toggling activation status");
+  }
+});
+
 // DELETE
 router.delete("/:id", async (req, res) => {
   try {
