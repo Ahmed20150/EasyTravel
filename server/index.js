@@ -584,5 +584,4 @@ app.get('/api/giftitems', async (req, res) => {
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
 app.use('/api/seller', sellerRoutes);
-// app.listen(3000, () => console.log('Server running on port 3000'));
 
