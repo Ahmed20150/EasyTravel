@@ -1,25 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Map from "../components/Map";
 import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 import mapboxgl from "mapbox-gl";
+import { useCookies } from "react-cookie";
 
-//TODO time input should be of type time not string 
+//TODO time input should be of type time not string
 // Set your Mapbox access token
 mapboxgl.accessToken =
   "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
 
 const ActivityForm = () => {
+  const [errors, setErrors] = useState([]); // State to store validation errors
   const [formData, setFormData] = useState({
     date: "",
     time: "",
     location: {
       address: "",
-      coordinates: {
-        lat: "",
-        lng: "",
-      },
     },
     price: {
       min: "",
@@ -31,6 +29,8 @@ const ActivityForm = () => {
     isBookingOpen: true,
   });
   const navigate = useNavigate();
+  const [cookies] = useCookies(["username"]);
+  const [categories, setCategories] = useState([]);
 
   const handleLocationSelect = async (lng, lat) => {
     try {
@@ -61,37 +61,44 @@ const ActivityForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle location coordinates change
-  const handleCoordinatesChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      location: {
-        ...formData.location,
-        coordinates: {
-          ...formData.location.coordinates,
-          [name]: value,
-        },
-      },
-    });
-  };
   const handleButtonClick = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:3000/activities", {
         ...formData,
         tags: formData.tags.split(",").map((tag) => tag.trim()),
+        creator: cookies.username || "default_username", // Pass the username from cookies
       });
       navigate(`/activities`);
       console.log("Activity created:", response.data);
-    } catch (error) {
-      console.error("Error creating activity:", error);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
+      } else {
+        console.error("An error occurred:", err);
+      }
     }
   };
   const handleCancel = () => {
     localStorage.clear();
     navigate("/activities");
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+
   return (
     <div className="activity-form">
       <h2>Create a New Activity</h2>
@@ -108,7 +115,7 @@ const ActivityForm = () => {
       <label>
         Time:
         <input
-          type="text"
+          type="time"
           name="time"
           value={formData.time}
           onChange={handleChange}
@@ -162,15 +169,21 @@ const ActivityForm = () => {
           required
         />
       </label>
-      <label>
+       <label>
         Category:
-        <input
-          type="text"
+        <select
           name="category"
           value={formData.category}
           onChange={handleChange}
           required
-        />
+        >
+          <option value="">Select a category</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </label>
       <label>
         Tags (comma-separated):
@@ -182,9 +195,9 @@ const ActivityForm = () => {
         />
       </label>
       <label>
-        Special Discounts:
+        Special Discounts (in %):
         <input
-          type="text"
+          type="number"
           name="specialDiscounts"
           value={formData.specialDiscounts}
           onChange={handleChange}

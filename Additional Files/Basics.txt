@@ -24,6 +24,8 @@ Essential github Commands:
 1. "git fetch origin" : retrieves remote updates and changes from all branches in the repo wihout specifically merginf them into your current branch
 2. "git Merge [branch_name]": merges content of [branch_name] into the branch that you are currently in
 3. "git checkout [branch_name]": leave current branch and switch to [branch_name]
+4. "git revert [commit number]": undo's the commit specified by its number
+5. "git revert -m 1 [commit number]": undo's the commit specified by its number (if it was a merging commit, 1 specifies the parent branch is chosen, which is the branhc that you are on)
 
 how to merge from changes from branch X into branch Y:
 1. go to branch Y (git checkout branchY)
@@ -43,6 +45,9 @@ Types of Events in our System:
 1. Activities (Posted by Advertiser)
 2. Itenrary (Posted by tour Guide)
 3. Museums & Historical Places (Posted by Tourism Governor)
+
+Common Commands:
+1. " --legacy-peer-deps ": added after installation and uninistallation commands, fixes error of dependancies
 
 Useful resources:
 1. MERN Stack crash course: https://www.youtube.com/watch?v=98BzS5Oz5E4&list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&index=1&ab_channel=NetNinja

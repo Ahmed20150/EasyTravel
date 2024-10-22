@@ -2,3 +2,5 @@ TODO Create naviigation to create profile / view profile based on firstime login
 TODO Ensure user cant login without admin approval (check acc status)
 TODO ensure routing to terms & conditions on firsttimelogin
 TODO ensure that if user loks for their username with caps that they can still find it(lowercase all inputs before i query)
+TODO ensure max no of numbers in mobile no input (8aleban 11)
+TODO fix notification for tourist age under 18 and tried to make booking
