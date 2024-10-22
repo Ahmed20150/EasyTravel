@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
-
+import { useCookies } from "react-cookie";
 function Revenue() {
+  const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
+  const userType = cookies.userType; // Access the userType
+  const username = cookies.username;
   const [it_totalRevenue, setItTotalRevenue] = useState(0);
   const [museum_totalRevenue, setMuseumTotalRevenue] = useState(0);
   const [act_totalRevenue, setActTotalRevenue] = useState(0);
@@ -34,15 +37,33 @@ function Revenue() {
         axios.get('http://localhost:3000/api/itineraries'),
         axios.get('http://localhost:3000/api/museums'),
         axios.get('http://localhost:3000/api/activities'),
-        axios.get('http://localhost:3000/api/giftitems')
+        axios.get('http://localhost:3000/api/giftitems'),
       ]);
-
+  
       const itineraries = itinerariesResponse.data;
       const museums = museumsResponse.data;
       const acts = actResponse.data;
       const giftItems = giftItemsResponse.data;
+  
+      let filteredItineraries = itineraries;
+      let filteredActs = acts;
+      let filteredGiftItems = giftItems;
+  
+      if (userType === 'tourGuide') {
+        filteredItineraries = itineraries.filter(itinerary => itinerary.creator === username);
+      } else if (userType === 'advertiser') {
+        filteredActs = acts.filter(act => act.creator === username);
+      } else if (userType === 'seller') {
+        filteredGiftItems = giftItems.filter(gift => gift.creator === username);
+      }
+  
+      setItineraries(filteredItineraries);
+      setMuseums(museums);
+      setActs(filteredActs);
+      setGiftTotalRevenue(filteredGiftItems);
+  
       let museums_totalRevenue = 0;
-
+  
       museums.forEach((museum) => {
         let ticketPrice = 0;
         switch (museum.type) {
@@ -62,14 +83,12 @@ function Revenue() {
         const subtotal2 = ticketPrice * numofpurchases;
         museums_totalRevenue += subtotal2;
       });
-
-      
-
-      const it_revenue = itineraries.reduce((total, itinerary) => total + (itinerary.priceOfTour * (itinerary.numofpurchases || 1)), 0);
+  
+      const it_revenue = filteredItineraries.reduce((total, itinerary) => total + (itinerary.priceOfTour * (itinerary.numofpurchases || 1)), 0);
       const museum_revenue = museums_totalRevenue;
-      const act_revenue = acts.reduce((total, act) => total + (act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1)), 0);
-      const gift_revenue = giftItems.reduce((total, gift) => total + (gift.price * (gift.purchases || 0)), 0);
-
+      const act_revenue = filteredActs.reduce((total, act) => total + (act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1)), 0);
+      const gift_revenue = filteredGiftItems.reduce((total, gift) => total + (gift.price * (gift.purchases || 0)), 0);
+  
       setItTotalRevenue(it_revenue);
       setMuseumTotalRevenue(museum_revenue);
       setActTotalRevenue(act_revenue);
@@ -79,7 +98,6 @@ function Revenue() {
       console.error('Error fetching data:', error);
     }
   };
-
   // Filter Data Based on Selected Filter
   const handleFilterClick = async () => {
     try {
@@ -88,33 +106,41 @@ function Revenue() {
         axios.get('http://localhost:3000/api/museums'),
         axios.get('http://localhost:3000/api/activities'),
       ]);
-
+  
       const itineraries = itinerariesResponse.data;
       const museums = museumsResponse.data;
       const acts = actResponse.data;
-
-      setItineraries(itineraries);
+  
+      let filteredItineraries = itineraries;
+      let filteredActs = acts;
+  
+      if (userType === 'tourGuide') {
+        filteredItineraries = itineraries.filter(itinerary => itinerary.creator === username);
+      } else if (userType === 'advertiser') {
+        filteredActs = acts.filter(act => act.creator === username);
+      }
+  
+      setItineraries(filteredItineraries);
       setMuseums(museums);
-      setActs(acts);
-
+      setActs(filteredActs);
+  
       let filtered = [];
       if (filter === 'activity') {
-        filtered = acts.map((act) => ({
+        filtered = filteredActs.map((act) => ({
           type: 'Activity',
           name: act.name,
-          category: act.category, // Include category
+          category: act.category,
           revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
         }));
       } else if (filter === 'itinerary') {
-        filtered = itineraries.map((itinerary) => ({
+        filtered = filteredItineraries.map((itinerary) => ({
           type: 'Itinerary',
           name: itinerary.name,
-          category: itinerary.category, // Include category
+          category: itinerary.category,
           revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
         }));
       } else if (filter === 'date' && selectedDate) {
-        // Filter by selected date in both activities and itineraries
-        const activityResults = acts
+        const activityResults = filteredActs
           .filter((act) => act.date && act.date.startsWith(selectedDate))
           .map((act) => ({
             type: 'Activity',
@@ -123,8 +149,8 @@ function Revenue() {
             revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
             date: act.date,
           }));
-
-        const itineraryResults = itineraries
+  
+        const itineraryResults = filteredItineraries
           .filter((itinerary) => itinerary.availableDates && itinerary.availableDates.includes(selectedDate))
           .map((itinerary) => ({
             type: 'Itinerary',
@@ -133,22 +159,19 @@ function Revenue() {
             revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
             date: selectedDate,
           }));
-
-        // Combine results
+  
         filtered = [...activityResults, ...itineraryResults];
       } else if (filter === 'month' && selectedMonth) {
-        const monthRevenue = acts.filter((act) => {
+        const monthRevenue = filteredActs.filter((act) => {
           const activityMonth = new Date(act.date).getMonth() + 1;
           return activityMonth === parseInt(selectedMonth);
         });
-
-        // Combine both activities and itineraries for the selected month
-        const itineraryResults = itineraries.filter((itinerary) => {
+  
+        const itineraryResults = filteredItineraries.filter((itinerary) => {
           const itineraryMonth = new Date(itinerary.availableDates[0]).getMonth() + 1;
           return itineraryMonth === parseInt(selectedMonth);
         });
-
-        // Calculate revenues for both activities and itineraries
+  
         const activityRevenue = monthRevenue.map((act) => ({
           type: 'Activity',
           name: act.name,
@@ -156,7 +179,7 @@ function Revenue() {
           revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
           date: act.date,
         }));
-
+  
         const itineraryRevenue = itineraryResults.map((itinerary) => ({
           type: 'Itinerary',
           name: itinerary.name,
@@ -164,15 +187,14 @@ function Revenue() {
           revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
           date: itinerary.availableDates[0],
         }));
-
+  
         filtered = [...activityRevenue, ...itineraryRevenue];
       }
-
-      // Check if filtered array is empty for date and month filter
+  
       if ((filter === 'date' || filter === 'month') && filtered.length === 0) {
         alert(`There is no revenue for the selected ${filter === 'date' ? 'date' : 'month'}.`);
       }
-
+  
       setFilterData(filtered);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -260,14 +282,18 @@ function Revenue() {
           Show All Revenue
         </button>
 
-        {/* Filter Button with Dropdown */}
+
+        {userType !== 'admin'  && userType !== 'seller' && (
+        //{/* Filter Button with Dropdown */}
+        <>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}>
           <option value="">Select Filter</option>
           <option value="activity">Activity</option>
           <option value="itinerary">Itinerary</option>
           <option value="date">Date</option>
           <option value="month">Month</option>
-        </select>
+        </select></>
+        )}
 
         {/* Input for selecting a date only when 'Date' is selected in the dropdown */}
         {filter === 'date' && (
@@ -289,7 +315,7 @@ function Revenue() {
             placeholder="MM"
           />
         )}
-
+        {userType !== 'admin'  && userType !== 'seller' && (
         <button
           style={buttonStyle}
           onMouseOver={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
@@ -297,7 +323,7 @@ function Revenue() {
           onClick={handleFilterClick}
         >
           Filter
-        </button>
+        </button>)}
       </div>
 
       {/* Render the filtered data */}
@@ -313,14 +339,30 @@ function Revenue() {
           </ul>
         </div>
       )}
+      
 
       {/* Show total revenue and individual revenues */}
       <div style={outputStyle}>
-        <p>Itinerary Total Revenue: ${it_totalRevenue.toFixed(2)}</p>
-        <p>Museum Total Revenue: ${museum_totalRevenue.toFixed(2)}</p>
+        {/* && userType !== 'advertiser' */}
+      {userType !== 'seller' && (
+         <p>Itinerary Total Revenue: ${it_totalRevenue.toFixed(2)}</p>
+      )}
+
+{userType !== 'seller'  && userType !== 'advertiser' && userType !== 'tourGuide' && (
+          <p>Museum Total Revenue: ${museum_totalRevenue.toFixed(2)}</p>
+      )}
+       {/* && userType !== 'tourGuide' */}
+       {userType !== 'seller'  &&  (
         <p>Activity Total Revenue: ${act_totalRevenue.toFixed(2)}</p>
-        <p>Gift Item Total Revenue: ${gift_totalRevenue.toFixed(2)}</p>
+      )}
+        
+       {userType !== 'advertiser'  && userType !== 'tourGuide' && (
+          <p>Gift Item Total Revenue: ${gift_totalRevenue.toFixed(2)}</p>
+      )}
+       
+       {userType === 'admin'&&  (
         <p><strong>Total Revenue: ${totalRevenue.toFixed(2)}</strong></p>
+      )}
       </div>
     </div>
   );
