@@ -21,10 +21,11 @@ const ViewItinerary = () => {
     const fetchItineraries = async () => {
       try {
         const response = await axios.get("http://localhost:3000/itinerary"); // Replace with your API endpoint
+        const user = await axios.get(`http://localhost:3000/api/tourist/${username}`);
 
         // Filter only activated itineraries
         const activatedItineraries = response.data.filter(
-          (itinerary) => itinerary.activated
+          (itinerary) => itinerary.activated || user.data.bookedItineraries.includes(itinerary._id)
         );
 
         // Store the activated itineraries in state
