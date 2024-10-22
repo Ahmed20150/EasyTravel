@@ -5,23 +5,25 @@ router.use(express.json());
 
 // Import each user model
 const Tourist = require('../models/tourist.model');
-//const TourGuide = require('../models/TourGuide');
-//const Advertiser = require('../models/Advertiser');
-//const Seller = require('../models/Seller');
+const TourGuide = require('../models/tourGuide.model');
+const Advertiser = require('../models/advertiser.model');
+const Seller = require('../models/seller.model');
 
 // Function to get the appropriate model based on role
 const getUserModelByRole = (role) => {
-    switch (role) {
-        case 'Tourist':
+    const role2 = role.toLowerCase();
+
+    switch (role2) {
+        case 'tourist':
             return Tourist;
-        case 'TourGuide':
+        case 'tourguide':
             return TourGuide;
-        case 'Advertiser':
+        case 'advertiser':
             return Advertiser;
-        case 'Seller':
+        case 'seller':
             return Seller;
         default:
-            return Tourist;
+            return false;
     }
 };
 
@@ -48,6 +50,8 @@ router.post('/requestDelete/:username/:role', async (req, res) => {
         if (alreadyRequested) {
             return res.status(400).json({ message: "Request already submitted." });
         }
+
+
 
         // Log the deletion request
         const deletionRequest = new DeletionRequest({

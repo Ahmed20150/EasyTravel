@@ -83,16 +83,17 @@ router.post('/add-admin', async (req, res) => {
 
 // Function to get the appropriate model based on role
 const getUserModelByRole = (role) => {
-    switch (role) {
-        case 'Tourist':
+    const role2 = role.toLowerCase();
+    switch (role2) {
+        case 'tourist' :
             return Tourist;
-        case 'TourGuide':
+        case 'tourguide':
             return TourGuide;
-        case 'Advertiser':
+        case 'advertiser':
             return Advertiser;
-        case 'Seller':
+        case 'seller':
             return Seller;
-        case 'Toursim Governer':
+        case 'toursim governer':
             return TourismGoverner;
         default:
             return Tourist;
@@ -147,9 +148,10 @@ router.get('/viewAllUsers', async (req, res) => {
         // Fetch users from all models
         const tourists = await getAllUsersFromModel(Tourist);
         const governer = await getAllUsersFromModel(TourismGoverner);
-        //const tourGuides = await getAllUsersFromModel(TourGuide);
-        //const advertisers = await getAllUsersFromModel(Advertiser);
-        //const sellers = await getAllUsersFromModel(Seller);
+        const tourGuides = await getAllUsersFromModel(TourGuide);
+        const advertisers = await getAllUsersFromModel(Advertiser);
+        const sellers = await getAllUsersFromModel(Seller);
+   
 
         // Combine users with specific fields into a single array
         const allUsers = [
@@ -162,25 +164,25 @@ router.get('/viewAllUsers', async (req, res) => {
             ...governer.map(user => ({
                 username: user.username,
                 role: 'Toursim Governer'
+            })),
+            ...tourGuides.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'TourGuide'
+            })),
+            ...advertisers.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'Advertiser'
+            })),
+            ...sellers.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'Seller'
             }))
-            // ...tourGuides.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'TourGuide'
-            // })),
-            // ...advertisers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Advertiser'
-            // })),
-            // ...sellers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Seller'
-            // }))
         ];
 
         // Return combined result
@@ -196,9 +198,6 @@ router.get('/viewRequests', async (req, res) => {
     try {
         // Fetch users from all models
         const Requests= await getAllUsersFromModel(DeletionRequest)
-        //const tourGuides = await getAllUsersFromModel(TourGuide);
-        //const advertisers = await getAllUsersFromModel(Advertiser);
-        //const sellers = await getAllUsersFromModel(Seller);
 
         // Combine users with specific fields into a single array
         const allUsers = [
@@ -206,30 +205,8 @@ router.get('/viewRequests', async (req, res) => {
                 username: user.username,
                 email: user.email,
                 mobile_number: user.mobile_number,
-                role: 'Tourist'
+                role: user.role
             })),
-            // ...governer.map(user => ({
-            //     username: user.username,
-            //     role: 'Toursim Governer'
-            // }))
-            // ...tourGuides.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'TourGuide'
-            // })),
-            // ...advertisers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Advertiser'
-            // })),
-            // ...sellers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Seller'
-            // }))
         ];
 
         // Return combined result

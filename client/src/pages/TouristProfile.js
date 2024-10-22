@@ -4,14 +4,20 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TouristForm from '../components/TouristForm';
 import { useLocation, Link} from 'react-router-dom'; 
+import { useCookies } from "react-cookie";
+
 
 const TouristProfile = () => {
+    const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
+const userType = cookies.userType; // Access the userType
+
     const [tourist, setTourist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const location = useLocation(); 
     const { username } = location.state || {}; 
+
 
     useEffect(() => {
         const fetchTouristProfile = async () => {
@@ -31,6 +37,21 @@ const TouristProfile = () => {
         };
         fetchTouristProfile();
     }, [username]); // Use username as dependency
+
+    const handleRequest = async (username,role) => {
+        //const input = { username, role };
+        try {
+            // Construct the URL with the username and role as query parameters
+            const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`); 
+            // Update state to remove the deleted user
+            window.alert(`Request sent successfully: ${response.data.message}`);
+             // Filter out the deleted user from the UI
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            alert("Request already sent or Failed to sent request"); // Inform user of the error
+        }
+    };
+
 
     const handleUpdate = async (updatedTourist) => {
         try {
@@ -64,6 +85,12 @@ const TouristProfile = () => {
                     <p>Occupation: {tourist.occupation}</p>
                     <p>wallet: {tourist.wallet}</p>
                     <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+                    <button
+                                className="delete-button"
+                                onClick={()=>{handleRequest(tourist.username,userType)}}  // Pass the correct user details
+                            >
+                                Request Delete
+                            </button>
                     <Link to="/home"><button>Back</button></Link>
                 </div>
             )}
