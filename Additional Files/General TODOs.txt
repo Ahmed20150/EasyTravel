@@ -1,0 +1,4 @@
+TODO ensure max no of numbers in mobile no input (8aleban 11)
+TODO fix notification for tourist age under 18 and tried to make booking
+TODO adjust activity deletion with itenrary (sync them up) 
+TODO adjust that when advertiser sends deletion request, their activities are NOT deleted until the deletion req is accepted. (ahmed wael) 

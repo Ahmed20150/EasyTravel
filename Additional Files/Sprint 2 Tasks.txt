@@ -1,0 +1,23 @@
+**Sprint 2 Tasks Breakdown (Per Apartment):**
+Yellow - Stories (30-36 & 39) (Total 8 stories): Ali, Ashraf, Abdallah
+Red - Stories (37-38 & 43-45 & 58-64) (Total 12 stories): Hoss, Gasser (& potentially a third person)
+Blue - Stories (40-42 & 46-48 & 52-57) (Total 12 stories): Maro, Wael, Nofal
+Orange - Stories (49-51 & 65-69) (Total 8 Stories): Amr, Hipa
+
+**Sprint 2 Tasks Breakdown (Per Person):**
+
+Ahmed Gasser: 38, 59-64
+
+Mohamed Hossam: 37, 43, 44, 45, 58
+
+Marwan: 
+
+Nofal:
+
+Ahmed Wael:
+
+Ali:
+
+Abdallah:
+
+Ashraf:
