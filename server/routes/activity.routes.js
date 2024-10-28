@@ -73,4 +73,15 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// delete all activities by username
+router.delete("/deleteAll/:username", async (req, res) => {
+  try {
+    await Activity.deleteMany({ creator: req.params.username });
+    res.status(200).json({ message: "All activities deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;

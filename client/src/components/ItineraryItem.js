@@ -6,6 +6,7 @@ const ItineraryCard = ({
   onBook,
   isBooked,
   onUnbook,
+  onActivationToggle,
 }) => {
   return (
     <div className="itinerary-card">
@@ -57,6 +58,16 @@ const ItineraryCard = ({
         {userType === "tourist" && (
           <button onClick={() => onUnbook(itinerary._id)}>
             {isBooked ? "UnBook" : "Not Booked Yet"}
+          </button>
+        )}
+        {userType === "tourGuide" && (
+          <button
+            className={`toggle-button ${
+              itinerary.activated ? "deactivate" : "activate"
+            }`}
+            onClick={() => onActivationToggle(itinerary._id)}
+          >
+            {itinerary.activated ? "Deactivate" : "Activate"}
           </button>
         )}
       </div>

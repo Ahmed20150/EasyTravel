@@ -1,0 +1,10 @@
+These TODOs should be completed by all team members that it applies to BEFORE starting in sprint 2 requirements, so that these updates can be merged on the main branch and all team members are on the same page.
+
+1. Adjust File Structure: 
+    1.1 any CSS file be in CSS folder
+    1.2 any routes that are in index.js should be placed in a routes folder of their own
+    1.3 any routes folder that is not named in this convention: [file_name].routes.js should be renamed
+
+2. Adjust CSS: No stylesheets should have global elements, use classes instead of direct styling on global elements. All Stylesheets were commented in sprint 1 because of this (Except museumList.css), everyone should fix this issue and we can uncomment them. (Exception for museumList.css: The button elements in it have been moved to App.css in order to be applied globaly on the entire application)
+
+3. Certain Logic in certain stories was mainly implemented in the frontend files, and it shouldve been implemented in the backend routes instead.
