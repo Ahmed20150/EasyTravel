@@ -50,6 +50,42 @@ router.put("/tourist/:username", authenticate, async (req, res) => {
   }
 });
 
+// Save/Bookmark Event to Tourist Profile
+router.patch("/bookmarkEvent", authenticate, async (req, res) => {
+  const { username, eventId } = req.body;
+
+  try {
+    const tourist = await Tourist.findOne({ username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add eventId to the bookmarkedEvents array
+    if (!tourist.bookmarkedEvents.includes(eventId)) {
+      tourist.bookmarkedEvents.push(eventId);
+      await tourist.save();
+    }
+
+    res.status(200).json({ message: "Event bookmarked successfully", bookmarkedEvents: tourist.bookmarkedEvents });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Retrieve Bookmarked Events for Tourist
+router.get("/bookmarkedEvents/:username", authenticate, async (req, res) => {
+  try {
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    res.json({ bookmarkedEvents: tourist.bookmarkedEvents });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.patch("/bookItinerary", async (req, res) => {
   try {
     const { username, newBookedItineraries } = req.body;

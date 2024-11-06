@@ -1,23 +1,19 @@
-// client/src/pages/TouristProfile.js
-
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import TouristForm from '../components/TouristForm';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
-
+import { Link, useLocation } from 'react-router-dom';
+import TouristForm from '../components/TouristForm';
 
 const TouristProfile = () => {
-    const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
-    const userType = cookies.userType; // Access the userType
-
+    const [cookies] = useCookies(["userType", "username"]);
+    const userType = cookies.userType;
     const [tourist, setTourist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const location = useLocation();
     const { username } = location.state || {};
-
+    const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
 
     useEffect(() => {
         const fetchTouristProfile = async () => {
@@ -35,35 +31,26 @@ const TouristProfile = () => {
                 setLoading(false);
             }
         };
-        fetchTouristProfile();
-    }, [username]); // Use username as dependency
 
-    const handleRequest = async (username, role) => {
-        //const input = { username, role };
-        try {
-            // Construct the URL with the username and role as query parameters
-            const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
-            // Update state to remove the deleted user
-            window.alert(`Request sent successfully: ${response.data.message}`);
-            // Filter out the deleted user from the UI
-        } catch (error) {
-            console.error("Error deleting user:", error);
-            if (error.response) {
-                alert(error.response.data.message);
-            } else {
-                alert("An unexpected error occurred: " + error.message);
+        const fetchBookmarkedEvents = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/bookmarkedEvents/${username}`);
+                setBookmarkedEvents(response.data.bookmarkedEvents || []);
+            } catch (err) {
+                console.error("Error fetching bookmarked events", err);
             }
-        }
-    };
+        };
 
+        fetchTouristProfile();
+        fetchBookmarkedEvents();
+    }, [username]);
 
-    const handleUpdate = async (updatedTourist) => {
+    const handleBookmark = async (eventId) => {
         try {
-            const response = await axios.put(`http://localhost:3000/api/tourist/${username}`, updatedTourist);
-            setTourist(response.data);
-            setIsEditing(false);
+            await axios.patch("http://localhost:3000/api/bookmarkEvent", { username, eventId });
+            setBookmarkedEvents(prevEvents => [...prevEvents, eventId]);
         } catch (err) {
-            setError('Failed to update tourist profile');
+            console.error("Error bookmarking event", err);
         }
     };
 
@@ -73,7 +60,7 @@ const TouristProfile = () => {
     return (
         <div>
             {isEditing ? (
-                tourist ? ( // Ensure tourist is defined before rendering TouristForm
+                tourist ? (
                     <TouristForm tourist={tourist} onUpdate={handleUpdate} isEditing={isEditing} setIsEditing={setIsEditing} />
                 ) : (
                     <div>No tourist data available</div>
@@ -91,10 +78,21 @@ const TouristProfile = () => {
                     <button onClick={() => setIsEditing(true)}>Edit Profile</button>
                     <button
                         className="delete-button"
-                        onClick={() => { handleRequest(tourist.username, userType) }}  // Pass the correct user details
+                        onClick={() => { handleRequest(tourist.username, userType) }}
                     >
                         Request Delete
                     </button>
+                    <h2>Bookmarked Events:</h2>
+                    {/* Ensure bookmarkedEvents is not undefined and is an array */}
+                    <ul>
+                        {Array.isArray(bookmarkedEvents) && bookmarkedEvents.length > 0 ? (
+                            bookmarkedEvents.map(eventId => (
+                                <li key={eventId}>{eventId}</li> // Display eventId or name here
+                            ))
+                        ) : (
+                            <p>No bookmarked events</p>
+                        )}
+                    </ul>
                     <Link to="/home"><button>Back</button></Link>
                 </div>
             )}
