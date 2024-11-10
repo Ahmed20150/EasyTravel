@@ -1,10 +1,10 @@
 // src/components/Itineraries/ItineraryList.jsx
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate, Link } from "react-router-dom";
-import "../css/ItineraryList.css"; // Import the CSS file
+import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { Link, useNavigate } from "react-router-dom";
+import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
+import "../css/ItineraryList.css"; // Import the CSS file
 
 const ItineraryList = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -111,6 +111,7 @@ const ItineraryList = () => {
             onEdit={handleEdit}
             onActivationToggle={handleToggleActivation}
             userType={userType}
+            isProfilePage={false} 
           />
         ))}
       </div>

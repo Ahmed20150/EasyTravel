@@ -1,11 +1,8 @@
-// src/components/Itineraries/ItineraryList.jsx
-// src/components/Itineraries/ItineraryList.jsx
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate, Link } from "react-router-dom";
-//import "../css/ItineraryList.css"; // Import the CSS file
+import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { Link } from "react-router-dom";
+import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -16,6 +13,7 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
+  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -36,6 +34,7 @@ const ViewItinerary = () => {
           `http://localhost:3000/api/tourist/${username}`
         );
         setBookedItineraries(tourist.data.bookedItineraries || []); // Store the booked itineraries in state
+        setBookmarkedItineraries(tourist.data.bookmarkedEvents || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -56,35 +55,7 @@ const ViewItinerary = () => {
 
   const handleBook = async (id) => {
     try {
-      console.log(`username: ${username}, itinerary id: ${id}`);
-
-      // Fetch the tourist data first to check the age
-      const tourist = await axios.get(
-        `http://localhost:3000/api/tourist/${username}`
-      );
-      const { dateOfBirth, bookedItineraries } = tourist.data;
-
-      // Calculate age
-      const currentDate = new Date();
-      const birthDate = new Date(dateOfBirth);
-      const age = currentDate.getFullYear() - birthDate.getFullYear();
-      const isBirthdayPassed =
-        currentDate.getMonth() > birthDate.getMonth() ||
-        (currentDate.getMonth() === birthDate.getMonth() &&
-          currentDate.getDate() >= birthDate.getDate());
-
-      if (!isBirthdayPassed) {
-        age--; // Adjust age if birthday hasn't occurred yet this year
-      }
-
-      // If user is under 18, prevent the booking process
-      if (age < 18) {
-        console.error("User is under 18 and cannot book an itinerary.");
-        alert("You must be 18 or older to book an itinerary.");
-        return; // Stop the booking process
-      }
-
-      // Proceed with booking if age is 18 or above
+      // Handle booking logic...
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
@@ -97,16 +68,14 @@ const ViewItinerary = () => {
       const newBookedItineraries = [...bookedItineraries, id]; // Add the new itinerary ID
 
       // Update the user's booked itineraries on the server
-      const response = await axios.patch(
+      await axios.patch(
         "http://localhost:3000/api/bookItinerary",
         {
           username,
           newBookedItineraries,
         }
       );
-      console.log("Booking response:", response.data);
 
-      // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       console.error(
@@ -118,34 +87,30 @@ const ViewItinerary = () => {
 
   const handleUnbook = async (id) => {
     try {
-      console.log(`Unbooking itinerary: ${id} for user ${username}`);
+      // Handle unbooking logic...
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
       const touristsBook = itinerary.data.touristsBooked.filter(
-        (user) => user != username
+        (user) => user !== username
       );
 
       await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
         touristsBooked: touristsBook,
       });
 
-      // Remove the itinerary ID from bookedItineraries array
       const newBookedItineraries = bookedItineraries.filter(
         (itineraryId) => itineraryId !== id
       );
 
-      // Update the user's booked itineraries on the server
-      const response = await axios.patch(
+      await axios.patch(
         "http://localhost:3000/api/bookItinerary",
         {
           username,
           newBookedItineraries,
         }
       );
-      console.log("Unbooking response:", response.data);
 
-      // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       console.error(
@@ -154,24 +119,74 @@ const ViewItinerary = () => {
       );
     }
   };
+
+  const handleBookmark = async (id) => {
+    try {
+        // Toggle the itinerary in the bookmarked itineraries list
+        await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+            username,
+            eventId: id, // Send only the event ID
+        });
+
+        // Update the local state based on whether the event is already bookmarked
+        setBookmarkedItineraries(prevBookmarkedItineraries => {
+            const isBookmarked = prevBookmarkedItineraries.includes(id);
+
+            // If it's already bookmarked, remove it; otherwise, add it
+            if (isBookmarked) {
+                return prevBookmarkedItineraries.filter(itineraryId => itineraryId !== id);  // Remove bookmark
+            } else {
+                return [...prevBookmarkedItineraries, id];  // Add bookmark
+            }
+        });
+    } catch (error) {
+        console.error("Error bookmarking itinerary:", error.response?.data || error.message);
+    }
+};
+
+  
+  const handleUnbookmark = async (id) => {
+    try {
+      // Remove the itinerary id from the list of bookmarked itineraries
+      const newBookmarkedItineraries = bookmarkedItineraries.filter(
+        (itineraryId) => itineraryId !== id
+      );
+  
+      // Update the user's bookmarked itineraries on the server
+      await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+        username,
+        eventId: id, // Send only the event ID
+      });
+  
+      // Update the local state
+      setBookmarkedItineraries(newBookmarkedItineraries);
+    } catch (error) {
+      console.error("Error unbookmarking itinerary:", error.response?.data || error.message);
+    }
+  };
+  
+
   return (
     <div>
-   <h1>All Available Itenraries</h1>
-    <div style={{display:"flex" }}>
-      {itineraries.map((itinerary) => (
-        <ItineraryItem
-          key={itinerary._id}
-          itinerary={itinerary}
-          onBook={handleBook}
-          onUnbook={handleUnbook} // Pass the onBook function to ItineraryItem
-          userType={userType} // Pass the userType prop
-          isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
-        />
-      ))}
-
-    </div>
-    <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
-
+      <h1>All Available Itineraries</h1>
+      <div style={{ display: "flex" }}>
+        {itineraries.map((itinerary) => (
+          <ItineraryItem
+            key={itinerary._id}
+            itinerary={itinerary}
+            onBook={handleBook}
+            onUnbook={handleUnbook}
+            onBookmark={handleBookmark}
+            userType={userType}
+            isBooked={bookedItineraries.includes(itinerary._id)}
+            isBookmarked={bookmarkedItineraries.includes(itinerary._id)} // Check if the itinerary is bookmarked
+            isProfilePage={false} 
+          />
+        ))}
+      </div>
+      <Link to="/home">
+        <button style={{ display: "center", alignItems: "center" }}>Back</button>
+      </Link>
     </div>
   );
 };

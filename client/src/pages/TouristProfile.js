@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
 import { Link, useLocation } from 'react-router-dom';
-import TouristForm from '../components/TouristForm';
+import ItineraryCard from '../components/ItineraryItem'; // Import ItineraryCard component
 
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]);
@@ -14,7 +14,8 @@ const TouristProfile = () => {
     const location = useLocation();
     const { username } = location.state || {};
     const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
-
+    const [itineraries, setItineraries] = useState([]); // Store itineraries
+    const isProfilePage = true;
     useEffect(() => {
         const fetchTouristProfile = async () => {
             if (!username) {
@@ -36,8 +37,19 @@ const TouristProfile = () => {
             try {
                 const response = await axios.get(`http://localhost:3000/api/bookmarkedEvents/${username}`);
                 setBookmarkedEvents(response.data.bookmarkedEvents || []);
+                fetchItineraries(response.data.bookmarkedEvents || []);
             } catch (err) {
                 console.error("Error fetching bookmarked events", err);
+            }
+        };
+
+        const fetchItineraries = async (eventIds) => {
+            try {
+                // Fetch itineraries based on eventIds
+                const response = await axios.post("http://localhost:3000/api/itineraries/fetch", { eventIds });
+                setItineraries(response.data);
+            } catch (err) {
+                console.error("Error fetching itineraries", err);
             }
         };
 
@@ -47,8 +59,16 @@ const TouristProfile = () => {
 
     const handleBookmark = async (eventId) => {
         try {
+            // Add or remove the event from the bookmark list
             await axios.patch("http://localhost:3000/api/bookmarkEvent", { username, eventId });
-            setBookmarkedEvents(prevEvents => [...prevEvents, eventId]);
+            setBookmarkedEvents(prevEvents => {
+                const isBookmarked = prevEvents.includes(eventId);
+                if (isBookmarked) {
+                    return prevEvents.filter(id => id !== eventId);  // Remove bookmark
+                } else {
+                    return [...prevEvents, eventId];  // Add bookmark
+                }
+            });
         } catch (err) {
             console.error("Error bookmarking event", err);
         }
@@ -76,23 +96,31 @@ const TouristProfile = () => {
                     <p>Occupation: {tourist.occupation}</p>
                     <p>wallet: {tourist.wallet}</p>
                     <button onClick={() => setIsEditing(true)}>Edit Profile</button>
-                    <button
-                        className="delete-button"
-                        onClick={() => { handleRequest(tourist.username, userType) }}
-                    >
-                        Request Delete
-                    </button>
+                    <button className="delete-button" onClick={() => { handleRequest(tourist.username, userType) }}>Request Delete</button>
+
                     <h2>Bookmarked Events:</h2>
-                    {/* Ensure bookmarkedEvents is not undefined and is an array */}
-                    <ul>
-                        {Array.isArray(bookmarkedEvents) && bookmarkedEvents.length > 0 ? (
-                            bookmarkedEvents.map(eventId => (
-                                <li key={eventId}>{eventId}</li> // Display eventId or name here
+                    <div className="itinerary-list">
+                        {itineraries.length > 0 ? (
+                            itineraries.map((itinerary) => (
+                                <ItineraryCard
+                                    key={itinerary._id}
+                                    itinerary={itinerary}
+                                    onEdit={() => console.log("Edit", itinerary._id)}
+                                    onDelete={() => console.log("Delete", itinerary._id)}
+                                    userType={userType}
+                                    onBook={() => console.log("Book", itinerary._id)}
+                                    isBooked={false}
+                                    onUnbook={() => console.log("Unbook", itinerary._id)}
+                                    onActivationToggle={() => console.log("Toggle Activation", itinerary._id)}
+                                    onBookmark={handleBookmark}
+                                    isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                                    isProfilePage={isProfilePage} 
+                                />
                             ))
                         ) : (
                             <p>No bookmarked events</p>
                         )}
-                    </ul>
+                    </div>
                     <Link to="/home"><button>Back</button></Link>
                 </div>
             )}
