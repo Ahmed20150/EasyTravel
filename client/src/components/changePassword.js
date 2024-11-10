@@ -16,6 +16,9 @@ import axios from 'axios';
 import { CookiesProvider, useCookies } from 'react-cookie';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Copyright() {
   return (
@@ -54,9 +57,9 @@ function ChangePassword() {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [repeatNewPassword, setRepeatNewPassword] = useState('');
 
 
   const [tokenCookie, setTokenCookie] = useCookies(['token']); // Init cookie object, naming it "token"
@@ -67,27 +70,32 @@ function ChangePassword() {
 
      const username = Cookies.get('username');
 
-     if(password !== repeatPassword) {
-        alert('Passwords do not match!');
+     if(newPassword !== repeatNewPassword) {
+        toast.error('Passwords do not match!');
          return;
       }
 
-      const user = { username, password, newPassword };
+      const user = { username, oldPassword, newPassword };
 
     try {
-      const response = await axios.post('http://localhost:3000/api/changePassword', user);
+      const response = await axios.post('http://localhost:3000/auth/changePassword', user);
+      toast.success('Password changed successfully!');
       console.log('Password changed successfully!', response.data);
 
       // Optionally, update cookies or handle navigation
-      setPassword('');
-      setRepeatPassword('');
-      navigate('/home');
+      setOldPassword('');
+      setNewPassword('');
+      setRepeatNewPassword('');
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000); 
     } catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+      const errorMessage = error.response ? error.response.data : error.message;
+      toast.error('Error: ' + error.response.data.message);
+      console.error('Error:', errorMessage);
     }
   };
 
-  //TODO frontend responses to error and success messages
   return (
     <CookiesProvider>
       <Container component="main" maxWidth="xs">
@@ -96,6 +104,12 @@ function ChangePassword() {
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
+          <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/home')}
+      >
+        Back to Home Page
+      </button>
           <Typography component="h1" variant="h5">
             Change Password
           </Typography>
@@ -117,11 +131,11 @@ function ChangePassword() {
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
+              name="oldPassword"
+              label="Old Password"
               type="password"
-              id="password"
-              onChange={(e) => setPassword(e.target.value)}
+              id="oldPassword"
+              onChange={(e) => setOldPassword(e.target.value)}
               autoComplete="password"
             />
             <TextField
@@ -129,11 +143,11 @@ function ChangePassword() {
               margin="normal"
               required
               fullWidth
-              name="repeatPassword"
-              label="Repeat Password"
-              type="repeatPassword"
-              id="repeatPassword"
-              onChange={(e) => setRepeatPassword(e.target.value)}
+              name="newPassword"
+              label="New Password"
+              type="password"
+              id="newPassword"
+              onChange={(e) => setNewPassword(e.target.value)}
               autoComplete="repeatPassword"
             />
              <TextField
@@ -141,17 +155,14 @@ function ChangePassword() {
               margin="normal"
               required
               fullWidth
-              name="newPassword"
-              label="New Password"
-              type="newPassword"
-              id="newPassword"
-              onChange={(e) => setNewPassword(e.target.value)}
+              name="repeatNewPassword"
+              label="Repeat New Password"
+              type="password"
+              id="repeatNewPassword"
+              onChange={(e) => setRepeatNewPassword(e.target.value)}
               autoComplete="newPassword"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+          
             <Button
               type="submit"
               fullWidth
@@ -161,7 +172,7 @@ function ChangePassword() {
             >
               Change Password
             </Button>
-            <Grid container>
+            {/* <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   Forgot password?
@@ -172,7 +183,7 @@ function ChangePassword() {
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
-            </Grid>
+            </Grid> */}
           </form>
         </div>
         <Box mt={8}>

@@ -2,7 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const app = express();
+app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const cors = require("cors");
+const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
 const TourismGoverner = require("./models/tourismGoverner.model.js");
@@ -10,27 +13,45 @@ const Seller = require("./models/seller.model.js");
 const Advertiser = require("./models/advertiser.model.js");
 const Admin = require("./models/admin.model.js");
 const TourGuide = require("./models/tourGuide.model.js");
+const GiftItem = require("./models/giftitem.model.js"); 
 const adminRoutes = require('./routes/admin.routes.js');
+const tourGuideRoutes = require('./routes/tour_guideRoute.js');
+const advRoutes = require('./routes/AdvertiserRoute.js');
+const sellerRoutes = require('./routes/SellerRoute.js');
+const authRoutes = require('./routes/authentication.routes.js');
+const touristRoutes = require('./routes/touristRoutes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
-const sendEmail = require('./sendEmail')
-//const Actt = require("./models/actt.model.js");
-
+const sendEmail = require('./sendEmail');
+const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
-const GiftItem = require("./models/giftitem.model.js");
-
-//itineraries
-//museumsandhistoricalplaces
-// const activities = require("./models/activities.model.js");
-// const itinerarie = require("./models/itinerarie.model.js");
-// const Activity = require("./models/actt.model.js");
 
 
+/////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
+const bodyParser = require('body-parser');
+const fileRoutes = require('./routes/file.routes.js');
+const Grid = require('gridfs-stream');
 
-//connect admin.routes.js to index.j
-app.use('/admin', adminRoutes);
+// Middleware
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({ limit:'50mb',  extended: true }));
+app.use(cors());
+
+require('./config/db');
+
+app.use('/api/files', fileRoutes);
+app.use('/auth', authRoutes);
+
+
+
+const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
+const Category= require("./models/category.model.js");
+const Preference= require("./models/preference.model.js");
+
+//connect admin.routes.js to index.js
+
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
@@ -39,246 +60,37 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use(cookieParser());
 
+app.use('/admin', adminRoutes);
 
-// app.get("/", (req, res) => {
-//     res.send("Hello World!");
-// });
+//connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
+app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
+const activityRoutes = require("./routes/activity.routes.js");
+const itineraryRoutes = require("./routes/itinerary.routes.js");
+app.use('/api', touristRoutes);
 
+app.use("/museums", museumRoutes);
+app.use("/activities", activityRoutes);
+app.use("/itinerary", itineraryRoutes);
+app.use("/gift", giftRoutes);
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
-mongoose.connect("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL").then(() => {
+// const conn = mongoose.createConnection("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL", { useNewUrlParser: true,
+//   useUnifiedTopology: true,});
 
-    console.log("Connected to the database!");
-}).catch((err) => {
-    console.log("Cannot connect to the database!", err);
-});
-
-
-
-//TODO check for repeated emails / usernames
-//Create User (Sign up)
-app.post('/api/signUp', async (req, res) => { 
-    try {
-        let user;
-        if(req.body.userType === 'tourist'){
-         user = await Tourist.create(req.body);
-        }
-        else if(req.body.userType === 'tourGuide'){
-            user = await TourGuide.create(req.body);
-        }
-        else if(req.body.userType === 'advertiser'){
-            user = await Advertiser.create(req.body);
-
-        }
-        else if(req.body.userType === 'seller'){
-            user = await Seller.create(req.body);
-        }
-        else{
-            res.status(500).json({ message: "please choose a user type!"});
-        }
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// //Upload File
-// const multer = require('multer');
-// const path = require('path');
-
-// // Configure multer storage
-// const storage = multer.diskStorage({
-//   destination: "./public/",
-//   filename: function(req, file, cb){
-//      cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
-//   }
+// let gfs;
+// conn.once('open', () => {
+//   gfs = Grid(conn.db, mongoose.mongo);
+//   gfs.collection('uploads');
+//   console.log('Connected to GridFS');
 // });
 
-// const upload = multer({
-//   storage: storage,
-//   limits:{fileSize: 1000000},
-// }).single("myfile");
+//TODO arrange routes in their seperate files, keep index clean
+//TODO store sendEmail & generateOTP Files in a folder
+//TODO check for repeated emails / usernames
 
-// //uploading files
-// app.post('/upload', upload.single('file'), (req, res) => {
-//     try {
-//       res.json({ message: 'File uploaded successfully', name: req.file.filename });
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   });
-
-// Login for all users
-app.post('/api/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
-            Tourist.findOne({ username }),
-            TourGuide.findOne({ username }),
-            Advertiser.findOne({ username }),
-            Seller.findOne({ username }),
-            Admin.findOne({ username }),
-            TourismGoverner.findOne({username}),
-          ]);
-
-          const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
-        
-          if (!user) {
-            return res.status(400).json({ message: "username doesnt exist" });
-        }
-
-         const isPasswordValid = password==user.password;
-
-        if (!isPasswordValid) {
-            return res.status(400).json({ message: "Invalid password, Tourist pw is "+ user.password + " while your password is " + password });
-        }
-
-        let userType;
-        if (tourist) userType = 'tourist';
-        else if (tourGuide) userType = 'tourGuide';
-        else if (advertiser) userType = 'advertiser';
-        else if (seller) userType = 'seller';
-        else if (admin) userType = 'admin';
-        else if (tourismGoverner) userType = 'tourismGoverner';
-    
-
-         //create JWT
-        const accessToken = jwt
-        .sign(
-            {
-                id: user._id,
-            },
-            "secret",
-            { expiresIn: "1d" }
-        );
-
-        res.status(200).json({ message: "Login successful", user, accessToken: accessToken, userType: userType });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-
-// Change Password Endpoint
-app.post('/api/changePassword', async (req, res) => {
-    const { username, password, newPassword } = req.body;
-  
-    try {
-        const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
-            Tourist.findOne({ username }),
-            TourGuide.findOne({ username }),
-            Advertiser.findOne({ username }),
-            Seller.findOne({ username }),
-            Admin.findOne({ username }),
-            TourismGoverner.findOne({username}),
-          ]);
-
-        const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      const isPasswordValid = password ==  user.password;
-      if (!isPasswordValid) {
-        return res.status(400).json({ message: 'Current password is incorrect' });
-      }
-  
-      user.password = newPassword;
-      await user.save();
-  
-      res.status(200).json({ message: 'Password changed successfully' });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
-
-const otpStore = {};
-// Forgot Password Endpoint
-app.post('/api/forgotPassword', async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
-  }
-
-  //TODO should admin have forget pw?
-  const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
-    Tourist.findOne({ email }),
-    TourGuide.findOne({ email }),
-    Advertiser.findOne({ email }),
-    Seller.findOne({ email }),
-    Admin.findOne({ email }),
-    TourismGoverner.findOne({email}),
-  ]);
-
-
-  const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
-
-  if(!user){
-    return res.status(404).json({ message: 'User not found' });
-  }
-
-  const otp = generateOtp();
-  const subject = 'Your OTP for Login';
-  const text = `Your OTP for login is: ${otp}`;
-
-  try {
-    await sendEmail(email, subject, text);
-    otpStore[email] = otp;
-    res.status(200).json({ message: 'OTP sent successfully', otp }); 
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to send OTP', error });
-  }
-});
-
-//verify OTP
-app.post('/api/verifyotp', (req, res) => {
-  const { email, otp } = req.body;
-
-  if (!email || !otp) {
-    return res.status(400).json({ message: 'Email and OTP are required' });
-  }
-
-  const storedOtp = otpStore[email];
-
-  if (storedOtp && storedOtp === otp) {
-    delete otpStore[email]; //remove from memory after verification
-    res.status(200).json({ message: 'OTP verified successfully' });
-  } else {
-    res.status(400).json({ message: 'Invalid OTP' + storedOtp + " " + otp });
-  }
-});
-
-// Change Password forgotten password
-app.post('/api/changeForgotPassword', async (req, res) => {
-    const { email, newPassword} = req.body;
-  
-    try {
-        const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
-            Tourist.findOne({ email }),
-            TourGuide.findOne({ email }),
-            Advertiser.findOne({ email }),
-            Seller.findOne({ email }),
-            Admin.findOne({ email }),
-            TourismGoverner.findOne({email}),
-          ]);
-
-        const user = tourist || tourGuide || advertiser || seller || admin || tourismGoverner;
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      user.password = newPassword;
-      await user.save();
-  
-      res.status(200).json({ message: 'Password changed successfully' });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  });
 
 //getting all tourists
 app.get('/api/tourists', async (req, res) => {
@@ -291,6 +103,346 @@ app.get('/api/tourists', async (req, res) => {
 });
 
 
+
+
+
+
+////////////// category ////////////
+app.post("/api/category", async (req, res) => {
+  try {
+    // Check if category already exists
+    const existingCategory = await Category.findOne({ name: req.body.name });
+    
+    if (existingCategory) {
+      return res.status(400).json({ message: "Category already exists" });
+    }
+
+    // Create the new category
+    const category = await Category.create(req.body);
+    res.status(200).json(category);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//get all categories
+app.get("/api/categories", async (req, res) =>{
+  try{
+    const category = await Category.find({});
+    res.status(200).json(category);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+app.put("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedCategory = await Category.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated category
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+app.delete("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Perform the deletion
+    await Category.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+////////// preference /////////
+
+app.post("/api/preference", async (req, res) => {
+  try {
+    // Check if the preference category already exists
+    const existingPreference = await Preference.findOne({ name: req.body.name });
+    
+    if (existingPreference) {
+      return res.status(400).json({ message: "preference already exists" });
+    }
+
+    // Create a new preference if it doesn't exist
+    const preference = await Preference.create(req.body);
+    res.status(200).json(preference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/api/preference", async (req, res) =>{
+  try{
+    const preference = await Preference.find({});
+    res.status(200).json(preference);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+
+
+
+app.put("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedPreference = await Preference.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated preference
+    res.status(200).json(updatedPreference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+////////////// category ////////////
+app.post("/api/category", async (req, res) => {
+  try {
+    // Check if category already exists
+    const existingCategory = await Category.findOne({ name: req.body.name });
+    
+    if (existingCategory) {
+      return res.status(400).json({ message: "Category already exists" });
+    }
+
+    // Create the new category
+    const category = await Category.create(req.body);
+    res.status(200).json(category);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+app.get("/api/category", async (req, res) =>{
+  try{
+    const category = await Category.find({});
+    res.status(200).json(category);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+app.put("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedCategory = await Category.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated category
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+app.delete("/api/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const category = await Category.findOne({ name: name });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Perform the deletion
+    await Category.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+////////// preference /////////
+
+app.post("/api/preference", async (req, res) => {
+  try {
+    // Check if the preference category already exists
+    const existingPreference = await Preference.findOne({ name: req.body.name });
+    
+    if (existingPreference) {
+      return res.status(400).json({ message: "preference already exists" });
+    }
+
+    // Create a new preference if it doesn't exist
+    const preference = await Preference.create(req.body);
+    res.status(200).json(preference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/api/preference", async (req, res) =>{
+  try{
+    const preference = await Preference.find({});
+    res.status(200).json(preference);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
+
+
+
+
+
+app.put("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Assuming you have some data to update in the request body
+    const updatedData = req.body; // Get the new data from the request body
+
+    // Update the category
+    const updatedPreference = await Preference.findOneAndUpdate(
+      { name: name },
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    // Return the updated preference
+    res.status(200).json(updatedPreference);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+app.delete("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Perform the deletion
+    await Preference.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Preference tag deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete("/api/preference/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const preference = await Preference.findOne({ name: name });
+
+    if (!preference) {
+      return res.status(404).json({ message: "preference tag not found" });
+    }
+
+    // Perform the deletion
+    await Preference.deleteOne({ name: name });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Preference tag deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 
 // get all activities 
@@ -418,3 +570,9 @@ app.get('/api/giftitems', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+
+app.use('/api', tourGuideRoutes);
+app.use('/api/Adv', advRoutes);
+app.use('/api/seller', sellerRoutes);
+

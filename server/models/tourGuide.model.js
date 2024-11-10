@@ -9,6 +9,9 @@ const tourGuideSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    acceptedTerms: { 
+        type: Boolean, 
+        default: false }, //
     password:{
         type:String,
         required:true
@@ -23,25 +26,43 @@ const tourGuideSchema = new mongoose.Schema({
     },
     mobileNumber:{
         type:Number,
-        required:false
+        required:false,
+        default: null
     },
     yearsOfExperience:{
         type:Number,
-        required:false
+        required:false,
+        default: null
     },
     previousWork:{
         type:String,
-        required:false
+        required:false,
+        default: null
     },
+    firstTimeLogin: { 
+        type: Number,
+         default: 0
+         },
     dateOfBirth:{
         type:Date,
-        required:false
+        required:false,
+        default: null
+    },
+    profilePicture: {
+        type: String, // Store image as base64 string
+        required: false
     },
     status: {
         type: String,
         enum: ['accepted', 'rejected', 'pending'],
         default: 'pending'
     },
+    firstTimeLogin: {  
+        type: Boolean,
+        default: true 
+    },
+
+
 });
 
 const TourGuide = mongoose.model("TourGuide", tourGuideSchema); //store in table "Tourist"

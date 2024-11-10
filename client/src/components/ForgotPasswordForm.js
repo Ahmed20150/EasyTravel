@@ -16,6 +16,8 @@ import {useState} from 'react';
 import axios from 'axios';
 import { CookiesProvider, useCookies } from 'react-cookie'
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Copyright() {
   return (
@@ -51,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-//TODO frontend responses to error and success messages
 
 export default function ForgotPasswordForm() {
   const classes = useStyles();
@@ -75,12 +76,13 @@ export default function ForgotPasswordForm() {
   const handleSendEmail = async (e) => {
     e.preventDefault();
     try{
-        const response = await axios.post('http://localhost:3000/api/forgotPassword', {email});
+        const response = await axios.post('http://localhost:3000/auth/forgotPassword', {email});
         console.log(response);
         setShowOtpForm(true);
     } 
   catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+    toast.error('Error: ' + error.response.data.message);
+    console.error('Error:', error.response ? error.response.data : error.message);
   }
 }
 
@@ -88,12 +90,13 @@ export default function ForgotPasswordForm() {
 const handleVerifyOtp = async (e) => {
     e.preventDefault();
     try{
-        const response = await axios.post('http://localhost:3000/api/verifyOtp', {email, otp});
+        const response = await axios.post('http://localhost:3000/auth/verifyOtp', {email, otp});
         console.log(response);
         setShowChangePasswordForm(true);
 
     } 
   catch (error) {
+    toast.error('Error: ' + error.response.data.message);
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 }
@@ -101,10 +104,16 @@ const handleVerifyOtp = async (e) => {
 
 const handleChangePassword = async () => {
     try {
-      await axios.post('http://localhost:3000/api/changeForgotPassword', { email, newPassword });
-      alert('Password changed successfully');
-      navigate('/login')
-    } catch (error) {
+      if(repeatPassword !== newPassword) {
+        toast.error('Passwords do not match!');
+        return;
+      }
+      await axios.post('http://localhost:3000/auth/changeForgotPassword', { email, newPassword });
+      toast.success('Password changed successfully');
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);    } catch (error) {
+      toast.error('Failed to change password: ' + error.response.data.message);
       console.error('Failed to change password:', error);
     }
   };
@@ -117,6 +126,12 @@ const handleChangePassword = async () => {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
+        <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/')}
+      >
+        Back to Landing Page
+      </button>
         <Typography component="h1" variant="h5">
           Forget Password
         </Typography>
@@ -218,12 +233,8 @@ const handleChangePassword = async () => {
           </form>
         )}
           <Grid container>
-            <Grid item xs>
-              <Link href='/forgotPasswordForm'>
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
+  
+            <Grid item >
               <Link href="/signUp" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>

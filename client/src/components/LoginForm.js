@@ -1,21 +1,23 @@
-import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import {useState} from 'react';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import axios from 'axios';
-import { CookiesProvider, useCookies } from 'react-cookie'
+import React, { useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Copyright() {
   return (
@@ -51,17 +53,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-//TODO frontend responses to error and success messages
 
 export default function Login() {
   const classes = useStyles();
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  
 
   const [tokenCookie, setTokenCookie] = useCookies(['token']) //init cookie object, naming it "token"
   const [loggedInUserCookie, setloggedInUserCookie] = useCookies(['username']) //init cookie object, naming it "username"
   const [loggedInUserTypeCookie, setloggedInUserTypeCookie] = useCookies(['userType']) //init cookie object, naming it "userType"
+  const [acceptedTermsCookie, setAcceptedTermsCookie] = useCookies(['acceptedTerms']) //init cookie object, naming it "acceptedTerms"
+
 
 
 
@@ -75,26 +79,84 @@ export default function Login() {
 
     console.log(user);
     try {
-      const response = await axios.post('http://localhost:3000/api/login', user); //retrieve data from server
+      const response = await axios.post('http://localhost:3000/auth/login', user); //retrieve data from server
+      
       const accessToken = response.data.accessToken; //capture accessToken from response
       const userType = response.data.userType;
-      console.log('Successful Login!', response.data);
-      console.log('Access Token:', accessToken);
-      console.log('Logged in Username:', username);
+      const firstTimeLogin = response.data.firstTimeLogin;
+      const acceptedTerms = response.data.acceptedTerms;
+      const status = response.data.status;
+      const userId = response.data.userId;
 
       setTokenCookie('token', accessToken, { path: '/', maxAge: 1000 }); // set "token" cookie = accessToken, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
       setloggedInUserCookie('username', username, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
       setloggedInUserTypeCookie('userType', userType, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+      setAcceptedTermsCookie('acceptedTerms', acceptedTerms, { path: '/', maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires) 
+
+      if(userType==='admin' || userType==='tourismGoverner'){
+        toast.success('Successful Login!');
+        setTimeout(() => {
+          navigate("/home", { state: { username } });
+        }, 2000);
+        return;
+      }
+      
+
+      console.log('Successful Login!', response.data);
+      console.log('Access Token:', accessToken);
+      console.log('Logged in Username:', username);
+      console.log('acceptedTerms:', acceptedTerms);
 
 
       setUsername('');
       setPassword('');
 
-      //TODO based on userType navigate to different pages
-      navigate('/home');
+      // TODO based on userType navigate to different pages
+
+      console.log('User Type:', userType, 'First Time Login:', firstTimeLogin);
+      
 
 
-  } catch (error) {
+      if(status === 'rejected'){
+        toast.error('Account has been rejected');
+        setTimeout(() => {
+          navigate("/");
+        }, 2000); 
+        return;
+      }
+      else if(status === 'pending'){
+        toast.error('Account is still pending, Please wait for admin approval');
+        // setTimeout(() => {
+        //   navigate("/");
+        // }, 2000);
+        return;
+      }
+
+      toast.success('Successful Login!');
+
+      if(firstTimeLogin === false){ // forward to home page (add to it view profile page)      
+        setTimeout(() => {
+          navigate("/home" , { state: { username } });
+        }, 2000); 
+      }
+      else if(firstTimeLogin === true){ //forward to terms and conditions page, then create profile, then home page
+        
+      if(userType==="tourist"){
+        setTimeout(() => {
+          navigate("/home");
+        }, 2000); 
+      }
+      else{
+        setTimeout(() => {
+          navigate("/termsAndConditions", {state: { userId, userType }});
+        }, 2000);       }
+
+      }
+     
+
+
+ } catch (error) {
+      toast.error('Invalid Username or Password');
       console.error('Error:', error.response ? error.response.data : error.message);
   }
 
@@ -110,10 +172,17 @@ export default function Login() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      <ToastContainer/>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
+        <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/')}
+      >
+        Back to Landing Page
+      </button>
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
@@ -143,10 +212,10 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="password"
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -158,7 +227,7 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href='/forgotPasswordForm'>
+              <Link href='/forgotPassword'>
                 Forgot password?
               </Link>
             </Grid>

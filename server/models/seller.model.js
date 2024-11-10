@@ -1,52 +1,55 @@
 const mongoose = require("mongoose");
-const fileSchema = require("./file.model");
 
 const sellerSchema = new mongoose.Schema({
     username: {
-        type:String,
-        required:true
+        type: String,
+        required: true
     },
-    email:{
-        type:String,
-        required:true
+    email: {
+        type: String,
+        required: true
     },
-    password:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
-    firstName:{
-        type:String,
-        required:false
+    firstLastName: {
+        type: String,
+        required: false
     },
-    lastName:{
-        type:String,
-        required:false
+    description: {
+        type: String,
+        required: false
     },
-    mobileNumber:{
-        type:Number,
-        required:false
+    mobileNumber: {
+        type: Number,
+        required: false
     },
-    yearsOfExperience:{
-        type:Number,
-        required:false
+    dateOfBirth: {
+        type: Date,
+        required: false
     },
-    previousWork:{
-        type:String,
-        required:false
+    acceptedTerms: { 
+        type: Boolean, 
+        default: false 
     },
-    dateOfBirth:{
-        type:Date,
-        required:false
+    profilePicture: {
+        type: String, // Store image as base64 string
+        required: false
     },
     status: {
         type: String,
         enum: ['accepted', 'rejected', 'pending'],
         default: 'pending'
     },
-    // id: fileSchema,
-    // taxCard: fileSchema,
+    firstTimeLogin: {  
+        type: Boolean,
+        default: true 
+    },
+
+
 });
 
-const Seller = mongoose.model("Seller", sellerSchema); //store in table "Tourist"
+const Seller = mongoose.model("Seller", sellerSchema);
 
-module.exports =  Seller; //export for use in other files
+module.exports = Seller;

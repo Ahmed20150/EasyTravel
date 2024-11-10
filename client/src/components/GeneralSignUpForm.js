@@ -18,10 +18,13 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import TouristSignUpForm from './TouristSignUpForm';
 import { useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Autocomplete from '@mui/material/Autocomplete';
+import countries from '../data/countries';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -81,8 +84,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 //TODO make dropdown for nationality
-//TODO put some restrictions on password
-  //TODO frontend responses to error and success messages
 
 export default function GeneralSignUpForm() {
 
@@ -97,9 +98,13 @@ export default function GeneralSignUpForm() {
 
  //Tourist Specific Extra Data
  const [mobileNumber, setMobileNumber] = useState('')
+ const [countryCode, setCountryCode] = useState(''); 
  const [nationality, setNationality] = useState('')
  const [dateOfBirth, setDateOfBirth] = useState('')
- const [occupation, setOccupation] = useState('')
+ const [occupation, setOccupation] = useState('Student')
+ const [otherOccupation, setOtherOccupation] = useState(''); 
+
+ const [uploadText, setUploadText] = useState('')
 
   const handleRadioButtonChange = (event) => {
     const value = event.target.value;
@@ -113,19 +118,31 @@ export default function GeneralSignUpForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const user = {username, email, password, userType}
-    
-    const tourist = {username, email, password, mobileNumber,nationality,dateOfBirth,occupation,userType};
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('userType', userType);
+    formData.append('repeatPassword', repeatPassword);
 
-    console.log(user);
+    if (file && userType !== 'tourist') {
+      formData.append('file', file);
+    }
+
     try {
     if(userType === 'tourist'){
-      const response = await axios.post('http://localhost:3000/api/signUp', tourist);
-      console.log('Success:', response.data);
+      formData.append('mobileNumber', `${countryCode}${mobileNumber}`);
+      formData.append('nationality', nationality);
+      formData.append('dateOfBirth', dateOfBirth);
+      formData.append('occupation', occupation === 'Other' ? otherOccupation : occupation);
+      const response = await axios.post('http://localhost:3000/auth/signUp', formData);
+      toast.success('Sign up Successful!');
     }
     else{
-        const response = await axios.post('http://localhost:3000/api/signUp', user);
-        console.log('Success:', response.data);
+      const response = await axios.post('http://localhost:3000/auth/signUp', formData);
+      handleUpload();
+      toast.success('Sign up Successful!');
+
     }
 
       setUsername('');
@@ -133,68 +150,66 @@ export default function GeneralSignUpForm() {
       setPassword('');
       setUserType('');
       setMobileNumber('');
+      setCountryCode(''); 
       setNationality('');
       setDateOfBirth('');
-      setOccupation('');
+      setOccupation('Student');
+      setOtherOccupation('');
+      setBase64('');
+      setFile(null);
 
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); 
 
   } catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+
+    toast.error('Sign up Failed: ' + error.response.data.message);
+    console.error('Error:', error.response ? error.response.data : error.message);
   }
 
 
-  // const formData = new FormData();
-  // formData.append('myfile',this.state.file);
-  // const config = {
-  //     headers: {
-  //         'content-type': 'multipart/form-data'
-  //     }
-  // };
-  // axios.post("http://localhost:3000/upload",formData,config)
-  //     .then((response) => {
-  //         alert("The file is successfully uploaded");
-  //     }).catch((error) => {
-  // });
-
   }
 
+  //file upload-related code
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
+  const [base64, setBase64] = useState('');
+  const [uploadedFile, setUploadedFile] = useState(null);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+  const handleUpload = async (e) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/files/upload', {
+        filename: file.name,
+        username: username,
+        contentType: file.type,
+        base64: base64,
+      });
+      setUploadedFile(response.data.file);
+      setUploadText('File uploaded successfully');
+    } catch (error) {
+      setUploadText('Error uploading file');
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+    }
   };
 
-  const handleFileUpload = async (event) => {
-    event.preventDefault();
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
 
-    console.log("DOC UPLOAD")
-    // if (!selectedFile) {
-    //   setUploadStatus('Please select a file to upload.');
-    //   return;
-    // }
-
-    // const formData = new FormData();
-    // formData.append('file', selectedFile);
-
-    // try {
-    //   const response = await axios.post('http://localhost:3000/api/upload', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   });
-    //   setUploadStatus('File uploaded successfully.');
-    // } catch (error) {
-    //   setUploadStatus('File upload failed.');
-    // }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setBase64(reader.result.split(',')[1]); // Extract base64 string
+    };
+    reader.readAsDataURL(selectedFile);
   };
 
 
   return (
-
     
     <Container component="main" maxWidth="xs">
+     
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -203,6 +218,12 @@ export default function GeneralSignUpForm() {
         <Typography component="h1" variant="h5" style={{ marginBottom: '19px' }}>
           Sign Up
         </Typography>
+        <button
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/')}
+      >
+        Back to Landing Page
+      </button>
         <form className={classes.form} action='POST'  onSubmit={handleSubmit}>
         {/* General Info for all Account Types */}
         <FormControl>
@@ -221,7 +242,7 @@ export default function GeneralSignUpForm() {
         <FormControlLabel value="advertiser" control={<Radio />} label="Advertiser" />
         <FormControlLabel value="seller" control={<Radio />} label="Seller" />
         <div className={classes.centeredRadio}>
-            <FormControlLabel value="tourist" control={<Radio />} label="Tourist" />
+            <FormControlLabel value="tourist" control={<Radio />} label="Tourist"/>
           </div>
       </RadioGroup>
         </FormControl>
@@ -284,6 +305,38 @@ export default function GeneralSignUpForm() {
 
           {userType === 'tourist' && (
         <>
+        <Autocomplete
+      id="country-select-demo"
+      sx={{ width: 300 }}
+      options={countries}
+      autoHighlight
+      getOptionLabel={(option) => option.label}
+      onChange={(event, value) => {
+        setNationality(value ? value.label : '');
+        setCountryCode(value ? value.phone : ''); 
+      }}      renderOption={(props, option) => (
+        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+          <img
+            loading="lazy"
+            width="20"
+            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+            alt=""
+          />
+          {option.label} ({option.code}) +{option.phone}
+        </Box>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Choose a country"
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: 'new-password', // disable autocomplete and autofill
+          }}
+        />
+      )}
+    />
           <TextField
             variant="outlined"
             margin="normal"
@@ -293,21 +346,11 @@ export default function GeneralSignUpForm() {
             label="Mobile Number"
             type="number"
             id="mobileNumber"
-            onChange={(e) => setMobileNumber(e.target.value)}
+            value={`${countryCode}${mobileNumber}`}
+            onChange={(e) => setMobileNumber(e.target.value.replace(countryCode, ''))}
             autoComplete="mobileNumber"
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="nationality"
-            label="Nationality"
-            type="text"
-            id="nationality"
-            onChange={(e) => setNationality(e.target.value)}
-            autoComplete="nationality"
-          />
+         
           <TextField
             variant="outlined"
             margin="normal"
@@ -323,47 +366,43 @@ export default function GeneralSignUpForm() {
             }}
             autoComplete="DOB"
           />
+          <FormControl component="fieldset" margin="normal">
+          <FormLabel id="demo-row-radio-buttons-group-label">Occupation:</FormLabel>
+          <RadioGroup
+            aria-label="occupation"
+            name="occupation"
+            value={occupation}
+            onChange={(e) => setOccupation(e.target.value)}
+          >
+            <FormControlLabel value="Student" control={<Radio />} label="Student" />
+            <FormControlLabel value="Other" control={<Radio />} label="Other" />
+          </RadioGroup>
+        </FormControl>
+        {occupation === 'Other' && (
           <TextField
-            variant="outlined"
+            label="Specify Occupation"
+            value={otherOccupation}
+            onChange={(e) => setOtherOccupation(e.target.value)}
+            fullWidth
             margin="normal"
             required
-            fullWidth
-            name="occupation"
-            label="Occupation"
-            type="text"
-            id="occupation"
-            onChange={(e) => setOccupation(e.target.value)}
-            autoComplete="occupation"
           />
+        )}
         </>
       )}
-
-<div>
-      <h2>File Upload</h2>
-       
-      <input
-            type="file"
-            onChange={handleFileChange}
-          />
-
-          {/* <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Confirm Upload
-          </Button> */}
-
-
-
-    </div>
-
-
+ {/* File Upload for Non-Tourist Users */}
+ {userType !== 'tourist' && (
+            <div>
+              <h2>File Upload</h2>
+              <input type="file" accept="application/pdf" onChange={handleFileChange} required />
+              <p>{uploadText}</p>
+            </div>
+          )}
+{/* 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -375,7 +414,7 @@ export default function GeneralSignUpForm() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href="/forgotPassword" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
@@ -390,6 +429,7 @@ export default function GeneralSignUpForm() {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <ToastContainer/>
     </Container>
   );
 }
