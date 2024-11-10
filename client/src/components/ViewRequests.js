@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
 import "../css/ActivityLists.css";
 
 const UserList = () => {
@@ -26,7 +26,7 @@ const UserList = () => {
     //const input = { username, role };
     try {
         // Construct the URL with the username and role as query parameters
-        //alert(`enter ${username}`)
+        alert(`enter ${role}`)
         await axios.delete(`http://localhost:3000/admin/delete-user/${username}/${role}`); 
         // Update state to remove the deleted user
         setUsers(users.filter((user) => user.username !== username)); // Filter out the deleted user from the UI
@@ -40,10 +40,11 @@ const UserList = () => {
   return (
     <div className="activity-list">
       <h1>Delete Requests </h1>
+      <Link to="/adminAccountManagement"><button>Back</button></Link>
       <div className="button-container"></div>
       <div className="card-container">
         {users.map((user) => (
-          <div className="card" key={user._id}>
+          <div className="card" key={user.username}>
             <h2 className="user-role"> {user.role}</h2>
             <h4 className="user-username">Username: {user.username}</h4>
             <h4 className="user-email">Email: {user.email}</h4> 

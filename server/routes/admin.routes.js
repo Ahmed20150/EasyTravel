@@ -1,24 +1,36 @@
 const express = require("express");
 const router = express.Router();
 const Admin = require('../models/admin.model');
+const TourGuide = require('../models/tourGuide.model');
+const Advertiser = require('../models/advertiser.model');
+const Seller = require('../models/seller.model');
 const TourismGoverner = require('../models/tourismGoverner.model');
+const bcrypt = require('bcrypt');
 const Tourist = require('../models/tourist.model')
 const DeletionRequest = require('../models/DeletionRequest.model');
 router.use(express.json());
-
-//Add Tourism Governer
+// Add Tourism Governer
 router.post('/add-tourismGoverner', async (req, res) => {
     const { username, password } = req.body;
 
-      if(username.includes(" ")){
+    if (username.includes(" ")) {
         return res.status(400).json({ message: 'Username is Invalid.' });
     }
-      if(password.includes(" ")){
+    if (password.includes(" ")) {
         return res.status(400).json({ message: 'Password is Invalid.' });
     }
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password Required' });
+    }
+
+    check1 = await Tourist.findOne({ username });
+    check2 = await Advertiser.findOne({ username });
+    check3 = await Seller.findOne({ username });
+    check4 = await TourGuide.findOne({ username });
+    check4 = await Admin.findOne({ username });
+    if (check1 || check2 || check3 || check4) {
+        return res.status(400).json({ message: 'Username already exists in database. Please choose a different one.' });
     }
 
     try {
@@ -27,33 +39,42 @@ router.post('/add-tourismGoverner', async (req, res) => {
         if (NonUniqueUser) {
             return res.status(400).json({ message: 'Username already exists' });
         }
+
         const newTourismGoverner = new TourismGoverner({
             username,
-            password
+            password,
         });
+
         await newTourismGoverner.save();
         res.status(201).json({ message: 'Tourism Governer Added Successfully' });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ message: 'Error Creating new Tourism Governer Account', error });
     }
 });
 
-
-//Add Admin
+// Add Admin
 router.post('/add-admin', async (req, res) => {
     const { username, password } = req.body;
 
     // Check if username and password are provided
-    if(username.includes(" ")){
+    if (username.includes(" ")) {
         return res.status(400).json({ message: 'Username is Invalid.' });
     }
-    if(password.includes(" ")){
+    if (password.includes(" ")) {
         return res.status(400).json({ message: 'Password is Invalid.' });
     }
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Username and Password are required.' });
+    }
+
+    check1 = await Tourist.findOne({ username });
+    check2 = await Advertiser.findOne({ username });
+    check3 = await Seller.findOne({ username });
+    check4 = await TourGuide.findOne({ username });
+    check4 = await TourismGoverner.findOne({ username });
+    if (check1 || check2 || check3 || check4) {
+        return res.status(400).json({ message: 'Username already exists in database. Please choose a different one.' });
     }
 
     try {
@@ -80,16 +101,17 @@ router.post('/add-admin', async (req, res) => {
 
 // Function to get the appropriate model based on role
 const getUserModelByRole = (role) => {
-    switch (role) {
-        case 'Tourist':
+    const role2 = role.toLowerCase();
+    switch (role2) {
+        case 'tourist':
             return Tourist;
-        case 'TourGuide':
+        case 'tourguide':
             return TourGuide;
-        case 'Advertiser':
+        case 'advertiser':
             return Advertiser;
-        case 'Seller':
+        case 'seller':
             return Seller;
-        case 'Toursim Governer':
+        case 'toursim governer':
             return TourismGoverner;
         default:
             return Tourist;
@@ -108,15 +130,15 @@ router.delete('/delete-user/:username/:role', async (req, res) => {
 
         // Find the user by username in the appropriate collection/model
         // Find the user by _id and delete them
-        const deletedUser = await UserModel.deleteOne({ username});
+        const deletedUser = await UserModel.deleteOne({ username });
 
         if (deletedUser.deletedCount === 0) {
             return res.status(404).json({ message: "User not found." });
         }
 
-        const request=await DeletionRequest.findOne({username,role})
-        if(request){
-            await DeletionRequest.deleteOne({username,role});
+        const request = await DeletionRequest.findOne({ username, role })
+        if (request) {
+            await DeletionRequest.deleteOne({ username, role });
         }
 
         // Respond with success message
@@ -144,9 +166,10 @@ router.get('/viewAllUsers', async (req, res) => {
         // Fetch users from all models
         const tourists = await getAllUsersFromModel(Tourist);
         const governer = await getAllUsersFromModel(TourismGoverner);
-        //const tourGuides = await getAllUsersFromModel(TourGuide);
-        //const advertisers = await getAllUsersFromModel(Advertiser);
-        //const sellers = await getAllUsersFromModel(Seller);
+        const tourGuides = await getAllUsersFromModel(TourGuide);
+        const advertisers = await getAllUsersFromModel(Advertiser);
+        const sellers = await getAllUsersFromModel(Seller);
+
 
         // Combine users with specific fields into a single array
         const allUsers = [
@@ -159,25 +182,25 @@ router.get('/viewAllUsers', async (req, res) => {
             ...governer.map(user => ({
                 username: user.username,
                 role: 'Toursim Governer'
+            })),
+            ...tourGuides.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'TourGuide'
+            })),
+            ...advertisers.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'Advertiser'
+            })),
+            ...sellers.map(user => ({
+                username: user.username,
+                email: user.email,
+                mobile_number: user.mobile_number,
+                role: 'Seller'
             }))
-            // ...tourGuides.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'TourGuide'
-            // })),
-            // ...advertisers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Advertiser'
-            // })),
-            // ...sellers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Seller'
-            // }))
         ];
 
         // Return combined result
@@ -192,10 +215,7 @@ router.get('/viewAllUsers', async (req, res) => {
 router.get('/viewRequests', async (req, res) => {
     try {
         // Fetch users from all models
-        const Requests= await getAllUsersFromModel(DeletionRequest)
-        //const tourGuides = await getAllUsersFromModel(TourGuide);
-        //const advertisers = await getAllUsersFromModel(Advertiser);
-        //const sellers = await getAllUsersFromModel(Seller);
+        const Requests = await getAllUsersFromModel(DeletionRequest)
 
         // Combine users with specific fields into a single array
         const allUsers = [
@@ -203,30 +223,8 @@ router.get('/viewRequests', async (req, res) => {
                 username: user.username,
                 email: user.email,
                 mobile_number: user.mobile_number,
-                role: 'Tourist'
+                role: user.role
             })),
-            // ...governer.map(user => ({
-            //     username: user.username,
-            //     role: 'Toursim Governer'
-            // }))
-            // ...tourGuides.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'TourGuide'
-            // })),
-            // ...advertisers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Advertiser'
-            // })),
-            // ...sellers.map(user => ({
-            //     username: user.username,
-            //     email: user.email,
-            //     mobile_number: user.mobile_number,
-            //     role: 'Seller'
-            // }))
         ];
 
         // Return combined result
@@ -237,5 +235,176 @@ router.get('/viewRequests', async (req, res) => {
     }
 });
 
+// Function to get pending requests
+const getPendingRequests = async (Model) => {
+    try {
+        return await Model.find({ status: 'pending' });
+    } catch (error) {
+        throw new Error('Error fetching pending requests');
+    }
+};
+
+// Endpoint to get pending tour guide requests
+router.get('/pending-tour-guides', async (req, res) => {
+    try {
+        const pendingGuides = await getPendingRequests(TourGuide);
+        res.status(200).json(pendingGuides);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching pending tour guides', error: error.message });
+    }
+});
+
+// Endpoint to get pending advertiser requests
+router.get('/pending-advertisers', async (req, res) => {
+    try {
+        const pendingAdvertisers = await getPendingRequests(Advertiser);
+        res.status(200).json(pendingAdvertisers);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching pending advertisers', error: error.message });
+    }
+});
+
+// Endpoint to get pending seller requests
+router.get('/pending-sellers', async (req, res) => {
+    try {
+        const pendingSellers = await getPendingRequests(Seller);
+        res.status(200).json(pendingSellers);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching pending sellers', error: error.message });
+    }
+});
+
+// Generic function to accept or reject requests
+const updateStatus = async (Model, id, status) => {
+    try {
+        let update = { status };
+        if (status === 'accepted') {
+            update.firstTimeLogin = 1; // Set firstTimeLogin to 1 when accepted
+        }
+        const updatedDocument = await Model.findByIdAndUpdate(id, update, { new: true });
+        if (!updatedDocument) {
+            throw new Error('Document not found');
+        }
+        return updatedDocument;
+    } catch (error) {
+        throw new Error('Error updating status');
+    }
+};
+
+
+// Endpoint to accept a tour guide
+router.put('/accept-tour-guide/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedGuide = await updateStatus(TourGuide, id, 'accepted');
+        res.status(200).json({ message: 'Tour guide accepted', data: updatedGuide });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// Endpoint to reject a tour guide
+router.put('/reject-tour-guide/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedGuide = await updateStatus(TourGuide, id, 'rejected');
+        res.status(200).json({ message: 'Tour guide rejected', data: updatedGuide });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// Endpoint to accept an advertiser
+router.put('/accept-advertiser/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedAdvertiser = await updateStatus(Advertiser, id, 'accepted');
+        res.status(200).json({ message: 'Advertiser accepted', data: updatedAdvertiser });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// Endpoint to reject an advertiser
+router.put('/reject-advertiser/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedAdvertiser = await updateStatus(Advertiser, id, 'rejected');
+        res.status(200).json({ message: 'Advertiser rejected', data: updatedAdvertiser });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// Endpoint to accept a seller
+router.put('/accept-seller/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedSeller = await updateStatus(Seller, id, 'accepted');
+        res.status(200).json({ message: 'Seller accepted', data: updatedSeller });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// Endpoint to reject a seller
+router.put('/reject-seller/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedSeller = await updateStatus(Seller, id, 'rejected');
+        res.status(200).json({ message: 'Seller rejected', data: updatedSeller });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+// Endpoint to accept terms for Tour Guides
+router.put('/tourGuide/:id/accept-terms', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedGuide = await TourGuide.findByIdAndUpdate(
+            id,
+            { firstTimeLogin: false, acceptedTerms: true },
+            { new: true });
+        if (!updatedGuide) {
+            return res.status(404).json({ message: 'Tour guide not found' });
+        }
+        res.status(200).json({ message: 'Terms accepted for tour guide', data: updatedGuide });
+    } catch (error) {
+        res.status(500).json({ message: 'Error accepting terms for tour guide', error: error.message });
+    }
+});
+
+// Endpoint to accept terms for Advertisers
+router.put('/advertiser/:id/accept-terms', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedAdvertiser = await Advertiser.findByIdAndUpdate(id,
+            { firstTimeLogin: false, acceptedTerms: true },
+            { new: true });
+        if (!updatedAdvertiser) {
+            return res.status(404).json({ message: 'Advertiser not found' });
+        }
+        res.status(200).json({ message: 'Terms accepted for advertiser', data: updatedAdvertiser });
+    } catch (error) {
+        res.status(500).json({ message: 'Error accepting terms for advertiser', error: error.message });
+    }
+});
+
+// Endpoint to accept terms for Sellers
+router.put('/seller/:id/accept-terms', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedSeller = await Seller.findByIdAndUpdate(id,
+            { firstTimeLogin: false, acceptedTerms: true },
+            { new: true });
+        if (!updatedSeller) {
+            return res.status(404).json({ message: 'Seller not found' });
+        }
+        res.status(200).json({ message: 'Terms accepted for seller', data: updatedSeller });
+    } catch (error) {
+        res.status(500).json({ message: 'Error accepting terms for seller', error: error.message });
+    }
+});
 
 module.exports = router;

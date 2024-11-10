@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const AddNewAdmins = () => {
   const [username, setUsername] = useState('');
@@ -55,6 +55,8 @@ const AddNewAdmins = () => {
         <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>
           Add Admin
         </button>
+
+        <Link to="/adminAccountManagement"><button>Back</button></Link>
       </form>
     </div>
   );

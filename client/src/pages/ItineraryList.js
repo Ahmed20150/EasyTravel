@@ -2,20 +2,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../css/ItineraryList.css"; // Import the CSS file
+import { useCookies } from "react-cookie";
 
 const ItineraryList = () => {
   const [itineraries, setItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Use useNavigate for navigation
-
+  const [cookies] = useCookies(["username", "userType"]);
+  const username = cookies.username;
+  const userType = cookies.userType; // Access the userType
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
         const response = await axios.get("http://localhost:3000/itinerary"); // Replace with your API endpoint
-        setItineraries(response.data);
+
+        // Filter itineraries where the creator matches the username in the cookies
+        const filteredItineraries = response.data.filter(
+          (itinerary) => itinerary.creator === username
+        );
+        setItineraries(filteredItineraries); // Store the filtered itineraries in state
       } catch (err) {
         setError(err.message);
       } finally {
@@ -23,19 +31,52 @@ const ItineraryList = () => {
       }
     };
 
-    fetchItineraries();
-  }, []);
+    if (username) {
+      // Fetch itineraries only if username is available
+      fetchItineraries();
+    }
+  }, [username]);
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/itinerary/${id}`); // Make sure to update the endpoint
-      setItineraries(itineraries.filter((itinerary) => itinerary._id !== id)); // Update the state
+      const itinerary = await axios.get(
+        `http://localhost:3000/itinerary/${id}`
+      );
+      if (itinerary.data.touristsBooked.length == 0) {
+        await axios.delete(`http://localhost:3000/itinerary/${id}`); // Make sure to update the endpoint
+        setItineraries(itineraries.filter((itinerary) => itinerary._id !== id)); // Update the state
+      } else {
+        alert(
+          `Cannot delete an itinerary with ${itinerary.data.touristsBooked.length} bookings `
+        );
+      }
     } catch (err) {
       setError(err.message);
     }
   };
+  const handleToggleActivation = async (id) => {
+    try {
+      // Send request to toggle the activation status for the itinerary
+      // In your frontend request, use this corrected URL
+      const response = await axios.put(
+        `http://localhost:3000/Itinerary/toggleActivation/${id}`
+      );
+      // Update the itineraries state with the toggled itinerary
+      setItineraries(
+        itineraries.map((itinerary) =>
+          itinerary._id === id
+            ? { ...itinerary, activated: !itinerary.activated }
+            : itinerary
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling activation:", error);
+      alert("Failed to toggle activation. Please try again.");
+    }
+  };
 
   const handleEdit = (id) => {
+    localStorage.clear();
     navigate(`/itinerary/edit/${id}`);
   };
   const handleCreate = () => {
@@ -55,8 +96,11 @@ const ItineraryList = () => {
       <h1>Itineraries</h1>
       <div className="button-container">
         <button className="create-button" onClick={() => handleCreate()}>
-          Create New Activity
+          Create New Itinerary
         </button>
+        <Link to="/home">
+          <button>Back</button>
+        </Link>
       </div>
       <div className="itinerary-list">
         {itineraries.map((itinerary) => (
@@ -65,6 +109,8 @@ const ItineraryList = () => {
             itinerary={itinerary}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            onActivationToggle={handleToggleActivation}
+            userType={userType}
           />
         ))}
       </div>
