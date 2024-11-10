@@ -1,4 +1,3 @@
-// src/components/Itineraries/ItineraryList.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
@@ -14,6 +13,7 @@ const ItineraryList = () => {
   const [cookies] = useCookies(["username", "userType"]);
   const username = cookies.username;
   const userType = cookies.userType; // Access the userType
+
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
@@ -42,24 +42,24 @@ const ItineraryList = () => {
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
-      if (itinerary.data.touristsBooked.length == 0) {
+      if (itinerary.data.touristsBooked.length === 0) {
         await axios.delete(`http://localhost:3000/itinerary/${id}`); // Make sure to update the endpoint
         setItineraries(itineraries.filter((itinerary) => itinerary._id !== id)); // Update the state
       } else {
         alert(
-          `Cannot delete an itinerary with ${itinerary.data.touristsBooked.length} bookings `
+          `Cannot delete an itinerary with ${itinerary.data.touristsBooked.length} bookings`
         );
       }
     } catch (err) {
       setError(err.message);
     }
   };
+
   const handleToggleActivation = async (id) => {
     try {
       // Send request to toggle the activation status for the itinerary
-      // In your frontend request, use this corrected URL
       const response = await axios.put(
-        `http://localhost:3000/Itinerary/toggleActivation/${id}`
+        `http://localhost:3000/itinerary/toggleActivation/${id}`
       );
       // Update the itineraries state with the toggled itinerary
       setItineraries(
@@ -79,6 +79,7 @@ const ItineraryList = () => {
     localStorage.clear();
     navigate(`/itinerary/edit/${id}`);
   };
+
   const handleCreate = () => {
     navigate(`/itinerary/create`);
   };

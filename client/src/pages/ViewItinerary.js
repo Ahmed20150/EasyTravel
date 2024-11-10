@@ -1,14 +1,12 @@
-// src/components/Itineraries/ItineraryList.jsx
-// src/components/Itineraries/ItineraryList.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
 import { useNavigate, Link } from "react-router-dom";
-//import "../css/ItineraryList.css"; // Import the CSS file
 import { useCookies } from "react-cookie";
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
+  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
@@ -16,6 +14,8 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
+  const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -46,13 +46,28 @@ const ViewItinerary = () => {
     fetchItineraries();
   }, [username]);
 
-  if (loading) {
-    return <p>Loading itineraries...</p>;
-  }
+  useEffect(() => {
+    if (searchClicked) {
+      if (searchQuery.trim() === "") {
+        setFilteredItineraries(itineraries); // Show all itineraries if no search query
+      } else {
+        const filtered = itineraries.filter((itinerary) => {
+          const nameMatch = itinerary.name
+            ? itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+          const categoryMatch = itinerary.category
+            ? itinerary.category.toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+          const tagsMatch = itinerary.tags && itinerary.tags.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          );
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+          return nameMatch || categoryMatch || tagsMatch;
+        });
+        setFilteredItineraries(filtered);
+      }
+    }
+  }, [searchQuery, itineraries, searchClicked]);
 
   const handleBook = async (id) => {
     try {
@@ -123,7 +138,7 @@ const ViewItinerary = () => {
         `http://localhost:3000/itinerary/${id}`
       );
       const touristsBook = itinerary.data.touristsBooked.filter(
-        (user) => user != username
+        (user) => user !== username
       );
 
       await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
@@ -154,24 +169,49 @@ const ViewItinerary = () => {
       );
     }
   };
+
+  const handleSearchClick = () => {
+    setSearchClicked(true);
+  };
+
+  if (loading) {
+    return <p>Loading itineraries...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
   return (
     <div>
-   <h1>All Available Itenraries</h1>
-    <div style={{display:"flex" }}>
-      {itineraries.map((itinerary) => (
-        <ItineraryItem
-          key={itinerary._id}
-          itinerary={itinerary}
-          onBook={handleBook}
-          onUnbook={handleUnbook} // Pass the onBook function to ItineraryItem
-          userType={userType} // Pass the userType prop
-          isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
+      <h1>All Available Itineraries</h1>
+      <div>
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search by museum name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-      ))}
+        <button onClick={handleSearchClick}>Search</button>
+      </div>
 
-    </div>
-    <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
+      <div style={{ display: "flex" }}>
+        {filteredItineraries.map((itinerary) => (
+          <ItineraryItem
+            key={itinerary._id}
+            itinerary={itinerary}
+            onBook={handleBook}
+            onUnbook={handleUnbook}
+            userType={userType}
+            isBooked={bookedItineraries.includes(itinerary._id)}
+          />
+        ))}
+      </div>
 
+      <Link to="/home">
+        <button style={{ display: "center", alignItems: "center" }}>Back</button>
+      </Link>
     </div>
   );
 };

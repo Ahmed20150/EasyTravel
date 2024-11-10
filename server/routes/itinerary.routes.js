@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 const Itinerary = require("../models/itinerary.model.js");
+
 router.use(express.json());
 router.use(cors()); // This allows requests from any origin
-//CREATE
+
+// CREATE
 router.post("/", async (req, res) => {
   try {
     console.log(req.body);
@@ -45,14 +47,39 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// SEARCH - Search itineraries based on query parameters
+router.get("/search", async (req, res) => {
+  try {
+    const { name, category, tags } = req.query;
+
+    // Build the query object dynamically based on the parameters provided
+    const searchQuery = {};
+
+    // Use MongoDB full-text search for name, category, and tags
+    if (name) searchQuery.name = { $regex: name, $options: "i" }; // Case-insensitive search for name
+    if (category) searchQuery.category = { $regex: category, $options: "i" }; // Case-insensitive search for category
+    if (tags) searchQuery.tags = { $in: tags.split(",") }; // Search tags by an array (e.g., "historical, museum")
+
+    // Fetch itineraries that match the search query
+    const itineraries = await Itinerary.find(searchQuery);
+
+    if (itineraries.length === 0) {
+      return res.status(404).json({ message: "No itineraries found matching the search criteria" });
+    }
+
+    res.status(200).json(itineraries);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // UPDATE
 router.put("/:id", async (req, res) => {
   try {
     const updatedItinerary = await Itinerary.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
-      // Run validators to ensure schema rules are met
+      { new: true, runValidators: true } // Run validators to ensure schema rules are met
     );
     if (!updatedItinerary) {
       return res.status(404).json({ error: "Itinerary not found." });
@@ -67,6 +94,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Toggle Activation Status
 router.put("/toggleActivation/:id", async (req, res) => {
   try {
     const itinerary = await Itinerary.findById(req.params.id);
@@ -95,10 +123,12 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// PATCH - Update booking counter
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
   const { itineraryCounter } = req.body;
-  console.log(` this is ${itineraryCounter} , and ${id} `);
+  console.log(`This is ${itineraryCounter}, and ${id}`);
   try {
     const updatedItinerary = await Itinerary.findByIdAndUpdate(
       id,
@@ -112,10 +142,12 @@ router.patch("/:id", async (req, res) => {
 
     res.status(200).json(updatedItinerary);
   } catch (err) {
-    console.error("Error updating bookingCounter:", err); // Print the error to the console
-    res.status(500).json({ message: "Server error", error: err.message }); // Include the error message in the response
+    console.error("Error updating bookingCounter:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+// PATCH - Update touristsBooked list
 router.patch("/:id/touristsBook", async (req, res) => {
   try {
     const { id } = req.params;
@@ -141,7 +173,7 @@ router.patch("/:id/touristsBook", async (req, res) => {
   }
 });
 
-// deactivate all itineraries by username
+// Deactivate all itineraries by username
 router.put("/deactivateAll/:username", async (req, res) => {
   try {
     const username = req.params.username;
@@ -164,8 +196,7 @@ router.put("/deactivateAll/:username", async (req, res) => {
   }
 });
 
-
-// delete all itinraries by username
+// Delete all itineraries by username
 router.delete("/deleteAll/:username", async (req, res) => {
   try {
     await Itinerary.deleteMany({ creator: req.params.username });
@@ -174,6 +205,5 @@ router.delete("/deleteAll/:username", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;
