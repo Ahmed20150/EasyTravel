@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 Modal.setAppElement('#root');
 
 //TODO if there are two future dates, there is no distinction which one did i choose when i have to book the itinerary
+//TODO cant unbook before less than 48hrs
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -29,6 +30,9 @@ const ViewItinerary = () => {
   const [selectedItineraryId, setSelectedItineraryId] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const [selectedTime, setSelectedTime] = useState(null);
   const userType = cookies.userType; // Access the userType
   const username = cookies.username; // Access the username
 
@@ -77,6 +81,7 @@ const ViewItinerary = () => {
     setModalIsOpen(true);
     const itineraryResponse = await axios.get(`http://localhost:3000/itinerary/${id}`);
     setAvailableDates(itineraryResponse.data.availableDates);
+    setAvailableTimes(itineraryResponse.data.availableTimes);
 
   };
 
@@ -85,6 +90,7 @@ const ViewItinerary = () => {
     setSelectedItineraryId(null);
     setAvailableDates([]);
     setSelectedDate(null);
+    setSelectedTime(null);
   };
 
 
@@ -143,6 +149,15 @@ const ViewItinerary = () => {
         selectedItineraryId,
       });
 
+      console.log("TOURIST USERNAME : ", username);
+
+      await axios.post("http://localhost:3000/booking/createBooking", {
+        touristUsername: username,
+        itineraryId: selectedItineraryId,
+        bookingDate: selectedDate,
+        bookingTime: selectedTime
+      });
+
       
       // Update the state with the new booked itineraries and wallet balance
       setBookedItineraries(response.data.bookedItineraries);
@@ -155,70 +170,47 @@ const ViewItinerary = () => {
     }
   };
 
-  const handleBook = async (id) => {
-    try {
-      console.log(`username: ${username}, itinerary id: ${id}`);
-
-      // Fetch the tourist data first to check the age
-      const tourist = await axios.get(
-        `http://localhost:3000/api/tourist/${username}`
-      );
-      const { dateOfBirth, bookedItineraries } = tourist.data;
-
-      // Calculate age
-      const currentDate = new Date();
-      const birthDate = new Date(dateOfBirth);
-      const age = currentDate.getFullYear() - birthDate.getFullYear();
-      const isBirthdayPassed =
-        currentDate.getMonth() > birthDate.getMonth() ||
-        (currentDate.getMonth() === birthDate.getMonth() &&
-          currentDate.getDate() >= birthDate.getDate());
-
+  function convertTo24HourFormat(timeString) {
+    const [time, modifier] = timeString.split(/(AM|PM)/i);
+    let [hours, minutes] = time.split(':').map(Number);
   
-
-      // If user is under 18, prevent the booking process
-      if (age < 18) {
-        console.error("User is under 18 and cannot book an itinerary.");
-        toast.error("You must be 18 or older to book an itinerary.");
-        return; // Stop the booking process
-      }
-
-      // Proceed with booking if age is 18 or above
-      const itinerary = await axios.get(
-        `http://localhost:3000/itinerary/${id}`
-      );
-      const touristsBook = [...itinerary.data.touristsBooked, username];
-
-      await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
-        touristsBooked: touristsBook,
-      });
-
-      const newBookedItineraries = [...bookedItineraries, id]; // Add the new itinerary ID
-
-      // Update the user's booked itineraries on the server
-      const response = await axios.patch(
-        "http://localhost:3000/api/bookItinerary",
-        {
-          username,
-          newBookedItineraries,
-        }
-      );
-      console.log("Booking response:", response.data);
-
-      // Update the booked itineraries state
-      setBookedItineraries(newBookedItineraries);
-    } catch (error) {
-      console.error(
-        "Error booking itinerary:",
-        error.response?.data || error.message
-      );
+    if (modifier.toUpperCase() === 'PM' && hours !== 12) {
+      hours += 12;
     }
-  };
+    if (modifier.toUpperCase() === 'AM' && hours === 12) {
+      hours = 0;
+    }
+  
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
 
 
   const handleUnbook = async (id) => {
     try {
       const selectedItineraryId = id;
+
+      const bookingResponse = await axios.get(`http://localhost:3000/booking/getBooking/${id}/${username}`);
+      const booking = bookingResponse.data;
+
+      // Check if the booking date and time is more than 48 hours before the current date and time
+      const bookingTime24Hour = convertTo24HourFormat(booking.bookingTime);
+      const bookingDate = new Date(booking.bookingDate).toISOString().split('T')[0];
+      const currentDateTime = new Date();
+      const bookingDateTime = new Date(`${bookingDate}T${bookingTime24Hour}:00`);
+      console.log("BOOKING DATE : ", booking.bookingDate);
+      console.log("BOOKING TIME : ", booking.bookingTime);
+      console.log("BOOKING 24hr TIME : ", bookingTime24Hour);
+      console.log("BOOKING DATE TIME : ", bookingDateTime);
+      const timeDifference = bookingDateTime - currentDateTime;
+      console.log("TIME DIFF : ",timeDifference);
+      const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+      if (hoursDifference < 48) {
+        toast.error("You cannot unbook less than 48 hours before the booking date and time.");
+        return;
+      }
+
+
       console.log(`Unbooking itinerary: ${id} for user ${username}`);
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
@@ -245,15 +237,15 @@ const ViewItinerary = () => {
           selectedItineraryId
         }
       );
-      console.log("Unbooking response:", response.data);
+
+      await axios.delete(`http://localhost:3000/booking/deleteBooking/${id}/${username}`);
+      toast.success("Unbooking Successful, Amount is refunded to your wallet");
 
       // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
-      console.error(
-        "Error unbooking itinerary:",
-        error.response?.data || error.message
-      );
+      const errorMessage = error.response?.data?.message || "Error Unbooking itinerary. Please try again.";
+      toast.error(errorMessage);
     }
   };
   return (
@@ -289,16 +281,19 @@ const ViewItinerary = () => {
             marginRight: '-50%',
             transform: 'translate(-50%, -50%)',
             width: '60%', // Increase width
-            height: '60%', // Increase height
+            height: '80%', // Increase height
             padding: '40px', // Increase padding
           },
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           <h2>Payment Method</h2>
-          <h3>Please Choose your Payment Method</h3>
-
+          <h3 style={{marginBottom: "40px"}}>Please Choose your Payment Method</h3>
+          <div style={{display:"flex", gap:"40px"}}>
           <h3>Available Dates</h3>
+          <h3>Available Times</h3>
+          </div>
+          <div style={{display:"flex"}}>
           <div>
           <FormControl>
             <RadioGroup
@@ -312,6 +307,23 @@ const ViewItinerary = () => {
               ))}
             </RadioGroup>
           </FormControl>
+          </div>
+
+
+          <div>
+          <FormControl>
+            <RadioGroup
+              aria-labelledby="available-dates-radio-group-label"
+              name="available-dates-radio-group"
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+            >
+              {availableTimes.map((time, index) => (
+                <FormControlLabel key={index} value={time} control={<Radio />} label={time} />
+              ))}
+            </RadioGroup>
+          </FormControl>
+          </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "30px" }}>
             <button onClick={handleWalletPurchase} >by Wallet</button>
