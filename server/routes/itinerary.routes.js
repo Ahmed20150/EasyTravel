@@ -175,5 +175,30 @@ router.delete("/deleteAll/:username", async (req, res) => {
   }
 });
 
+// Search for museums, historical places, activities, or itineraries by name, category, or tag
+router.get("/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query) {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    // Search for itineraries by name, category, or tag
+    const results = await Itinerary.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+        { tags: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error searching for itineraries:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 module.exports = router;

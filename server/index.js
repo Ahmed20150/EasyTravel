@@ -27,7 +27,7 @@ const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
-
+const searchRoutes = require("./routes/search.router.js"); // Import the search routes
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
 const bodyParser = require('body-parser');
@@ -43,8 +43,6 @@ require('./config/db');
 
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
-
-
 
 const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
 const Category= require("./models/category.model.js");
@@ -72,6 +70,10 @@ app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/gift", giftRoutes);
+app.use('/api', tourGuideRoutes);
+app.use('/api/Adv', advRoutes);
+app.use('/api/seller', sellerRoutes);
+app.use('/api', searchRoutes); // Use the search routes
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -91,7 +93,6 @@ app.listen(port, () => {
 //TODO store sendEmail & generateOTP Files in a folder
 //TODO check for repeated emails / usernames
 
-
 //getting all tourists
 app.get('/api/tourists', async (req, res) => {
     try {
@@ -101,11 +102,6 @@ app.get('/api/tourists', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
-
-
-
-
-
 
 ////////////// category ////////////
 app.post("/api/category", async (req, res) => {
@@ -138,7 +134,6 @@ app.get("/api/categories", async (req, res) =>{
   }
 })
 
-
 app.put("/api/category/:name", async (req, res) => {
   try {
     const { name } = req.params;
@@ -165,9 +160,6 @@ app.put("/api/category/:name", async (req, res) => {
   }
 });
 
-
-
-
 app.delete("/api/category/:name", async (req, res) => {
   try {
     const { name } = req.params;
@@ -186,13 +178,6 @@ app.delete("/api/category/:name", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-
-
-
-
-
-
 
 ////////// preference /////////
 
@@ -224,10 +209,6 @@ app.get("/api/preference", async (req, res) =>{
   }
 })
 
-
-
-
-
 app.put("/api/preference/:name", async (req, res) => {
   try {
     const { name } = req.params;
@@ -254,158 +235,6 @@ app.put("/api/preference/:name", async (req, res) => {
   }
 });
 
-
-
-
-////////////// category ////////////
-app.post("/api/category", async (req, res) => {
-  try {
-    // Check if category already exists
-    const existingCategory = await Category.findOne({ name: req.body.name });
-    
-    if (existingCategory) {
-      return res.status(400).json({ message: "Category already exists" });
-    }
-
-    // Create the new category
-    const category = await Category.create(req.body);
-    res.status(200).json(category);
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-
-app.get("/api/category", async (req, res) =>{
-  try{
-    const category = await Category.find({});
-    res.status(200).json(category);
-
-  }catch{
-    res.status(500).json({message:error.message});
-
-  }
-})
-
-
-app.put("/api/category/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
-    const category = await Category.findOne({ name: name });
-
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-
-    // Assuming you have some data to update in the request body
-    const updatedData = req.body; // Get the new data from the request body
-
-    // Update the category
-    const updatedCategory = await Category.findOneAndUpdate(
-      { name: name },
-      updatedData,
-      { new: true } // Return the updated document
-    );
-
-    // Return the updated category
-    res.status(200).json(updatedCategory);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-
-
-
-app.delete("/api/category/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
-    const category = await Category.findOne({ name: name });
-
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-
-    // Perform the deletion
-    await Category.deleteOne({ name: name });
-
-    // Respond with a success message
-    res.status(200).json({ message: "Category deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-
-
-
-
-
-
-
-////////// preference /////////
-
-app.post("/api/preference", async (req, res) => {
-  try {
-    // Check if the preference category already exists
-    const existingPreference = await Preference.findOne({ name: req.body.name });
-    
-    if (existingPreference) {
-      return res.status(400).json({ message: "preference already exists" });
-    }
-
-    // Create a new preference if it doesn't exist
-    const preference = await Preference.create(req.body);
-    res.status(200).json(preference);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get("/api/preference", async (req, res) =>{
-  try{
-    const preference = await Preference.find({});
-    res.status(200).json(preference);
-
-  }catch{
-    res.status(500).json({message:error.message});
-
-  }
-})
-
-
-
-
-
-app.put("/api/preference/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
-    const preference = await Preference.findOne({ name: name });
-
-    if (!preference) {
-      return res.status(404).json({ message: "preference tag not found" });
-    }
-
-    // Assuming you have some data to update in the request body
-    const updatedData = req.body; // Get the new data from the request body
-
-    // Update the category
-    const updatedPreference = await Preference.findOneAndUpdate(
-      { name: name },
-      updatedData,
-      { new: true } // Return the updated document
-    );
-
-    // Return the updated preference
-    res.status(200).json(updatedPreference);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-
-
 app.delete("/api/preference/:name", async (req, res) => {
   try {
     const { name } = req.params;
@@ -424,26 +253,6 @@ app.delete("/api/preference/:name", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-app.delete("/api/preference/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
-    const preference = await Preference.findOne({ name: name });
-
-    if (!preference) {
-      return res.status(404).json({ message: "preference tag not found" });
-    }
-
-    // Perform the deletion
-    await Preference.deleteOne({ name: name });
-
-    // Respond with a success message
-    res.status(200).json({ message: "Preference tag deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 
 // get all activities 
 app.get('/api/activities', async (req, res) => {
@@ -455,9 +264,7 @@ app.get('/api/activities', async (req, res) => {
   }
 });
 
-
 // get all itineraries
-
 app.get('/api/itineraries', async (req, res) => {
   try {
       const itinerarie = await itineraries.find({});
@@ -467,9 +274,7 @@ app.get('/api/itineraries', async (req, res) => {
   }
 });
 
-
 // get all museumsandhistoricalplaces
-
 app.get('/api/museums', async (req, res) => {
   try {
       const museums  = await museumsandhistoricalplaces.find({});
@@ -489,8 +294,6 @@ app.get('/api/actt', async (req, res) => {
   }
 });
 
-
-
 // adding a table actt 
 app.post("/api/actt", async (req,res) => {
   try {
@@ -501,7 +304,6 @@ app.post("/api/actt", async (req,res) => {
 }
 })
 
-
 app.post('/api/museums', async (req, res) => {
   try {
       const museums  = await museumsandhistoricalplaces.create(req.body);
@@ -510,7 +312,6 @@ app.post('/api/museums', async (req, res) => {
       res.status(500).json({ message: err.message });
   }
 });
-
 
 app.post('/api/activities', async (req, res) => {
   try {
@@ -580,8 +381,11 @@ app.get('/api/giftitems', async (req, res) => {
   }
 });
 
-
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
 app.use('/api/seller', sellerRoutes);
+app.use('/api', searchRoutes); // Use the search routes
 
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
