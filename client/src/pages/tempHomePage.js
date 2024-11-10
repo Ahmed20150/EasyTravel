@@ -40,10 +40,9 @@ const TempHomePage = () => {
   };
 
   function handleLogout() {
-    Cookies.get().forEach((cookie) => Cookies.remove(cookie));
+    Object.keys(Cookies.get()).forEach((cookieName) => Cookies.remove(cookieName));
     fetchData();
   }
-
   const handleViewProfile = () => {
     if (username) {
       navigate(`/view-profile${userType === "tourGuide" ? "" : userType}`, { state: { username } });
