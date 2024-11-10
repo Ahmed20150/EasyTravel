@@ -111,7 +111,6 @@ export default function Login() {
       setUsername('');
       setPassword('');
 
-      // TODO based on userType navigate to different pages
 
       console.log('User Type:', userType, 'First Time Login:', firstTimeLogin);
       

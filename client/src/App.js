@@ -48,8 +48,7 @@ import MuseumsList from "./pages/museumsList";
 import GiftList from './pages/GiftList';
 
 
-//TODO add navigation buttons between all pages
-//
+
 
 
 import Categories from './pages/Categories';

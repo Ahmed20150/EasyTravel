@@ -77,19 +77,10 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-// const conn = mongoose.createConnection("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL", { useNewUrlParser: true,
-//   useUnifiedTopology: true,});
-
-// let gfs;
-// conn.once('open', () => {
-//   gfs = Grid(conn.db, mongoose.mongo);
-//   gfs.collection('uploads');
-//   console.log('Connected to GridFS');
-// });
 
 //TODO arrange routes in their seperate files, keep index clean
 //TODO store sendEmail & generateOTP Files in a folder
-//TODO check for repeated emails / usernames
+
 
 
 //getting all tourists

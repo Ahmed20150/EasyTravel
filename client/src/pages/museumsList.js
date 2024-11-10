@@ -6,8 +6,6 @@ import "../styles/museumList.css"; // Import CSS styles
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
-//TODO make image upload instead of image URL
-//TODO fix css to make it local only and not affect other pages
 const MuseumsList = () => {
   const [museums, setMuseums] = useState([]);
   const [loading, setLoading] = useState(true);

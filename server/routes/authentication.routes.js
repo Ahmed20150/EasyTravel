@@ -203,7 +203,6 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
   
-    //TODO should admin have forget pw?
     const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
       Tourist.findOne({ email }),
       TourGuide.findOne({ email }),

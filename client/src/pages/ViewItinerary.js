@@ -7,10 +7,18 @@ import { useNavigate, Link } from "react-router-dom";
 //import "../css/ItineraryList.css"; // Import the CSS file
 import { useCookies } from "react-cookie";
 import Modal from 'react-modal';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 Modal.setAppElement('#root');
 
+//TODO if there are two future dates, there is no distinction which one did i choose when i have to book the itinerary
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -19,6 +27,8 @@ const ViewItinerary = () => {
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedItineraryId, setSelectedItineraryId] = useState(null);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
   const userType = cookies.userType; // Access the userType
   const username = cookies.username; // Access the username
 
@@ -62,15 +72,19 @@ const ViewItinerary = () => {
   }
 
   
-  const openModal = (id) => {
+  const openModal = async (id) => {
     setSelectedItineraryId(id);
     setModalIsOpen(true);
-    console.log("ITEN ID: "+ id);
+    const itineraryResponse = await axios.get(`http://localhost:3000/itinerary/${id}`);
+    setAvailableDates(itineraryResponse.data.availableDates);
+
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedItineraryId(null);
+    setAvailableDates([]);
+    setSelectedDate(null);
   };
 
 
@@ -100,11 +114,27 @@ const ViewItinerary = () => {
     try {
       const isOldEnough = await checkAge(username);
       if (!isOldEnough) {
-        alert("You must be 18 or older to book an itinerary.");
+        toast.error("You must be 18 or older to book an itinerary.");
+        return;
+      }
+
+      const today = new Date();
+      const selectedDateObj = new Date(selectedDate);
+      if (selectedDateObj <= today) {
+        toast.error("The selected date must be after Todays date.");
         return;
       }
 
       const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Add the new itinerary ID
+
+      const itinerary = await axios.get(
+        `http://localhost:3000/itinerary/${selectedItineraryId}`
+      );
+      const touristsBook = [...itinerary.data.touristsBooked, username];
+
+      await axios.patch(`http://localhost:3000/itinerary/${selectedItineraryId}/touristsBook`, {
+        touristsBooked: touristsBook,
+      });
 
       // Call the backend route to book the itinerary and update the wallet
       const response = await axios.patch("http://localhost:3000/api/bookItinerary", {
@@ -113,15 +143,15 @@ const ViewItinerary = () => {
         selectedItineraryId,
       });
 
+      
       // Update the state with the new booked itineraries and wallet balance
       setBookedItineraries(response.data.bookedItineraries);
 
-      alert("Itinerary booked successfully!");
+      toast.success("Itinerary booked successfully!");
       closeModal();
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Error booking itinerary. Please try again.";
-      alert(errorMessage);
-      // alert("Error booking itinerary. Please try again.");
+      toast.error(errorMessage);
     }
   };
 
@@ -149,7 +179,7 @@ const ViewItinerary = () => {
       // If user is under 18, prevent the booking process
       if (age < 18) {
         console.error("User is under 18 and cannot book an itinerary.");
-        alert("You must be 18 or older to book an itinerary.");
+        toast.error("You must be 18 or older to book an itinerary.");
         return; // Stop the booking process
       }
 
@@ -185,49 +215,7 @@ const ViewItinerary = () => {
     }
   };
 
-  // const handleUnbook = async (id) => {
-  //   try {
-  //     console.log(`Unbooking itinerary: ${id} for user ${username}`);
 
-  //     const itinerary = await axios.get(
-  //       `http://localhost:3000/itinerary/${id}`
-  //     );
-
-  //     const touristsBook = itinerary.data.touristsBooked.filter(
-  //       (user) => user !== username
-  //     );
-
-  //     await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
-  //       touristsBooked: touristsBook,
-  //     });
-
-  //     // Remove the itinerary ID from bookedItineraries array
-  //     const newBookedItineraries = bookedItineraries.filter(
-  //       (itineraryId) => itineraryId !== id
-  //     );
-
-  //     // Update the user's booked itineraries on the server
-  //     const response = await axios.patch(
-  //       "http://localhost:3000/api/bookItinerary",
-  //       {
-  //         username,
-  //         newBookedItineraries,
-  //       }
-  //     );
-  //     console.log("Unbooking response:", response.data);
-
-  //     // Update the booked itineraries state
-  //     setBookedItineraries(newBookedItineraries);
-  //   } catch (error) {
-  //     console.error(
-  //       "Error unbooking itinerary:",
-  //       error.response?.data || error.message
-  //     );
-  //   }
-  // };
-
-
-  
   const handleUnbook = async (id) => {
     try {
       const selectedItineraryId = id;
@@ -309,6 +297,22 @@ const ViewItinerary = () => {
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           <h2>Payment Method</h2>
           <h3>Please Choose your Payment Method</h3>
+
+          <h3>Available Dates</h3>
+          <div>
+          <FormControl>
+            <RadioGroup
+              aria-labelledby="available-dates-radio-group-label"
+              name="available-dates-radio-group"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            >
+              {availableDates.map((date, index) => (
+                <FormControlLabel key={index} value={date} control={<Radio />} label={date} />
+              ))}
+            </RadioGroup>
+          </FormControl>
+          </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "30px" }}>
             <button onClick={handleWalletPurchase} >by Wallet</button>
             <button>by Credit Card</button>
@@ -317,6 +321,7 @@ const ViewItinerary = () => {
         </div>
       </Modal>
     <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
+    <ToastContainer/>
     </div>
   );
 };
