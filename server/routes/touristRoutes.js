@@ -13,7 +13,10 @@ const authenticate = (req, res, next) => {
 // Read Tourist Profile by username
 router.get("/tourist/:username", authenticate, async (req, res) => {
   try {
-    const tourist = await Tourist.findOne({ username: req.params.username }); // Use findOne for username
+    const tourist = await Tourist.findOne({ username: req.params.username })
+      .populate("bookedItineraries") // Populate booked itineraries with actual itinerary data
+      .exec();
+      
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
 import { Link, useLocation } from 'react-router-dom';
-import ItineraryCard from '../components/ItineraryItem'; // Import ItineraryCard component
+import ItineraryCard from '../components/ItineraryItem';
 
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]);
@@ -14,8 +14,10 @@ const TouristProfile = () => {
     const location = useLocation();
     const { username } = location.state || {};
     const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
-    const [itineraries, setItineraries] = useState([]); // Store itineraries
+    const [itineraries, setItineraries] = useState([]);
+    const [bookedItineraries, setBookedItineraries] = useState([]); // New state for booked itineraries
     const isProfilePage = true;
+
     useEffect(() => {
         const fetchTouristProfile = async () => {
             if (!username) {
@@ -26,6 +28,7 @@ const TouristProfile = () => {
             try {
                 const response = await axios.get(`http://localhost:3000/api/tourist/${username}`);
                 setTourist(response.data);
+                setBookedItineraries(response.data.bookedItineraries || []); // Set booked itineraries
                 setLoading(false);
             } catch (err) {
                 setError('Failed to fetch tourist profile');
@@ -45,7 +48,6 @@ const TouristProfile = () => {
 
         const fetchItineraries = async (eventIds) => {
             try {
-                // Fetch itineraries based on eventIds
                 const response = await axios.post("http://localhost:3000/api/itineraries/fetch", { eventIds });
                 setItineraries(response.data);
             } catch (err) {
@@ -73,6 +75,20 @@ const TouristProfile = () => {
             console.error("Error bookmarking event", err);
         }
     };
+
+    const isItineraryWithinTwoDays = (timeline) => {
+        const itineraryDate = new Date(timeline);
+        const currentDate = new Date();
+        const twoDaysLater = new Date();
+        twoDaysLater.setDate(currentDate.getDate() + 2);
+
+        // Check if the itinerary is within the next 2 days
+        return itineraryDate >= currentDate && itineraryDate <= twoDaysLater;
+    };
+
+    const filteredBookedItineraries = bookedItineraries.filter(itinerary => 
+        isItineraryWithinTwoDays(itinerary.timeline)
+    );
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
@@ -114,13 +130,31 @@ const TouristProfile = () => {
                                     onActivationToggle={() => console.log("Toggle Activation", itinerary._id)}
                                     onBookmark={handleBookmark}
                                     isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                                    isProfilePage={isProfilePage} 
+                                    isProfilePage={isProfilePage}
                                 />
                             ))
                         ) : (
                             <p>No bookmarked events</p>
                         )}
                     </div>
+
+                    <h2>Notifications:</h2>
+                    <div className="itinerary-list">
+                        {filteredBookedItineraries.length > 0 ? (
+                            filteredBookedItineraries.map((itinerary) => (
+                                <ItineraryCard
+                                    key={itinerary._id}
+                                    itinerary={itinerary}
+                                    onBookmark={handleBookmark}
+                                    isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                                    isProfilePage={isProfilePage}
+                                />
+                            ))
+                        ) : (
+                            <p>No booked itineraries within the next 2 days</p>
+                        )}
+                    </div>
+
                     <Link to="/home"><button>Back</button></Link>
                 </div>
             )}
