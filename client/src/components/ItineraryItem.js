@@ -1,7 +1,13 @@
-import React from "react";
-import "../css/ItineraryItem.css"; // Import the CSS file for styles
-
-const ItineraryItem = ({ itinerary, onDelete, onEdit }) => {
+const ItineraryCard = ({
+  itinerary,
+  onEdit,
+  onDelete,
+  userType,
+  onBook,
+  isBooked,
+  onUnbook,
+  onActivationToggle,
+}) => {
   return (
     <div className="itinerary-card">
       <h2 className="itinerary-title">{itinerary.name}</h2>
@@ -24,18 +30,49 @@ const ItineraryItem = ({ itinerary, onDelete, onEdit }) => {
         ))}
       </ul>
       <div className="button-container">
-        <button className="edit-button" onClick={() => onEdit(itinerary._id)}>
-          Edit
-        </button>
-        <button
-          className="delete-button"
-          onClick={() => onDelete(itinerary._id)}
-        >
-          Delete
-        </button>
+        {/* Conditionally render the buttons based on userType */}
+        {userType === "tourGuide" && (
+          <>
+            <button
+              className="edit-button"
+              onClick={() => onEdit(itinerary._id)}
+            >
+              Edit
+            </button>
+            <button
+              className="delete-button"
+              onClick={() => onDelete(itinerary._id)}
+            >
+              Delete
+            </button>
+          </>
+        )}
+        {userType === "tourist" && (
+          <button
+            onClick={() => onBook(itinerary._id)}
+            disabled={isBooked} // Disable if already booked
+          >
+            {isBooked ? "Already Booked" : "Book"}
+          </button>
+        )}
+        {userType === "tourist" && (
+          <button onClick={() => onUnbook(itinerary._id)}>
+            {isBooked ? "UnBook" : "Not Booked Yet"}
+          </button>
+        )}
+        {userType === "tourGuide" && (
+          <button
+            className={`toggle-button ${
+              itinerary.activated ? "deactivate" : "activate"
+            }`}
+            onClick={() => onActivationToggle(itinerary._id)}
+          >
+            {itinerary.activated ? "Deactivate" : "Activate"}
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
-export default ItineraryItem;
+export default ItineraryCard;

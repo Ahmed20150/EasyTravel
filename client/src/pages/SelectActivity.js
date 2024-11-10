@@ -125,7 +125,6 @@ const SelectActivity = () => {
         )}
       </ul>
       <button onClick={handleDone}>Done</button>
-      <Link to="/itinerary/create"><button>Back</button> </Link>
     </div>
   );
 };

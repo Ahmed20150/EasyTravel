@@ -1,0 +1,33 @@
+.viewTables {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column;  /* Stack the buttons vertically */
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .custom-button {
+    background-color: purple;
+    color: white;
+    font-size: 24px;
+    padding: 20px 40px;
+    margin: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 300px; /* Make the buttons large */
+  }
+  
+  .custom-button:hover {
+    background-color: darkviolet;  /* Add a hover effect */
+  }
+  
+  h1 {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  
