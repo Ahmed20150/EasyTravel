@@ -1,0 +1,21 @@
+This file is concerned with containing all needed commands to run, bug fix and test our application.
+Contains: Essential Github commands, How to merge branches in github, common commands to fix merging errors
+
+**Essential github Commands:**
+1. "git fetch origin" : retrieves remote updates and changes from all branches in the repo wihout specifically merginf them into your current branch
+2. "git Merge [branch_name]": merges content of [branch_name] into the branch that you are currently in
+3. "git checkout [branch_name]": leave current branch and switch to [branch_name]
+4. "git revert [commit number]": undo's the commit specified by its number
+5. "git revert -m 1 [commit number]": undo's the commit specified by its number (if it was a merging commit, 1 specifies the parent branch is chosen, which is the branhc that you are on)
+
+**how to merge from changes from branch X into branch Y:**
+1. go to branch Y (git checkout branchY)
+2. inside of branch Y, write "git fetch origin" (ensuring latest remote changes are available locally) 
+3. write "git merge branchX"
+4. Syncronize changes and commit changes to remote repo
+
+**Common Commands:**
+1. " --legacy-peer-deps ": added after installation and uninistallation commands, fixes error of dependancies
+2. if Missing Module Error in MongoDB: "npm install mongodb@5.9.1"
+3. if Missing Module Error in anythiing other than mongo, check the name of the missing module and simply write: "npm i [missing_module_name]"
+4. for installation of general missing modules: "npm i" (may not always fix missing module error)
