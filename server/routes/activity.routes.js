@@ -7,6 +7,18 @@ router.use(express.json());
 router.use(cookieParser());
 router.use(cors()); // This allows requests from any origin
 
+// Simple in-memory store for notifications
+let notifications = [];
+
+// Function to send a system message to the creator
+const sendSystemMessage = (creatorUsername, message) => {
+  notifications.push({
+    username: creatorUsername,
+    message: message,
+    timestamp: new Date(),
+  });
+};
+
 // CREATE
 router.post("/", async (req, res) => {
   try {
@@ -19,9 +31,7 @@ router.post("/", async (req, res) => {
       return res.status(400).send({ errors });
     }
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while saving the activity." });
+    res.status(500).json({ error: "An error occurred while saving the activity." });
   }
 });
 
@@ -73,7 +83,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// delete all activities by username
+// DELETE all activities by username
 router.delete("/deleteAll/:username", async (req, res) => {
   try {
     await Activity.deleteMany({ creator: req.params.username });
@@ -83,5 +93,39 @@ router.delete("/deleteAll/:username", async (req, res) => {
   }
 });
 
+// PATCH - Update flagged status and send system message
+// PATCH - Flag an activity
+// PATCH to flag an activity
+router.patch("/:id", async (req, res) => {
+  try {
+    const activity = await Activity.findByIdAndUpdate(
+      req.params.id,
+      { flagged: req.body.flagged }, // Update the 'flagged' field
+      { new: true }  // Ensure the updated document is returned
+    );
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    res.status(200).json(activity); // Return updated activity
+  } catch (error) {
+    console.error("Error updating flagged status:", error);
+    res.status(500).json({ error: "Error updating flagged status" });
+  }
+});
+
+
+
+// Optional: Endpoint to retrieve notifications for a user
+router.get("/notifications/:username", async (req, res) => {
+  try {
+    const notifications = await Notification.find({ user: req.params.username });
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch notifications" });
+  }
+});
 
 module.exports = router;
+

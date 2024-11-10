@@ -18,6 +18,7 @@ const ItineraryForm = () => {
     locationsToVisit: [],
     timeline: "",
     duration: "",
+    flagged: "",
     languageOfTour: "",
     priceOfTour: "",
     availableDates: [],
@@ -167,6 +168,16 @@ const ItineraryForm = () => {
           type="number"
           name="duration"
           value={formData.duration}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      <label>
+        Flagged:
+        <input
+          type="text"
+          name="flagged"
+          value={formData.flagged}
           onChange={handleChange}
           required
         />

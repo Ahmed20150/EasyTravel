@@ -181,6 +181,21 @@ const ActivityEdit = () => {
             required
           />
         </div>
+
+      <div>
+        <label>
+        Flagged:
+        <input
+          type="text"
+          name="flagged"
+          value={activity.flagged}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      </div>
+
+
         <div>
         <label>
         Category:

@@ -60,6 +60,12 @@ const activitySchema = new mongoose.Schema({
   },
   isBookingOpen: { type: Boolean, default: true },
   numofpurchases:{type: Number, default: 0},
+  flagged: {
+    type: String,
+    enum: ['yes', 'no'],
+    default: 'no', // Default value is 'no'
+    required: [true, "Flag status is required"] // Custom error message
+  },
 });
 
 // Middleware to validate that min price is not greater than max price on save

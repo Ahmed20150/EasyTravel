@@ -21,6 +21,7 @@ const ItineraryEdit = () => {
     accessibility: "",
     pickupLocation: "",
     dropoffLocation: "",
+    flagged: "",
   });
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const ItineraryEdit = () => {
             accessibility: itinerary.accessibility,
             pickupLocation: itinerary.pickupLocation,
             dropoffLocation: itinerary.dropoffLocation,
+            flagged: itinerary.flagged,
           };
 
           // Set the fetched data as the form data
@@ -241,6 +243,16 @@ const ItineraryEdit = () => {
           type="number"
           name="duration"
           value={formData.duration}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      <label>
+        Flagged:
+        <input
+          type="text"
+          name="flagged"
+          value={formData.flagged}
           onChange={handleChange}
           required
         />

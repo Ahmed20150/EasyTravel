@@ -1,4 +1,3 @@
-// src/components/Itineraries/ItineraryList.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
@@ -14,15 +13,15 @@ const ItineraryList = () => {
   const [cookies] = useCookies(["username", "userType"]);
   const username = cookies.username;
   const userType = cookies.userType; // Access the userType
+
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
         const response = await axios.get("http://localhost:3000/itinerary"); // Replace with your API endpoint
-
-        // Filter itineraries where the creator matches the username in the cookies
-        const filteredItineraries = response.data.filter(
-          (itinerary) => itinerary.creator === username
-        );
+        const filteredItineraries = userType === 'admin' 
+          ? response.data 
+          : response.data.filter((itinerary) => itinerary.creator === username);
+  
         setItineraries(filteredItineraries); // Store the filtered itineraries in state
       } catch (err) {
         setError(err.message);
@@ -30,12 +29,12 @@ const ItineraryList = () => {
         setLoading(false);
       }
     };
-
+  
     if (username) {
       // Fetch itineraries only if username is available
       fetchItineraries();
     }
-  }, [username]);
+  }, [username, userType]);
 
   const handleDelete = async (id) => {
     try {
@@ -54,10 +53,10 @@ const ItineraryList = () => {
       setError(err.message);
     }
   };
+
   const handleToggleActivation = async (id) => {
     try {
       // Send request to toggle the activation status for the itinerary
-      // In your frontend request, use this corrected URL
       const response = await axios.put(
         `http://localhost:3000/Itinerary/toggleActivation/${id}`
       );
@@ -79,8 +78,28 @@ const ItineraryList = () => {
     localStorage.clear();
     navigate(`/itinerary/edit/${id}`);
   };
+
   const handleCreate = () => {
     navigate(`/itinerary/create`);
+  };
+
+  const handleFlag = async (id) => {
+    try {
+      // Send a PATCH request to the backend to flag the itinerary
+      const response = await axios.patch(
+        `http://localhost:3000/itinerary/${id}/flag`
+      );
+      // Update the state with the new flagged status
+      setItineraries(
+        itineraries.map((itinerary) =>
+          itinerary._id === id ? { ...itinerary, flagged: 'yes' } : itinerary
+        )
+      );
+      alert(`Itinerary flagged successfully: ${response.data.message}`);
+    } catch (error) {
+      console.error("Error flagging itinerary:", error);
+      alert("Failed to flag the itinerary.");
+    }
   };
 
   if (loading) {
@@ -95,23 +114,39 @@ const ItineraryList = () => {
     <div>
       <h1>Itineraries</h1>
       <div className="button-container">
-        <button className="create-button" onClick={() => handleCreate()}>
-          Create New Itinerary
-        </button>
+        {/* Hide the Create New Itinerary button for admins */}
+        {userType !== 'admin' && (
+          <button className="create-button" onClick={() => handleCreate()}>
+            Create New Itinerary
+          </button>
+        )}
         <Link to="/home">
           <button>Back</button>
         </Link>
       </div>
       <div className="itinerary-list">
         {itineraries.map((itinerary) => (
-          <ItineraryItem
-            key={itinerary._id}
-            itinerary={itinerary}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            onActivationToggle={handleToggleActivation}
-            userType={userType}
-          />
+          <div key={itinerary._id} className="itinerary-item-container">
+            <ItineraryItem
+              itinerary={itinerary}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              onActivationToggle={handleToggleActivation}
+              userType={userType}
+            />
+            {userType === 'admin' && (
+              <div className="admin-actions">
+                <p>Created by: {itinerary.creator}</p>
+                <p>Flagged: {itinerary.flagged}</p>
+                <button 
+                  className="flag-button" 
+                  onClick={() => handleFlag(itinerary._id)}
+                >
+                  Flag
+                </button>
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>

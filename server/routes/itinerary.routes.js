@@ -176,4 +176,24 @@ router.delete("/deleteAll/:username", async (req, res) => {
 });
 
 
+// Flag itinerary
+router.patch("/:id/flag", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const itinerary = await Itinerary.findById(id);
+    if (!itinerary) {
+      return res.status(404).json({ error: "Itinerary not found." });
+    }
+
+    // Update the flagged status
+    itinerary.flagged = 'yes'; // Set the flagged field to 'yes'
+    await itinerary.save();
+
+    res.status(200).json({ message: "Itinerary flagged successfully.", itinerary });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 module.exports = router;

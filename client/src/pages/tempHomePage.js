@@ -115,6 +115,8 @@ const TempHomePage = () => {
            <Link to="/Categorycontrol"><button>Manage Categories</button></Link>
            <Link to="/preferences"><button>Manage Prefrence Tags</button></Link>
            <Link to="/revenue"><button>Financial Report</button></Link>
+           <Link to="/itinerary"><button>View itineraries</button></Link>
+           <Link to="/activities"><button>View Events</button></Link>
           </>
       )}
       {userType === 'advertiser' && (

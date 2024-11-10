@@ -27,6 +27,7 @@ const ActivityForm = () => {
     tags: "",
     specialDiscounts: "",
     isBookingOpen: true,
+    flagged: "",
   });
   const navigate = useNavigate();
   const [cookies] = useCookies(["username"]);
@@ -166,6 +167,16 @@ const ActivityForm = () => {
               },
             })
           }
+          required
+        />
+      </label>
+      <label>
+        Flagged:
+        <input
+          type="text"
+          name="flagged"
+          value={formData.flagged}
+          onChange={handleChange}
           required
         />
       </label>

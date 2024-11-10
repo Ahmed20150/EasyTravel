@@ -86,6 +86,12 @@ const itinerarySchema = new mongoose.Schema({
   },
   touristsBooked: { type: [String] },
   activated: { type: Boolean, default: true },
+  flagged: {
+    type: String,
+    enum: ['yes', 'no'],
+    default: 'no', // Default value is 'no'
+    required: [true, "Flag status is required"] // Custom error message
+  },
 });
 
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);
