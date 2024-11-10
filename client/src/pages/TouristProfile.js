@@ -90,6 +90,13 @@ const TouristProfile = () => {
         isItineraryWithinTwoDays(itinerary.timeline)
     );
 
+    // Filter bookmarked itineraries with 'changed' and 'activated' status
+    const filteredBookmarkedItineraries = bookmarkedEvents.filter(eventId => {
+        // Find the itinerary by the eventId in the itineraries list
+        const itinerary = itineraries.find(item => item._id === eventId);
+        return itinerary && itinerary.changed === true && itinerary.activated === true;
+    });
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
@@ -138,7 +145,27 @@ const TouristProfile = () => {
                         )}
                     </div>
 
-                    <h2>Notifications:</h2>
+                    <h2>Notifications (Bookmarked, Changed, Activated):</h2>
+                    <div className="itinerary-list">
+                        {filteredBookmarkedItineraries.length > 0 ? (
+                            filteredBookmarkedItineraries.map((eventId) => {
+                                const itinerary = itineraries.find(item => item._id === eventId);
+                                return itinerary ? (
+                                    <ItineraryCard
+                                        key={itinerary._id}
+                                        itinerary={itinerary}
+                                        onBookmark={handleBookmark}
+                                        isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                                        isProfilePage={isProfilePage}
+                                    />
+                                ) : null;
+                            })
+                        ) : (
+                            <p>No bookmarked itineraries with 'changed' and 'activated' status</p>
+                        )}
+                    </div>
+
+                    <h2>Notifications for Upcoming Booked Itineraries (Within 2 Days):</h2>
                     <div className="itinerary-list">
                         {filteredBookedItineraries.length > 0 ? (
                             filteredBookedItineraries.map((itinerary) => (

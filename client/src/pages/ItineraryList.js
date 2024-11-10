@@ -54,26 +54,28 @@ const ItineraryList = () => {
       setError(err.message);
     }
   };
-  const handleToggleActivation = async (id) => {
-    try {
-      // Send request to toggle the activation status for the itinerary
-      // In your frontend request, use this corrected URL
-      const response = await axios.put(
-        `http://localhost:3000/Itinerary/toggleActivation/${id}`
-      );
-      // Update the itineraries state with the toggled itinerary
-      setItineraries(
-        itineraries.map((itinerary) =>
-          itinerary._id === id
-            ? { ...itinerary, activated: !itinerary.activated }
-            : itinerary
-        )
-      );
-    } catch (error) {
-      console.error("Error toggling activation:", error);
-      alert("Failed to toggle activation. Please try again.");
-    }
-  };
+const handleToggleActivation = async (id) => {
+  try {
+    // Send request to toggle the activation status for the itinerary
+    const response = await axios.put(
+      `http://localhost:3000/Itinerary/toggleActivation/${id}`
+    );
+    // Update the itineraries state with the toggled itinerary and change the 'changed' status
+    setItineraries(
+      itineraries.map((itinerary) =>
+        itinerary._id === id
+          ? {
+              ...itinerary,
+              activated: !itinerary.activated,
+            }
+          : itinerary
+      )
+    );
+  } catch (error) {
+    console.error("Error toggling activation:", error);
+    alert("Failed to toggle activation. Please try again.");
+  }
+};
 
   const handleEdit = (id) => {
     localStorage.clear();
