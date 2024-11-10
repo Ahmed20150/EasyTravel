@@ -3,9 +3,11 @@ const cookieParser = require("cookie-parser");
 const router = express.Router();
 const cors = require("cors");
 const Activity = require("../models/activity.model.js");
+const Notification = require('../models/notification.model'); // Adjust path as necessary
 router.use(express.json());
 router.use(cookieParser());
 router.use(cors()); // This allows requests from any origin
+
 
 // Simple in-memory store for notifications
 let notifications = [];
@@ -93,14 +95,13 @@ router.delete("/deleteAll/:username", async (req, res) => {
   }
 });
 
-// PATCH - Update flagged status and send system message
+
 // PATCH - Flag an activity
-// PATCH to flag an activity
 router.patch("/:id", async (req, res) => {
   try {
     const activity = await Activity.findByIdAndUpdate(
       req.params.id,
-      { flagged: req.body.flagged }, // Update the 'flagged' field
+      { flagged: "yes" }, // Update the flagged field
       { new: true }  // Ensure the updated document is returned
     );
 
@@ -108,7 +109,20 @@ router.patch("/:id", async (req, res) => {
       return res.status(404).json({ message: "Activity not found" });
     }
 
-    res.status(200).json(activity); // Return updated activity
+    // Create a notification for the creator of the flagged activity
+    if (activity.creator) {
+      const notification = {
+        user: activity.creator,  // Target user (creator)
+        message: `Your activity "${activity.category}" has been flagged as inappropriate.`,
+        timestamp: new Date(),
+      };
+
+      // Assuming you have a Notification model to save the notification to a database
+      const newNotification = new Notification(notification);
+      await newNotification.save();  // Save the notification to the database
+    }
+
+    res.status(200).json(activity);
   } catch (error) {
     console.error("Error updating flagged status:", error);
     res.status(500).json({ error: "Error updating flagged status" });

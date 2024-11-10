@@ -27,6 +27,8 @@ const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
+const notificationRouter = require("./routes/notificationRouter.js");
+
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -72,6 +74,8 @@ app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/gift", giftRoutes);
+
+app.use("/notifications", notificationRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

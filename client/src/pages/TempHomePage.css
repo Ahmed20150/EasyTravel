@@ -1,0 +1,37 @@
+.container {
+    padding: 20px;
+  }
+  
+  .notifications {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    max-height: 200px; /* Limit height for large notification lists */
+    overflow-y: auto; /* Enable scrolling if notifications exceed max-height */
+    border-top: 1px solid #ddd;
+  }
+  
+  .notifications h2 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+  }
+  
+  .notifications ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .notifications li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e1e1e1;
+  }
+  
+  .notifications li:last-child {
+    border-bottom: none;
+  }
+  
