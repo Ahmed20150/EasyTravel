@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 const Itinerary = require("../models/itinerary.model.js");
+const Notification = require("../models/notification.model.js"); // Import the Notification model
+
 router.use(express.json());
 router.use(cors()); // This allows requests from any origin
-//CREATE
+
+// CREATE
 router.post("/", async (req, res) => {
   try {
-    console.log(req.body);
     const newItinerary = new Itinerary(req.body);
     const savedItinerary = await newItinerary.save();
     res.status(201).json(savedItinerary);
@@ -33,9 +35,7 @@ router.get("/", async (req, res) => {
 // READ (Get specific itinerary)
 router.get("/:id", async (req, res) => {
   try {
-    const itinerary = await Itinerary.findById(req.params.id).populate(
-      "activities.activity"
-    ); // Populate activities for more details
+    const itinerary = await Itinerary.findById(req.params.id).populate("activities.activity");
     if (!itinerary) {
       return res.status(404).json({ error: "Itinerary not found." });
     }
@@ -52,7 +52,6 @@ router.put("/:id", async (req, res) => {
       req.params.id,
       req.body,
       { new: true, runValidators: true }
-      // Run validators to ensure schema rules are met
     );
     if (!updatedItinerary) {
       return res.status(404).json({ error: "Itinerary not found." });
@@ -67,6 +66,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Toggle Activation
 router.put("/toggleActivation/:id", async (req, res) => {
   try {
     const itinerary = await Itinerary.findById(req.params.id);
@@ -74,7 +74,6 @@ router.put("/toggleActivation/:id", async (req, res) => {
       return res.status(404).send("Itinerary not found");
     }
 
-    // Toggle the 'activated' status
     itinerary.activated = !itinerary.activated;
     await itinerary.save();
     res.send(itinerary);
@@ -95,10 +94,11 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Update bookingCounter
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
   const { itineraryCounter } = req.body;
-  console.log(` this is ${itineraryCounter} , and ${id} `);
   try {
     const updatedItinerary = await Itinerary.findByIdAndUpdate(
       id,
@@ -112,19 +112,20 @@ router.patch("/:id", async (req, res) => {
 
     res.status(200).json(updatedItinerary);
   } catch (err) {
-    console.error("Error updating bookingCounter:", err); // Print the error to the console
-    res.status(500).json({ message: "Server error", error: err.message }); // Include the error message in the response
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+// Update touristsBooked
 router.patch("/:id/touristsBook", async (req, res) => {
   try {
     const { id } = req.params;
-    const { touristsBooked } = req.body; // Update this to handle the array correctly
+    const { touristsBooked } = req.body;
 
     const updatedBookingList = await Itinerary.findByIdAndUpdate(
-      id, // Use the correct identifier for MongoDB
-      { touristsBooked: touristsBooked }, // Update bookedItineraries array
-      { new: true } // Return the updated document
+      id,
+      { touristsBooked: touristsBooked },
+      { new: true }
     );
 
     if (!updatedBookingList) {
@@ -136,22 +137,19 @@ router.patch("/:id/touristsBook", async (req, res) => {
       touristsBooked: updatedBookingList.touristsBooked,
     });
   } catch (error) {
-    console.error("Error updating booked itineraries:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// deactivate all itineraries by username
+// Deactivate all itineraries by username
 router.put("/deactivateAll/:username", async (req, res) => {
   try {
     const username = req.params.username;
-    console.log(`Deactivating itineraries for username: ${username}`);
 
     const result = await Itinerary.updateMany(
       { creator: req.params.username },
       { $set: { activated: false } }
     );
-    console.log(`Update result: ${JSON.stringify(result)}`);
 
     if (result.modifiedCount > 0) {
       res.status(200).json({ message: "All itineraries deactivated" });
@@ -159,13 +157,11 @@ router.put("/deactivateAll/:username", async (req, res) => {
       res.status(404).json({ message: "No itineraries found for the given username" });
     }
   } catch (err) {
-    console.error("Error deactivating itineraries:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-
-// delete all itinraries by username
+// Delete all itineraries by username
 router.delete("/deleteAll/:username", async (req, res) => {
   try {
     await Itinerary.deleteMany({ creator: req.params.username });
@@ -175,8 +171,7 @@ router.delete("/deleteAll/:username", async (req, res) => {
   }
 });
 
-
-// Flag itinerary
+// Flag itinerary and send notification
 router.patch("/:id/flag", async (req, res) => {
   const { id } = req.params;
   try {
@@ -185,15 +180,36 @@ router.patch("/:id/flag", async (req, res) => {
       return res.status(404).json({ error: "Itinerary not found." });
     }
 
-    // Update the flagged status
-    itinerary.flagged = 'yes'; // Set the flagged field to 'yes'
+    itinerary.flagged = "yes";
     await itinerary.save();
 
-    res.status(200).json({ message: "Itinerary flagged successfully.", itinerary });
+    // Create a notification for the itinerary's creator with detailed information
+    const notification = new Notification({
+      user: itinerary.creator,
+      message: `Your itinerary with locations "${itinerary.locationsToVisit.join(
+        ", "
+      )}" and timeline "${itinerary.timeline}" has been flagged as inappropriate.`,
+    });
+
+    await notification.save();
+
+    res.status(200).json({ message: "Itinerary flagged and notification sent.", itinerary });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Optional: Endpoint to retrieve notifications for a user
+router.get("/notifications/:username", async (req, res) => {
+  try {
+    const notifications = await Notification.find({ user: req.params.username });
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch notifications" });
+  }
+});
+
+module.exports = router;
 
 
 module.exports = router;
