@@ -39,4 +39,11 @@ const Search = () => {
   );
 };
 
+
+// Example search request for museums by name
+fetch('/api/museums/search?name=Eiffel Tower')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+
 export default Search;
