@@ -10,11 +10,14 @@ const TempHomePage = () => {
   const [notifications, setNotifications] = useState([]);  
   const [username, setUsername] = useState(Cookies.get('username'));
   const [userType, setUserType] = useState(Cookies.get('userType'));
+  const [userEmail, setUserEmail] = useState(null);  // State to store email for admin users
 
   useEffect(() => {
     fetchData();
     if (userType !== "admin") {
       fetchNotifications(); 
+    } else {
+      fetchEmail();  // Fetch email only if the user is an admin
     }
   }, [userType, username]);
 
@@ -39,10 +42,23 @@ const TempHomePage = () => {
     }
   };
 
+  // Fetch email for admin users
+  const fetchEmail = async () => {
+    try {
+      if (userType === 'admin' && username) {
+        const response = await axios.get(`http://localhost:3000/email/${username}`);
+        setUserEmail(response.data.email); // Set the email in the state
+      }
+    } catch (error) {
+      console.error("Error fetching email:", error);
+    }
+  };
+
   function handleLogout() {
     Object.keys(Cookies.get()).forEach((cookieName) => Cookies.remove(cookieName));
     fetchData();
   }
+
   const handleViewProfile = () => {
     if (username) {
       navigate(`/view-profile${userType === "tourGuide" ? "" : userType}`, { state: { username } });
@@ -52,6 +68,9 @@ const TempHomePage = () => {
   return (
     <div className="container">
       <h1>Welcome {username}, you are a {userType}!!</h1>
+      {userType === 'admin' && userEmail && (
+        <p>Your email: {userEmail}</p>  // Display the email for admin users
+      )}
       <button onClick={handleLogout}>Logout</button>
       <Link to="/changePassword"><button>Change Password</button></Link>
 

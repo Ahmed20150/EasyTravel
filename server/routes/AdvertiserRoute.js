@@ -84,4 +84,26 @@ router.get('/profileAdv/:username', async (req, res) => {
   }
 });
 
+// Route to fetch advertiser's email by username
+router.get('/emailAdv/:username', async (req, res) => {
+  const { username } = req.params; // Get the username from the URL parameters
+  
+  try {
+    // Find the advertiser profile by username
+    const profile = await Advertiser.findOne({ username });
+    
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    // Extract the email field from the profile
+    const { email } = profile;
+    res.status(200).json({ email }); // Send the email as a JSON response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 module.exports = router; // Export the router for use in other files

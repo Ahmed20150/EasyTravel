@@ -76,6 +76,7 @@ app.use("/itinerary", itineraryRoutes);
 app.use("/gift", giftRoutes);
 
 app.use("/notifications", notificationRouter);
+app.use("/tourguide", tourGuideRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -577,6 +578,7 @@ app.get('/api/giftitems', async (req, res) => {
 
 
 app.use('/api', tourGuideRoutes);
-app.use('/api/Adv', advRoutes);
+app.use('/advertiser', advRoutes);
+//app.use()
 app.use('/api/seller', sellerRoutes);
 

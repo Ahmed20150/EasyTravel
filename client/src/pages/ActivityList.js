@@ -15,15 +15,30 @@ const ActivityLists = () => {
   const userType = cookies.userType; // Access the userType
 
   // Fetch activities based on user type
-  const fetchActivities = async (username) => {
+  const fetchActivities = async () => {
     try {
       const response = await axios.get("http://localhost:3000/activities");
 
-      const filteredActivities = userType === 'admin' 
+      const filteredActivities = userType === 'admin'
         ? response.data // Admins see all activities
         : response.data.filter((activity) => activity.creator === username); // Filtered for regular users
 
-      setActivities(filteredActivities);
+      // Fetch email for each creator in activities if user is admin
+      if (userType === 'admin') {
+        const activitiesWithEmails = await Promise.all(filteredActivities.map(async (activity) => {
+          try {
+            const emailResponse = await axios.get(`http://localhost:3000/advertiser/emailAdv/${activity.creator}`);
+            return { ...activity, creatorEmail: emailResponse.data.email }; // Add email to each activity
+          } catch (error) {
+            console.error(`Error fetching email for creator ${activity.creator}:`, error);
+            return activity; // Return activity without email if fetch fails
+          }
+        }));
+
+        setActivities(activitiesWithEmails);
+      } else {
+        setActivities(filteredActivities);
+      }
     } catch (error) {
       console.error("Error fetching activities:", error);
     }
@@ -47,7 +62,7 @@ const ActivityLists = () => {
     if (userType === 'admin') {
       fetchActivities(); // Fetch all activities for admin
     } else if (username) {
-      fetchActivities(username); // Fetch user-specific activities
+      fetchActivities(); // Fetch user-specific activities
       fetchNotifications(); // Fetch notifications for the user
     }
   }, [username, userType]); // Depend on username and userType
@@ -131,10 +146,11 @@ const ActivityLists = () => {
               <span className="price-max">${activity.price?.max}</span>
             </p>
 
-            {/* Show username if admin */}
+            {/* Show username and email if admin */}
             {userType === 'admin' && (
               <div className="activity-details">
                 <p className="activity-creator">Creator: {activity.creator}</p>
+                <p className="activity-creator-email">Email: {activity.creatorEmail || "Not available"}</p> {/* Display creator's email here */}
                 <p className="activity-flagged">Flagged: {activity.flagged}</p>
               </div>
             )}

@@ -10,6 +10,7 @@ const ItineraryList = () => {
   const [notifications, setNotifications] = useState([]); // State for notifications
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [creatorEmails, setCreatorEmails] = useState({}); // State for storing emails by creator username
   const navigate = useNavigate();
   const [cookies] = useCookies(["username", "userType"]);
   const username = cookies.username;
@@ -24,6 +25,23 @@ const ItineraryList = () => {
           : response.data.filter((itinerary) => itinerary.creator === username);
 
         setItineraries(filteredItineraries);
+
+        // Fetch emails for each unique creator if userType is "admin"
+        if (userType === "admin") {
+          const creatorUsernames = [...new Set(filteredItineraries.map(itinerary => itinerary.creator))];
+          const emailPromises = creatorUsernames.map(async (creator) => {
+            try {
+              const response = await axios.get(`http://localhost:3000/api/email/${creator}`);
+              return { [creator]: response.data.email };
+            } catch (error) {
+              console.error(`Error fetching email for ${creator}:`, error);
+              return { [creator]: "Not available" };
+            }
+          });
+
+          const emails = await Promise.all(emailPromises);
+          setCreatorEmails(Object.assign({}, ...emails));
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -146,6 +164,7 @@ const ItineraryList = () => {
             {userType === "admin" && (
               <div className="admin-actions">
                 <p>Created by: {itinerary.creator}</p>
+                <p>Email: {creatorEmails[itinerary.creator] || "Not available"}</p>
                 <p>Flagged: {itinerary.flagged}</p>
                 <button
                   className="flag-button"
