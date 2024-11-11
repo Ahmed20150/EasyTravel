@@ -29,6 +29,7 @@ const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
+const Review=require("./routes/review.routes.js")
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -45,6 +46,7 @@ require('./config/db');
 
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
+app.use('/review',Review)
 
 
 
