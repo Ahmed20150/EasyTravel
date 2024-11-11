@@ -1,0 +1,295 @@
+.book-flight-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.form-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.flight-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.form-row.locations {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-row.dates {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-row.passengers {
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+}
+
+.form-row.options {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-group {
+    flex: 1;
+    min-width: 120px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 32px;
+    padding: 0 10px;
+    font-size: 13px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    transition: all 0.2s;
+}
+
+/* Number inputs */
+.form-group input[type="number"] {
+    width: 70px;
+    text-align: center;
+}
+
+/* Date inputs */
+.form-group input[type="date"] {
+    width: 130px;
+}
+
+/* Checkbox styling */
+.form-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    vertical-align: middle;
+    accent-color: #3498db;
+    cursor: pointer;
+}
+
+.flight-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: #3498db;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+.passengers-container {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.search-button {
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    background: #3498db;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.search-button:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.flight-offers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.flight-offer-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.flight-offer-header {
+    font-size: 20px;
+    color: #2c3e50;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.itinerary {
+    padding: 16px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.segment {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.segment>div {
+    margin-bottom: 8px;
+}
+
+.segment strong {
+    color: #2c3e50;
+}
+
+.search-button:hover {
+    background: #2980b9;
+}
+
+.confirm-prices-button {
+  padding: 12px 24px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 16px;
+}
+
+.confirm-prices-button:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+.confirm-prices-button:not(:disabled):hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+}
+
+.button-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.search-button,
+.book-button {
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.search-button {
+    background: #3498db;
+}
+
+.book-button {
+    background: #28a745;
+}
+
+.book-button:disabled {
+    background: #95a5a6;
+    cursor: not-allowed;
+}
+
+.search-button:hover,
+.book-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.search-button:hover {
+    background: #2980b9;
+}
+
+.book-button:hover:not(:disabled) {
+    background: #218838;
+}
+
+@media (max-width: 1024px) {
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    input[type="date"],
+    input[type="number"] {
+        width: 100% !important;
+    }
+
+    .passengers-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-wrap: wrap;
+    }
+    
+    .form-group {
+        width: 100%;
+    }
+    
+    .form-group input[type="number"],
+    .form-group input[type="date"] {
+        width: 100%;
+    }
+}

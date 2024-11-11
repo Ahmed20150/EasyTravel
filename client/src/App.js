@@ -21,7 +21,7 @@ import LandingPage from "./pages/LandingPage";
 import TempHomePage from "./pages/tempHomePage";
 import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
-import ViewTables from './pages/viewTables';
+import ViewTables from "./pages/viewTables";
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
 // import EditProfilePage from './pages/';
 import FileUpload from "./components/fileUpload";
@@ -45,18 +45,16 @@ import ViewItinerary from "./pages/ViewItinerary";
 import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
-import GiftList from './pages/GiftList';
-
+import GiftList from "./pages/GiftList";
+import BookFLight from "./pages/BookFlight";
 
 //TODO add navigation buttons between all pages
 //
 
-
-import Categories from './pages/Categories';
-import PreferencePage from './pages/PreferencePage';import Revenue from './pages/Revenue';
-import GiftItemForm  from './pages/GiftItemPage';
-
-
+import Categories from "./pages/Categories";
+import PreferencePage from "./pages/PreferencePage";
+import Revenue from "./pages/Revenue";
+import GiftItemForm from "./pages/GiftItemPage";
 
 function App() {
   return (
@@ -93,37 +91,47 @@ function App() {
           />
           {/* <Route path="/create-profile" element={<CreateProfilePage />}>
             <Route path="/view-profile/:email" element={<ViewProfilePage />} /> */}
-            {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
-            <Route path='/adminAccountManagement' element={<AdminAccountManagement />} />
-            <Route path='/pendingRequestsPage' element={<PendingRequestsPage />} />
-            <Route path='/TouristProfile' element={<TouristProfile />} />
-            <Route path='/termsAndConditions' element={<TermsAndConditions />} />
-            <Route path="/view-users" element={<ViewUsers />} />
-            <Route path="/view-requests" element={<ViewRequest />} />
-            <Route path="/add-tourismGoverner" element={<AddNewTourismGoverner />} />
-            <Route path="/add-admin" element={<AddNewAdmin />} />
-            <Route path="/activities" element={<ActivityList />} />           
-            <Route path="/activities/create" element={<ActivityForm />} />
-            <Route path="/activities/edit/:id" element={<ActivityEdit />} />
-            <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
-            <Route path="/itinerary" element={<ItineraryList />} />
-            <Route path="/itinerary/create" element={<ItineraryForm />} />
-            <Route path="/itinerary/create/selectActivity" element={<SelectActivity />}/>
-            <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
-            <Route path="/museums" element={<MuseumsList />} />
+          {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
+          <Route
+            path="/adminAccountManagement"
+            element={<AdminAccountManagement />}
+          />
+          <Route
+            path="/pendingRequestsPage"
+            element={<PendingRequestsPage />}
+          />
+          <Route path="/TouristProfile" element={<TouristProfile />} />
+          <Route path="/termsAndConditions" element={<TermsAndConditions />} />
+          <Route path="/view-users" element={<ViewUsers />} />
+          <Route path="/view-requests" element={<ViewRequest />} />
+          <Route
+            path="/add-tourismGoverner"
+            element={<AddNewTourismGoverner />}
+          />
+          <Route path="/add-admin" element={<AddNewAdmin />} />
+          <Route path="/activities" element={<ActivityList />} />
+          <Route path="/activities/create" element={<ActivityForm />} />
+          <Route path="/activities/edit/:id" element={<ActivityEdit />} />
+          <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
+          <Route path="/itinerary" element={<ItineraryList />} />
+          <Route path="/itinerary/create" element={<ItineraryForm />} />
+          <Route
+            path="/itinerary/create/selectActivity"
+            element={<SelectActivity />}
+          />
+          <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
+          <Route path="/museums" element={<MuseumsList />} />
 
+          <Route path="/Categorycontrol" element={<Categories />} />
+          <Route path="/preferences" element={<PreferencePage />} />
 
-            <Route path='/Categorycontrol' element={< Categories/>} />
-            <Route path="/preferences" element={<PreferencePage />} />
+          <Route path="/giftlist" element={<GiftList />} />
 
-            
-
-            <Route path="/giftlist"element={<GiftList />}/>
-
-            <Route path="/view" element={<ViewTables />}/>
-            <Route path="/revenue" element={<Revenue />}/>
-            <Route path="/giftitem" element={<GiftItemForm />}/>
-          </Routes>
+          <Route path="/view" element={<ViewTables />} />
+          <Route path="/revenue" element={<Revenue />} />
+          <Route path="/giftitem" element={<GiftItemForm />} />
+          <Route path="/BookFlight" element={<BookFLight />} />
+        </Routes>
       </BrowserRouter>
     </div>
   );

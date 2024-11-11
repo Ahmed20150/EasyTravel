@@ -68,35 +68,35 @@ const TempHomePage = () => {
     // console.log(fileName);
   };
 
-      const handleViewProfile = () => {
-        const loggedInUser = Cookies.get('username');
-        const userType = Cookies.get('userType');
-        if (loggedInUser) {
-          if(userType === "tourGuide"){
-            navigate('/view-profile', { state: { username: loggedInUser } });
-          }
-          else if(userType === "advertiser"){
-            navigate('/view-profileAdv', { state: { username: loggedInUser } });
-          }
-          else if(userType === "seller"){
-            navigate('/view-profileSeller', { state: { username: loggedInUser } });
-          }
-          else{
-            navigate('/TouristProfile', { state: { username: loggedInUser } });
-          }
+  const handleViewProfile = () => {
+    const loggedInUser = Cookies.get("username");
+    const userType = Cookies.get("userType");
+    if (loggedInUser) {
+      if (userType === "tourGuide") {
+        navigate("/view-profile", { state: { username: loggedInUser } });
+      } else if (userType === "advertiser") {
+        navigate("/view-profileAdv", { state: { username: loggedInUser } });
+      } else if (userType === "seller") {
+        navigate("/view-profileSeller", { state: { username: loggedInUser } });
+      } else {
+        navigate("/TouristProfile", { state: { username: loggedInUser } });
       }
     }
+  };
 
-    const [username, setUsername] = useState(Cookies.get('username'));
-    const [userType, setUserType] = useState(Cookies.get('userType'));
-    return (
-        <div className="container">
-            <h1>Welcome {username}, you are an {userType}!!</h1>
-            <button onClick={handleLogout}>Logout</button>
-            <Link to="/changePassword"><button>Change Password</button></Link>
-            
-            
-      {userType !== 'admin' && userType !== 'tourismGoverner' && (
+  const [username, setUsername] = useState(Cookies.get("username"));
+  const [userType, setUserType] = useState(Cookies.get("userType"));
+  return (
+    <div className="container">
+      <h1>
+        Welcome {username}, you are an {userType}!!
+      </h1>
+      <button onClick={handleLogout}>Logout</button>
+      <Link to="/changePassword">
+        <button>Change Password</button>
+      </Link>
+
+      {userType !== "admin" && userType !== "tourismGoverner" && (
         <button onClick={handleViewProfile}>View profile</button>
       )}
 
@@ -108,46 +108,69 @@ const TempHomePage = () => {
         </>
       )}
 
-        {userType === 'admin' && (
-          <>
-           <Link to="/pendingRequestsPage"><button>Pending Requests</button></Link>
-           <Link to="/adminAccountManagement"><button>Account Management</button></Link>
-           <Link to="/Categorycontrol"><button>Manage Categories</button></Link>
-           <Link to="/preferences"><button>Manage Prefrence Tags</button></Link>
-           <Link to="/revenue"><button>Financial Report</button></Link>
-          </>
-      )}
-      {userType === 'advertiser' && (
+      {userType === "admin" && (
         <>
-            <Link to="/activities"><button>View Activities</button></Link>
-            <Link to="/revenue"><button>Financial Report</button></Link>
+          <Link to="/pendingRequestsPage">
+            <button>Pending Requests</button>
+          </Link>
+          <Link to="/adminAccountManagement">
+            <button>Account Management</button>
+          </Link>
+          <Link to="/Categorycontrol">
+            <button>Manage Categories</button>
+          </Link>
+          <Link to="/preferences">
+            <button>Manage Prefrence Tags</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
+        </>
+      )}
+      {userType === "advertiser" && (
+        <>
+          <Link to="/activities">
+            <button>View Activities</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
         </>
       )}
 
-      {userType === 'seller' && (
+      {userType === "seller" && (
         <>
-            <Link to="/revenue"><button>Financial Report</button></Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
         </>
       )}
 
       {userType === "tourGuide" && (
         <>
-        <Link to="/itinerary">
-          <button>View Itineraries</button>
-        </Link>
-      <Link to="/revenue"><button>Financial Report</button></Link>
-      </>
+          <Link to="/itinerary">
+            <button>View Itineraries</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
+        </>
       )}
       {userType === "tourist" && (
         <>
-        <Link to="/ViewAllItinerary"><button>View Itineraries</button></Link>
-        <Link to="/GiftList"><button>Gift Shop</button></Link>
+          <Link to="/ViewAllItinerary">
+            <button>View Itineraries</button>
+          </Link>
+          <Link to="/GiftList">
+            <button>Gift Shop</button>
+          </Link>
+          <Link to="/BookFLight">
+            <button>BookFLight</button>
+          </Link>
         </>
       )}
-
-
-        </div>
-    );
-}
+    </div>
+  );
+};
 
 export default TempHomePage;
