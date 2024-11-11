@@ -203,7 +203,6 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
   
-    //TODO should admin have forget pw?
     const [tourist, tourGuide, advertiser, seller, admin, tourismGoverner] = await Promise.all([
       Tourist.findOne({ email }),
       TourGuide.findOne({ email }),
@@ -292,6 +291,33 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
         res.status(500).json({ message: err.message });
       }
     });
+
+
+    // send payment reciept through email
+  router.post('/sendPaymentEmail', async (req, res) => {
+    const { email, text } = req.body;
+  
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+  
+    const [tourist] = await Promise.all([
+      Tourist.findOne({ email }),
+    ]);
+  
+    if(!tourist){
+      return res.status(404).json({ message: 'User not found' });
+    }
+  
+    const subject = 'Booking Payment Confirmation';
+  
+    try {
+      await sendEmail(email, subject, text);
+      res.status(200).json({ message: 'email sent successfully'}); 
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to send email', error });
+    }
+  });
   
 
   module.exports = router;

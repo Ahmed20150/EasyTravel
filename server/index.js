@@ -21,6 +21,7 @@ const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
 const Reviews = require('./routes/review.routes.js');
+const bookingRoutes = require('./routes/booking.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
@@ -73,24 +74,16 @@ app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/gift", giftRoutes);
+app.use("/booking", bookingRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-// const conn = mongoose.createConnection("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL", { useNewUrlParser: true,
-//   useUnifiedTopology: true,});
-
-// let gfs;
-// conn.once('open', () => {
-//   gfs = Grid(conn.db, mongoose.mongo);
-//   gfs.collection('uploads');
-//   console.log('Connected to GridFS');
-// });
 
 //TODO arrange routes in their seperate files, keep index clean
 //TODO store sendEmail & generateOTP Files in a folder
-//TODO check for repeated emails / usernames
+
 
 
 //getting all tourists
