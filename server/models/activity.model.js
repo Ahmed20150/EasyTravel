@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//const reviewSchema = require("./review");
 
 const activitySchema = new mongoose.Schema({
   creator: {
@@ -59,8 +60,29 @@ const activitySchema = new mongoose.Schema({
     max: [100, "Special discount cannot exceed 100"], // Maximum special discount should be 100
   },
   isBookingOpen: { type: Boolean, default: true },
-  numofpurchases:{type: Number, default: 0},
+  numofpurchases: { type: Number, default: 0 },
+
+  ratings: [
+    {
+      rating: { type: Number, required: true },
+      comment: { type: String, required: true }
+    }
+  ],
+  totalRatingCount: { type: Number, default: 0 },
+  avgRating: { type: Number, default: 0 }
 });
+activitySchema.methods.updateRatings = function () {
+  this.totalRatingCount = this.ratings.length;
+  const sum = this.ratings.reduce((acc, review) => acc + review.rating, 0);
+  this.avgRating = this.totalRatingCount ? sum / this.totalRatingCount : 0;
+  return this.save();
+};
+
+// Create Review Method
+activitySchema.methods.createReview = function (rating, comment) {
+  this.ratings.push({ rating, comment });
+  return this.updateRatings(); // Update total count and average rating
+};
 
 // Middleware to validate that min price is not greater than max price on save
 activitySchema.pre("save", function (next) {

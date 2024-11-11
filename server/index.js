@@ -20,6 +20,7 @@ const advRoutes = require('./routes/AdvertiserRoute.js');
 const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
+const Reviews = require('./routes/review.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
@@ -61,7 +62,7 @@ app.use(cors());
 app.use(cookieParser());
 
 app.use('/admin', adminRoutes);
-
+app.use('/review', Reviews);
 //connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
 app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
 const activityRoutes = require("./routes/activity.routes.js");
