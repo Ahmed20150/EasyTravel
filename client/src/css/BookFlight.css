@@ -97,14 +97,6 @@ h1 {
     cursor: pointer;
 }
 
-.flight-checkbox {
-  width: 18px;
-  height: 18px;
-  margin-right: 12px;
-  cursor: pointer;
-  accent-color: #3498db;
-}
-
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -157,6 +149,25 @@ input[type="number"]::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.flight-offer-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.flight-offer-card.selected {
+    border-color: #3498db;
+    background-color: #f8f9ff;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Remove the old checkbox styles since we're not using them anymore */
+.flight-checkbox {
+    display: none;
 }
 
 .flight-offer-header {

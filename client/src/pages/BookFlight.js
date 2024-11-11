@@ -460,14 +460,12 @@ const BookFlight = () => {
 
       <div className="flight-offers">
         {flightOffers.map((offer, index) => (
-          <div key={index} className="flight-offer-card">
+          <div
+            key={index}
+            className={`flight-offer-card ${selectedOffer?.id === offer.id ? 'selected' : ''}`}
+            onClick={() => handleOfferSelection(offer)}
+          >
             <div className="flight-offer-header">
-              <input
-                type="checkbox"
-                checked={selectedOffer?.id === offer.id}
-                onChange={() => handleOfferSelection(offer)}
-                className="flight-checkbox"
-              />
               <div className="price-info">
                 <strong>Price:</strong> {offer.price.total}{" "}
                 {translate("currencies", offer.price.currency)}
