@@ -163,6 +163,19 @@ const ViewItinerary = () => {
       setBookedItineraries(response.data.bookedItineraries);
 
       toast.success("Itinerary booked successfully!");
+
+      const user = await axios.get(`http://localhost:3000/api/tourist/${username}`);
+      const email = user.data.email;
+      console.log("EMAIL : ", email);
+
+      const pickupLocation = itinerary.data.pickupLocation;
+      const dropoffLocation = itinerary.data.dropoffLocation;
+      const price = itinerary.data.priceOfTour;
+      const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} was successfully recieved, Please check your wallet for the payment details.`;
+      await axios.post("http://localhost:3000/auth/sendPaymentEmail",{
+        email, 
+        text
+      });
       closeModal();
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Error booking itinerary. Please try again.";
@@ -191,6 +204,11 @@ const ViewItinerary = () => {
 
       const bookingResponse = await axios.get(`http://localhost:3000/booking/getBooking/${id}/${username}`);
       const booking = bookingResponse.data;
+
+      if(!booking) {
+       console.log("no booking exists for this itenrary for this user!")
+        return;
+      }
 
       // Check if the booking date and time is more than 48 hours before the current date and time
       const bookingTime24Hour = convertTo24HourFormat(booking.bookingTime);
@@ -251,6 +269,10 @@ const ViewItinerary = () => {
   return (
     <div>
    <h1>All Available Itenraries</h1>
+   <div style={{display:"flex", justifyContent:"center", alignItems: "center", marginBottom:"20px"}}>
+      <Link to="/viewPastEvents"><button>View Past Itineraries</button></Link>
+      <Link to="/viewUpcomingEvents"><button>View Upcoming Itineraries</button></Link>
+    </div>
     <div style={{display:"flex" }}>
       {itineraries.map((itinerary) => (
         <ItineraryItem

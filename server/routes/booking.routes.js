@@ -77,4 +77,45 @@ router.post("/createBooking", async (req, res) => {
     }
   });
 
+  router.get("/pastBookings", async (req, res) => {
+    try {
+      const { username } = req.query; // Change from req.body to req.query
+      if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+      }
+  
+      const today = new Date();
+      const pastBookings = await Booking.find({
+        touristUsername: username,
+        bookingDate: { $lt: today },
+      });
+  
+      res.status(200).json(pastBookings);
+    } catch (error) {
+      console.error("Error fetching past bookings:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  router.get("/upcomingBookings", async (req, res) => {
+    try {
+      const { username } = req.query; // Change from req.body to req.query
+      if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+      }
+  
+      const today = new Date();
+      const upcomingBookings = await Booking.find({
+        touristUsername: username,
+        bookingDate: { $gt: today },
+      });
+  
+      res.status(200).json(upcomingBookings);
+    } catch (error) {
+      console.error("Error fetching upcoming bookings:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+
 module.exports = router;
