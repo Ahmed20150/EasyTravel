@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const Tourist = require("../models/tourist.model"); // Adjust the path as needed
+const Preference = require("../models/preference.model");
 
 // Middleware for authentication (if needed)
 const authenticate = (req, res, next) => {
@@ -74,4 +75,63 @@ router.patch("/bookItinerary", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+
+//////////////////////////////////
+
+
+
+// Add or update preferences for a tourist by username
+router.patch("/tourist/:username/preferences", authenticate, async (req, res) => {
+  const { preferences } = req.body; // Preferences passed as an array of preference names
+
+  try {
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Verify the provided preferences exist in the Preference model
+    const validPreferences = await Preference.find({ name: { $in: preferences } });
+    const validPreferenceNames = validPreferences.map((p) => p.name);
+
+    // Update the tourist's preferences
+    tourist.preferences = validPreferenceNames;
+    await tourist.save();
+
+    res.status(200).json({
+      message: "Preferences updated successfully",
+      preferences: tourist.preferences,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Retrieve a tourist's preferences by username
+router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
+  try {
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    res.status(200).json({ preferences: tourist.preferences });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+// touristRoutes.js
 module.exports = router;

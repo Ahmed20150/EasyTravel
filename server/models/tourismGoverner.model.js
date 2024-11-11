@@ -13,7 +13,7 @@ const toursimGovernerSchema = new mongoose.Schema({
         type: String,
         default: "tourismGoverner",
     }
-});
+},{ timestamps: true });
 
 const TourismGoverner = mongoose.model("TourismGoverner", toursimGovernerSchema); //store in table "TourismGoverner"
 

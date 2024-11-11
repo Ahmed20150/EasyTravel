@@ -63,7 +63,7 @@ const tourGuideSchema = new mongoose.Schema({
     },
 
 
-});
+},{ timestamps: true });
 
 const TourGuide = mongoose.model("TourGuide", tourGuideSchema); //store in table "Tourist"
 

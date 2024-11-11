@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Itinerary = require("./itinerary.model");
+const Preference = require("./preference.model");
 
 const touristSchema = new mongoose.Schema({
   username: {
@@ -44,7 +45,14 @@ const touristSchema = new mongoose.Schema({
       ref: "Itinerary",
     },
   ],
-});
+  preferences: [
+    {
+      type: String, // Store the names of preferences directly
+      
+    },
+  ],
+  
+},{ timestamps: true });
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
 
