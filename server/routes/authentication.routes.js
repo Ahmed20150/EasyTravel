@@ -292,6 +292,15 @@ router.post('/signUp', upload.single('file'), async (req, res) => {
         res.status(500).json({ message: err.message });
       }
     });
+    router.post('/send-email', async (req, res) => {
+      const { to, subject, text } = req.body;
+      try {
+        await sendEmail(to, subject, text);
+        res.status(200).json({ message: 'Email sent successfully' });
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to send email' });
+      }
+    });
   
 
   module.exports = router;

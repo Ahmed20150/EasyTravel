@@ -55,7 +55,33 @@ const ViewItinerary = () => {
 
   const handleBook = async (id) => {
     try {
-      // Handle booking logic...
+      console.log(`username: ${username}, itinerary id: ${id}`);
+
+      // Fetch the tourist data first to check the age
+      const tourist = await axios.get(
+        `http://localhost:3000/api/tourist/${username}`
+      );
+      const { dateOfBirth, bookedItineraries } = tourist.data;
+
+      // Calculate age
+      const currentDate = new Date();
+      const birthDate = new Date(dateOfBirth);
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+      const isBirthdayPassed =
+        currentDate.getMonth() > birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() &&
+          currentDate.getDate() >= birthDate.getDate());
+
+      if (!isBirthdayPassed) {
+        age--; // Adjust age if birthday hasn't occurred yet this year
+      }
+
+      // If user is under 18, prevent the booking process
+      if (age < 18) {
+        console.error("User is under 18 and cannot book an itinerary.");
+        alert("You must be 18 or older to book an itinerary.");
+        return; // Stop the booking process
+      }
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );

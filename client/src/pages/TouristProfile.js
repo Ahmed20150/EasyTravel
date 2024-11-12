@@ -59,6 +59,31 @@ const TouristProfile = () => {
         fetchBookmarkedEvents();
     }, [username]);
 
+    useEffect(() => {
+        const sendEmail = async (to, subject, text) => {
+            try {
+              await axios.post('http://localhost:3000/auth/send-email', { to, subject, text });
+              console.log('Email sent successfully');
+            } catch (error) {
+              console.error('Failed to send email', error);
+            }
+          };
+        if (tourist && bookedItineraries.length > 0) {
+            const upcomingItineraries = bookedItineraries.filter(itinerary =>
+                isItineraryWithinTwoDays(itinerary.timeline)
+            );
+
+            upcomingItineraries.forEach(itinerary => {
+                const subject = "Upcoming Itinerary Reminder";
+                const text = `Dear ${tourist.username}, you have an upcoming itinerary "${itinerary.name}" scheduled for ${new Date(itinerary.timeline).toLocaleDateString()}. Please make sure to review your plans.`;
+                
+                sendEmail(tourist.email, subject, text)
+                    .then(response => console.log(`Email sent: ${response}`))
+                    .catch(error => console.error("Error sending email:", error));
+            });
+        }
+    }, [tourist, bookedItineraries]);
+
     const handleBookmark = async (eventId) => {
         try {
             // Add or remove the event from the bookmark list
@@ -77,14 +102,31 @@ const TouristProfile = () => {
     };
 
     const isItineraryWithinTwoDays = (timeline) => {
-        const itineraryDate = new Date(timeline);
+        // Convert MM/DD/YYYY to YYYY-MM-DD for reliable parsing
+        const [month, day, year] = timeline.split('/');
+        const formattedTimeline = `${year}-${month}-${day}`;
+    
+        const itineraryDate = new Date(formattedTimeline);
         const currentDate = new Date();
         const twoDaysLater = new Date();
         twoDaysLater.setDate(currentDate.getDate() + 2);
-
+    
+        // Zero out the time components for accurate date-only comparison
+        itineraryDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+        twoDaysLater.setHours(0, 0, 0, 0);
+    
+        console.log('Original timeline:', timeline);
+        console.log('Itinerary Date:', itineraryDate);
+        console.log('Current Date:', currentDate);
+        console.log('Two Days Later:', twoDaysLater);
+        console.log('Within Two Days:', itineraryDate >= currentDate && itineraryDate <= twoDaysLater);
+    
         // Check if the itinerary is within the next 2 days
         return itineraryDate >= currentDate && itineraryDate <= twoDaysLater;
     };
+    
+    
 
     const filteredBookedItineraries = bookedItineraries.filter(itinerary => 
         isItineraryWithinTwoDays(itinerary.timeline)
