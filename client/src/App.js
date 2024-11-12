@@ -48,6 +48,7 @@ import MuseumsList from "./pages/museumsList";
 import GiftList from './pages/GiftList';
 import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
+import BookTransportation from './components/BookTransportation'
 
 
 
@@ -128,6 +129,8 @@ function App() {
             <Route path="/view" element={<ViewTables />}/>
             <Route path="/revenue" element={<Revenue />}/>
             <Route path="/giftitem" element={<GiftItemForm />}/>
+            <Route path="/bookTransport" element={<BookTransportation />}/>
+
           </Routes>
       </BrowserRouter>
     </div>

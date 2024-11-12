@@ -30,6 +30,7 @@ const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
 const Review=require("./routes/review.routes.js")
+const Transportation=require("./routes/transportation.routes.js")
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -44,10 +45,11 @@ app.use(cors());
 
 require('./config/db');
 
+
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
-app.use('/review',Review)
-
+app.use('/review',Review);
+app.use('/transport',Transportation);
 
 
 const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')

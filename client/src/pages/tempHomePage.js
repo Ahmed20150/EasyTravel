@@ -142,6 +142,7 @@ const TempHomePage = () => {
         <>
         <Link to="/ViewAllItinerary"><button>View Itineraries</button></Link>
         <Link to="/GiftList"><button>Gift Shop</button></Link>
+        <Link to="/bookTransport"><button>book Transportation</button></Link>
         </>
       )}
 
