@@ -47,6 +47,7 @@ import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
 import GiftList from "./pages/GiftList";
 import BookFLight from "./pages/BookFlight";
+import BookHotel from "./pages/BookHotel";
 
 //TODO add navigation buttons between all pages
 //
@@ -131,6 +132,7 @@ function App() {
           <Route path="/revenue" element={<Revenue />} />
           <Route path="/giftitem" element={<GiftItemForm />} />
           <Route path="/BookFlight" element={<BookFLight />} />
+          <Route path="/BookHotel" element={<BookHotel />} />
         </Routes>
       </BrowserRouter>
     </div>
