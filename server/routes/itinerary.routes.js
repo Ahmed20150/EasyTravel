@@ -3,6 +3,7 @@ const router = express.Router();
 const cors = require("cors");
 const Itinerary = require("../models/itinerary.model.js");
 const Notification = require("../models/notification.model.js"); // Import the Notification model
+const sendEmail = require('../sendEmail');
 
 router.use(express.json());
 router.use(cors()); // This allows requests from any origin
@@ -209,7 +210,26 @@ router.get("/notifications/:username", async (req, res) => {
   }
 });
 
+
+router.post("/sendNotification", async (req, res) => {
+  const { email, text } = req.body;
+
+  // Validate input
+  if (!email || !text) {
+    return res.status(400).json({ error: "Email and text are required." });
+  }
+
+  try {
+    // Send email with a fixed subject "Notification"
+    const subject = "Notification";
+    await sendEmail(email, subject, text);
+
+    res.status(200).json({ message: "Email sent successfully." });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: "Failed to send email." });
+  }
+});
+
 module.exports = router;
 
-
-module.exports = router;

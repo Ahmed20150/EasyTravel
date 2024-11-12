@@ -105,7 +105,28 @@ const ItineraryList = () => {
     navigate(`/itinerary/create`);
   };
 
-  const handleFlag = async (id) => {
+  // Function to send a notification email to the creator
+  const sendNotificationEmail = async (creator) => {
+    const email = creatorEmails[creator];
+    const message = `Your itinerary has been flagged as inappropriate. Please review the details and take necessary actions.`;
+
+    if (email) {
+      try {
+        await axios.post("http://localhost:3000/itinerary/sendNotification", {
+          email,
+          text: message,
+        });
+        alert("Notification email sent successfully.");
+      } catch (error) {
+        console.error("Error sending notification email:", error);
+        alert("Failed to send notification email.");
+      }
+    } else {
+      alert("Creator's email not available.");
+    }
+  };
+
+  const handleFlag = async (id, creator) => {
     try {
       const response = await axios.patch(`http://localhost:3000/itinerary/${id}/flag`);
       setItineraries(
@@ -113,7 +134,10 @@ const ItineraryList = () => {
           itinerary._id === id ? { ...itinerary, flagged: "yes" } : itinerary
         )
       );
-      alert(`Itinerary flagged successfully: ${response.data.message}`);
+      alert("Itinerary flagged successfully");
+
+      // Call the function to send the email notification to the creator
+      await sendNotificationEmail(creator);
     } catch (error) {
       console.error("Error flagging itinerary:", error);
       alert("Failed to flag the itinerary.");
@@ -168,7 +192,7 @@ const ItineraryList = () => {
                 <p>Flagged: {itinerary.flagged}</p>
                 <button
                   className="flag-button"
-                  onClick={() => handleFlag(itinerary._id)}
+                  onClick={() => handleFlag(itinerary._id, itinerary.creator)}
                 >
                   Flag
                 </button>
