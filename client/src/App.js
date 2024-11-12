@@ -48,6 +48,8 @@ import MuseumsList from "./pages/museumsList";
 import GiftList from './pages/GiftList';
 import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
 
 
 
@@ -56,7 +58,6 @@ import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
 import Categories from './pages/Categories';
 import PreferencePage from './pages/PreferencePage';import Revenue from './pages/Revenue';
 import GiftItemForm  from './pages/GiftItemPage';
-
 
 
 function App() {
@@ -109,6 +110,8 @@ function App() {
             <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
             <Route path="/viewPastEvents" element={<ViewPastEvents />} />
             <Route path="/viewUpcomingEvents" element={<ViewUpcomingEvents />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-cancel" element={<PaymentCancel />} />
 
 
             <Route path="/itinerary" element={<ItineraryList />} />

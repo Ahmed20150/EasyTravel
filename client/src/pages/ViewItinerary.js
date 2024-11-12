@@ -14,12 +14,13 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {loadStripe} from '@stripe/stripe-js';
 
 
 Modal.setAppElement('#root');
 
 //TODO if there are two future dates, there is no distinction which one did i choose when i have to book the itinerary
-//TODO cant unbook before less than 48hrs
+//TODO adjust it so booking and unbooking affects activities database (numofpurchases)
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -37,6 +38,8 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
+
+  const navigate= useNavigate();
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -131,11 +134,13 @@ const ViewItinerary = () => {
         return;
       }
 
-      const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Add the new itinerary ID
+      const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update Itenararies Booked List in Tourist Model
 
+      //Updating Tourists Booked List in Itinerary
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${selectedItineraryId}`
       );
+
       const touristsBook = [...itinerary.data.touristsBooked, username];
 
       await axios.patch(`http://localhost:3000/itinerary/${selectedItineraryId}/touristsBook`, {
@@ -162,24 +167,68 @@ const ViewItinerary = () => {
       // Update the state with the new booked itineraries and wallet balance
       setBookedItineraries(response.data.bookedItineraries);
 
-      toast.success("Itinerary booked successfully!");
+      
+      //Send Email Reciept
 
       const user = await axios.get(`http://localhost:3000/api/tourist/${username}`);
       const email = user.data.email;
-      console.log("EMAIL : ", email);
 
       const pickupLocation = itinerary.data.pickupLocation;
       const dropoffLocation = itinerary.data.dropoffLocation;
       const price = itinerary.data.priceOfTour;
-      const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} was successfully recieved, Please check your wallet for the payment details.`;
+      const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} Euro(s) by Wallet was successfully recieved, Please check your Account for the payment details.`;
       await axios.post("http://localhost:3000/auth/sendPaymentEmail",{
         email, 
         text
       });
+
+      toast.success("Itinerary booked successfully!");
+
       closeModal();
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Error booking itinerary. Please try again.";
       toast.error(errorMessage);
+    }
+  };
+
+  const handleCreditCardPurchase = async () => {
+
+    const isOldEnough = await checkAge(username);
+    if (!isOldEnough) {
+      toast.error("You must be 18 or older to book an itinerary.");
+      return;
+    }
+
+    const today = new Date();
+    const selectedDateObj = new Date(selectedDate);
+    if (selectedDateObj <= today) {
+      toast.error("The selected date must be after Todays date.");
+      return;
+    }
+
+    const itinerary = await axios.get(
+      `http://localhost:3000/itinerary/${selectedItineraryId}`
+    );
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/payment/create-checkout-session',
+        {
+          itineraryId: selectedItineraryId,
+          itineraryName: "Itinerary",
+          price: itinerary.data.priceOfTour,
+          selectedDate, 
+          selectedTime, 
+        },
+        {
+          headers: { Authorization: `Bearer ${cookies.token}` },
+        }
+      );
+      console.log("RESPONSE : ", response);
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error('Error during credit card purchase:', error);
+      toast.error('An error occurred during the credit card purchase. Please try again.');
     }
   };
 
@@ -349,7 +398,7 @@ const ViewItinerary = () => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: "30px" }}>
             <button onClick={handleWalletPurchase} >by Wallet</button>
-            <button>by Credit Card</button>
+            <button onClick={handleCreditCardPurchase}>by Credit Card</button>
           </div>
           <button style={{ marginTop: "50px" }} onClick={closeModal}>Close</button>
         </div>
