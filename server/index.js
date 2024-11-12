@@ -27,6 +27,12 @@ const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
+const touristReport = require('./routes/touristReport.routes.js');
+const  totalTouristActivity = require("./routes/totalTouristActivity.routes.js");
+
+
+
+
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -584,4 +590,5 @@ app.get('/api/giftitems', async (req, res) => {
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
 app.use('/api/seller', sellerRoutes);
-
+app.use('/api/reports', touristReport);
+app.use("/api", totalTouristActivity);

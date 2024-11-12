@@ -46,8 +46,8 @@ import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
 import GiftList from './pages/GiftList';
-
-
+import TouristReport from './pages/TouristReport'; 
+import TotalTourists from './pages/TotalActivityTourist';
 //TODO add navigation buttons between all pages
 //
 
@@ -122,7 +122,9 @@ function App() {
 
             <Route path="/view" element={<ViewTables />}/>
             <Route path="/revenue" element={<Revenue />}/>
-            <Route path="/giftitem" element={<GiftItemForm />}/>
+            <Route path="/giftitem" element={<GiftItemForm />}/> 
+            <Route path="/tourist-report" element={<TouristReport />} />
+            <Route path="/totaltouristactivity" element={<TotalTourists />} />
           </Routes>
       </BrowserRouter>
     </div>

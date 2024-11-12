@@ -120,7 +120,8 @@ const TempHomePage = () => {
       {userType === 'advertiser' && (
         <>
             <Link to="/activities"><button>View Activities</button></Link>
-            <Link to="/revenue"><button>Financial Report</button></Link>
+            <Link to="/revenue"><button>Financial Report</button></Link> 
+            <Link to="/totaltouristactivity"><button>Tourist Report</button></Link> 
         </>
       )}
 
@@ -135,7 +136,8 @@ const TempHomePage = () => {
         <Link to="/itinerary">
           <button>View Itineraries</button>
         </Link>
-      <Link to="/revenue"><button>Financial Report</button></Link>
+      <Link to="/revenue"><button>Financial Report</button></Link> 
+      <Link to="/tourist-report"><button>Tourist Report</button></Link>
       </>
       )}
       {userType === "tourist" && (
