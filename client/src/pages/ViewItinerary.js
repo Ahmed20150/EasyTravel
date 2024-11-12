@@ -134,6 +134,10 @@ const ViewItinerary = () => {
         return;
       }
 
+      //Update Activity Purchases
+       await axios.patch(`http://localhost:3000/itinerary/increment-purchases/${selectedItineraryId}`);
+       
+
       const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update Itenararies Booked List in Tourist Model
 
       //Updating Tourists Booked List in Itinerary
@@ -279,6 +283,10 @@ const ViewItinerary = () => {
 
 
       console.log(`Unbooking itinerary: ${id} for user ${username}`);
+
+      //Update Activity Purchases
+      await axios.patch(`http://localhost:3000/itinerary/decrement-purchases/${selectedItineraryId}`);
+
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
