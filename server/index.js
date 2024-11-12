@@ -29,6 +29,8 @@ const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
 const notificationRouter = require("./routes/notificationRouter.js");
 
+const activityRouter= require("./routes/activity.routes.js");
+
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -581,4 +583,5 @@ app.use('/api', tourGuideRoutes);
 app.use('/advertiser', advRoutes);
 //app.use()
 app.use('/api/seller', sellerRoutes);
+app.use('/api/send' , activityRouter);
 

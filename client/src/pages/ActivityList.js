@@ -6,32 +6,30 @@ import { useCookies } from "react-cookie";
 import "../css/ActivityLists.css";
 
 const ActivityLists = () => {
-  const [activities, setActivities] = useState([]); // State to hold activities
-  const [notifications, setNotifications] = useState([]); // State to hold notifications
-  const navigate = useNavigate(); // Use useNavigate for navigation
+  const [activities, setActivities] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
   const [cookies] = useCookies(["username", "userType"]);
 
-  const username = cookies.username; // Access the username from cookies
-  const userType = cookies.userType; // Access the userType
+  const username = cookies.username;
+  const userType = cookies.userType;
 
-  // Fetch activities based on user type
   const fetchActivities = async () => {
     try {
       const response = await axios.get("http://localhost:3000/activities");
 
       const filteredActivities = userType === 'admin'
-        ? response.data // Admins see all activities
-        : response.data.filter((activity) => activity.creator === username); // Filtered for regular users
+        ? response.data
+        : response.data.filter((activity) => activity.creator === username);
 
-      // Fetch email for each creator in activities if user is admin
       if (userType === 'admin') {
         const activitiesWithEmails = await Promise.all(filteredActivities.map(async (activity) => {
           try {
             const emailResponse = await axios.get(`http://localhost:3000/advertiser/emailAdv/${activity.creator}`);
-            return { ...activity, creatorEmail: emailResponse.data.email }; // Add email to each activity
+            return { ...activity, creatorEmail: emailResponse.data.email };
           } catch (error) {
             console.error(`Error fetching email for creator ${activity.creator}:`, error);
-            return activity; // Return activity without email if fetch fails
+            return activity;
           }
         }));
 
@@ -44,30 +42,26 @@ const ActivityLists = () => {
     }
   };
 
-  // Fetch notifications for the logged-in user
   const fetchNotifications = async () => {
     try {
       if (userType !== 'admin' && username) {
-        // Fetch notifications for the logged-in user
         const response = await axios.get(`http://localhost:3000/notifications/${username}`);
-        setNotifications(response.data);  // Update state with the fetched notifications
+        setNotifications(response.data);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
   };
 
-  // Call functions on mount or when username/userType changes
   useEffect(() => {
     if (userType === 'admin') {
-      fetchActivities(); // Fetch all activities for admin
+      fetchActivities();
     } else if (username) {
-      fetchActivities(); // Fetch user-specific activities
-      fetchNotifications(); // Fetch notifications for the user
+      fetchActivities();
+      fetchNotifications();
     }
-  }, [username, userType]); // Depend on username and userType
+  }, [username, userType]);
 
-  // Function to handle deletion of an activity
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/activities/${id}`);
@@ -86,10 +80,24 @@ const ActivityLists = () => {
     navigate(`/activities/create`);
   };
 
-  const handleFlag = async (id) => {
+  // New function to send email notification to the creator
+  const sendFlagNotification = async (creatorEmail, category) => {
+    try {
+      await axios.post("http://localhost:3000/api/send/send-notification", {
+        email: creatorEmail,
+        text: `Your activity "${category}" has been flagged as inappropriate.`,
+      });
+      alert("Notification email sent to creator.");
+    } catch (error) {
+      console.error("Error sending notification email:", error);
+      alert("Failed to send notification email. Please try again.");
+    }
+  };
+
+  const handleFlag = async (id, creatorEmail, category) => {
     try {
       await axios.patch(`http://localhost:3000/activities/${id}`, {
-        flagged: "yes",  // Ensure the correct value 'yes' is being sent
+        flagged: "yes",
       });
 
       setActivities((prevActivities) =>
@@ -99,6 +107,7 @@ const ActivityLists = () => {
       );
 
       alert("Activity has been successfully flagged!");
+      sendFlagNotification(creatorEmail, category);  // Send email to creator
     } catch (error) {
       console.error("Error flagging activity:", error);
       alert("Failed to flag activity. Please try again.");
@@ -109,7 +118,6 @@ const ActivityLists = () => {
     <div className="activity-list">
       <h1>Activities</h1>
 
-      {/* Display notifications for non-admin users */}
       {userType !== 'admin' && notifications.length > 0 && (
         <div className="notifications">
           <h2>Your Notifications</h2>
@@ -125,7 +133,6 @@ const ActivityLists = () => {
       )}
 
       <div className="button-container">
-        {/* Hide Create button for admin */}
         {userType !== 'admin' && (
           <button className="create-button" onClick={handleCreate}>
             Create New Activity
@@ -146,11 +153,10 @@ const ActivityLists = () => {
               <span className="price-max">${activity.price?.max}</span>
             </p>
 
-            {/* Show username and email if admin */}
             {userType === 'admin' && (
               <div className="activity-details">
                 <p className="activity-creator">Creator: {activity.creator}</p>
-                <p className="activity-creator-email">Email: {activity.creatorEmail || "Not available"}</p> {/* Display creator's email here */}
+                <p className="activity-creator-email">Email: {activity.creatorEmail || "Not available"}</p>
                 <p className="activity-flagged">Flagged: {activity.flagged}</p>
               </div>
             )}
@@ -169,12 +175,11 @@ const ActivityLists = () => {
                 Delete
               </button>
 
-              {/* Add Flag button for admin */}
               {userType === 'admin' && (
                 <button
                   className="flag-button"
                   style={{ backgroundColor: "purple", color: "white" }}
-                  onClick={() => handleFlag(activity._id)}
+                  onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}  // Pass category for the notification message
                 >
                   Flag
                 </button>

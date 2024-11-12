@@ -4,10 +4,12 @@ const router = express.Router();
 const cors = require("cors");
 const Activity = require("../models/activity.model.js");
 const Notification = require('../models/notification.model'); // Adjust path as necessary
+const sendEmail = require('../sendEmail');
+const axios = require('axios');
+
 router.use(express.json());
 router.use(cookieParser());
 router.use(cors()); // This allows requests from any origin
-
 
 // Simple in-memory store for notifications
 let notifications = [];
@@ -95,7 +97,6 @@ router.delete("/deleteAll/:username", async (req, res) => {
   }
 });
 
-
 // PATCH - Flag an activity
 router.patch("/:id", async (req, res) => {
   try {
@@ -129,8 +130,6 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-
-
 // Optional: Endpoint to retrieve notifications for a user
 router.get("/notifications/:username", async (req, res) => {
   try {
@@ -141,25 +140,24 @@ router.get("/notifications/:username", async (req, res) => {
   }
 });
 
-// Fetch user email based on username (for advertisers)
-router.get('/tourguide/:username/email', async (req, res) => {
-  const { username } = req.params;
+
+// POST route to send a notification email
+router.post("/send-notification", async (req, res) => {
+  const { email, text } = req.body; // Retrieve email and text from the request body
+
+  if (!email || !text) {
+    return res.status(400).json({ error: "Email and text are required." });
+  }
+
   try {
-    const user = await User.findOne({ username }); // Find the user by username
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    // Call sendEmail with the subject "Notification"
+    await sendEmail(email, "Notification", text);
 
-    if (user.type === 'advertiser') {
-      return res.status(200).json({ email: user.email }); // Return email if the user is an advertiser
-    }
-
-    res.status(403).json({ error: 'User is not an advertiser' });
+    res.status(200).json({ message: "Notification email sent successfully" });
   } catch (error) {
-    console.error("Error fetching user email:", error);
-    res.status(500).json({ error: 'Server error' });
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: "Failed to send notification email" });
   }
 });
 
 module.exports = router;
-
