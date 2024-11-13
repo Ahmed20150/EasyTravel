@@ -50,6 +50,7 @@ import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import Help from './pages/Help';
 
 
 
@@ -112,6 +113,7 @@ function App() {
             <Route path="/viewUpcomingEvents" element={<ViewUpcomingEvents />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
+            <Route path="/Help" element={<Help />} />
 
 
             <Route path="/itinerary" element={<ItineraryList />} />

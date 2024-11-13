@@ -19,8 +19,6 @@ import {loadStripe} from '@stripe/stripe-js';
 
 Modal.setAppElement('#root');
 
-//TODO if there are two future dates, there is no distinction which one did i choose when i have to book the itinerary
-//TODO adjust it so booking and unbooking affects activities database (numofpurchases)
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
