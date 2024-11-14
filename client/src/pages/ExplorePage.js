@@ -29,6 +29,14 @@ const ExplorePage = () => {
     ref.current.scrollBy({ left: amount, behavior: "smooth" });
   };
 
+  const predefinedTags = [
+    "Monuments",
+    "Museums",
+    "Religious Sites",
+    "Palaces/Castles",
+  ];
+  const [selectedTags, setSelectedTags] = useState([]);
+
   useEffect(() => {
     fetchItineraries();
     fetchActivities();
@@ -55,6 +63,20 @@ const ExplorePage = () => {
     setMuseums(response.data);
     setLoadingMuseums(false);
   };
+
+  const toggleTag = (tag) => {
+    setSelectedTags((prevTags) =>
+      prevTags.includes(tag)
+        ? prevTags.filter((t) => t !== tag)
+        : [...prevTags, tag]
+    );
+  };
+
+  const filteredMuseums = selectedTags.length
+    ? museums.filter((museum) =>
+        museum.tags.some((tag) => selectedTags.includes(tag))
+      )
+    : museums;
 
   return (
     <div className="explore-page">
@@ -117,6 +139,17 @@ const ExplorePage = () => {
 
       <div className="section">
         <h2 className="section-title">Museums & Historical Places</h2>
+        <div className="museum-tag-filter">
+          {predefinedTags.map((tag) => (
+            <div
+              key={tag}
+              className={`tag ${selectedTags.includes(tag) ? "active" : ""}`}
+              onClick={() => toggleTag(tag)}
+            >
+              {tag}
+            </div>
+          ))}
+        </div>
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", museumScrollRef)}
@@ -128,7 +161,7 @@ const ExplorePage = () => {
             {loadingMuseums ? (
               <div className="loader">Loading Museums...</div>
             ) : (
-              museums.map((museum) => (
+              filteredMuseums.map((museum) => (
                 <ViewMuseumCard
                   key={museum._id}
                   museum={museum}
