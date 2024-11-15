@@ -8,7 +8,9 @@ import "../css/ExplorePage.css";
 
 const ExplorePage = () => {
   const [itineraries, setItineraries] = useState([]);
+  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState([]);
   const [museums, setMuseums] = useState([]);
   const [scrollDistance, setScrollDistance] = useState(340);
 
@@ -22,6 +24,17 @@ const ExplorePage = () => {
   const [cookies] = useCookies(["nationality", "occupation"]);
   const nationality = cookies.nationality;
   const occupation = cookies.occupation;
+
+  const [filterCriteriaItineraries, setFilterCriteriaItineraries] = useState({
+    maxBudget: "",
+    date: "",
+    language: "",
+  });
+
+  const [filterCriteriaActivities, setFilterCriteriaActivities] = useState({
+    maxBudget: "",
+    date: "",
+  });
 
   const itineraryScrollRef = useRef(null);
   const activityScrollRef = useRef(null);
@@ -45,6 +58,14 @@ const ExplorePage = () => {
     fetchActivities();
     fetchMuseums();
   }, []);
+
+  useEffect(() => {
+    applyFiltersItineraries();
+  }, [filterCriteriaItineraries, itineraries]);
+
+  useEffect(() => {
+    applyFiltersActivities();
+  }, [filterCriteriaActivities, activities]);
 
   const fetchItineraries = async () => {
     setLoadingItineraries(true);
@@ -81,6 +102,72 @@ const ExplorePage = () => {
       )
     : museums;
 
+  const handleFilterChangeItineraries = (e) => {
+    const { name, value } = e.target;
+    setFilterCriteriaItineraries((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFilterChangeActivities = (e) => {
+    const { name, value } = e.target;
+    setFilterCriteriaActivities((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const applyFiltersItineraries = () => {
+    let filtered = [...itineraries];
+
+    // Budget filter
+    if (filterCriteriaItineraries.maxBudget) {
+      filtered = filtered.filter(
+        (itinerary) =>
+          itinerary.priceOfTour <= filterCriteriaItineraries.maxBudget
+      );
+    }
+
+    // Date filter
+    if (filterCriteriaItineraries.date) {
+      const selectedDate = new Date(filterCriteriaItineraries.date);
+      filtered = filtered.filter((itinerary) =>
+        itinerary.availableDates.some(
+          (date) =>
+            new Date(date).toDateString() === selectedDate.toDateString()
+        )
+      );
+    }
+
+    // Language filter
+    if (filterCriteriaItineraries.language) {
+      filtered = filtered.filter((itinerary) =>
+        itinerary.languageOfTour
+          .toLowerCase()
+          .includes(filterCriteriaItineraries.language.toLowerCase())
+      );
+    }
+
+    setFilteredItineraries(filtered);
+  };
+
+  const applyFiltersActivities = () => {
+    let filtered = [...activities];
+
+    if (filterCriteriaActivities.maxBudget) {
+      filtered = filtered.filter(
+        (activity) => activity.price.max <= filterCriteriaActivities.maxBudget
+      );
+    }
+
+    if (filterCriteriaActivities.date) {
+      const selectedDate = new Date(filterCriteriaActivities.date);
+      filtered = filtered.filter((activity) =>
+        activity.availableDates.some(
+          (date) =>
+            new Date(date).toDateString() === selectedDate.toDateString()
+        )
+      );
+    }
+
+    setFilteredActivities(filtered);
+  };
+
   // Sorting for itineraries
   const handleSortItineraries = (e) => {
     const option = e.target.value;
@@ -116,24 +203,61 @@ const ExplorePage = () => {
     <div className="explore-page">
       <h1>Explore Upcoming Attractions</h1>
       <p>Discover activities, itineraries, and historical places near you.</p>
+      {/* Itineraries Filter Section */}
+      <div className="filter-section">
+        <h2 className="filters-title">Filter Itineraries</h2>
+        <div className="filters">
+          {/* Sorting Options */}
+          <div className="filter">
+            <label htmlFor="sort-itineraries">Sort by:</label>
+            <select
+              id="sort-itineraries"
+              value={sortOptionItineraries}
+              onChange={handleSortItineraries}
+            >
+              <option value="default">Default</option>
+              <option value="rating">Average Rating ⭐</option>
+              <option value="price">Price</option>
+            </select>
+          </div>
+          <div className="filter">
+            <label htmlFor="maxBudget">Max Budget:</label>
+            <input
+              type="number"
+              id="maxBudget"
+              name="maxBudget"
+              value={filterCriteriaItineraries.maxBudget}
+              onChange={handleFilterChangeItineraries}
+              placeholder="Enter max budget"
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="date">Date:</label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              value={filterCriteriaItineraries.date}
+              onChange={handleFilterChangeItineraries}
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="language">Language:</label>
+            <input
+              type="text"
+              id="language"
+              name="language"
+              value={filterCriteriaItineraries.language}
+              onChange={handleFilterChangeItineraries}
+              placeholder="Enter language"
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Itineraries Section */}
       <div className="section">
         <h2 className="section-title">Itineraries</h2>
-
-        {/* Sorting Options */}
-        <div className="sort-options">
-          <label htmlFor="sort-itineraries">Sort by:</label>
-          <select
-            id="sort-itineraries"
-            value={sortOptionItineraries}
-            onChange={handleSortItineraries}
-          >
-            <option value="default">Default</option>
-            <option value="rating">Average Rating ⭐</option>
-            <option value="price">Price</option>
-          </select>
-        </div>
 
         {/* Render Itineraries */}
         <div className="card-scroll-container">
@@ -146,10 +270,12 @@ const ExplorePage = () => {
           <div className="card-scroll" ref={itineraryScrollRef}>
             {loadingItineraries ? (
               <div className="loader">Loading Itineraries...</div>
-            ) : (
-              itineraries.map((itinerary) => (
+            ) : filteredItineraries.length > 0 ? (
+              filteredItineraries.map((itinerary) => (
                 <ViewItineraryCard key={itinerary._id} itinerary={itinerary} />
               ))
+            ) : (
+              <div className="no-results">No itineraries match the filters</div>
             )}
           </div>
           <button
@@ -161,21 +287,50 @@ const ExplorePage = () => {
         </div>
       </div>
 
+      {/* Activities Filter Section */}
+      <div className="filter-section">
+        <h2 className="filters-title">Filter Activities</h2>
+        <div className="filters">
+          {/* Sort */}
+          <div className="filter">
+            <label htmlFor="sort-activities">Sort by:</label>
+            <select
+              id="sort-activities"
+              value={sortOptionActivities}
+              onChange={handleSortActivities}
+            >
+              <option value="default">Default</option>
+              <option value="rating">Average Rating ⭐</option>
+              <option value="price">Starting Price</option>
+            </select>
+          </div>
+          <div className="filter">
+            <label htmlFor="maxBudget">Max Budget:</label>
+            <input
+              type="number"
+              id="maxBudget"
+              name="maxBudget"
+              value={filterCriteriaActivities.maxBudget}
+              onChange={handleFilterChangeActivities}
+              placeholder="Enter max budget"
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="date">Date:</label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              value={filterCriteriaActivities.date}
+              onChange={handleFilterChangeActivities}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Activities Section */}
       <div className="section">
         <h2 className="section-title">Activities</h2>
-        <div className="sort-options">
-          <label htmlFor="sort-activities">Sort by:</label>
-          <select
-            id="sort-activities"
-            value={sortOptionActivities}
-            onChange={handleSortActivities}
-          >
-            <option value="default">Default</option>
-            <option value="rating">Average Rating ⭐</option>
-            <option value="price">Starting Price</option>
-          </select>
-        </div>
 
         {/* Render Activities */}
         <div className="card-scroll-container">
@@ -188,10 +343,12 @@ const ExplorePage = () => {
           <div className="card-scroll" ref={activityScrollRef}>
             {loadingActivities ? (
               <div className="loader">Loading Activities...</div>
-            ) : (
-              activities.map((activity) => (
+            ) : filteredActivities.length > 0 ? (
+              filteredActivities.map((activity) => (
                 <ViewActivityCard key={activity._id} activity={activity} />
               ))
+            ) : (
+              <div className="no-results">No activities match the filters</div>
             )}
           </div>
           <button
