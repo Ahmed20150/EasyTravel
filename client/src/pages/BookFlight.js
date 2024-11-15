@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import "../css/BookFlight.css";
 import TravelerForm from "../components/TravelerForm"; // Make sure this path is correct
 import { useCookies } from "react-cookie";
+import Popup from "../components/Popup"; // Import the Popup component
+import { FaPlaneDeparture } from "react-icons/fa"; // Import the required icon
 
 const BookFlight = () => {
   const [origin, setOrigin] = useState("");
@@ -26,21 +28,31 @@ const BookFlight = () => {
   const [confirmedFlightOffers, setConfirmedFlightOffers] = useState(null);
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
   const username = cookies.username; // Access the username
-  const API_KEY = "fsRGlbkyW4Ob4ASYqLDV0mGAaHC99FAn";
-  const API_SECRET = "EB9KyyGfjd0hpfFj";
+  const API_KEY = "HPqf3pVyphn2AvaeiS91Bs8nOaGVHGGk";
+  const API_SECRET = "tacunKixDcMglp0q";
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState("asc");
   const itemsPerPage = 5;
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    if (showSuccessPopup) {
+      console.log("Success Popup should be visible");
+    }
+  }, [showSuccessPopup]);
 
   const getAccessToken = async () => {
     try {
+      const body = new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: API_KEY,
+        client_secret: API_SECRET,
+      });
+      console.log("Access Token Request Body:", body.toString());
       const response = await axios.post(
         "https://test.api.amadeus.com/v1/security/oauth2/token",
-        new URLSearchParams({
-          grant_type: "client_credentials",
-          client_id: API_KEY,
-          client_secret: API_SECRET,
-        }),
+        body,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -167,7 +179,10 @@ const BookFlight = () => {
         "Price confirmation request:",
         JSON.stringify(priceConfirmBody, null, 2)
       );
-
+      console.log(
+        "Price Confirmation Request Body:",
+        JSON.stringify(priceConfirmBody, null, 2)
+      );
       const priceResponse = await axios.post(
         "https://test.api.amadeus.com/v1/shopping/flight-offers/pricing",
         priceConfirmBody,
@@ -251,7 +266,10 @@ const BookFlight = () => {
         },
       };
 
-      console.log("Booking request:", JSON.stringify(requestBody, null, 2));
+      console.log(
+        "Booking Request Body:",
+        JSON.stringify(requestBody, null, 2)
+      );
 
       const response = await axios.post(
         "https://test.api.amadeus.com/v1/booking/flight-orders",
@@ -266,12 +284,17 @@ const BookFlight = () => {
 
       const flightResponse = response.data;
 
+      const localRequestBody = {
+        username: username,
+        newBookedFlightId: flightResponse.data.id,
+      };
+      console.log(
+        "Local Booking Request Body:",
+        JSON.stringify(localRequestBody, null, 2)
+      );
       await axios.put(
         "http://localhost:3000/api/bookFlights",
-        {
-          username: username,
-          newBookedFlightId: flightResponse.data.id,
-        },
+        localRequestBody,
         {
           headers: {
             "Content-Type": "application/json",
@@ -279,7 +302,10 @@ const BookFlight = () => {
         }
       );
 
-      alert(`Flight booked successfully! Reference: ${flightResponse.data.id}`);
+      setSuccessMessage(
+        `Flight booked successfully! Reference: ${flightResponse.data.id}`
+      );
+      setShowSuccessPopup(true); // Show success popup
       return flightResponse;
     } catch (err) {
       alert(err.message || "Failed to book flight");
@@ -361,43 +387,6 @@ const BookFlight = () => {
                   type="date"
                   value={returnDate}
                   onChange={(e) => setReturnDate(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Wrap Passengers section in a styled box */}
-          <div className="passenger-section">
-            <div className="form-row">
-              <div className="form-group">
-                <label>Adults</label>
-                <input
-                  type="number"
-                  value={adults}
-                  onChange={(e) => setAdults(e.target.value)}
-                  required
-                  min="1"
-                  max="9"
-                />
-              </div>
-              <div className="form-group">
-                <label>Children</label>
-                <input
-                  type="number"
-                  value={children}
-                  onChange={(e) => setChildren(e.target.value)}
-                  min="0"
-                  max="8"
-                />
-              </div>
-              <div className="form-group">
-                <label>Infants</label>
-                <input
-                  type="number"
-                  value={infants}
-                  onChange={(e) => setInfants(e.target.value)}
-                  min="0"
-                  max={adults}
                 />
               </div>
             </div>
@@ -581,6 +570,11 @@ const BookFlight = () => {
         onClose={() => setShowTravelerForm(false)}
         onSubmit={handleTravelerSubmit}
         numberOfTravelers={adults + children}
+      />
+      <Popup
+        show={showSuccessPopup}
+        message={successMessage}
+        onClose={() => setShowSuccessPopup(false)}
       />
     </div>
   );
