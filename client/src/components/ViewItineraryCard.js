@@ -30,6 +30,12 @@ const ViewItineraryCard = ({ itinerary }) => {
         <p>
           <strong>Dropoff Location:</strong> {itinerary.dropoffLocation}
         </p>
+        <p>
+          <strong>Average Rating:</strong> {itinerary.avgRating.toFixed(1)} ⭐
+        </p>
+        <p>
+          <strong>Total Ratings:</strong> {itinerary.totalRatingCount}
+        </p>
       </div>
 
       <div className="itinerary-locations">

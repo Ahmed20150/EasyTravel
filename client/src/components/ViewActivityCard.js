@@ -33,6 +33,12 @@ const ViewActivityCard = ({ activity }) => {
           <strong>Booking Status:</strong>{" "}
           {activity.isBookingOpen ? "Open" : "Closed"}
         </p>
+        <p>
+          <strong>Average Rating:</strong> {activity.avgRating.toFixed(1)} ⭐
+        </p>
+        <p>
+          <strong>Total Ratings:</strong> {activity.totalRatingCount}
+        </p>
       </div>
 
       <div className="activity-tags">

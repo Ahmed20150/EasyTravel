@@ -16,6 +16,9 @@ const ExplorePage = () => {
   const [loadingActivities, setLoadingActivities] = useState(true);
   const [loadingMuseums, setLoadingMuseums] = useState(true);
 
+  const [sortOptionItineraries, setSortOptionItineraries] = useState("default");
+  const [sortOptionActivities, setSortOptionActivities] = useState("default");
+
   const [cookies] = useCookies(["nationality", "occupation"]);
   const nationality = cookies.nationality;
   const occupation = cookies.occupation;
@@ -78,13 +81,61 @@ const ExplorePage = () => {
       )
     : museums;
 
+  // Sorting for itineraries
+  const handleSortItineraries = (e) => {
+    const option = e.target.value;
+    setSortOptionItineraries(option);
+
+    const sortedItineraries = [...itineraries];
+    if (option === "rating") {
+      sortedItineraries.sort((a, b) => b.avgRating - a.avgRating); // Descending by rating
+    } else if (option === "price") {
+      sortedItineraries.sort((a, b) => a.priceOfTour - b.priceOfTour); // Ascending by price
+    }
+    setItineraries(sortedItineraries);
+  };
+
+  // Sorting for activities
+  const handleSortActivities = (e) => {
+    const option = e.target.value;
+    setSortOptionActivities(option);
+
+    const sortedActivities = [...activities];
+    if (option === "rating") {
+      sortedActivities.sort((a, b) => b.avgRating - a.avgRating);
+    } else if (option === "price") {
+      sortedActivities.sort(
+        (a, b) =>
+          (a.price.min + a.price.max) / 2 - (b.price.min + b.price.max) / 2
+      );
+    }
+    setActivities(sortedActivities);
+  };
+
   return (
     <div className="explore-page">
       <h1>Explore Upcoming Attractions</h1>
       <p>Discover activities, itineraries, and historical places near you.</p>
 
+      {/* Itineraries Section */}
       <div className="section">
         <h2 className="section-title">Itineraries</h2>
+
+        {/* Sorting Options */}
+        <div className="sort-options">
+          <label htmlFor="sort-itineraries">Sort by:</label>
+          <select
+            id="sort-itineraries"
+            value={sortOptionItineraries}
+            onChange={handleSortItineraries}
+          >
+            <option value="default">Default</option>
+            <option value="rating">Average Rating ⭐</option>
+            <option value="price">Price</option>
+          </select>
+        </div>
+
+        {/* Render Itineraries */}
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", itineraryScrollRef)}
@@ -110,8 +161,23 @@ const ExplorePage = () => {
         </div>
       </div>
 
+      {/* Activities Section */}
       <div className="section">
         <h2 className="section-title">Activities</h2>
+        <div className="sort-options">
+          <label htmlFor="sort-activities">Sort by:</label>
+          <select
+            id="sort-activities"
+            value={sortOptionActivities}
+            onChange={handleSortActivities}
+          >
+            <option value="default">Default</option>
+            <option value="rating">Average Rating ⭐</option>
+            <option value="price">Starting Price</option>
+          </select>
+        </div>
+
+        {/* Render Activities */}
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", activityScrollRef)}
