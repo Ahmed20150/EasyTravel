@@ -103,7 +103,28 @@ const itinerarySchema = new mongoose.Schema({
   },
   touristsBooked: { type: [String] },
   activated: { type: Boolean, default: true },
+
+  ratings: [
+    {
+      rating: { type: Number, required: true },
+      comment: { type: String, required: true },
+    },
+  ],
+  totalRatingCount: { type: Number, default: 0 },
+  avgRating: { type: Number, default: 0 },
 });
+itinerarySchema.methods.updateRatings = function () {
+  this.totalRatingCount = this.ratings.length;
+  const sum = this.ratings.reduce((acc, review) => acc + review.rating, 0);
+  this.avgRating = this.totalRatingCount ? sum / this.totalRatingCount : 0;
+  return this.save();
+};
+
+// Create Review Method
+itinerarySchema.methods.createReview = function (rating, comment) {
+  this.ratings.push({ rating, comment });
+  return this.updateRatings(); // Update total count and average rating
+};
 
 // Add text index on name, category, and tags fields for search functionality
 itinerarySchema.index({ name: "text", category: "text", tags: "text" });
