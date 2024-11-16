@@ -3,10 +3,12 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import "./TempHomePage.css"; // Import the CSS file for styling
+import "./TempHomePage.css"; 
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const TempHomePage = () => {
   const navigate = useNavigate();
+  const [showNotifications, setShowNotifications] = useState(true);
   const [notifications, setNotifications] = useState([]);  
   const [username, setUsername] = useState(Cookies.get('username'));
   const [userType, setUserType] = useState(Cookies.get('userType'));
@@ -74,18 +76,40 @@ const TempHomePage = () => {
       <button onClick={handleLogout}>Logout</button>
       <Link to="/changePassword"><button>Change Password</button></Link>
 
-      {userType !== 'admin' && notifications.length > 0 && (
+      {userType !== 'admin' && notifications.length > 0 && showNotifications && (
         <div className="notifications">
-          <h2>Your Notifications</h2>
+          <div className="notifications-header">
+            <h2>Your Notifications</h2>
+            <button
+              className="close-button"
+              onClick={() => setShowNotifications(false)}
+              aria-label="Close Notifications"
+            >
+              &times;
+            </button>
+          </div>
           <ul>
             {notifications.map((notification, index) => (
               <li key={index}>
                 <p>{notification.message}</p>
-                <p><small>{new Date(notification.timestamp).toLocaleString()}</small></p>
+                <p>
+                  <small>
+                    {new Date(notification.timestamp).toLocaleString()}
+                  </small>
+                </p>
               </li>
             ))}
           </ul>
         </div>
+      )}
+
+      {!showNotifications && notifications.length > 0 && (
+        <button
+          className="show-notifications-button"
+          onClick={() => setShowNotifications(true)}
+        >
+         <NotificationsIcon/>
+        </button>
       )}
 
       {userType !== 'admin' && userType !== 'tourismGoverner' && (
