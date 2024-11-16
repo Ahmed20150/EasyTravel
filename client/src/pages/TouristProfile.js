@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
 import { Link, useLocation } from 'react-router-dom';
 import ItineraryCard from '../components/ItineraryItem';
-
+import TouristForm from '../components/TouristForm';
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]);
     const userType = cookies.userType;
@@ -58,6 +58,34 @@ const TouristProfile = () => {
         fetchTouristProfile();
         fetchBookmarkedEvents();
     }, [username]);
+    const handleRequest = async (username, role) => {
+        //const input = { username, role };
+        try {
+            // Construct the URL with the username and role as query parameters
+            const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
+            // Update state to remove the deleted user
+            window.alert(`Request sent successfully: ${response.data.message}`);
+            // Filter out the deleted user from the UI
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            if (error.response) {
+                alert(error.response.data.message);
+            } else {
+                alert("An unexpected error occurred: " + error.message);
+            }
+        }
+    };
+
+
+    const handleUpdate = async (updatedTourist) => {
+        try {
+            const response = await axios.put(`http://localhost:3000/api/tourist/${username}`, updatedTourist);
+            setTourist(response.data);
+            setIsEditing(false);
+        } catch (err) {
+            setError('Failed to update tourist profile');
+        }
+    };
 
     useEffect(() => {
         const sendEmail = async (to, subject, text) => {
