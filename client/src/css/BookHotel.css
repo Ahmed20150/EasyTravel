@@ -24,11 +24,92 @@
     cursor: pointer;
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hotel-offer-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.hotel-offer-card:hover::before {
+    border-color: var(--primary-light);
+}
+
+.hotel-offer-card.selected::before {
+    border-color: var(--primary);
+    background-color: rgba(107, 70, 193, 0.05);
 }
 
 .hotel-offer-card.selected {
-    border-color: #3498db;
-    background-color: #f8f9ff;
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(107, 70, 193, 0.15);
+}
+
+.hotel-offer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hotel-offer-details {
+    margin-bottom: 10px;
+}
+
+.hotel-address {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2196f3;
+}
+
+.location {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.room-details {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.room-policies {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.guests {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.hotel-offer-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.amenity-tag {
+    background-color: #e0e0e0;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
 }
 
 .checkbox-group {
@@ -200,6 +281,12 @@
   100% { transform: rotate(360deg); }
 }
 
+.loading-text {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #666;
+}
+
 .error-banner {
   background-color: #ffebee;
   color: #c62828;
@@ -208,34 +295,249 @@
   margin: 10px 0;
 }
 
-.hotel-offer-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  margin: 10px 0;
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.book-button {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s;
 }
 
-.hotel-offer-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.book-button:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
 }
 
-.hotel-offer-card.selected {
-  border-color: #2196f3;
-  background-color: #e3f2fd;
+.book-button:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.popup-content button {
+  margin-top: 1rem;
+  padding: 0.5rem 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.popup-content button:hover {
+  background: var(--primary-dark);
+}
+
+/* ...existing code... */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.pagination button.active {
+  background: #2980b9;
+}
+
+.pagination button:hover:not(.active) {
+  background: #5dade2;
+}
+
+/* ...existing code... */
+
+.hotel-offer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.hotel-offer-details {
+  margin-bottom: 10px;
+}
+
+.hotel-address {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #2196f3;
+}
+
+.location {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.room-policies {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.guests {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.hotel-offer-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .amenity-tag {
   background-color: #e0e0e0;
   padding: 4px 8px;
   border-radius: 12px;
-  margin-right: 8px;
   font-size: 0.8rem;
 }
 
-.price {
-  font-weight: bold;
-  color: #2196f3;
+/* ...existing code... */
+
+.room-details {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* ...existing code... */
+
+.form-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.search-button,
+.book-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.search-button {
+    background: #3498db;
+    color: white;
+}
+
+.search-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+.book-button {
+    background: #2ecc71;
+    color: white;
+}
+
+.book-button:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+}
+
+.hotel-offer-header h3 {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.hotel-rating {
+    font-size: 1rem;
+    color: #f39c12;
+}
+
+.hotel-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }

@@ -20,6 +20,7 @@ const advRoutes = require('./routes/AdvertiserRoute.js');
 const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
+const hotelOffers = require("./routes/hotelOffer.routes.js");
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
@@ -72,6 +73,7 @@ app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/gift", giftRoutes);
+app.use("/hotelOffer", hotelOffers);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
