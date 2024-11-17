@@ -1,11 +1,14 @@
 // src/GiftList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useCurrency } from '../components/CurrencyContext'; // Assuming CurrencyContext is in components
 
-//TODO add giftItem form(for admin to add items) that has dynamic image uploading
 const GiftList = () => {
     const [gifts, setGifts] = useState([]);
+    
+    // Get the selected currency and exchange rates from context
+    const { selectedCurrency, exchangeRates } = useCurrency();
 
     useEffect(() => {
         const fetchGifts = async () => {
@@ -36,6 +39,14 @@ const GiftList = () => {
         }
     };
 
+    // Function to convert price to selected currency
+    const convertPrice = (price) => {
+        if (exchangeRates[selectedCurrency]) {
+            return (price * exchangeRates[selectedCurrency]).toFixed(2); // Convert price based on exchange rate
+        }
+        return price.toFixed(2); // Return original price if no exchange rate found
+    };
+
     return (
         <div>
             <h1>Gift Items</h1>
@@ -46,8 +57,8 @@ const GiftList = () => {
                         <h2>{gift.name}</h2>
                         <img src={gift.image} alt={gift.name} width="100" />
                         <p>{gift.description}</p>
-                        <p>Price: ${gift.price}</p>
-                        <p>Purchases: {gift.purchases}</p> {/* Use the updated state here */}
+                        <p>Price: {selectedCurrency} {convertPrice(gift.price)}</p> {/* Display price in selected currency */}
+                        <p>Purchases: {gift.purchases}</p>
                         <button onClick={() => handlePurchase(gift._id)}>Buy</button>
                     </li>
                 ))}

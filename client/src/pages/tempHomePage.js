@@ -1,30 +1,28 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
 
-//TODO make dynamic button placement with custom text for each user type more efficient
-//TODO figure out how to make fetchData accessible globally to all project files w/o having to implement it each time
 const TempHomePage = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [base64, setBase64] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
+  const { selectedCurrency, setSelectedCurrency, exchangeRates } = useCurrency();
 
   useEffect(() => {
-    // "fetchData()" is called when the component mounts (i.e when page is first opened)
     fetchData();
-    // fetchBase64();
-  }, []); // Add empty dependency array to run only once on mount
+  }, []);
 
   async function fetchData() {
-    // Function to check if user is logged in, by checking if cookie exists
     const accessToken = Cookies.get("token");
     const loggedInUser = Cookies.get("username");
     const userType = Cookies.get("userType");
     const acceptedTerms = Cookies.get("acceptedTerms");
+
     if (!accessToken || acceptedTerms === "false") {
       console.log("Should not have access to home!");
       navigate("/");
@@ -38,19 +36,18 @@ const TempHomePage = () => {
   }
 
   function removeAllCookies() {
-    const allCookies = Cookies.get(); // Get all cookies
+    const allCookies = Cookies.get();
     for (let cookie in allCookies) {
-      Cookies.remove(cookie); // Remove each cookie
+      Cookies.remove(cookie);
     }
   }
 
   function handleLogout() {
-    // Logout functionality that removes cookie and calls checker (leading to redirection to login)
     removeAllCookies();
     fetchData();
   }
 
-  const fetchBase64 = async (event) => {
+  const fetchBase64 = async () => {
     const loggedInUser = Cookies.get("username");
     try {
       const response = await axios.get(
@@ -64,8 +61,6 @@ const TempHomePage = () => {
     } catch (error) {
       console.error("Error fetching file:", error);
     }
-
-    // console.log(fileName);
   };
 
   const handleViewProfile = () => {
@@ -84,10 +79,27 @@ const TempHomePage = () => {
     }
   };
 
-  const [username, setUsername] = useState(Cookies.get("username"));
-  const [userType, setUserType] = useState(Cookies.get("userType"));
+  const handleCurrencyChange = (event) => {
+    setSelectedCurrency(event.target.value);
+  };
+
+  const [username] = useState(Cookies.get("username"));
+  const [userType] = useState(Cookies.get("userType"));
+
   return (
     <div className="container">
+      {/* Currency Selector (Top-left corner) */}
+      <div className="currency-selector">
+        <h2>Select Currency:</h2>
+        <select value={selectedCurrency} onChange={handleCurrencyChange}>
+          {Object.keys(exchangeRates).map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <h1>
         Welcome {username}, you are an {userType}!!
       </h1>

@@ -1,6 +1,17 @@
 import React from "react";
+import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
 
 const ViewMuseumCard = ({ museum, nationality, occupation }) => {
+  const { selectedCurrency, exchangeRates } = useCurrency();
+
+  // Function to convert price to selected currency
+  const convertPrice = (priceInUSD) => {
+    if (exchangeRates[selectedCurrency]) {
+      return (priceInUSD * exchangeRates[selectedCurrency]).toFixed(2);
+    }
+    return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
+  };
+
   // Extract the country from museum.location
   const museumCountry = museum.location.split(",")[1]?.trim();
   let ticketPrice;
@@ -11,6 +22,27 @@ const ViewMuseumCard = ({ museum, nationality, occupation }) => {
   } else {
     ticketPrice = museum.ticketPrices.foreigner;
   }
+
+  // Share button handler
+  const handleShare = async () => {
+    const shareData = {
+      title: museum.name,
+      text: `Check out this amazing museum: ${museum.name}\nLocated at: ${museum.location}\nFind out more here: `,
+      url: museum.website || window.location.href, // Use museum's website or current URL
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log("Museum shared successfully");
+      } catch (error) {
+        console.error("Error sharing museum:", error);
+      }
+    } else {
+      // Fallback for unsupported browsers
+      alert("Sharing is not supported on this browser.");
+    }
+  };
 
   return (
     <section className="articles">
@@ -24,11 +56,12 @@ const ViewMuseumCard = ({ museum, nationality, occupation }) => {
             <p className="location">{museum.location}</p>
             <p>{museum.description}</p>
             <p className="opening-hours">
-              Opening Hours: {museum.openingHours.from} -{" "}
-              {museum.openingHours.to}
+              Opening Hours: {museum.openingHours.from} - {museum.openingHours.to}
             </p>
             <p className="ticket-price">
-              Ticket: <span className="price-value">${ticketPrice}</span>
+              Ticket: <span className="price-value">
+                ${convertPrice(ticketPrice)} {selectedCurrency}
+              </span>
             </p>
             {/* Display Tags */}
             <div className="tags-cont">
@@ -39,6 +72,10 @@ const ViewMuseumCard = ({ museum, nationality, occupation }) => {
                   </span>
                 ))}
             </div>
+            {/* Share Button */}
+            <button className="share-button" onClick={handleShare}>
+              Share Museum
+            </button>
           </div>
         </div>
       </article>
