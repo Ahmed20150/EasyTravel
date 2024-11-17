@@ -12,6 +12,7 @@ const ExplorePage = () => {
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [museums, setMuseums] = useState([]);
+  const [filteredMuseums, setFilteredMuseums] = useState([]);
   const [scrollDistance, setScrollDistance] = useState(340);
 
   const [loadingItineraries, setLoadingItineraries] = useState(true);
@@ -34,8 +35,18 @@ const ExplorePage = () => {
   const [filterCriteriaActivities, setFilterCriteriaActivities] = useState({
     maxBudget: "",
     date: "",
+    rating: "", // Added rating filter for activities
   });
 
+  const [searchCategory, setSearchCategory] = useState(""); // Added state for category search
+  const [searchTags, setSearchTags] = useState(""); // Added state for tag search for activities
+  const [searchMuseumTags, setSearchMuseumTags] = useState(""); // Added state for tag search for museums
+  const [searchMuseumName, setSearchMuseumName] = useState(""); // Added state for searching museums by name
+  const [searchItineraryCreator, setSearchItineraryCreator] = useState(""); // Search by itinerary creator
+  const [searchActivityCreator, setSearchActivityCreator] = useState(""); // Search by activity creator
+
+  
+  
   const itineraryScrollRef = useRef(null);
   const activityScrollRef = useRef(null);
   const museumScrollRef = useRef(null);
@@ -61,11 +72,16 @@ const ExplorePage = () => {
 
   useEffect(() => {
     applyFiltersItineraries();
-  }, [filterCriteriaItineraries, itineraries]);
+  }, [filterCriteriaItineraries, itineraries,searchItineraryCreator]);
 
   useEffect(() => {
     applyFiltersActivities();
-  }, [filterCriteriaActivities, activities]);
+  }, [filterCriteriaActivities, activities, searchCategory, searchTags, searchActivityCreator]); // Added searchActivityCreator to the dependency array
+  
+
+  useEffect(() => {
+    applyFiltersMuseums();
+  }, [museums, searchMuseumTags, searchMuseumName]); // Re-run filter when searchMuseumTags or searchMuseumName changes
 
   const fetchItineraries = async () => {
     setLoadingItineraries(true);
@@ -96,9 +112,17 @@ const ExplorePage = () => {
     );
   };
 
-  const filteredMuseums = selectedTags.length
+  const filteredMuseumsByTags = searchMuseumTags
     ? museums.filter((museum) =>
-        museum.tags.some((tag) => selectedTags.includes(tag))
+        museum.tags.some((tag) =>
+          tag.toLowerCase().includes(searchMuseumTags.toLowerCase())
+        )
+      )
+    : museums;
+
+  const filteredMuseumsByName = searchMuseumName
+    ? museums.filter((museum) =>
+        museum.name.toLowerCase().includes(searchMuseumName.toLowerCase())
       )
     : museums;
 
@@ -110,6 +134,27 @@ const ExplorePage = () => {
   const handleFilterChangeActivities = (e) => {
     const { name, value } = e.target;
     setFilterCriteriaActivities((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearchCategoryChange = (e) => {
+    setSearchCategory(e.target.value); // Handle category search input change
+  };
+
+  const handleSearchItineraryCreatorChange = (e) => {
+    setSearchItineraryCreator(e.target.value); // Handle itinerary creator search input change
+  };
+  
+
+  const handleSearchTagsChange = (e) => {
+    setSearchTags(e.target.value); // Handle tags search input change
+  };
+
+  const handleSearchMuseumTagsChange = (e) => {
+    setSearchMuseumTags(e.target.value); // Handle tags search for museums
+  };
+
+  const handleSearchMuseumNameChange = (e) => {
+    setSearchMuseumName(e.target.value); // Handle name search for museums
   };
 
   const applyFiltersItineraries = () => {
@@ -142,6 +187,13 @@ const ExplorePage = () => {
           .includes(filterCriteriaItineraries.language.toLowerCase())
       );
     }
+    if (searchItineraryCreator) {
+      filtered = filtered.filter(
+        (itinerary) =>
+          itinerary.creator &&
+          itinerary.creator.toLowerCase().includes(searchItineraryCreator.toLowerCase())
+      );
+    }
 
     setFilteredItineraries(filtered);
   };
@@ -149,12 +201,43 @@ const ExplorePage = () => {
   const applyFiltersActivities = () => {
     let filtered = [...activities];
 
+    // Apply category search filter if present
+    if (searchCategory) {
+      filtered = filtered.filter((activity) =>
+        activity.category.toLowerCase().includes(searchCategory.toLowerCase()) // Filter by category
+      );
+    }
+
+    if (searchActivityCreator) {
+      filtered = filtered.filter(
+        (activity) =>
+          activity.creator &&
+          activity.creator.toLowerCase().includes(searchActivityCreator.toLowerCase())
+      );
+    }
+    
+    
+
+
+    
+
+    // Apply tag search filter if present
+    if (searchTags) {
+      filtered = filtered.filter((activity) =>
+        activity.tags.some((tag) =>
+          tag.toLowerCase().includes(searchTags.toLowerCase()) // Filter by tags
+        )
+      );
+    }
+
+    // Budget filter
     if (filterCriteriaActivities.maxBudget) {
       filtered = filtered.filter(
         (activity) => activity.price.max <= filterCriteriaActivities.maxBudget
       );
     }
 
+    // Date filter
     if (filterCriteriaActivities.date) {
       const selectedDate = new Date(filterCriteriaActivities.date);
       filtered = filtered.filter((activity) =>
@@ -165,7 +248,27 @@ const ExplorePage = () => {
       );
     }
 
+    // Rating filter
+    if (filterCriteriaActivities.rating) {
+      filtered = filtered.filter(
+        (activity) => activity.avgRating >= filterCriteriaActivities.rating
+      );
+    }
+
     setFilteredActivities(filtered);
+  };
+
+  const applyFiltersMuseums = () => {
+    let filtered = [...filteredMuseumsByTags];
+
+    // Apply museum name search filter if present
+    if (searchMuseumName) {
+      filtered = filtered.filter((museum) =>
+        museum.name.toLowerCase().includes(searchMuseumName.toLowerCase())
+      );
+    }
+
+    setFilteredMuseums(filtered); // Update filteredMuseums
   };
 
   // Sorting for itineraries
@@ -189,42 +292,89 @@ const ExplorePage = () => {
 
     const sortedActivities = [...activities];
     if (option === "rating") {
-      sortedActivities.sort((a, b) => b.avgRating - a.avgRating);
+      sortedActivities.sort((a, b) => b.avgRating - a.avgRating); // Descending by rating
     } else if (option === "price") {
-      sortedActivities.sort(
-        (a, b) =>
-          (a.price.min + a.price.max) / 2 - (b.price.min + b.price.max) / 2
-      );
+      sortedActivities.sort((a, b) => a.price.max - b.price.max); // Ascending by price
     }
     setActivities(sortedActivities);
   };
 
+  const handleSearchActivityCreatorChange = (e) => {
+    setSearchActivityCreator(e.target.value);
+  };
+  
+  
+
   return (
     <div className="explore-page">
       <h1>Explore Upcoming Attractions</h1>
-      <p>Discover activities, itineraries, and historical places near you.</p>
-      {/* Itineraries Filter Section */}
+
+      {/* Museums Filter Section */}
+      <div className="filter-section">
+        <h2 className="filters-title">Filter Museums</h2>
+        <div className="filters">
+          <div className="filter">
+            <label htmlFor="museum-name">Search by Museum Name:</label>
+            <input
+              type="text"
+              id="museum-name"
+              value={searchMuseumName}
+              onChange={handleSearchMuseumNameChange}
+              placeholder="Enter museum name"
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="museum-tags">Search by Tags:</label>
+            <input
+              type="text"
+              id="museum-tags"
+              value={searchMuseumTags}
+              onChange={handleSearchMuseumTagsChange}
+              placeholder="Enter tags (comma separated)"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Museums Section */}
+      <div className="section">
+        <h2 className="section-title">Museums</h2>
+        <div className="card-scroll-container">
+          <button
+            onClick={() => handleScroll("left", museumScrollRef)}
+            className="scroll-button left"
+          >
+            ←
+          </button>
+          <div className="card-scroll" ref={museumScrollRef}>
+            {loadingMuseums ? (
+              <p>Loading museums...</p>
+            ) : filteredMuseums.length > 0 ? (
+              filteredMuseums.map((museum) => (
+                <ViewMuseumCard key={museum._id} museum={museum} />
+              ))
+            ) : (
+              <p>No museums match your filters or selected tags.</p>
+            )}
+          </div>
+          <button
+            onClick={() => handleScroll("right", museumScrollRef)}
+            className="scroll-button right"
+          >
+            →
+          </button>
+        </div>
+      </div>
+
+      {/* Itinerary Filter Section */}
       <div className="filter-section">
         <h2 className="filters-title">Filter Itineraries</h2>
         <div className="filters">
-          {/* Sorting Options */}
           <div className="filter">
-            <label htmlFor="sort-itineraries">Sort by:</label>
-            <select
-              id="sort-itineraries"
-              value={sortOptionItineraries}
-              onChange={handleSortItineraries}
-            >
-              <option value="default">Default</option>
-              <option value="rating">Average Rating ⭐</option>
-              <option value="price">Price</option>
-            </select>
-          </div>
-          <div className="filter">
-            <label htmlFor="maxBudget">Max Budget:</label>
+            <label htmlFor="maxBudget-itinerary">Max Budget:</label>
             <input
               type="number"
-              id="maxBudget"
+              id="maxBudget-itinerary"
               name="maxBudget"
               value={filterCriteriaItineraries.maxBudget}
               onChange={handleFilterChangeItineraries}
@@ -232,25 +382,46 @@ const ExplorePage = () => {
             />
           </div>
           <div className="filter">
-            <label htmlFor="date">Date:</label>
+            <label htmlFor="date-itinerary">Date:</label>
             <input
               type="date"
-              id="date"
+              id="date-itinerary"
               name="date"
               value={filterCriteriaItineraries.date}
               onChange={handleFilterChangeItineraries}
             />
           </div>
           <div className="filter">
-            <label htmlFor="language">Language:</label>
+            <label htmlFor="language-itinerary">Language:</label>
             <input
               type="text"
-              id="language"
+              id="language-itinerary"
               name="language"
               value={filterCriteriaItineraries.language}
               onChange={handleFilterChangeItineraries}
               placeholder="Enter language"
             />
+          </div><div className="filter">
+            <label htmlFor="search-itinerary-creator">Search by Itinerary Creator:</label>
+            <input
+              type="text"
+              id="search-itinerary-creator"
+              value={searchItineraryCreator}
+              onChange={handleSearchItineraryCreatorChange}
+              placeholder="Enter creator name"
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="sort-itinerary">Sort By:</label>
+            <select
+              id="sort-itinerary"
+              value={sortOptionItineraries}
+              onChange={handleSortItineraries}
+            >
+              <option value="default">Default</option>
+              <option value="rating">Average Rating</option>
+              <option value="price">Price</option>
+            </select>
           </div>
         </div>
       </div>
@@ -258,8 +429,6 @@ const ExplorePage = () => {
       {/* Itineraries Section */}
       <div className="section">
         <h2 className="section-title">Itineraries</h2>
-
-        {/* Render Itineraries */}
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", itineraryScrollRef)}
@@ -269,13 +438,13 @@ const ExplorePage = () => {
           </button>
           <div className="card-scroll" ref={itineraryScrollRef}>
             {loadingItineraries ? (
-              <div className="loader">Loading Itineraries...</div>
+              <p>Loading itineraries...</p>
             ) : filteredItineraries.length > 0 ? (
               filteredItineraries.map((itinerary) => (
                 <ViewItineraryCard key={itinerary._id} itinerary={itinerary} />
               ))
             ) : (
-              <div className="no-results">No itineraries match the filters</div>
+              <p>No itineraries match your filters.</p>
             )}
           </div>
           <button
@@ -291,24 +460,11 @@ const ExplorePage = () => {
       <div className="filter-section">
         <h2 className="filters-title">Filter Activities</h2>
         <div className="filters">
-          {/* Sort */}
           <div className="filter">
-            <label htmlFor="sort-activities">Sort by:</label>
-            <select
-              id="sort-activities"
-              value={sortOptionActivities}
-              onChange={handleSortActivities}
-            >
-              <option value="default">Default</option>
-              <option value="rating">Average Rating ⭐</option>
-              <option value="price">Starting Price</option>
-            </select>
-          </div>
-          <div className="filter">
-            <label htmlFor="maxBudget">Max Budget:</label>
+            <label htmlFor="maxBudget-activity">Max Budget:</label>
             <input
               type="number"
-              id="maxBudget"
+              id="maxBudget-activity"
               name="maxBudget"
               value={filterCriteriaActivities.maxBudget}
               onChange={handleFilterChangeActivities}
@@ -316,14 +472,73 @@ const ExplorePage = () => {
             />
           </div>
           <div className="filter">
-            <label htmlFor="date">Date:</label>
+            <label htmlFor="date-activity">Date:</label>
             <input
               type="date"
-              id="date"
+              id="date-activity"
               name="date"
               value={filterCriteriaActivities.date}
               onChange={handleFilterChangeActivities}
             />
+          </div>
+          <div className="filter">
+            <label htmlFor="category-activity">Category:</label>
+            <input
+              type="text"
+              id="category-activity"
+              value={searchCategory}
+              onChange={handleSearchCategoryChange}
+              placeholder="Enter category"
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="tags-activity">Search by Tags:</label>
+            <input
+              type="text"
+              id="tags-activity"
+              value={searchTags}
+              onChange={handleSearchTagsChange}
+              placeholder="Enter tags (comma separated)"
+            />
+          </div>
+          <div className="filter">
+          <label htmlFor="search-activity-creator">Search by Activity Creator:</label>
+          <input
+            type="text"
+            id="search-activity-creator"
+            value={searchActivityCreator}
+            onChange={handleSearchActivityCreatorChange}
+            placeholder="Enter creator name"
+          />
+        </div>
+
+ 
+          
+          <div className="filter">
+            <label htmlFor="rating-activity">Min Rating:</label>
+            <input
+              type="number"
+              id="rating-activity"
+              name="rating"
+              value={filterCriteriaActivities.rating}
+              onChange={handleFilterChangeActivities}
+              min="0"
+              max="5"
+              step="0.1"
+              placeholder="Enter minimum rating"
+            />
+          </div>
+          <div className="filter">
+            <label htmlFor="sort-activity">Sort By:</label>
+            <select
+              id="sort-activity"
+              value={sortOptionActivities}
+              onChange={handleSortActivities}
+            >
+              <option value="default">Default</option>
+              <option value="rating">Average Rating</option>
+              <option value="price">Price</option>
+            </select>
           </div>
         </div>
       </div>
@@ -331,8 +546,6 @@ const ExplorePage = () => {
       {/* Activities Section */}
       <div className="section">
         <h2 className="section-title">Activities</h2>
-
-        {/* Render Activities */}
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", activityScrollRef)}
@@ -342,60 +555,17 @@ const ExplorePage = () => {
           </button>
           <div className="card-scroll" ref={activityScrollRef}>
             {loadingActivities ? (
-              <div className="loader">Loading Activities...</div>
+              <p>Loading activities...</p>
             ) : filteredActivities.length > 0 ? (
               filteredActivities.map((activity) => (
                 <ViewActivityCard key={activity._id} activity={activity} />
               ))
             ) : (
-              <div className="no-results">No activities match the filters</div>
+              <p>No activities match your filters.</p>
             )}
           </div>
           <button
             onClick={() => handleScroll("right", activityScrollRef)}
-            className="scroll-button right"
-          >
-            →
-          </button>
-        </div>
-      </div>
-
-      <div className="section">
-        <h2 className="section-title">Museums & Historical Places</h2>
-        <div className="museum-tag-filter">
-          {predefinedTags.map((tag) => (
-            <div
-              key={tag}
-              className={`tag ${selectedTags.includes(tag) ? "active" : ""}`}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </div>
-          ))}
-        </div>
-        <div className="card-scroll-container">
-          <button
-            onClick={() => handleScroll("left", museumScrollRef)}
-            className="scroll-button left"
-          >
-            ←
-          </button>
-          <div className="card-scroll" ref={museumScrollRef}>
-            {loadingMuseums ? (
-              <div className="loader">Loading Museums...</div>
-            ) : (
-              filteredMuseums.map((museum) => (
-                <ViewMuseumCard
-                  key={museum._id}
-                  museum={museum}
-                  nationality={nationality}
-                  occupation={occupation}
-                />
-              ))
-            )}
-          </div>
-          <button
-            onClick={() => handleScroll("right", museumScrollRef)}
             className="scroll-button right"
           >
             →
