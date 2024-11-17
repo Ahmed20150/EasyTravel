@@ -3,8 +3,8 @@ import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import { useCookies } from "react-cookie";
 function Revenue() {
-  const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
-  const userType = cookies.userType; // Access the userType
+  const [cookies] = useCookies(["userType", "username"]); 
+  const userType = cookies.userType; 
   const username = cookies.username;
   const [it_totalRevenue, setItTotalRevenue] = useState(0);
   const [museum_totalRevenue, setMuseumTotalRevenue] = useState(0);
@@ -24,13 +24,13 @@ function Revenue() {
   // Utility function for formatting dates
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     return `${month}-${day}-${year}`;
   };
 
-  // Show All Revenue (Gift Items, Activities, Itineraries, and Museums)
+  
   const handleShowAllRevenueClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse, giftItemsResponse] = await Promise.all([
@@ -79,7 +79,7 @@ function Revenue() {
           default:
             ticketPrice = 0;
         }
-        const numofpurchases = museum.numofpurchases || 1; // Default to 1 if undefined
+        const numofpurchases = museum.numofpurchases || 1; 
         const subtotal2 = ticketPrice * numofpurchases;
         museums_totalRevenue += subtotal2;
       });
@@ -98,7 +98,7 @@ function Revenue() {
       console.error('Error fetching data:', error);
     }
   };
-  // Filter Data Based on Selected Filter
+  
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([

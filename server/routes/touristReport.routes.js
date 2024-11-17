@@ -5,17 +5,17 @@ const router = express.Router();
 
 router.get('/tourist-report', async (req, res) => {
   try {
-    // Check if a month query parameter is provided
+    
     const month = parseInt(req.query.month, 10);
 
     if (month && month >= 1 && month <= 12) {
-      // Ensure the month is two digits (e.g., "01" for January)
+      
       const monthStr = month < 10 ? '0' + month : month;
 
-      // Start of the month (e.g., "2024-05-01T00:00:00Z")
+      
       const startDate = new Date(`2024-${monthStr}-01T00:00:00Z`);
 
-      // End of the month (e.g., "2024-05-31T23:59:59.999Z")
+      
       const endDate = new Date(`2024-${monthStr}-01T23:59:59.999Z`);
 
       // Adjust the endDate to be the last day of the month dynamically
