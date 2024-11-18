@@ -70,14 +70,28 @@ const ExplorePage = () => {
   const fetchItineraries = async () => {
     setLoadingItineraries(true);
     const response = await axios.get("http://localhost:3000/itinerary");
-    setItineraries(response.data);
+    const currentDate = new Date();
+    const upcomingItineraries = response.data
+      .filter((itinerary) => itinerary.flagged === "no") // Exclude flagged itineraries
+      .map((itinerary) => ({
+        ...itinerary,
+        availableDates: itinerary.availableDates.filter(
+          (date) => new Date(date) > currentDate
+        ),
+      }))
+      .filter((itinerary) => itinerary.availableDates.length > 0);
+    setItineraries(upcomingItineraries);
     setLoadingItineraries(false);
   };
 
   const fetchActivities = async () => {
     setLoadingActivities(true);
     const response = await axios.get("http://localhost:3000/activities");
-    setActivities(response.data);
+    const currentDate = new Date();
+    const upcomingActivities = response.data
+      .filter((activity) => activity.flagged === "no") // Exclude flagged activities
+      .filter((activity) => new Date(activity.date) > currentDate);
+    setActivities(upcomingActivities);
     setLoadingActivities(false);
   };
 
