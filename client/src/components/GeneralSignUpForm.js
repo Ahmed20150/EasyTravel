@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '10px',
   },
 }));
-//TODO make dropdown for nationality
+
 
 export default function GeneralSignUpForm() {
 

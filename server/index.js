@@ -20,6 +20,8 @@ const advRoutes = require('./routes/AdvertiserRoute.js');
 const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
+const Reviews = require('./routes/review.routes.js');
+const bookingRoutes = require('./routes/booking.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
@@ -31,6 +33,8 @@ const notificationRouter = require("./routes/notificationRouter.js");
 
 const activityRouter= require("./routes/activity.routes.js");
 
+const Review=require("./routes/review.routes.js")
+const Transportation=require("./routes/transportation.routes.js")
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -45,9 +49,11 @@ app.use(cors());
 
 require('./config/db');
 
+
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
-
+app.use('/review',Review);
+app.use('/transport',Transportation);
 
 
 const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
@@ -65,7 +71,7 @@ app.use(cors());
 app.use(cookieParser());
 
 app.use('/admin', adminRoutes);
-
+app.use('/review', Reviews);
 //connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
 app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
 const activityRoutes = require("./routes/activity.routes.js");
@@ -79,24 +85,16 @@ app.use("/gift", giftRoutes);
 
 app.use("/notifications", notificationRouter);
 app.use("/tourguide", tourGuideRoutes);
+app.use("/booking", bookingRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-// const conn = mongoose.createConnection("mongodb+srv://ahmed1gasser:jxaauvDrMDrxvUQS@acl.05st6.mongodb.net/?retryWrites=true&w=majority&appName=ACL", { useNewUrlParser: true,
-//   useUnifiedTopology: true,});
-
-// let gfs;
-// conn.once('open', () => {
-//   gfs = Grid(conn.db, mongoose.mongo);
-//   gfs.collection('uploads');
-//   console.log('Connected to GridFS');
-// });
 
 //TODO arrange routes in their seperate files, keep index clean
 //TODO store sendEmail & generateOTP Files in a folder
-//TODO check for repeated emails / usernames
+
 
 
 //getting all tourists

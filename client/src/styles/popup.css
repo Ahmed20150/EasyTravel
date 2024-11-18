@@ -1,0 +1,50 @@
+.review-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top of other elements */
+  }
+  
+  .review-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .review-modal h2 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+  }
+  
+  .review-modal input,
+  .review-modal textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .review-modal button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .review-modal button:hover {
+    background-color: #0056b3;
+  }
+  

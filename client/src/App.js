@@ -46,10 +46,12 @@ import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
 import GiftList from './pages/GiftList';
+import ViewPastEvents from './pages/ViewPastEvents';
+import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
+import BookTransportation from './components/BookTransportation'
 
 
-//TODO add navigation buttons between all pages
-//
+
 
 
 import Categories from './pages/Categories';
@@ -106,6 +108,10 @@ function App() {
             <Route path="/activities/create" element={<ActivityForm />} />
             <Route path="/activities/edit/:id" element={<ActivityEdit />} />
             <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
+            <Route path="/viewPastEvents" element={<ViewPastEvents />} />
+            <Route path="/viewUpcomingEvents" element={<ViewUpcomingEvents />} />
+
+
             <Route path="/itinerary" element={<ItineraryList />} />
             <Route path="/itinerary/create" element={<ItineraryForm />} />
             <Route path="/itinerary/create/selectActivity" element={<SelectActivity />}/>
@@ -123,6 +129,8 @@ function App() {
             <Route path="/view" element={<ViewTables />}/>
             <Route path="/revenue" element={<Revenue />}/>
             <Route path="/giftitem" element={<GiftItemForm />}/>
+            <Route path="/bookTransport" element={<BookTransportation />}/>
+
           </Routes>
       </BrowserRouter>
     </div>

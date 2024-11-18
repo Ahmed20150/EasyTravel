@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const itinerarySchema = new mongoose.Schema({
   creator: {
     type: String,
@@ -92,7 +93,28 @@ const itinerarySchema = new mongoose.Schema({
     default: 'no', // Default value is 'no'
     required: [true, "Flag status is required"] // Custom error message
   },
+
+  ratings: [
+    {
+      rating: { type: Number, required: true },
+      comment: { type: String, required: true }
+    }
+  ],
+  totalRatingCount: { type: Number, default: 0 },
+  avgRating: { type: Number, default: 0 }
 });
+itinerarySchema.methods.updateRatings = function () {
+  this.totalRatingCount = this.ratings.length;
+  const sum = this.ratings.reduce((acc, review) => acc + review.rating, 0);
+  this.avgRating = this.totalRatingCount ? sum / this.totalRatingCount : 0;
+  return this.save();
+};
+
+// Create Review Method
+itinerarySchema.methods.createReview = function (rating, comment) {
+  this.ratings.push({ rating, comment });
+  return this.updateRatings(); // Update total count and average rating
+};
 
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);
 module.exports = Itinerary;
