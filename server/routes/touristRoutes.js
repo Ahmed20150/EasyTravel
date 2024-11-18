@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Tourist = require("../models/tourist.model"); // Adjust the path as needed
 const Itinerary = require('../models/itinerary.model'); // Adjust the path based on where your Itinerary model is located
+const Booking = require('../models/booking.model'); // Adjust the path based on where your Itinerary model is located
 
 
 // Middleware for authentication (if needed)
@@ -9,7 +10,26 @@ const authenticate = (req, res, next) => {
   // Your authentication logic here
   next();
 };
+router.get("/api/bookings/:username", async (req, res) => {
+  const { username } = req.params;
 
+  try {
+      // Query the database for all bookings with the given touristUsername
+      const bookings = await Booking.find({ touristUsername: username });
+
+      if (bookings.length === 0) {
+          return res.status(404).json({ message: "No bookings found for this user" });
+      }
+
+      // You can now save the bookings to another collection, or perform further actions
+      // Example: Saving the bookings to another collection or sending them back to the client
+      // For example, returning all the booking details
+      res.status(200).json({ bookings });
+  } catch (err) {
+      console.error("Error fetching bookings:", err);
+      res.status(500).json({ message: "Server error" });
+  }
+});
 // Read Tourist Profile by username
 router.get("/tourist/:username", authenticate, async (req, res) => {
   try {

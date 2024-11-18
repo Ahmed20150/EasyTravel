@@ -586,4 +586,5 @@ app.use('/api/Adv', advRoutes);
 app.use('/api/seller', sellerRoutes);
 app.use('/api/bookmarkEvent', touristRoutes);
 app.use('/api', touristRoutes);
+app.use(touristRoutes);
 

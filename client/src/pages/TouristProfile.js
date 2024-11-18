@@ -45,7 +45,18 @@ const TouristProfile = () => {
                 console.error("Error fetching bookmarked events", err);
             }
         };
-
+        const fetchBookings = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/bookings/${username}`);
+                const bookings = response.data.bookings || [];
+                const upcomingBookings = bookings.filter(booking =>
+                    isItineraryWithinTwoDays(booking.bookingDate)
+                );
+                setBookedItineraries(upcomingBookings);  // Set booked itineraries within 2 days
+            } catch (err) {
+                console.error("Error fetching bookings", err);
+            }
+        };
         const fetchItineraries = async (eventIds) => {
             try {
                 const response = await axios.post("http://localhost:3000/api/itineraries/fetch", { eventIds });
@@ -54,7 +65,7 @@ const TouristProfile = () => {
                 console.error("Error fetching itineraries", err);
             }
         };
-
+        fetchBookings();
         fetchTouristProfile();
         fetchBookmarkedEvents();
     }, [username]);
@@ -97,11 +108,8 @@ const TouristProfile = () => {
             }
           };
         if (tourist && bookedItineraries.length > 0) {
-            const upcomingItineraries = bookedItineraries.filter(itinerary =>
-                isItineraryWithinTwoDays(itinerary.timeline)
-            );
 
-            upcomingItineraries.forEach(itinerary => {
+            bookedItineraries.forEach(itinerary => {
                 const subject = "Upcoming Itinerary Reminder";
                 const text = `Dear ${tourist.username}, you have an upcoming itinerary "${itinerary.name}" scheduled for ${new Date(itinerary.timeline).toLocaleDateString()}. Please make sure to review your plans.`;
                 
@@ -129,36 +137,25 @@ const TouristProfile = () => {
         }
     };
 
-    const isItineraryWithinTwoDays = (timeline) => {
-        // Convert MM/DD/YYYY to YYYY-MM-DD for reliable parsing
-        const [month, day, year] = timeline.split('/');
-        const formattedTimeline = `${year}-${month}-${day}`;
-    
-        const itineraryDate = new Date(formattedTimeline);
+    const isItineraryWithinTwoDays = (bookingDate) => {
+        const bookingDateObj = new Date(bookingDate);
         const currentDate = new Date();
         const twoDaysLater = new Date();
         twoDaysLater.setDate(currentDate.getDate() + 2);
-    
+
         // Zero out the time components for accurate date-only comparison
-        itineraryDate.setHours(0, 0, 0, 0);
+        bookingDateObj.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
         twoDaysLater.setHours(0, 0, 0, 0);
-    
-        console.log('Original timeline:', timeline);
-        console.log('Itinerary Date:', itineraryDate);
-        console.log('Current Date:', currentDate);
-        console.log('Two Days Later:', twoDaysLater);
-        console.log('Within Two Days:', itineraryDate >= currentDate && itineraryDate <= twoDaysLater);
-    
-        // Check if the itinerary is within the next 2 days
-        return itineraryDate >= currentDate && itineraryDate <= twoDaysLater;
+
+        return bookingDateObj >= currentDate && bookingDateObj <= twoDaysLater;
     };
     
     
 
-    const filteredBookedItineraries = bookedItineraries.filter(itinerary => 
-        isItineraryWithinTwoDays(itinerary.timeline)
-    );
+    // const filteredBookedItineraries = bookedItineraries.filter(itinerary => 
+    //     isItineraryWithinTwoDays(itinerary.timeline)
+    // );
 
     // Filter bookmarked itineraries with 'changed' and 'activated' status
     const filteredBookmarkedItineraries = bookmarkedEvents.filter(eventId => {
@@ -235,10 +232,10 @@ const TouristProfile = () => {
                         )}
                     </div>
 
-                    <h2>Notifications for Upcoming Booked Itineraries (Within 2 Days):</h2>
+                    <h2>Booked Itineraries (Within 2 Days):</h2>
                     <div className="itinerary-list">
-                        {filteredBookedItineraries.length > 0 ? (
-                            filteredBookedItineraries.map((itinerary) => (
+                        {bookedItineraries.length > 0 ? (
+                            bookedItineraries.map((itinerary) => (
                                 <ItineraryCard
                                     key={itinerary._id}
                                     itinerary={itinerary}
