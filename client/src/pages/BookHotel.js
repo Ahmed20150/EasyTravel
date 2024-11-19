@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/BookHotel.css";
 import { useCookies } from "react-cookie";
+import {Link} from "react-router-dom";
 
 const BookHotel = () => {
   const [cityCode, setCityCode] = useState("");
@@ -136,6 +137,9 @@ const BookHotel = () => {
   return (
     <div className="book-hotel-container">
       <h1>Search for Hotels</h1>
+      <Link to="/home" className="back-button"> 
+        &larr; Back
+      </Link>
       <div className="form-card">
         <form className="hotel-form" onSubmit={handleSearch}>
           <div className="search-section">

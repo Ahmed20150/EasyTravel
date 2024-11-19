@@ -5,6 +5,7 @@ import TravelerForm from "../components/TravelerForm"; // Make sure this path is
 import { useCookies } from "react-cookie";
 import Popup from "../components/Popup"; // Import the Popup component
 import { FaPlaneDeparture } from "react-icons/fa"; // Import the required icon
+import { Link } from "react-router-dom";
 
 const BookFlight = () => {
   const [origin, setOrigin] = useState("");
@@ -344,6 +345,9 @@ const BookFlight = () => {
   return (
     <div className="book-flight-container">
       <h1>Search for Flights</h1>
+      <Link to="/home" className="back-button"> 
+        &larr; Back
+      </Link>
       <div className="form-card">
         <form className="flight-form" onSubmit={handleSearch}>
           {/* Wrap Search section in a styled box */}

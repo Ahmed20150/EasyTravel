@@ -180,10 +180,10 @@ const TempHomePage = () => {
             <button>Gift Shop</button>
           </Link>
           <Link to="/BookFLight">
-            <button>BookFLight</button>
+            <button>Book Flight</button>
           </Link>
           <Link to="/BookHotel">
-            <button>BookHotel</button>
+            <button>Book Hotel</button>
           </Link>
         <Link to="/bookTransport"><button>book Transportation</button></Link>
         </>
