@@ -154,7 +154,7 @@ router.post("/send-notification", async (req, res) => {
     // Call sendEmail with the subject "Notification"
     await sendEmail(email, "Notification", text);
 
-    res.status(200).json({ message: "Notification email sent successfully" });
+    res.status(200).json({ message: "Notification/email sent successfully" });
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).json({ error: "Failed to send notification email" });
