@@ -122,27 +122,42 @@ const TempHomePage = () => {
         </Link>
       )}
 
-      {userType === 'admin' && (
+      {userType === "admin" && (
         <>
-          <Link to="/pendingRequestsPage"><button>Pending Requests</button></Link>
-          <Link to="/adminAccountManagement"><button>Account Management</button></Link>
-          <Link to="/Categorycontrol"><button>Manage Categories</button></Link>
-          <Link to="/preferences"><button>Manage Prefrence Tags</button></Link>
-          <Link to="/revenue"><button>Financial Report</button></Link>
-          <Link to="/itinerary"><button>View itineraries</button></Link>
-          <Link to="/activities"><button>View Events</button></Link>
+          <Link to="/pendingRequestsPage">
+            <button>Pending Requests</button>
+          </Link>
+          <Link to="/adminAccountManagement">
+            <button>Account Management</button>
+          </Link>
+          <Link to="/Categorycontrol">
+            <button>Manage Categories</button>
+          </Link>
+          <Link to="/preferences">
+            <button>Manage Prefrence Tags</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
+        </>
+      )}
+      {userType === "advertiser" && (
+        <>
+          <Link to="/activities">
+            <button>View Activities</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
         </>
       )}
 
-      {userType === 'advertiser' && (
+      {userType === "seller" && (
         <>
-          <Link to="/activities"><button>View Activities</button></Link>
-          <Link to="/revenue"><button>Financial Report</button></Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
         </>
-      )}
-
-      {userType === 'seller' && (
-        <Link to="/revenue"><button>Financial Report</button></Link>
       )}
 
       {userType === "tourGuide" && (
@@ -150,14 +165,26 @@ const TempHomePage = () => {
           <Link to="/itinerary">
             <button>View Itineraries</button>
           </Link>
-          <Link to="/revenue"><button>Financial Report</button></Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
         </>
       )}
 
       {userType === "tourist" && (
         <>
-        <Link to="/ViewAllItinerary"><button>View Itineraries</button></Link>
-        <Link to="/GiftList"><button>Gift Shop</button></Link>
+          <Link to="/ViewAllItinerary">
+            <button>View Itineraries</button>
+          </Link>
+          <Link to="/GiftList">
+            <button>Gift Shop</button>
+          </Link>
+          <Link to="/BookFLight">
+            <button>BookFLight</button>
+          </Link>
+          <Link to="/BookHotel">
+            <button>BookHotel</button>
+          </Link>
         <Link to="/bookTransport"><button>book Transportation</button></Link>
         </>
       )}

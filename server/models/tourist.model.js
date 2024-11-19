@@ -44,6 +44,8 @@ const touristSchema = new mongoose.Schema({
       ref: "Itinerary",
     },
   ],
+  BookedFlights: [{ type: String }],
+  BookedHotels: [{ type: String }],
 });
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
