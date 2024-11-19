@@ -260,7 +260,6 @@ const BookHotel = () => {
               <p className="room-details">
                 <strong>Rooms:</strong>{" "}
                 {offer.offers[0].room.typeEstimated.category} -{" "}
-                {offer.offers[0].room.typeEstimated.beds} Beds
               </p>
               <p className="room-policies">
                 {formatPolicies(offer.offers[0].policies)}
