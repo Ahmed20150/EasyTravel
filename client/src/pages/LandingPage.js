@@ -8,6 +8,8 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ExplorePage from "./ExplorePage";
 
+//COMPLETED SPRINT 2
+
 const landingPage = () => {
 
     
@@ -56,6 +58,7 @@ const landingPage = () => {
             </section>
 
             <h1>Have a Peek!</h1>
+            <h2>To actually book anything, you have to be logged in!</h2>
             <Link to="/login"><ExplorePage/></Link>
 
             
