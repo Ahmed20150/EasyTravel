@@ -48,7 +48,7 @@ import MuseumsList from "./pages/museumsList";
 import GiftList from './pages/GiftList';
 import TouristReport from './pages/TouristReport'; 
 import TotalTourists from './pages/TotalActivityTourist'; 
-
+import GiftItemsFilter from './pages/GiftItemsFilter'; 
 //TODO add navigation buttons between all pages
 //
 
@@ -126,7 +126,7 @@ function App() {
             <Route path="/giftitem" element={<GiftItemForm />}/> 
             <Route path="/tourist-report" element={<TouristReport />} />
             <Route path="/totaltouristactivity" element={<TotalTourists />} />  
-            
+            <Route path="/giftfilter" element={<GiftItemsFilter />} />
             
           
           </Routes>

@@ -18,6 +18,12 @@ function Revenue() {
   const [museums, setMuseums] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [filterType, setFilterType] = useState(' '); 
+  const [month, setMonth1] = useState('');
+  const [date, setDate1] = useState('');
+  const [giftItems, setGiftItems] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -178,6 +184,43 @@ function Revenue() {
       console.error('Error fetching data:', error);
     }
   };
+  const fetchGiftItems = async () => {
+    try {
+      setError('');
+      setLoading(true);
+      if (filterType === 'month') {
+        // Validate month input
+        if (!month || isNaN(month) || month < 1 || month > 12) {
+          setError('Please enter a valid month (1-12).');
+          return;
+        }
+        const response = await axios.get(`http://localhost:3000/gift/filter/byMonth`, {
+          params: { month },
+        });
+        setGiftItems(response.data || []);
+      } else if (filterType === 'date') {
+        // Validate date input
+        if (!date) {
+          setError('Please select a valid date.');
+          return;
+        }
+        const response = await axios.get(`http://localhost:3000/gift/filter/byDate`, {
+          params: { date },
+        });
+        setGiftItems(response.data || []);
+      } else if (filterType === 'product') {
+        // Fetch all gift items along with their revenue
+        const response = await axios.get(`http://localhost:3000/gift/filter/itemsWithRevenue`);
+        setGiftItems(response.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching gift items:', err);
+      setError(err.response?.data?.message || 'Failed to fetch gift items.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const containerStyle = {
     display: 'flex',
@@ -337,13 +380,147 @@ function Revenue() {
        {userType !== 'advertiser'  && userType !== 'tourGuide' && (
           <p>Gift Item Total Revenue: ${gift_totalRevenue.toFixed(2)}</p>
       )}
-       
-       {userType === 'admin'&&  (
-        <p><strong>Total Revenue: ${totalRevenue.toFixed(2)}</strong></p>
+  
+
+     {userType === 'admin' && (
+    <p>
+      <strong>Total Revenue: ${totalRevenue.toFixed(2)}</strong>
+    </p>
+     )}
+{(userType === 'admin' || userType === 'seller') && (
+  <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+    {/* Filter Selection */}
+    <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Filter Products</h2>
+    
+    <div style={{ marginBottom: '20px' }}>
+      <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
+        Select Filter Type:
+      </label>
+      <select 
+        value={filterType} 
+        onChange={(e) => setFilterType(e.target.value)} 
+        style={{ 
+          width: '100%', 
+          padding: '10px', 
+          border: '1px solid #ccc', 
+          borderRadius: '4px', 
+          fontSize: '16px' 
+        }}
+      >
+        <option value="">Select Filter</option>
+        <option value="month">Month</option>
+        <option value="date">Date</option>
+        <option value="product">Products</option>
+      </select>
+    </div>
+
+    {/* Month Input */}
+    {filterType === 'month' && (
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
+          Enter Month (1-12):
+        </label>
+        <input
+          type="number"
+          value={month}
+          onChange={(e) => setMonth1(e.target.value)}
+          placeholder="Enter month"
+          min="1"
+          max="12"
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '16px'
+          }}
+        />
+      </div>
+    )}
+
+    {/* Date Input */}
+    {filterType === 'date' && (
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
+          Select Date:
+        </label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate1(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '16px'
+          }}
+        />
+      </div>
+    )}
+
+    {/* Fetch Button */}
+    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <button
+        onClick={fetchGiftItems}
+        style={{ 
+          padding: '10px 20px', 
+          backgroundColor: '#5e2f8a', 
+          color: '#fff', 
+          border: 'none', 
+          borderRadius: '4px', 
+          fontSize: '16px', 
+          cursor: 'pointer' 
+        }}
+        onMouseOver={(e) => (e.target.style.backgroundColor = '#5e2f8a')}
+        onMouseOut={(e) => (e.target.style.backgroundColor = 'purple')}
+        disabled={loading}
+      >
+        {loading ? 'Loading...' : 'Fetch Products'}
+      </button>
+    </div>
+
+    {/* Error Handling */}
+    {error && (
+      <div style={{ color: 'red', textAlign: 'center', marginBottom: '20px' }}>
+        {error}
+      </div>
+    )}
+
+    {/* Display Filtered Gift Items */}
+    <div style={{ marginTop: '20px' }}>
+      <h3 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Filtered Products</h3>
+      {giftItems.length > 0 ? (
+        <ul style={{ listStyleType: 'none', padding: '0' }}>
+          {giftItems.map((item) => (
+            <li 
+              key={item._id} 
+              style={{ 
+                padding: '10px', 
+                marginBottom: '10px', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                backgroundColor: '#f9f9f9'
+              }}
+            >
+              <strong>Name:</strong> {item.name} | <strong>Revenue:</strong> ${item.revenue || 0}
+              {item.date && ` | Date: ${new Date(item.date).toLocaleDateString()}`}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ textAlign: 'center', color: '#666' }}>
+          No items found for the selected{' '}
+          {filterType === 'month' ? 'month' : filterType === 'date' ? 'date' : 'product'}.
+        </p>
       )}
+    </div>
+  </div>
+)}
+    
       </div>
     </div>
-  );
+  ) ;
 }
 
 export default Revenue;
