@@ -45,14 +45,13 @@ import ItineraryForm from "./pages/ItineraryForm";
 import ItineraryList from "./pages/ItineraryList";
 import MuseumsList from "./pages/museumsList";
 import SelectActivity from "./pages/SelectActivity";
-import MuseumsList from "./pages/museumsList";
-import GiftList from "./pages/GiftList";
 import BookFLight from "./pages/BookFlight";
 import BookHotel from "./pages/BookHotel";
 import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
 import BookTransportation from './components/BookTransportation';
 import ExplorePage from "./pages/ExplorePage";
+import ViewItinerary from "./pages/ViewItinerary";
 
 
 

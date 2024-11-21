@@ -1,8 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import {useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import "./TempHomePage.css"; 
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
@@ -62,8 +62,19 @@ const TempHomePage = () => {
   }
 
   const handleViewProfile = () => {
-    if (username) {
-      navigate(`/view-profile${userType === "tourGuide" ? "" : userType}`, { state: { username } });
+    const loggedInUser = Cookies.get('username');
+    const userType = Cookies.get('userType');
+    if(userType === "tourGuide"){
+      navigate('/view-profile', { state: { username: loggedInUser } });
+    }
+    else if(userType === "advertiser"){
+      navigate('/view-profileAdv', { state: { username: loggedInUser } });
+    }
+    else if(userType === "seller"){
+      navigate('/view-profileSeller', { state: { username: loggedInUser } });
+    }
+    else{
+      navigate('/TouristProfile', { state: { username: loggedInUser } });
     }
   };
 
@@ -178,7 +189,7 @@ const TempHomePage = () => {
           </Link>
           <Link to="/ViewAllItinerary">
             
-            <button>View Itineraries</button>
+            <button>Bookmark Events</button>
           
           </Link>
             <Link to="/GiftList">

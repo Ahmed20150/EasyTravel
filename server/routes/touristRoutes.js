@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Tourist = require("../models/tourist.model"); 
 const Itinerary = require("../models/itinerary.model"); 
-const Itinerary = require('../models/itinerary.model'); // Adjust the path based on where your Itinerary model is located
 const Booking = require('../models/booking.model'); // Adjust the path based on where your Itinerary model is located
 
 
@@ -132,6 +131,7 @@ router.post("/itineraries/fetch", async (req, res) => {
 
 // Route to book an itinerary
 router.patch("/bookItinerary", authenticate, async (req, res) => {
+  try{
   const { username, newBookedItineraries } = req.body;
 
     // Fetch the itinerary price
@@ -164,7 +164,8 @@ router.patch("/bookItinerary", authenticate, async (req, res) => {
       bookedItineraries: updatedTourist.bookedItineraries,
       wallet: updatedTourist.wallet,
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error updating booked itineraries:", error);
     res.status(500).json({ message: "Server error" });
   }

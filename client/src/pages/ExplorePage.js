@@ -5,6 +5,9 @@ import ViewActivityCard from "../components/ViewActivityCard";
 import ViewMuseumCard from "../components/ViewMuseumCard";
 import { useCookies } from "react-cookie";
 import "../css/ExplorePage.css";
+import { Link } from "react-router-dom";
+import Cookies from 'js-cookie';
+
 
 const ExplorePage = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -20,6 +23,9 @@ const ExplorePage = () => {
 
   const [sortOptionItineraries, setSortOptionItineraries] = useState("default");
   const [sortOptionActivities, setSortOptionActivities] = useState("default");
+
+  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
+
 
   const [cookies] = useCookies(["nationality", "occupation"]);
   const nationality = cookies.nationality;
@@ -213,10 +219,38 @@ const ExplorePage = () => {
     setActivities(sortedActivities);
   };
 
+  const username = Cookies.get("username");
+  const handleBookmark = async (id) => {
+    try {
+        // Toggle the itinerary in the bookmarked itineraries list
+        await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+            username,
+            eventId: id, // Send only the event ID
+        });
+
+        // Update the local state based on whether the event is already bookmarked
+        setBookmarkedItineraries(prevBookmarkedItineraries => {
+            const isBookmarked = prevBookmarkedItineraries.includes(id);
+
+            // If it's already bookmarked, remove it; otherwise, add it
+            if (isBookmarked) {
+                return prevBookmarkedItineraries.filter(itineraryId => itineraryId !== id);  // Remove bookmark
+            } else {
+                return [...prevBookmarkedItineraries, id];  // Add bookmark
+            }
+        });
+    } catch (error) {
+        console.error("Error bookmarking itinerary:", error.response?.data || error.message);
+    }
+};
+
   return (
     <div className="explore-page">
       <h1>Explore Upcoming Attractions</h1>
       <p>Discover activities, itineraries, and historical places near you.</p>
+      <Link to="/home" className="back-button"> {/* Adjust the path as needed */}
+        &larr; Back
+      </Link>
       {/* Itineraries Filter Section */}
       <div className="filter-section">
         <h2 className="filters-title">Filter Itineraries</h2>

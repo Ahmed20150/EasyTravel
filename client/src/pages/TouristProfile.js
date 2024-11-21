@@ -4,6 +4,9 @@ import { useCookies } from "react-cookie";
 import { Link, useLocation } from 'react-router-dom';
 import ItineraryCard from '../components/ItineraryItem';
 import TouristForm from '../components/TouristForm';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]);
     const userType = cookies.userType;
@@ -41,6 +44,7 @@ const TouristProfile = () => {
                 const response = await axios.get(`http://localhost:3000/api/bookmarkedEvents/${username}`);
                 setBookmarkedEvents(response.data.bookmarkedEvents || []);
                 fetchItineraries(response.data.bookmarkedEvents || []);
+
             } catch (err) {
                 console.error("Error fetching bookmarked events", err);
             }
@@ -52,7 +56,9 @@ const TouristProfile = () => {
                 const upcomingBookings = bookings.filter(booking =>
                     isItineraryWithinTwoDays(booking.bookingDate)
                 );
-                setBookedItineraries(upcomingBookings);  // Set booked itineraries within 2 days
+                setBookedItineraries(upcomingBookings);  
+                
+
             } catch (err) {
                 console.error("Error fetching bookings", err);
             }
@@ -169,6 +175,7 @@ const TouristProfile = () => {
 
     return (
         <div>
+            <ToastContainer/>
             {isEditing ? (
                 tourist ? (
                     <TouristForm tourist={tourist} onUpdate={handleUpdate} isEditing={isEditing} setIsEditing={setIsEditing} />
