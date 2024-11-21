@@ -1,45 +1,20 @@
-How to run Frontend: 
+This file is concerned with only the most basic information concering our application.
+Contains: How to run frontend & backend, Types of events in our system, Useful Resources
+
+**How to run Frontend:** 
 1. Open terminal in client folder (right click on client -> open in integrated terminal)
 2. write command: "npm start" (might need to write "npm i" in terminal first)
 
-How to run Backend Server:
+**How to run Backend Server:**
 1. Open terminal in server folder (right click on server -> open in integrated terminal)
 2. write command: "npm run dev" (might need to write "npm i" in terminal first)
 
-Important Notes:
-1. Try as much as possible to comment code with clear and concise explanations for what is happening and how the code works so that it could be easily understood by anyone in the team simply by reading the comments and the code
+**Types of Events in our System:**
+1. Activities (Posted by Advertiser)
+2. Itenrary (Posted by tour Guide)
+3. Museums & Historical Places (Posted by Tourism Governor)
 
-Naming Conventions:
-1. any and all variables should be typed in camelCase format (first letter of first word always small, all following first letters of all other words are capitalized)
-2. All Variable names, file names, etc. should be clear and desciptive.
-3. All React Page/Component (.js) file names should start with CAPITAL letters. (these are the only exception to the camelCase rule, due to react's predefined conventions)
-4. All Models(schemas) in the backend should follow this same naming convention: "X.model.js" (Ex: for the tourist model, the file name would be "tourist.model.js")
-
-Github Conventions:
-1. No one under any circumstances should push to the main branch without consulting the entire team.
-2. Descriptive and to the point commit messages should be written for all commits. Each commit message must start with a verb. (Ex: Fixed X, Added Y, Adjusted Z, etc.)
-3. Merged Work between different teams(Apartments) should be implemented and tested on "test-main" branch and only when it is fully tested and bug-free should it then be pushed onto the "main" branch.
-
-Essential github Commands:
-1. "git fetch origin" : retrieves remote updates and changes from all branches in the repo wihout specifically merginf them into your current branch
-2. "git Merge [branch_name]": merges content of [branch_name] into the branch that you are currently in
-3. "git checkout [branch_name]": leave current branch and switch to [branch_name]
-
-how to merge from changes from branch X into branch Y:
-1. go to branch Y (git checkout branchY)
-2. inside of branch Y, write "git fetch origin" (ensuring latest remote changes are available locally) 
-3. write "git merge branchX"
-4. Syncronize changes and commit changes to remote repo
-
-
-File Structure:
-A. In Client Folder:
-1. All frontend components(buttons, navbar, sidebar, etc.) should be in "components" folder
-2. "src/App.js" is the home to all of the routes for our application
-3. All frontend pages should be in "pages" folder 
-
-
-Useful resources:
+**Useful resources:**
 1. MERN Stack crash course: https://www.youtube.com/watch?v=98BzS5Oz5E4&list=PL4cUxeGkcC9iJ_KkrkBZWZRHVwnzLIoUE&index=1&ab_channel=NetNinja
 2. MaterialUI docuemntation: https://mui.com/material-ui/getting-started/
 3. 

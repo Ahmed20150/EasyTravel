@@ -1,0 +1,34 @@
+This File is concerned with project rules that we all work together to enforce, in order to ensure smooth merging and a well-developed product.
+Concerns are for example: naming conventions, file structure, etc.
+Contains: Important Notes, Naming Convention, Github Conventions &  File Structure 
+
+**Important Notes:**
+1. Try as much as possible to comment code with clear and concise explanations for what is happening and how the code works so that it could be easily understood by anyone in the team simply by reading the comments and the code
+2. ALL team members must have read and understood *ALL* User stories, not just the ones assigned to them, in order to better understand the dependancies between all stories in our system.
+3. Refer to "Sprint 2 Tasks.txt" to know who is responsible for which story, so that if a dependancy does arrise, you know which team member is responsible for the story you are looking for.
+
+
+**Naming Conventions:**
+1. any and all variables should be typed in camelCase format (first letter of first word always small, all following first letters of all other words are capitalized)
+2. All Variable names, file names, etc. should be clear and desciptive.
+3. All React Page/Component (.js) file names should start with CAPITAL letters. (these are the only exception to the camelCase rule, due to react's predefined conventions)
+4. All Models(schemas) in the backend should follow this same naming convention: "X.model.js" (Ex: for the tourist model, the file name would be "tourist.model.js")
+
+**Github Conventions:**
+1. No one under any circumstances should push to the main branch without consulting the entire team.
+2. Descriptive and to the point commit messages should be written for all commits. Each commit message must start with a verb. (Ex: Fixed X, Added Y, Adjusted Z, etc.)
+3. Merged Work between different teams(Apartments) should be implemented and tested on "test-main" branch and only when it is fully tested and bug-free should it then be pushed onto the "main" branch.
+
+**File Structure:**
+A. In Client Folder:
+    1. All frontend components(buttons, navbar, sidebar, etc.) should be in "components" folder
+    2. "src/App.js" is the home to all of the routes for our application
+    3. All frontend pages should be in "pages" folder 
+    4. All CSS stylesheets should be within a singular folder named "css"
+    5. No stylesheets should implement *Global* changes that could affect other pages in our application (use css classes instead of directly applying styling to a global element that we all use (i.e a button for example))
+    6. if a styling should be applied to the entire website, should be implemented in the "App.css" and not in any custom stylesheet.
+B. In Sever Folder:
+    1. No routes should be inside of "index.js"
+    2. route files should be named as follows: "[file_name].routes.js" (file_name has to be a name related to the routes contained inside the file)
+    2. model files should be named as follows: "[file_name].model.js" (file_name has to be a name related to the model contained inside the file)
+

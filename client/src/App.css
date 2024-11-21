@@ -1,8 +1,11 @@
+*{
+  justify-content:center;
+  align-items:center;
+}
+
 body {
-  background-color: #f0f0f0;
-  /* Light gray background */
+  background-color: #000;
   color: #333;
-  /* Dark text color for visibility */
   font-family: Arial, sans-serif;
 }
 
@@ -17,7 +20,6 @@ ul {
 
 li {
   background-color: #ffffff;
-  /* White background for each item */
   margin: 10px 0;
   padding: 15px;
   border-radius: 5px;
@@ -25,14 +27,28 @@ li {
 }
 
 button {
-  background-color: #3498db;
+  background-color: #7357b8;
   color: white;
   border: none;
-  padding: 10px;
+  border-radius: 5px;
+  padding: 10px 15px;
   cursor: pointer;
-  border-radius: 3px;
+  margin: 5px;
+  font-size: 1rem;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #2980b9;
+  background-color: #e98b43;
+}
+
+
+.container { 
+  display: flex;
+  flex-direction:column;
+  justify-content: center;
+  align-items: center; 
+  gap: 10px;
+  height: 100vh; 
+  background-color: #f0f0f0; 
 }

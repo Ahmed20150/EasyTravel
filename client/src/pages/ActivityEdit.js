@@ -14,6 +14,9 @@ const ActivityEdit = () => {
   const { id } = useParams(); // Get the ID from URL params
   const [activity, setActivity] = useState(null); // State to hold a single activity
   const navigate = useNavigate(); // Use useNavigate for navigation
+  const [errors, setErrors] = useState([]); // State to store validation errors
+  const [categories, setCategories] = useState([]);
+
 
   // Fetch activity data when the component mounts
   useEffect(() => {
@@ -28,7 +31,17 @@ const ActivityEdit = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
     fetchActivity();
+    fetchCategories();
   }, [id]);
 
   // Handle form changes (for location, price, and other fields)
@@ -67,8 +80,13 @@ const ActivityEdit = () => {
     try {
       await axios.put(`http://localhost:3000/activities/${id}`, activity);
       navigate(`/activities`); // Navigate back to the activities list after update
-    } catch (error) {
-      console.error("Error updating activity:", error);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
+      } else {
+        console.error("An error occurred:", err);
+      }
     }
   };
 
@@ -121,7 +139,7 @@ const ActivityEdit = () => {
         <div>
           <label>Time:</label>
           <input
-            type="text"
+            type="time"
             name="time"
             value={activity.time}
             onChange={handleChange}
@@ -163,15 +181,38 @@ const ActivityEdit = () => {
             required
           />
         </div>
+
+      <div>
+        <label>
+        Flagged:
+        <input
+          type="text"
+          name="flagged"
+          value={activity.flagged}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      </div>
+
+
         <div>
-          <label>Category:</label>
-          <input
-            type="text"
-            name="category"
-            value={activity.category}
-            onChange={handleChange}
-            required
-          />
+        <label>
+        Category:
+        <select
+          name="category"
+          value={activity.category}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select a category</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </label>
         </div>
         <div>
           <label>Tags:</label>
@@ -192,7 +233,7 @@ const ActivityEdit = () => {
         <div>
           <label>Special Discounts:</label>
           <input
-            type="text"
+            type="number"
             name="specialDiscounts"
             value={activity.specialDiscounts || ""}
             onChange={handleChange}
