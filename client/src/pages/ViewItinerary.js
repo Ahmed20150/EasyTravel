@@ -1,7 +1,7 @@
-import axios from "axios";
+// src/components/Itineraries/ItineraryList.jsx
+// src/components/Itineraries/ItineraryList.jsx
 import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
-import { Link } from "react-router-dom";
+import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
 import { useNavigate } from "react-router-dom";
 
@@ -15,10 +15,6 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
-  const [searchQuery, setSearchQuery] = useState(""); // State for search input
-  const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
-
-  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -39,7 +35,6 @@ const ViewItinerary = () => {
           `http://localhost:3000/api/tourist/${username}`
         );
         setBookedItineraries(tourist.data.bookedItineraries || []); // Store the booked itineraries in state
-        setBookmarkedItineraries(tourist.data.bookmarkedEvents || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -145,6 +140,7 @@ const ViewItinerary = () => {
         touristsBooked: touristsBook,
       });
 
+      // Remove the itinerary ID from bookedItineraries array
       const newBookedItineraries = bookedItineraries.filter(
         (itineraryId) => itineraryId !== id
       );
@@ -157,6 +153,10 @@ const ViewItinerary = () => {
         }
       );
 
+      await axios.delete(`http://localhost:3000/booking/deleteBooking/${id}/${username}`);
+      toast.success("Unbooking Successful, Amount is refunded to your wallet");
+
+      // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       console.error(

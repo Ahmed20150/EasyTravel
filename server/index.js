@@ -391,8 +391,5 @@ app.use('/api', tourGuideRoutes);
 app.use('/advertiser', advRoutes);
 //app.use()
 app.use('/api/seller', sellerRoutes);
-app.use('/api/bookmarkEvent', touristRoutes);
-app.use('/api', touristRoutes);
-app.use(touristRoutes);
 app.use('/api/send' , activityRouter);
 
