@@ -46,6 +46,7 @@ const touristSchema = new mongoose.Schema({
   ],
   BookedFlights: [{ type: String }],
   BookedHotels: [{ type: String }],
+  bookmarkedEvents: { type: [String], default: [] }, // Array to store event IDs
 });
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"

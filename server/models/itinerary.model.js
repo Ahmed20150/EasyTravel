@@ -87,6 +87,7 @@ const itinerarySchema = new mongoose.Schema({
   },
   touristsBooked: { type: [String] },
   activated: { type: Boolean, default: true },
+  changed: { type: Boolean, default: false },
   flagged: {
     type: String,
     enum: ['yes', 'no'],

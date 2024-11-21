@@ -22,6 +22,6 @@ Abdallah:
 
 Ashraf:
 
-Amr:
+Amr: 65-69
 
-Hipa:
+Hipa: 49-51

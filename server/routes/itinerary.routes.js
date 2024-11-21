@@ -76,6 +76,7 @@ router.put("/toggleActivation/:id", async (req, res) => {
     }
 
     itinerary.activated = !itinerary.activated;
+    itinerary.changed = true
     await itinerary.save();
     res.send(itinerary);
   } catch (error) {
