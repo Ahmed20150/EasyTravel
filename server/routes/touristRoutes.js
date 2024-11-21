@@ -170,7 +170,6 @@ router.patch("/bookItinerary", authenticate, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-//sfdhsgd
 
 router.patch("/unbookItinerary", async (req, res) => {
   try {
