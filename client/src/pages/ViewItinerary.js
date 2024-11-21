@@ -3,9 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
+import { useNavigate, Link } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
+  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
@@ -13,7 +16,8 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
-  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
+  const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -45,13 +49,28 @@ const ViewItinerary = () => {
     fetchItineraries();
   }, [username]);
 
-  if (loading) {
-    return <p>Loading itineraries...</p>;
-  }
+  useEffect(() => {
+    if (searchClicked) {
+      if (searchQuery.trim() === "") {
+        setFilteredItineraries(itineraries); // Show all itineraries if no search query
+      } else {
+        const filtered = itineraries.filter((itinerary) => {
+          const nameMatch = itinerary.name
+            ? itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+          const categoryMatch = itinerary.category
+            ? itinerary.category.toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+          const tagsMatch = itinerary.tags && itinerary.tags.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          );
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+          return nameMatch || categoryMatch || tagsMatch;
+        });
+        setFilteredItineraries(filtered);
+      }
+    }
+  }, [searchQuery, itineraries, searchClicked]);
 
   const handleBook = async (id) => {
     try {
@@ -191,6 +210,19 @@ const ViewItinerary = () => {
     }
   };
   
+
+
+  const handleSearchClick = () => {
+    setSearchClicked(true);
+  };
+
+  if (loading) {
+    return <p>Loading itineraries...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <div>

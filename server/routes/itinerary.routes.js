@@ -9,6 +9,8 @@ router.use(express.json());
 router.use(cors()); // This allows requests from any origin
 
 // CREATE
+
+// CREATE
 router.post("/", async (req, res) => {
   try {
     const newItinerary = new Itinerary(req.body);
@@ -43,6 +45,32 @@ router.get("/:id", async (req, res) => {
     res.status(200).json(itinerary);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// SEARCH - Search itineraries based on query parameters
+router.get("/search", async (req, res) => {
+  try {
+    const { name, category, tags } = req.query;
+
+    // Build the query object dynamically based on the parameters provided
+    const searchQuery = {};
+
+    // Use MongoDB full-text search for name, category, and tags
+    if (name) searchQuery.name = { $regex: name, $options: "i" }; // Case-insensitive search for name
+    if (category) searchQuery.category = { $regex: category, $options: "i" }; // Case-insensitive search for category
+    if (tags) searchQuery.tags = { $in: tags.split(",") }; // Search tags by an array (e.g., "historical, museum")
+
+    // Fetch itineraries that match the search query
+    const itineraries = await Itinerary.find(searchQuery);
+
+    if (itineraries.length === 0) {
+      return res.status(404).json({ message: "No itineraries found matching the search criteria" });
+    }
+
+    res.status(200).json(itineraries);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -144,6 +172,7 @@ router.patch("/:id/touristsBook", async (req, res) => {
 });
 
 // Deactivate all itineraries by username
+// Deactivate all itineraries by username
 router.put("/deactivateAll/:username", async (req, res) => {
   try {
     const username = req.params.username;
@@ -164,12 +193,38 @@ router.put("/deactivateAll/:username", async (req, res) => {
 });
 
 // Delete all itineraries by username
+// Delete all itineraries by username
 router.delete("/deleteAll/:username", async (req, res) => {
   try {
     await Itinerary.deleteMany({ creator: req.params.username });
     res.status(200).json({ message: "All Itineraries deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Search for museums, historical places, activities, or itineraries by name, category, or tag
+router.get("/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query) {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    // Search for itineraries by name, category, or tag
+    const results = await Itinerary.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+        { tags: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error searching for itineraries:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
