@@ -60,13 +60,14 @@ import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
+import { CurrencyProvider } from "./components/CurrencyContext";
 
 function App() {
   return (
     <div className="App">
       {/* for notifications across all pages */}
       <ToastContainer />
-
+      <CurrencyProvider> {/* Wrap the app with CurrencyProvider */}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -146,6 +147,7 @@ function App() {
 
         </Routes>
       </BrowserRouter>
+      </CurrencyProvider>
     </div>
   );
 }

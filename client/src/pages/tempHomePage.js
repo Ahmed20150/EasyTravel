@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "./TempHomePage.css"; 
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useCurrency } from "../components/CurrencyContext"; // Assuming Cur
 
 const TempHomePage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const TempHomePage = () => {
   const [username, setUsername] = useState(Cookies.get('username'));
   const [userType, setUserType] = useState(Cookies.get('userType'));
   const [userEmail, setUserEmail] = useState(null);  // State to store email for admin users
+  const { selectedCurrency, setSelectedCurrency, exchangeRates } = useCurrency();
+
 
   useEffect(() => {
     fetchData();
@@ -78,8 +81,23 @@ const TempHomePage = () => {
     }
   };
 
+  const handleCurrencyChange = (event) => {
+    setSelectedCurrency(event.target.value);
+  };
   return (
     <div className="container">
+       {userType === "tourist" && (
+        <div className="currency-selector">
+          <h2>Select Currency:</h2>
+          <select value={selectedCurrency} onChange={handleCurrencyChange}>
+            {Object.keys(exchangeRates).map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <h1>Welcome {username}, you are a {userType}!!</h1>
       {userType === 'admin' && userEmail && (
         <p>Your email: {userEmail}</p>  // Display the email for admin users
