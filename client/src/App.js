@@ -22,7 +22,6 @@ import TempHomePage from "./pages/tempHomePage";
 import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
 import ViewTables from "./pages/viewTables";
-import ViewTables from "./pages/viewTables";
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
 // import EditProfilePage from './pages/';
 import FileUpload from "./components/fileUpload";
