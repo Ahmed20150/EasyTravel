@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate, Link } from "react-router-dom";
-import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -18,6 +17,8 @@ const ViewItinerary = () => {
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
   const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
+
+  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   useEffect(() => {
     const fetchItineraries = async () => {

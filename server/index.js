@@ -41,8 +41,6 @@ const searchRoutes = require("./routes/search.router.js");
 
 // Models imports
 const Tourist = require("./models/tourist.model.js");
-const Category = require("./models/category.model.js");
-const Preference = require("./models/preference.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
 const notificationRouter = require("./routes/notificationRouter.js");
@@ -62,14 +60,12 @@ app.use('/review',Review);
 app.use('/transport',Transportation);
 
 
-const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
 const Category= require("./models/category.model.js");
 const Preference= require("./models/preference.model.js");
 
 //connect admin.routes.js to index.js
 
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
