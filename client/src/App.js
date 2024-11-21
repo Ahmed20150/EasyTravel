@@ -23,7 +23,6 @@ import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
 import ViewTables from "./pages/viewTables";
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
-import ViewTables from './pages/viewTables';
 // import EditProfilePage from './pages/';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
