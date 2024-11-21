@@ -1,0 +1,373 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .view-all-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  .section-title {
+    padding-left: 4%;
+    color: #2c3e50;
+    /* text-align: center; */
+    font-size: 2rem;
+    font-weight: bold;
+  }
+    
+  .explore-page {
+    padding: 20px;
+    color: white;
+  }
+
+  .card-scroll-container {
+    position: relative;
+    display: flex;
+    /* align-items: center; */
+    overflow: hidden;
+    width: 100%;
+    padding: 0 50px; /* Add padding to ensure the cards stay within bounds */
+  }
+  
+  .scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1;
+  }
+  
+  .scroll-button.left {
+    left: 0;
+  }
+  
+  .scroll-button.right {
+    right: 0;
+  }
+  
+  .card-scroll {
+    background-color: none;
+    display: flex;
+    overflow-x: auto;
+    padding: 20px 0;
+    gap: 15px;
+    scroll-behavior: smooth;
+    justify-content: flex-start; /* Align items to the start */
+    min-width: 100%; /* Ensure the scroll area takes the full width */
+  }
+  
+  .card-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .loader {
+    text-align: center;
+    font-size: 1.2em;
+    color: #666;
+    padding: 20px 0;
+  }
+
+  .articles {
+    display: grid;
+    margin: 20px auto;
+    grid-template-columns: repeat(1, minmax(320px, 320px));
+  }
+  
+  .article-wrapper {
+    border-radius: 16px;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    min-height: 550px;
+    max-height: 550px;
+  }
+  
+  .figure {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+  
+  .article-wrapper:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .article-wrapper img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .article-wrapper img:hover {
+    transform: scale(1.05);
+  }
+  
+  .article-body {
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .article-body h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #e98b43;
+  }
+  
+  .location {
+    font-size: 0.875rem;
+    color: #6c6c7a;
+  }
+  
+  .tag {
+    display: inline-block;
+    background-color: #e98b43;
+    color: white;
+    padding: 5px 12px;
+    margin: 5px 5px 0 0;
+    border-radius: 12px;
+    font-size: 0.875rem;
+  }
+
+  
+  .opening-hours, .ticket-price {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .price-value {
+    color: #28a745;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  
+
+  .view-itinerary-card {
+    max-width: 320px;
+    min-width: 320px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  
+  .view-itinerary-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .itinerary-header {
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .itinerary-title {
+    color: #e98b43;
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+  
+  .itinerary-details, .itinerary-locations, .itinerary-dates, .itinerary-times {
+    padding: 10px 24px;
+  }
+  
+  .itinerary-details p {
+    margin: 6px 0;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .itinerary-locations, .itinerary-dates, .itinerary-times {
+    background-color: #f9f9f9;
+  }
+  
+  .itinerary-locations h3,
+  .itinerary-dates h3,
+  .itinerary-times h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: #7357b8;
+  }
+  
+  .itinerary-locations ul,
+  .itinerary-dates ul,
+  .itinerary-times ul {
+    list-style-type: none;
+    padding: 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .itinerary-locations ul li,
+  .itinerary-dates ul li,
+  .itinerary-times ul li {
+    margin: 5px 0;
+    padding-left: 10px;
+    position: relative;
+  }
+  
+  .itinerary-locations ul li:before,
+  .itinerary-dates ul li:before,
+  .itinerary-times ul li:before {
+    content: "•";
+    color: #7357b8;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+  
+.view-activity-card {
+  max-width: 320px; /* Uniform card width */
+  min-width: 320px;
+  width: 100%; /* Ensures responsiveness */
+  margin: 20px auto; /* Centers the card */  
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.view-activity-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.activity-header {
+  padding: 10px;
+  text-align: center;
+}
+
+.activity-title {
+  color: #e98b43;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.activity-details {
+  padding: 10px 24px;
+}
+
+.activity-details p {
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.activity-tags {
+  padding: 10px;
+}
+
+.activity-tags h3 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  color: #7357b8;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/*----------------------------------*/
+
+.museum-tag-filter{
+  padding-left: 4%;
+  justify-self: baseline;
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+}
+
+.museum-tag-filter .tag{
+  padding: 8px 12px;
+  background: #e98b43;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.museum-tag-filter .tag.active,
+.museum-tag-filter .tag:hover{
+  transform: scale(1.05);
+  background: #7357b8;
+}
+
+/* filter/sort */
+.sort-options {
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.sort-options label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1rem;
+  color: #333;
+  margin-right: 0.3rem;
+}
+
+.sort-options select {
+  padding: 5px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+
+/* Add styles for filter menu */
+.filter-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.filters-title{
+  color: #333;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter label {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.filter input,
+.filter select {
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
