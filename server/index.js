@@ -91,6 +91,11 @@ app.use("/tourguide", tourGuideRoutes);
 app.use("/booking", bookingRoutes);
 app.use("/hotelOffer", hotelOffers);
 
+app.use('/api', tourGuideRoutes);
+app.use('/api/Adv', advRoutes);
+app.use('/api/seller', sellerRoutes);
+app.use('/api', searchRoutes);
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

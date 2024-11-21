@@ -227,6 +227,15 @@ const ViewItinerary = () => {
   return (
     <div>
       <h1>All Available Itineraries</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Search by museum name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button onClick={handleSearchClick}>Search</button>
+      </div>
       <div style={{ display: "flex" }}>
         {itineraries.map((itinerary) => (
           <ItineraryItem
