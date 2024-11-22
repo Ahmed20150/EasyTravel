@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useCurrency } from "../components/CurrencyContext"; 
 import "./TempHomePage.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
@@ -46,6 +47,13 @@ const TempHomePage = () => {
     }
   };
 
+  function removeAllCookies() {
+    const allCookies = Cookies.get();
+    for (let cookie in allCookies) {
+      Cookies.remove(cookie);
+    }
+  };
+
   // Fetch email for admin users
   const fetchEmail = async () => {
     try {
@@ -83,8 +91,27 @@ const TempHomePage = () => {
     }
   };
 
+  const handleCurrencyChange = (event) => {
+    setSelectedCurrency(event.target.value);
+  };
+
+
   return (
     <div className="container">
+      {/* Currency Selector (Only for tourist user) */}
+      {userType === "tourist" && (
+        <div className="currency-selector">
+          <h2>Select Currency:</h2>
+          <select value={selectedCurrency} onChange={handleCurrencyChange}>
+            {Object.keys(exchangeRates).map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <h1>
         Welcome {username}, you are a {userType}!!
       </h1>

@@ -1,6 +1,37 @@
 import React from "react";
+import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
 
 const ViewItineraryCard = ({ itinerary }) => {
+  const { selectedCurrency, exchangeRates } = useCurrency();
+
+  // Function to convert price to selected currency
+  const convertPrice = (priceInUSD) => {
+    if (exchangeRates[selectedCurrency]) {
+      return (priceInUSD * exchangeRates[selectedCurrency]).toFixed(2);
+    }
+    return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
+  };
+
+  // Share button handler
+  const handleShare = async () => {
+    const shareData = {
+      title: `${itinerary.creator}'s Itinerary`,
+      text: `Check out this amazing itinerary by ${itinerary.creator}!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(itinerary.priceOfTour)} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
+      url: itinerary.website || window.location.href, // Use itinerary's website or current URL
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log("Itinerary shared successfully");
+      } catch (error) {
+        console.error("Error sharing itinerary:", error);
+      }
+    } else {
+      alert("Sharing is not supported on this browser.");
+    }
+  };
+
   return (
     <div className="view-itinerary-card">
       <div className="itinerary-header">
@@ -12,7 +43,9 @@ const ViewItineraryCard = ({ itinerary }) => {
         </p>
         <p>
           <strong>Price:</strong>{" "}
-          <span className="price-value">${itinerary.priceOfTour}</span>
+          <span className="price-value">
+            {convertPrice(itinerary.priceOfTour)} {selectedCurrency}
+          </span>
         </p>
         <p>
           <strong>Language:</strong> {itinerary.languageOfTour}
@@ -63,6 +96,13 @@ const ViewItineraryCard = ({ itinerary }) => {
             <li key={index}>{time}</li>
           ))}
         </ul>
+      </div>
+
+      {/* Share Button */}
+      <div className="itinerary-share">
+        <button className="share-button" onClick={handleShare}>
+          Share Itinerary
+        </button>
       </div>
     </div>
   );

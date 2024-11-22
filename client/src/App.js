@@ -1,4 +1,5 @@
 // import logo from './logo.svg';
+import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ChangePassword from "./components/changePassword";
@@ -23,7 +24,6 @@ import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
 import ViewTables from "./pages/viewTables";
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
-// import EditProfilePage from './pages/';
 import FileUpload from "./components/fileUpload";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,7 +35,6 @@ import AddNewTourismGoverner from "./components/AddNewTourismGoverner";
 import ViewUsers from "./components/ViewUsersAndDelete";
 import ViewRequest from "./components/ViewRequests";
 import AdminAccountManagement from "./pages/AdminAccountManagement";
-// import { CookiesProvider } from 'react-cookie';
 import ActivityList from "./pages/ActivityList";
 import ActivityForm from "./pages/ActivityForm";
 import ActivityEdit from "./pages/ActivityEdit";
@@ -70,6 +69,7 @@ import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
+import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 
 function App() {
   return (
