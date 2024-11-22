@@ -3,8 +3,6 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
-import { useNavigate, Link } from "react-router-dom";
-import { useCookies } from "react-cookie";
 
 import "../css/ActivityLists.css";
 

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Itinerary = require("./itinerary.model");
-const Itinerary = require("./itinerary.model");
 
 const touristSchema = new mongoose.Schema({
   username: {
@@ -52,4 +51,3 @@ const touristSchema = new mongoose.Schema({
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
 
 module.exports = Tourist; //export for use in other files
-

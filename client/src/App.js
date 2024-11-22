@@ -42,7 +42,6 @@ import ActivityEdit from "./pages/ActivityEdit";
 import ItineraryEdit from "./pages/ItineraryEdit";
 import ItineraryForm from "./pages/ItineraryForm";
 import ViewItinerary from "./pages/ViewItinerary";
-import ViewItinerary from "./pages/ViewItinerary";
 import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
@@ -69,11 +68,7 @@ function App() {
       <ToastContainer />
 
       <BrowserRouter>
-    <div className="App">
-      {/* for notifications across all pages */}
-      <ToastContainer />
 
-      <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/fileUpload" element={<FileUpload />} />
@@ -155,6 +150,6 @@ function App() {
     </div>
   );
 }
-}
+
 
 export default App;

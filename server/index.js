@@ -1,16 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const bcrypt = require("bcrypt");
 const app = express();
 app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
-const cors = require("cors");
 const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const cors = require("cors");
-const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const port = process.env.PORT || 3000;
 const Tourist = require("./models/tourist.model.js");
 const TourismGoverner = require("./models/tourismGoverner.model.js");
