@@ -6,6 +6,7 @@ import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import ExplorePage from "./ExplorePage";
 
 const landingPage = () => {
 
@@ -53,6 +54,11 @@ const landingPage = () => {
                     </div>
                 </div>
             </section>
+
+            <h1>Have a Peek!</h1>
+            <Link to="/login"><ExplorePage/></Link>
+
+            
 
             <footer className="footer">
                 <div className=" landingContainer">
