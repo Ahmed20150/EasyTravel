@@ -279,6 +279,9 @@ router.get("/search", async (req, res) => {
   } catch (error) {
     console.error("Error searching for itineraries:", error);
     res.status(500).json({ message: "Server error" });
+  }
+}
+);
 router.patch('/increment-purchases/:itineraryId', async (req, res) => {
   try {
     const { itineraryId } = req.params;

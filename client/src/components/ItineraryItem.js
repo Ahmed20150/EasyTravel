@@ -7,6 +7,9 @@ const ItineraryCard = ({
   isBooked,
   onUnbook,
   onActivationToggle,
+  onBookmark, // New prop to handle bookmark
+  isBookmarked, // New prop to check if itinerary is bookmarked
+  isProfilePage,
 }) => {
   return (
     <div className="itinerary-card">
@@ -30,7 +33,7 @@ const ItineraryCard = ({
         ))}
       </ul>
       <div className="button-container">
-        {/* Conditionally render the buttons based on userType */}
+        {/* Conditionally render the buttons based on userType and isProfilePage flag */}
         {userType === "tourGuide" && (
           <>
             <button
@@ -47,17 +50,26 @@ const ItineraryCard = ({
             </button>
           </>
         )}
-        {userType === "tourist" && (
+        {userType === "tourist" &&
+          !isProfilePage && ( // Hide buttons in profile view
+            <>
+              <button
+                onClick={() => onBook(itinerary._id)}
+                disabled={isBooked} // Disable if already booked
+              >
+                {isBooked ? "Already Booked" : "Book"}
+              </button>
+              <button onClick={() => onUnbook(itinerary._id)}>
+                {isBooked ? "UnBook" : "Not Booked Yet"}
+              </button>
+            </>
+          )}
+        {userType === "tourist" && ( // Hide bookmark button in profile view
           <button
-            onClick={() => onBook(itinerary._id)}
-            disabled={isBooked} // Disable if already booked
+            onClick={() => onBookmark(itinerary._id)} // Handle bookmarking
+            style={{ backgroundColor: isBookmarked ? "black" : "" }} // Indicate bookmarked state
           >
-            {isBooked ? "Already Booked" : "Book"}
-          </button>
-        )}
-        {userType === "tourist" && (
-          <button onClick={() => onUnbook(itinerary._id)}>
-            {isBooked ? "UnBook" : "Not Booked Yet"}
+            {isBookmarked ? "Bookmarked" : "Bookmark"}
           </button>
         )}
         {userType === "tourGuide" && (
@@ -74,5 +86,4 @@ const ItineraryCard = ({
     </div>
   );
 };
-
 export default ItineraryCard;

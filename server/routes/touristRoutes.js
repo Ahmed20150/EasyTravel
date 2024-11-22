@@ -130,10 +130,10 @@ router.patch("/unbookItinerary", async (req, res) => {
 //Update BookedItenraries list only
 router.patch("/bookItineraryWithCreditCard", async (req, res) => {
   try {
-    const { username, newItineraryId} = req.body;
+    const { username, newItineraryId } = req.body;
 
-    console.log('Username:', username);
-    console.log('New Itinerary ID:', newItineraryId);
+    console.log("Username:", username);
+    console.log("New Itinerary ID:", newItineraryId);
 
     // Find the tourist by username
     const tourist = await Tourist.findOne({ username });
@@ -147,7 +147,6 @@ router.patch("/bookItineraryWithCreditCard", async (req, res) => {
 
     await tourist.save();
 
-
     res.status(200).json({
       message: "Itinerary booked successfully",
     });
@@ -157,7 +156,7 @@ router.patch("/bookItineraryWithCreditCard", async (req, res) => {
   }
 });
 
-router.get('/checkWallet/:username/:itineraryId', async (req, res) => {
+router.get("/checkWallet/:username/:itineraryId", async (req, res) => {
   try {
     const { username, itineraryId } = req.params;
 
@@ -245,31 +244,34 @@ router.put("/bookFlights", async (req, res) => {
 });
 
 // Add or update preferences for a tourist by username
-router.patch("/tourist/:username/preferences", authenticate, async (req, res) => {
-  const { preferences } = req.body; // Preferences passed as an array of preference names
+router.patch(
+  "/tourist/:username/preferences",
+  authenticate,
+  async (req, res) => {
+    const { preferences } = req.body; // Preferences passed as an array of preference names
 
-  try {
-    // Find the tourist by username
-    const tourist = await Tourist.findOne({ username: req.params.username });
-    if (!tourist) {
-      return res.status(404).json({ message: "Tourist not found" });
+    try {
+      // Find the tourist by username
+      const tourist = await Tourist.findOne({ username: req.params.username });
+      if (!tourist) {
+        return res.status(404).json({ message: "Tourist not found" });
+      }
+
+      // Verify the provided preferences exist in the Preference model
+
+      // Update the tourist's preferences
+      tourist.preferences = preferences;
+      await tourist.save();
+
+      res.status(200).json({
+        message: "Preferences updated successfully",
+        preferences: tourist.preferences,
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    // Verify the provided preferences exist in the Preference model
-  
-
-    // Update the tourist's preferences
-    tourist.preferences = preferences;
-    await tourist.save();
-
-    res.status(200).json({
-      message: "Preferences updated successfully",
-      preferences: tourist.preferences,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-});
+);
 
 // Retrieve a tourist's preferences by username
 router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
@@ -286,6 +288,59 @@ router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
   }
 });
 
+router.get("/bookmarkedEvents/:username", authenticate, async (req, res) => {
+  try {
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+    res.json({ bookmarkedEvents: tourist.bookmarkedEvents });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching bookmarked events" });
+  }
+});
 
+// Route to add an event to the tourist's bookmarks
+router.patch("/bookmarkEvent", authenticate, async (req, res) => {
+  const { username, eventId } = req.body;
+
+  try {
+    const tourist = await Tourist.findOne({ username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add the eventId to the bookmarkedEvents array if not already added
+    if (!tourist.bookmarkedEvents.includes(eventId)) {
+      tourist.bookmarkedEvents.push(eventId);
+    } else {
+      // If the event is already bookmarked, remove it
+      tourist.bookmarkedEvents = tourist.bookmarkedEvents.filter(
+        (id) => id !== eventId
+      );
+    }
+
+    await tourist.save(); // Save the updated tourist document
+
+    res.status(200).json({ message: "Bookmark status updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating bookmark status" });
+  }
+});
+
+router.post("/itineraries/fetch", async (req, res) => {
+  const { eventIds } = req.body; // Array of itinerary IDs from the bookmarked events
+  try {
+    // Fetch itineraries by IDs
+    const itineraries = await Itinerary.find({ _id: { $in: eventIds } });
+    if (!itineraries.length) {
+      return res.status(404).json({ message: "No itineraries found" });
+    }
+    res.status(200).json(itineraries);
+  } catch (err) {
+    console.error("Error fetching itineraries", err);
+    res.status(500).json({ message: "Error fetching itineraries" });
+  }
+});
 
 module.exports = router;

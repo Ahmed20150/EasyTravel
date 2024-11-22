@@ -53,6 +53,7 @@ const touristSchema = new mongoose.Schema(
         type: String, // Store the names of preferences directly
       },
     ],
+    bookmarkedEvents: { type: [String], default: [] }, // Array to store event IDs
   },
   { timestamps: true }
 );

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import Modal from "react-modal";
 import Radio from "@mui/material/Radio";
@@ -11,14 +10,14 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {loadStripe} from '@stripe/stripe-js';
+import { loadStripe } from "@stripe/stripe-js";
+import { Link } from "react-router-dom";
+import ItineraryItem from "../components/ItineraryItem";
 
 Modal.setAppElement("#root");
 
-
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
-  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
@@ -33,8 +32,7 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
-  const [searchQuery, setSearchQuery] = useState(""); // State for search input
-  const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
+  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   const navigate = useNavigate();
 
@@ -61,6 +59,7 @@ const ViewItinerary = () => {
           `http://localhost:3000/api/tourist/${username}`
         );
         setBookedItineraries(tourist.data.bookedItineraries || []); // Store the booked itineraries in state
+        setBookmarkedItineraries(tourist.data.bookmarkedEvents || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -71,32 +70,13 @@ const ViewItinerary = () => {
     fetchItineraries();
   }, [username]);
 
-  useEffect(() => {
-    if (searchClicked) {
-      if (searchQuery.trim() === "") {
-        setFilteredItineraries(itineraries); // Show all itineraries if no search query
-      } else {
-        const filtered = itineraries.filter((itinerary) => {
-          const nameMatch = itinerary.name
-            ? itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
-            : false;
-          const categoryMatch = itinerary.category
-            ? itinerary.category
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())
-            : false;
-          const tagsMatch =
-            itinerary.tags &&
-            itinerary.tags.some((tag) =>
-              tag.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+  if (loading) {
+    return <p>Loading itineraries...</p>;
+  }
 
-          return nameMatch || categoryMatch || tagsMatch;
-        });
-        setFilteredItineraries(filtered);
-      }
-    }
-  }, [searchQuery, itineraries, searchClicked]);
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   const openModal = async (id) => {
     setSelectedItineraryId(id);
@@ -211,7 +191,7 @@ const ViewItinerary = () => {
       const pickupLocation = itinerary.data.pickupLocation;
       const dropoffLocation = itinerary.data.dropoffLocation;
       const price = itinerary.data.priceOfTour;
-      const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} was successfully recieved, Please check your wallet for the payment details.`;
+      const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} Euro(s) by Wallet was successfully recieved, Please check your Account for the payment details.`;
       await axios.post("http://localhost:3000/auth/sendPaymentEmail", {
         email,
         text,
@@ -228,60 +208,6 @@ const ViewItinerary = () => {
     }
   };
 
-  const handleBook = async (id) => {
-    try {
-      console.log(`username: ${username}, itinerary id: ${id}`);
-
-      // Fetch the tourist data first to check the age
-      const tourist = await axios.get(
-        `http://localhost:3000/api/tourist/${username}`
-      );
-      const { dateOfBirth, bookedItineraries } = tourist.data;
-
-      // Calculate age
-      const currentDate = new Date();
-      const birthDate = new Date(dateOfBirth);
-      const age = currentDate.getFullYear() - birthDate.getFullYear();
-      const isBirthdayPassed =
-        currentDate.getMonth() > birthDate.getMonth() ||
-        (currentDate.getMonth() === birthDate.getMonth() &&
-          currentDate.getDate() >= birthDate.getDate());
-
-      if (!isBirthdayPassed) {
-        age--; // Adjust age if birthday hasn't occurred yet this year
-      }
-
-      // If user is under 18, prevent the booking process
-      if (age < 18) {
-        console.error("User is under 18 and cannot book an itinerary.");
-        alert("You must be 18 or older to book an itinerary.");
-        return; // Stop the booking process
-      }
-      const itinerary = await axios.get(
-        `http://localhost:3000/itinerary/${id}`
-      );
-      const touristsBook = [...itinerary.data.touristsBooked, username];
-
-      await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
-        touristsBooked: touristsBook,
-      });
-
-      const newBookedItineraries = [...bookedItineraries, id]; // Add the new itinerary ID
-
-      // Update the user's booked itineraries on the server
-      await axios.patch("http://localhost:3000/api/bookItinerary", {
-        username,
-        newBookedItineraries,
-      });
-
-      setBookedItineraries(newBookedItineraries);
-    } catch (error) {
-      console.error(
-        "Error booking itinerary:",
-        error.response?.data || error.message
-      );
-    }
-  };
   const handleCreditCardPurchase = async () => {
     const isOldEnough = await checkAge(username);
     if (!isOldEnough) {
@@ -396,7 +322,6 @@ const ViewItinerary = () => {
         touristsBooked: touristsBook,
       });
 
-      // Remove the itinerary ID from bookedItineraries array
       const newBookedItineraries = bookedItineraries.filter(
         (itineraryId) => itineraryId !== id
       );
@@ -416,7 +341,6 @@ const ViewItinerary = () => {
       );
       toast.success("Unbooking Successful, Amount is refunded to your wallet");
 
-      // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       const errorMessage =
@@ -426,17 +350,57 @@ const ViewItinerary = () => {
     }
   };
 
-  const handleSearchClick = () => {
-    setSearchClicked(true);
+  const handleBookmark = async (id) => {
+    try {
+      // Toggle the itinerary in the bookmarked itineraries list
+      await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+        username,
+        eventId: id, // Send only the event ID
+      });
+
+      // Update the local state based on whether the event is already bookmarked
+      setBookmarkedItineraries((prevBookmarkedItineraries) => {
+        const isBookmarked = prevBookmarkedItineraries.includes(id);
+
+        // If it's already bookmarked, remove it; otherwise, add it
+        if (isBookmarked) {
+          return prevBookmarkedItineraries.filter(
+            (itineraryId) => itineraryId !== id
+          ); // Remove bookmark
+        } else {
+          return [...prevBookmarkedItineraries, id]; // Add bookmark
+        }
+      });
+    } catch (error) {
+      console.error(
+        "Error bookmarking itinerary:",
+        error.response?.data || error.message
+      );
+    }
   };
 
-  if (loading) {
-    return <p>Loading itineraries...</p>;
-  }
+  const handleUnbookmark = async (id) => {
+    try {
+      // Remove the itinerary id from the list of bookmarked itineraries
+      const newBookmarkedItineraries = bookmarkedItineraries.filter(
+        (itineraryId) => itineraryId !== id
+      );
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+      // Update the user's bookmarked itineraries on the server
+      await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+        username,
+        eventId: id, // Send only the event ID
+      });
+
+      // Update the local state
+      setBookmarkedItineraries(newBookmarkedItineraries);
+    } catch (error) {
+      console.error(
+        "Error unbookmarking itinerary:",
+        error.response?.data || error.message
+      );
+    }
+  };
 
   return (
     <div>
