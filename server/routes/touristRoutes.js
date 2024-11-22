@@ -1,20 +1,42 @@
-// server/touristRoutes.js
-
 const express = require("express");
 const router = express.Router();
-const Tourist = require("../models/tourist.model"); 
-const Itinerary = require("../models/itinerary.model"); 
+const Tourist = require("../models/tourist.model"); // Adjust the path as needed
+const Itinerary = require('../models/itinerary.model'); // Adjust the path based on where your Itinerary model is located
+const Booking = require('../models/booking.model'); // Adjust the path based on where your Itinerary model is located
+
 
 // Middleware for authentication (if needed)
 const authenticate = (req, res, next) => {
   // Your authentication logic here
   next();
 };
+router.get("/api/bookings/:username", async (req, res) => {
+  const { username } = req.params;
 
+  try {
+      // Query the database for all bookings with the given touristUsername
+      const bookings = await Booking.find({ touristUsername: username });
+
+      if (bookings.length === 0) {
+          return res.status(404).json({ message: "No bookings found for this user" });
+      }
+
+      // You can now save the bookings to another collection, or perform further actions
+      // Example: Saving the bookings to another collection or sending them back to the client
+      // For example, returning all the booking details
+      res.status(200).json({ bookings });
+  } catch (err) {
+      console.error("Error fetching bookings:", err);
+      res.status(500).json({ message: "Server error" });
+  }
+});
 // Read Tourist Profile by username
 router.get("/tourist/:username", authenticate, async (req, res) => {
   try {
-    const tourist = await Tourist.findOne({ username: req.params.username }); // Use findOne for username
+    const tourist = await Tourist.findOne({ username: req.params.username })
+      .populate("bookedItineraries") // Populate booked itineraries with actual itinerary data
+      .exec();
+      
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
@@ -50,6 +72,61 @@ router.put("/tourist/:username", authenticate, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+router.get("/bookmarkedEvents/:username", authenticate, async (req, res) => {
+  try {
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+    res.json({ bookmarkedEvents: tourist.bookmarkedEvents });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching bookmarked events" });
+  }
+});
+
+// Route to add an event to the tourist's bookmarks
+router.patch("/bookmarkEvent", authenticate, async (req, res) => {
+  const { username, eventId } = req.body;
+
+  try {
+    const tourist = await Tourist.findOne({ username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add the eventId to the bookmarkedEvents array if not already added
+    if (!tourist.bookmarkedEvents.includes(eventId)) {
+      tourist.bookmarkedEvents.push(eventId);
+    } else {
+      // If the event is already bookmarked, remove it
+      tourist.bookmarkedEvents = tourist.bookmarkedEvents.filter(
+        (id) => id !== eventId
+      );
+    }
+
+    await tourist.save(); // Save the updated tourist document
+
+    res.status(200).json({ message: "Bookmark status updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating bookmark status" });
+  }
+});
+router.post("/itineraries/fetch", async (req, res) => {
+  const { eventIds } = req.body;  // Array of itinerary IDs from the bookmarked events
+  try {
+    // Fetch itineraries by IDs
+    const itineraries = await Itinerary.find({ '_id': { $in: eventIds } });
+    if (!itineraries.length) {
+      return res.status(404).json({ message: "No itineraries found" });
+    }
+    res.status(200).json(itineraries);
+  } catch (err) {
+    console.error("Error fetching itineraries", err);
+    res.status(500).json({ message: "Error fetching itineraries" });
+  }
+});
+
 
 //update booked Itenraries List and Pay with Wallet
 router.patch("/bookItinerary", async (req, res) => {
@@ -91,6 +168,7 @@ router.patch("/bookItinerary", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 router.patch("/unbookItinerary", async (req, res) => {
   try {

@@ -44,6 +44,7 @@ const touristSchema = new mongoose.Schema({
       ref: "Itinerary",
     },
   ],
+  bookmarkedEvents: { type: [String], default: [] }, // Array to store event IDs
 });
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"

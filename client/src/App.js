@@ -21,31 +21,31 @@ import LandingPage from "./pages/LandingPage";
 import TempHomePage from "./pages/tempHomePage";
 import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
-import ViewTables from './pages/viewTables';
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
+import ViewTables from './pages/viewTables';
 // import EditProfilePage from './pages/';
-import FileUpload from "./components/fileUpload";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import PendingRequestsPage from "./pages/PendingRequestsPage";
-import TouristProfile from "./pages/TouristProfile";
-import TermsAndConditions from "./pages/TermsAndConditions";
 import AddNewAdmin from "./components/AddNewAdmins";
 import AddNewTourismGoverner from "./components/AddNewTourismGoverner";
-import ViewUsers from "./components/ViewUsersAndDelete";
+import FileUpload from "./components/fileUpload";
 import ViewRequest from "./components/ViewRequests";
+import ViewUsers from "./components/ViewUsersAndDelete";
 import AdminAccountManagement from "./pages/AdminAccountManagement";
+import PendingRequestsPage from "./pages/PendingRequestsPage";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import TouristProfile from "./pages/TouristProfile";
 // import { CookiesProvider } from 'react-cookie';
-import ActivityList from "./pages/ActivityList";
-import ActivityForm from "./pages/ActivityForm";
 import ActivityEdit from "./pages/ActivityEdit";
+import ActivityForm from "./pages/ActivityForm";
+import ActivityList from "./pages/ActivityList";
+import GiftList from './pages/GiftList';
 import ItineraryEdit from "./pages/ItineraryEdit";
 import ItineraryForm from "./pages/ItineraryForm";
-import ViewItinerary from "./pages/ViewItinerary";
 import ItineraryList from "./pages/ItineraryList";
-import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
-import GiftList from './pages/GiftList';
+import SelectActivity from "./pages/SelectActivity";
+import ViewItinerary from "./pages/ViewItinerary";
 import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
 import PaymentSuccess from './pages/PaymentSuccess';
@@ -57,8 +57,10 @@ import Help from './pages/Help';
 
 
 import Categories from './pages/Categories';
-import PreferencePage from './pages/PreferencePage';import Revenue from './pages/Revenue';
-import GiftItemForm  from './pages/GiftItemPage';
+import GiftItemForm from './pages/GiftItemPage';
+import PreferencePage from './pages/PreferencePage';
+import Revenue from './pages/Revenue';
+
 
 
 function App() {

@@ -1,10 +1,10 @@
 // src/components/Itineraries/ItineraryList.jsx
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate, Link } from "react-router-dom";
-import "../css/ItineraryList.css"; // Import the CSS file
+import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { Link, useNavigate } from "react-router-dom";
+import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
+import "../css/ItineraryList.css"; // Import the CSS file
 
 const ItineraryList = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -54,26 +54,28 @@ const ItineraryList = () => {
       setError(err.message);
     }
   };
-  const handleToggleActivation = async (id) => {
-    try {
-      // Send request to toggle the activation status for the itinerary
-      // In your frontend request, use this corrected URL
-      const response = await axios.put(
-        `http://localhost:3000/Itinerary/toggleActivation/${id}`
-      );
-      // Update the itineraries state with the toggled itinerary
-      setItineraries(
-        itineraries.map((itinerary) =>
-          itinerary._id === id
-            ? { ...itinerary, activated: !itinerary.activated }
-            : itinerary
-        )
-      );
-    } catch (error) {
-      console.error("Error toggling activation:", error);
-      alert("Failed to toggle activation. Please try again.");
-    }
-  };
+const handleToggleActivation = async (id) => {
+  try {
+    // Send request to toggle the activation status for the itinerary
+    const response = await axios.put(
+      `http://localhost:3000/Itinerary/toggleActivation/${id}`
+    );
+    // Update the itineraries state with the toggled itinerary and change the 'changed' status
+    setItineraries(
+      itineraries.map((itinerary) =>
+        itinerary._id === id
+          ? {
+              ...itinerary,
+              activated: !itinerary.activated,
+            }
+          : itinerary
+      )
+    );
+  } catch (error) {
+    console.error("Error toggling activation:", error);
+    alert("Failed to toggle activation. Please try again.");
+  }
+};
 
   const handleEdit = (id) => {
     localStorage.clear();
@@ -111,6 +113,7 @@ const ItineraryList = () => {
             onEdit={handleEdit}
             onActivationToggle={handleToggleActivation}
             userType={userType}
+            isProfilePage={false} 
           />
         ))}
       </div>

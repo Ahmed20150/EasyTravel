@@ -1,10 +1,5 @@
-// src/components/Itineraries/ItineraryList.jsx
-// src/components/Itineraries/ItineraryList.jsx
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate, Link } from "react-router-dom";
-//import "../css/ItineraryList.css"; // Import the CSS file
+import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import Modal from 'react-modal';
 import Radio from '@mui/material/Radio';
@@ -15,6 +10,8 @@ import FormLabel from '@mui/material/FormLabel';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {loadStripe} from '@stripe/stripe-js';
+import { Link } from "react-router-dom";
+import ItineraryItem from "../components/ItineraryItem";
 
 
 Modal.setAppElement('#root');
@@ -36,6 +33,7 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
+  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   const navigate= useNavigate();
 
@@ -58,6 +56,7 @@ const ViewItinerary = () => {
           `http://localhost:3000/api/tourist/${username}`
         );
         setBookedItineraries(tourist.data.bookedItineraries || []); // Store the booked itineraries in state
+        setBookmarkedItineraries(tourist.data.bookmarkedEvents || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -296,7 +295,6 @@ const ViewItinerary = () => {
         touristsBooked: touristsBook,
       });
 
-      // Remove the itinerary ID from bookedItineraries array
       const newBookedItineraries = bookedItineraries.filter(
         (itineraryId) => itineraryId !== id
       );
@@ -314,13 +312,59 @@ const ViewItinerary = () => {
       await axios.delete(`http://localhost:3000/booking/deleteBooking/${id}/${username}`);
       toast.success("Unbooking Successful, Amount is refunded to your wallet");
 
-      // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Error Unbooking itinerary. Please try again.";
       toast.error(errorMessage);
     }
   };
+
+  const handleBookmark = async (id) => {
+    try {
+        // Toggle the itinerary in the bookmarked itineraries list
+        await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+            username,
+            eventId: id, // Send only the event ID
+        });
+
+        // Update the local state based on whether the event is already bookmarked
+        setBookmarkedItineraries(prevBookmarkedItineraries => {
+            const isBookmarked = prevBookmarkedItineraries.includes(id);
+
+            // If it's already bookmarked, remove it; otherwise, add it
+            if (isBookmarked) {
+                return prevBookmarkedItineraries.filter(itineraryId => itineraryId !== id);  // Remove bookmark
+            } else {
+                return [...prevBookmarkedItineraries, id];  // Add bookmark
+            }
+        });
+    } catch (error) {
+        console.error("Error bookmarking itinerary:", error.response?.data || error.message);
+    }
+};
+
+  
+  const handleUnbookmark = async (id) => {
+    try {
+      // Remove the itinerary id from the list of bookmarked itineraries
+      const newBookmarkedItineraries = bookmarkedItineraries.filter(
+        (itineraryId) => itineraryId !== id
+      );
+  
+      // Update the user's bookmarked itineraries on the server
+      await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+        username,
+        eventId: id, // Send only the event ID
+      });
+  
+      // Update the local state
+      setBookmarkedItineraries(newBookmarkedItineraries);
+    } catch (error) {
+      console.error("Error unbookmarking itinerary:", error.response?.data || error.message);
+    }
+  };
+  
+
   return (
     <div>
    <h1>All Available Itenraries</h1>
@@ -411,6 +455,25 @@ const ViewItinerary = () => {
       </Modal>
     <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
     <ToastContainer/>
+      <h1>All Available Itineraries</h1>
+      <div style={{ display: "flex" }}>
+        {itineraries.map((itinerary) => (
+          <ItineraryItem
+            key={itinerary._id}
+            itinerary={itinerary}
+            onBook={handleBook}
+            onUnbook={handleUnbook}
+            onBookmark={handleBookmark}
+            userType={userType}
+            isBooked={bookedItineraries.includes(itinerary._id)}
+            isBookmarked={bookmarkedItineraries.includes(itinerary._id)} // Check if the itinerary is bookmarked
+            isProfilePage={false} 
+          />
+        ))}
+      </div>
+      <Link to="/home">
+        <button style={{ display: "center", alignItems: "center" }}>Back</button>
+      </Link>
     </div>
   );
 };
