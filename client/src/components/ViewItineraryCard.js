@@ -1,7 +1,7 @@
 import React from "react";
 import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
 
-const ViewItineraryCard = ({ itinerary }) => {
+const ViewItineraryCard = ({ itinerary, openModal }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();
 
   // Function to convert price to selected currency
@@ -102,6 +102,12 @@ const ViewItineraryCard = ({ itinerary }) => {
       <div className="itinerary-share">
         <button className="share-button" onClick={handleShare}>
           Share Itinerary
+        </button>
+      </div>
+
+      <div className="itinerary-share">
+        <button className="share-button" onClick={() => openModal(itinerary._id)}>
+          Book
         </button>
       </div>
     </div>

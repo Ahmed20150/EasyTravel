@@ -99,19 +99,26 @@ const TempHomePage = () => {
 
   return (
     <div className="container">
-      {/* Currency Selector (Only for tourist user) */}
-      {userType === "tourist" && (
-        <div className="currency-selector">
-          <h2>Select Currency:</h2>
-          <select value={selectedCurrency} onChange={handleCurrencyChange}>
-            {Object.keys(exchangeRates).map((currency) => (
-              <option key={currency} value={currency}>
-                {currency}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+  {userType === "tourist" && (
+      <div
+        className="currency-selector"
+        style={{
+          position: "absolute",
+          top: "70px", // Adjust as needed
+          left: "20px", // Adjust as needed
+          zIndex: 1000, // Ensure it stays on top of other elements
+        }}
+      >
+        <h2>Select Currency:</h2>
+        <select value={selectedCurrency} onChange={handleCurrencyChange}>
+          {Object.keys(exchangeRates).map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
+            </option>
+          ))}
+        </select>
+      </div>
+    )}
 
       <h1>
         Welcome {username}, you are a {userType}!!
@@ -236,7 +243,7 @@ const TempHomePage = () => {
       {userType === "tourist" && (
         <>
           <Link to="/ViewAllItinerary">
-            <button>View Itineraries</button>
+            <button>Manage Events</button>
           </Link>
           <Link to="/GiftList">
             <button>Gift Shop</button>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
 
-const ViewActivityCard = ({ activity }) => {
+const ViewActivityCard = ({ activity, openModal }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();
 
   // Function to convert price to selected currency
@@ -87,6 +87,9 @@ const ViewActivityCard = ({ activity }) => {
       <div className="activity-share">
         <button className="share-button" onClick={handleShare}>
           Share Activity
+        </button>
+        <button className="share-button" onClick={() => openModal(activity._id)}>
+          Book
         </button>
       </div>
     </div>

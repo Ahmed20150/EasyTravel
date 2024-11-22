@@ -161,4 +161,16 @@ router.post("/send-notification", async (req, res) => {
   }
 });
 
+//create a route that increments numofpurchases by 1 using actiivty id
+router.post("/increment/:id", async (req, res) => {
+  try {
+    const activity = await Activity.findById(req.params.id);
+    activity.numOfPurchases += 1;
+    await activity.save();
+    res.status(200).json(activity);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
