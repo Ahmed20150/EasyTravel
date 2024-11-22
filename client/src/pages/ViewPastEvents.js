@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
-import "../css/popup.css";
+import "../styles/popup.css";
 
 const ViewPastEvents = () => {
   const [bookings, setBookings] = useState([]);

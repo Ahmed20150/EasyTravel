@@ -1,6 +1,6 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa"; // Import the required icon
-import "../css/popup.css"; // Import the CSS file
+import "../styles/popup.css"; // Import the CSS file
 
 const Popup = ({ show, message, onClose }) => {
   console.log("Popup component rendered");
