@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import {useNavigate} from "react-router-dom";
 import { useCookies } from "react-cookie";
 import Modal from 'react-modal';
 import Radio from '@mui/material/Radio';
@@ -373,16 +374,19 @@ const ViewItinerary = () => {
       <Link to="/viewUpcomingEvents"><button>View Upcoming Itineraries</button></Link>
     </div>
     <div style={{display:"flex" }}>
-      {itineraries.map((itinerary) => (
-        <ItineraryItem
-          key={itinerary._id}
-          itinerary={itinerary}
-          onBook={openModal}
-          onUnbook={() => handleUnbook(itinerary._id)} // Pass the onBook function to ItineraryItem
-          userType={userType} // Pass the userType prop
-          isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
-        />
-      ))}
+    {itineraries.map((itinerary) => (
+          <ItineraryItem
+            key={itinerary._id}
+            itinerary={itinerary}
+            onBook={openModal}
+            onUnbook={handleUnbook}
+            onBookmark={handleBookmark}
+            userType={userType}
+            isBooked={bookedItineraries.includes(itinerary._id)}
+            isBookmarked={bookmarkedItineraries.includes(itinerary._id)} // Check if the itinerary is bookmarked
+            isProfilePage={false} 
+          />
+        ))}
 
     </div>
 
@@ -455,25 +459,7 @@ const ViewItinerary = () => {
       </Modal>
     <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
     <ToastContainer/>
-      <h1>All Available Itineraries</h1>
-      <div style={{ display: "flex" }}>
-        {itineraries.map((itinerary) => (
-          <ItineraryItem
-            key={itinerary._id}
-            itinerary={itinerary}
-            onBook={handleBook}
-            onUnbook={handleUnbook}
-            onBookmark={handleBookmark}
-            userType={userType}
-            isBooked={bookedItineraries.includes(itinerary._id)}
-            isBookmarked={bookmarkedItineraries.includes(itinerary._id)} // Check if the itinerary is bookmarked
-            isProfilePage={false} 
-          />
-        ))}
-      </div>
-      <Link to="/home">
-        <button style={{ display: "center", alignItems: "center" }}>Back</button>
-      </Link>
+
     </div>
   );
 };
