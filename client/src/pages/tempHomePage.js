@@ -22,10 +22,17 @@ const TempHomePage = () => {
       fetchEmail();  // Fetch email only if the user is an admin
     }
   }, [userType, username]);
+    if (userType !== "admin") {
+      fetchNotifications(); 
+    } else {
+      fetchEmail();  // Fetch email only if the user is an admin
+    }
+  }, [userType, username]);
 
   async function fetchData() {
     const accessToken = Cookies.get("token");
     const acceptedTerms = Cookies.get("acceptedTerms");
+
 
     if (!accessToken || acceptedTerms === "false") {
       navigate("/");
@@ -42,6 +49,18 @@ const TempHomePage = () => {
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
+  }
+
+  const fetchNotifications = async () => {
+    try {
+      if (userType !== 'admin' && username) {
+        const response = await axios.get(`http://localhost:3000/notifications/${username}`);
+        setNotifications(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
   };
 
   // Fetch email for admin users
@@ -53,10 +72,21 @@ const TempHomePage = () => {
       }
     } catch (error) {
       console.error("Error fetching email:", error);
+  // Fetch email for admin users
+  const fetchEmail = async () => {
+    try {
+      if (userType === 'admin' && username) {
+        const response = await axios.get(`http://localhost:3000/email/${username}`);
+        setUserEmail(response.data.email); // Set the email in the state
+      }
+    } catch (error) {
+      console.error("Error fetching email:", error);
     }
+  };
   };
 
   function handleLogout() {
+    Object.keys(Cookies.get()).forEach((cookieName) => Cookies.remove(cookieName));
     Object.keys(Cookies.get()).forEach((cookieName) => Cookies.remove(cookieName));
     fetchData();
   }
@@ -141,6 +171,23 @@ const TempHomePage = () => {
           </Link>
         </>
       )}
+
+      {userType === 'admin' && (
+        <>
+          <Link to="/pendingRequestsPage"><button>Pending Requests</button></Link>
+          <Link to="/adminAccountManagement"><button>Account Management</button></Link>
+          <Link to="/Categorycontrol"><button>Manage Categories</button></Link>
+          <Link to="/preferences"><button>Manage Prefrence Tags</button></Link>
+          <Link to="/revenue"><button>Financial Report</button></Link>
+          <Link to="/itinerary"><button>View itineraries</button></Link>
+          <Link to="/activities"><button>View Events</button></Link>
+        </>
+      )}
+
+      {userType === 'advertiser' && (
+        <>
+          <Link to="/activities"><button>View Activities</button></Link>
+          <Link to="/revenue"><button>Financial Report</button></Link>
       {userType === "advertiser" && (
         <>
           <Link to="/activities">

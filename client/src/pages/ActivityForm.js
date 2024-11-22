@@ -20,6 +20,7 @@ const ActivityForm = () => {
     specialDiscounts: "",
     isBookingOpen: true,
     flagged: "",
+    flagged: "",
   });
   const navigate = useNavigate();
   const [cookies] = useCookies(["username"]);
