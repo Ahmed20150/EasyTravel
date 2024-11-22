@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useCurrency } from "../components/CurrencyContext"; 
+import { useCurrency } from "../components/CurrencyContext";
 import "./TempHomePage.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
@@ -14,6 +14,8 @@ const TempHomePage = () => {
   const [username, setUsername] = useState(Cookies.get("username"));
   const [userType, setUserType] = useState(Cookies.get("userType"));
   const [userEmail, setUserEmail] = useState(null); // State to store email for admin users
+  const { selectedCurrency, setSelectedCurrency, exchangeRates } =
+    useCurrency();
 
   useEffect(() => {
     fetchData();
@@ -52,7 +54,7 @@ const TempHomePage = () => {
     for (let cookie in allCookies) {
       Cookies.remove(cookie);
     }
-  };
+  }
 
   // Fetch email for admin users
   const fetchEmail = async () => {
@@ -94,7 +96,6 @@ const TempHomePage = () => {
   const handleCurrencyChange = (event) => {
     setSelectedCurrency(event.target.value);
   };
-
 
   return (
     <div className="container">
@@ -199,9 +200,15 @@ const TempHomePage = () => {
 
       {userType === "advertiser" && (
         <>
-            <Link to="/activities"><button>View Activities</button></Link>
-            <Link to="/revenue"><button>Financial Report</button></Link> 
-            <Link to="/totaltouristactivity"><button>Tourist Report</button></Link> 
+          <Link to="/activities">
+            <button>View Activities</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
+          <Link to="/totaltouristactivity">
+            <button>Tourist Report</button>
+          </Link>
         </>
       )}
 
@@ -215,19 +222,28 @@ const TempHomePage = () => {
 
       {userType === "tourGuide" && (
         <>
-        <Link to="/itinerary">
-          <button>View Itineraries</button>
-        </Link>
-      <Link to="/revenue"><button>Financial Report</button></Link> 
-      <Link to="/tourist-report"><button>Tourist Report</button></Link>
-      </>
+          <Link to="/itinerary">
+            <button>View Itineraries</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
+          <Link to="/tourist-report">
+            <button>Tourist Report</button>
+          </Link>
+        </>
       )}
       {userType === "tourist" && (
         <>
-        <Link to="/ViewAllItinerary"><button>View Itineraries</button></Link>
-        <Link to="/GiftList"><button>Gift Shop</button></Link>
-        <Link to="/Help"><button>Help</button></Link>
-
+          <Link to="/ViewAllItinerary">
+            <button>View Itineraries</button>
+          </Link>
+          <Link to="/GiftList">
+            <button>Gift Shop</button>
+          </Link>
+          <Link to="/Help">
+            <button>Help</button>
+          </Link>
         </>
       )}
 
