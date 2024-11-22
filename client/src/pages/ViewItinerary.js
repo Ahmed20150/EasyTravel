@@ -11,11 +11,10 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {loadStripe} from '@stripe/stripe-js';
 
 Modal.setAppElement("#root");
 
-//TODO if there are two future dates, there is no distinction which one did i choose when i have to book the itinerary
-//TODO cant unbook before less than 48hrs
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -36,6 +35,8 @@ const ViewItinerary = () => {
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
   const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -157,11 +158,18 @@ const ViewItinerary = () => {
         return;
       }
 
-      const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Add the new itinerary ID
+      //Update Activity Purchases
+      await axios.patch(
+        `http://localhost:3000/itinerary/increment-purchases/${selectedItineraryId}`
+      );
 
+      const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update Itenararies Booked List in Tourist Model
+
+      //Updating Tourists Booked List in Itinerary
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${selectedItineraryId}`
       );
+
       const touristsBook = [...itinerary.data.touristsBooked, username];
 
       await axios.patch(
@@ -193,13 +201,12 @@ const ViewItinerary = () => {
       // Update the state with the new booked itineraries and wallet balance
       setBookedItineraries(response.data.bookedItineraries);
 
-      toast.success("Itinerary booked successfully!");
+      //Send Email Reciept
 
       const user = await axios.get(
         `http://localhost:3000/api/tourist/${username}`
       );
       const email = user.data.email;
-      console.log("EMAIL : ", email);
 
       const pickupLocation = itinerary.data.pickupLocation;
       const dropoffLocation = itinerary.data.dropoffLocation;
@@ -209,6 +216,9 @@ const ViewItinerary = () => {
         email,
         text,
       });
+
+      toast.success("Itinerary booked successfully!");
+
       closeModal();
     } catch (error) {
       const errorMessage =
@@ -272,6 +282,47 @@ const ViewItinerary = () => {
       );
     }
   };
+  const handleCreditCardPurchase = async () => {
+    const isOldEnough = await checkAge(username);
+    if (!isOldEnough) {
+      toast.error("You must be 18 or older to book an itinerary.");
+      return;
+    }
+
+    const today = new Date();
+    const selectedDateObj = new Date(selectedDate);
+    if (selectedDateObj <= today) {
+      toast.error("The selected date must be after Todays date.");
+      return;
+    }
+
+    const itinerary = await axios.get(
+      `http://localhost:3000/itinerary/${selectedItineraryId}`
+    );
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/payment/create-checkout-session",
+        {
+          itineraryId: selectedItineraryId,
+          itineraryName: "Itinerary",
+          price: itinerary.data.priceOfTour,
+          selectedDate,
+          selectedTime,
+        },
+        {
+          headers: { Authorization: `Bearer ${cookies.token}` },
+        }
+      );
+      console.log("RESPONSE : ", response);
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error("Error during credit card purchase:", error);
+      toast.error(
+        "An error occurred during the credit card purchase. Please try again."
+      );
+    }
+  };
 
   function convertTo24HourFormat(timeString) {
     const [time, modifier] = timeString.split(/(AM|PM)/i);
@@ -328,6 +379,12 @@ const ViewItinerary = () => {
       }
 
       console.log(`Unbooking itinerary: ${id} for user ${username}`);
+
+      //Update Activity Purchases
+      await axios.patch(
+        `http://localhost:3000/itinerary/decrement-purchases/${selectedItineraryId}`
+      );
+
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
@@ -399,28 +456,20 @@ const ViewItinerary = () => {
           <button>View Upcoming Itineraries</button>
         </Link>
       </div>
-      <div>
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search by museum name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <button onClick={handleSearchClick}>Search</button>
-      </div>
       <div style={{ display: "flex" }}>
         {itineraries.map((itinerary) => (
           <ItineraryItem
             key={itinerary._id}
             itinerary={itinerary}
             onBook={openModal}
-            onUnbook={() => handleUnbook(itinerary._id)}
-            userType={userType} // Pass the userType prop
+            onUnbook={handleUnbook}
+            onBookmark={handleBookmark}
+            userType={userType}
             isBooked={bookedItineraries.includes(itinerary._id)}
+            isBookmarked={bookmarkedItineraries.includes(itinerary._id)} // Check if the itinerary is bookmarked
+            isProfilePage={false}
           />
         ))}
-        ;
       </div>
 
       <Modal
@@ -511,32 +560,19 @@ const ViewItinerary = () => {
             }}
           >
             <button onClick={handleWalletPurchase}>by Wallet</button>
-            <button>by Credit Card</button>
+            <button onClick={handleCreditCardPurchase}>by Credit Card</button>
           </div>
           <button style={{ marginTop: "50px" }} onClick={closeModal}>
             Close
           </button>
         </div>
       </Modal>
-      <ToastContainer />
-      <div style={{ display: "flex" }}>
-        {filteredItineraries.map((itinerary) => (
-          <ItineraryItem
-            key={itinerary._id}
-            itinerary={itinerary}
-            onBook={handleBook}
-            onUnbook={handleUnbook}
-            userType={userType}
-            isBooked={bookedItineraries.includes(itinerary._id)}
-          />
-        ))}
-      </div>
-
       <Link to="/home">
         <button style={{ display: "center", alignItems: "center" }}>
           Back
         </button>
       </Link>
+      <ToastContainer />
     </div>
   );
 };

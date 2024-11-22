@@ -5,6 +5,7 @@ const Itinerary = require("../models/itinerary.model.js");
 const Notification = require("../models/notification.model.js"); // Import the Notification model
 const sendEmail = require('../sendEmail');
 
+const Activity = require("../models/activity.model.js");
 router.use(express.json());
 router.use(cors()); // This allows requests from any origin
 
@@ -278,6 +279,67 @@ router.get("/search", async (req, res) => {
   } catch (error) {
     console.error("Error searching for itineraries:", error);
     res.status(500).json({ message: "Server error" });
+router.patch('/increment-purchases/:itineraryId', async (req, res) => {
+  try {
+    const { itineraryId } = req.params;
+
+    // Fetch the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Iterate through the list of activity IDs and increment numOfPurchases
+    const activityUpdates = itinerary.activities.map(async (activityId) => {
+      console.log('Processing activityId:', activityId.activity);
+
+      const activity = await Activity.findById(activityId.activity);
+      console.log(activity);
+      if (activity) {
+        activity.numofpurchases += 1;
+        await activity.save();
+      }
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(activityUpdates);
+
+    res.status(200).json({ message: 'numOfPurchases incremented for all activities in the itinerary' });
+  } catch (error) {
+    console.error('Error incrementing numOfPurchases:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.patch('/decrement-purchases/:itineraryId', async (req, res) => {
+  try {
+    const { itineraryId } = req.params;
+
+    // Fetch the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Iterate through the list of activity IDs and increment numOfPurchases
+    const activityUpdates = itinerary.activities.map(async (activityId) => {
+      console.log('Processing activityId:', activityId.activity);
+
+      const activity = await Activity.findById(activityId.activity);
+      console.log(activity);
+      if (activity) {
+        activity.numofpurchases -= 1;
+        await activity.save();
+      }
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(activityUpdates);
+
+    res.status(200).json({ message: 'numOfPurchases incremented for all activities in the itinerary' });
+  } catch (error) {
+    console.error('Error incrementing numOfPurchases:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 

@@ -51,6 +51,7 @@ router.put("/tourist/:username", authenticate, async (req, res) => {
   }
 });
 
+//update booked Itenraries List and Pay with Wallet
 router.patch("/bookItinerary", async (req, res) => {
   try {
     const { username, newBookedItineraries, selectedItineraryId } = req.body;
@@ -126,7 +127,37 @@ router.patch("/unbookItinerary", async (req, res) => {
   }
 });
 
-router.get("/checkWallet/:username/:itineraryId", async (req, res) => {
+//Update BookedItenraries list only
+router.patch("/bookItineraryWithCreditCard", async (req, res) => {
+  try {
+    const { username, newItineraryId} = req.body;
+
+    console.log('Username:', username);
+    console.log('New Itinerary ID:', newItineraryId);
+
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    const itinerary = await Itinerary.findById(newItineraryId);
+
+    tourist.bookedItineraries.push(itinerary._id);
+
+    await tourist.save();
+
+
+    res.status(200).json({
+      message: "Itinerary booked successfully",
+    });
+  } catch (error) {
+    console.error("Error updating booked itineraries:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get('/checkWallet/:username/:itineraryId', async (req, res) => {
   try {
     const { username, itineraryId } = req.params;
 

@@ -63,16 +63,3 @@ button:hover {
   height: 100vh; 
   background-color: #f0f0f0; 
 }
-
-
-
-
-.container { 
-  display: flex;
-  flex-direction:column;
-  justify-content: center;
-  align-items: center; 
-  gap: 10px;
-  height: 100vh; 
-  background-color: #f0f0f0; 
-}

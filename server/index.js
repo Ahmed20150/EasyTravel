@@ -36,6 +36,7 @@ const touristRoutes = require('./routes/touristRoutes.js');
 const Reviews = require('./routes/review.routes.js');
 const bookingRoutes = require('./routes/booking.routes.js');
 const hotelOffers = require("./routes/hotelOffer.routes.js");
+const paymentRoutes = require('./routes/payment.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
@@ -67,13 +68,15 @@ app.use(bodyParser.urlencoded({ limit:'50mb',  extended: true }));
 app.use(cors());
 
 require('./config/db');
-require('./config/db');
+
 
 
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
 app.use('/review',Review);
 app.use('/transport',Transportation);
+
+app.use('/payment', paymentRoutes);
 
 
 
