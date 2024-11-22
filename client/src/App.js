@@ -48,9 +48,7 @@ import BookFLight from "./pages/BookFlight";
 import BookHotel from "./pages/BookHotel";
 import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
-import BookTransportation from './components/BookTransportation';
-import ExplorePage from "./pages/ExplorePage";
-import ViewItinerary from "./pages/ViewItinerary";
+import BookTransportation from './components/BookTransportation'
 
 
 
@@ -142,7 +140,6 @@ function App() {
           <Route path="/BookFlight" element={<BookFLight />} />
           <Route path="/BookHotel" element={<BookHotel />} />
             <Route path="/bookTransport" element={<BookTransportation />}/>
-            <Route path="/ExplorePage" element={<ExplorePage />} />
 
         </Routes>
       </BrowserRouter>
