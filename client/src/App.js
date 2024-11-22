@@ -58,6 +58,9 @@ import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
 import { CurrencyProvider } from "./components/CurrencyContext";
+import GiftList from "./pages/GiftList";
+import MuseumsList from "./pages/museumsList";
+import ExplorePage from "./pages/ExplorePage";
 
 function App() {
   return (
@@ -140,6 +143,7 @@ function App() {
           <Route path="/BookFlight" element={<BookFLight />} />
           <Route path="/BookHotel" element={<BookHotel />} />
             <Route path="/bookTransport" element={<BookTransportation />}/>
+            <Route path="/ExplorePage" element={<ExplorePage/>}/>
 
         </Routes>
       </BrowserRouter>

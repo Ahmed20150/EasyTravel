@@ -72,7 +72,6 @@ const TouristProfile = () => {
 
     return (
         <div>
-            <ToastContainer/>
             {isEditing ? (
                 tourist ? ( // Ensure tourist is defined before rendering TouristForm
                     <TouristForm tourist={tourist} onUpdate={handleUpdate} isEditing={isEditing} setIsEditing={setIsEditing} />

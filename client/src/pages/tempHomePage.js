@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import {useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import "./TempHomePage.css"; 
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useCurrency } from "../components/CurrencyContext"; // Assuming Cur
+import axios from "axios";
 
 const TempHomePage = () => {
   const navigate = useNavigate();

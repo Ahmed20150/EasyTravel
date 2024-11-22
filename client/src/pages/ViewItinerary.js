@@ -3,11 +3,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+//import "../css/ItineraryList.css"; // Import the CSS file
+import { useCookies } from "react-cookie";
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
-  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
@@ -45,28 +46,13 @@ const ViewItinerary = () => {
     fetchItineraries();
   }, [username]);
 
-  useEffect(() => {
-    if (searchClicked) {
-      if (searchQuery.trim() === "") {
-        setFilteredItineraries(itineraries); // Show all itineraries if no search query
-      } else {
-        const filtered = itineraries.filter((itinerary) => {
-          const nameMatch = itinerary.name
-            ? itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
-            : false;
-          const categoryMatch = itinerary.category
-            ? itinerary.category.toLowerCase().includes(searchQuery.toLowerCase())
-            : false;
-          const tagsMatch = itinerary.tags && itinerary.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase())
-          );
+  if (loading) {
+    return <p>Loading itineraries...</p>;
+  }
 
-          return nameMatch || categoryMatch || tagsMatch;
-        });
-        setFilteredItineraries(filtered);
-      }
-    }
-  }, [searchQuery, itineraries, searchClicked]);
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   const handleBook = async (id) => {
     try {
@@ -97,6 +83,8 @@ const ViewItinerary = () => {
         alert("You must be 18 or older to book an itinerary.");
         return; // Stop the booking process
       }
+
+      // Proceed with booking if age is 18 or above
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
@@ -109,14 +97,16 @@ const ViewItinerary = () => {
       const newBookedItineraries = [...bookedItineraries, id]; // Add the new itinerary ID
 
       // Update the user's booked itineraries on the server
-      await axios.patch(
+      const response = await axios.patch(
         "http://localhost:3000/api/bookItinerary",
         {
           username,
           newBookedItineraries,
         }
       );
+      console.log("Booking response:", response.data);
 
+      // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       console.error(
@@ -128,12 +118,12 @@ const ViewItinerary = () => {
 
   const handleUnbook = async (id) => {
     try {
-      // Handle unbooking logic...
+      console.log(`Unbooking itinerary: ${id} for user ${username}`);
       const itinerary = await axios.get(
         `http://localhost:3000/itinerary/${id}`
       );
       const touristsBook = itinerary.data.touristsBooked.filter(
-        (user) => user !== username
+        (user) => user != username
       );
 
       await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
@@ -145,16 +135,15 @@ const ViewItinerary = () => {
         (itineraryId) => itineraryId !== id
       );
 
-      await axios.patch(
+      // Update the user's booked itineraries on the server
+      const response = await axios.patch(
         "http://localhost:3000/api/bookItinerary",
         {
           username,
           newBookedItineraries,
         }
       );
-
-      await axios.delete(`http://localhost:3000/booking/deleteBooking/${id}/${username}`);
-      toast.success("Unbooking Successful, Amount is refunded to your wallet");
+      console.log("Unbooking response:", response.data);
 
       // Update the booked itineraries state
       setBookedItineraries(newBookedItineraries);
@@ -165,96 +154,24 @@ const ViewItinerary = () => {
       );
     }
   };
-
-  const handleBookmark = async (id) => {
-    try {
-        // Toggle the itinerary in the bookmarked itineraries list
-        await axios.patch("http://localhost:3000/api/bookmarkEvent", {
-            username,
-            eventId: id, // Send only the event ID
-        });
-
-        // Update the local state based on whether the event is already bookmarked
-        setBookmarkedItineraries(prevBookmarkedItineraries => {
-            const isBookmarked = prevBookmarkedItineraries.includes(id);
-
-            // If it's already bookmarked, remove it; otherwise, add it
-            if (isBookmarked) {
-                return prevBookmarkedItineraries.filter(itineraryId => itineraryId !== id);  // Remove bookmark
-            } else {
-                return [...prevBookmarkedItineraries, id];  // Add bookmark
-            }
-        });
-    } catch (error) {
-        console.error("Error bookmarking itinerary:", error.response?.data || error.message);
-    }
-};
-
-  
-  const handleUnbookmark = async (id) => {
-    try {
-      // Remove the itinerary id from the list of bookmarked itineraries
-      const newBookmarkedItineraries = bookmarkedItineraries.filter(
-        (itineraryId) => itineraryId !== id
-      );
-  
-      // Update the user's bookmarked itineraries on the server
-      await axios.patch("http://localhost:3000/api/bookmarkEvent", {
-        username,
-        eventId: id, // Send only the event ID
-      });
-  
-      // Update the local state
-      setBookmarkedItineraries(newBookmarkedItineraries);
-    } catch (error) {
-      console.error("Error unbookmarking itinerary:", error.response?.data || error.message);
-    }
-  };
-  
-
-
-  const handleSearchClick = () => {
-    setSearchClicked(true);
-  };
-
-  if (loading) {
-    return <p>Loading itineraries...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
   return (
     <div>
-      <h1>All Available Itineraries</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Search by museum name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+   <h1>All Available Itenraries</h1>
+    <div style={{display:"flex" }}>
+      {itineraries.map((itinerary) => (
+        <ItineraryItem
+          key={itinerary._id}
+          itinerary={itinerary}
+          onBook={handleBook}
+          onUnbook={handleUnbook} // Pass the onBook function to ItineraryItem
+          userType={userType} // Pass the userType prop
+          isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
         />
-        <button onClick={handleSearchClick}>Search</button>
-      </div>
-      <div style={{ display: "flex" }}>
-        {itineraries.map((itinerary) => (
-          <ItineraryItem
-            key={itinerary._id}
-            itinerary={itinerary}
-            onBook={handleBook}
-            onUnbook={handleUnbook}
-            onBookmark={handleBookmark}
-            userType={userType}
-            isBooked={bookedItineraries.includes(itinerary._id)}
-            isBookmarked={bookmarkedItineraries.includes(itinerary._id)} // Check if the itinerary is bookmarked
-            isProfilePage={false} 
-          />
-        ))}
-      </div>
-      <Link to="/home">
-        <button style={{ display: "center", alignItems: "center" }}>Back</button>
-      </Link>
+      ))}
+
+    </div>
+    <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
+
     </div>
   );
 };
