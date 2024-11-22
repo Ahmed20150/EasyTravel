@@ -3,6 +3,23 @@ const mongoose = require("mongoose");
 
 
 const itinerarySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Name is required"], // Custom error message
+    trim: true, // Remove leading and trailing whitespace
+  },
+  category: {
+    type: String,
+    required: [true, "Category is required"], // Custom error message
+    trim: true, // Remove leading and trailing whitespace
+  },
+  tags: {
+    type: [String],
+    validate: {
+      validator: (v) => v.every((tag) => typeof tag === "string"), // Ensure all tags are strings
+      message: "All tags must be strings", // Custom error message
+    },
+  },
   creator: {
     type: String,
   },
@@ -138,5 +155,9 @@ itinerarySchema.methods.createReview = function (rating, comment) {
   return this.updateRatings(); // Update total count and average rating
 };
 
+// Add text index on name, category, and tags fields for search functionality
+itinerarySchema.index({ name: "text", category: "text", tags: "text" });
+
 const Itinerary = mongoose.model("Itinerary", itinerarySchema);
+
 module.exports = Itinerary;

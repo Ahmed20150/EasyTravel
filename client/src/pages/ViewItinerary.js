@@ -1,10 +1,7 @@
-// src/components/Itineraries/ItineraryList.jsx
-// src/components/Itineraries/ItineraryList.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem"; // Import the ItineraryItem component
 import { useNavigate, Link } from "react-router-dom";
-//import "../css/ItineraryList.css"; // Import the CSS file
 import { useCookies } from "react-cookie";
 import Modal from 'react-modal';
 import Radio from '@mui/material/Radio';
@@ -23,6 +20,7 @@ Modal.setAppElement('#root');
 
 const ViewItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
+  const [filteredItineraries, setFilteredItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
@@ -37,6 +35,8 @@ const ViewItinerary = () => {
   const username = cookies.username; // Access the username
 
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
+  const [searchClicked, setSearchClicked] = useState(false); // Flag for search click
 
   useEffect(() => {
     const fetchItineraries = async () => {
@@ -67,13 +67,28 @@ const ViewItinerary = () => {
     fetchItineraries();
   }, [username]);
 
-  if (loading) {
-    return <p>Loading itineraries...</p>;
-  }
+  useEffect(() => {
+    if (searchClicked) {
+      if (searchQuery.trim() === "") {
+        setFilteredItineraries(itineraries); // Show all itineraries if no search query
+      } else {
+        const filtered = itineraries.filter((itinerary) => {
+          const nameMatch = itinerary.name
+            ? itinerary.name.toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+          const categoryMatch = itinerary.category
+            ? itinerary.category.toLowerCase().includes(searchQuery.toLowerCase())
+            : false;
+          const tagsMatch = itinerary.tags && itinerary.tags.some((tag) =>
+            tag.toLowerCase().includes(searchQuery.toLowerCase())
+          );
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+          return nameMatch || categoryMatch || tagsMatch;
+        });
+        setFilteredItineraries(filtered);
+      }
+    }
+  }, [searchQuery, itineraries, searchClicked]);
 
   
   const openModal = async (id) => {
@@ -266,6 +281,19 @@ const ViewItinerary = () => {
       toast.error(errorMessage);
     }
   };
+
+  const handleSearchClick = () => {
+    setSearchClicked(true);
+  };
+
+  if (loading) {
+    return <p>Loading itineraries...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
   return (
     <div>
    <h1>All Available Itenraries</h1>
@@ -273,17 +301,27 @@ const ViewItinerary = () => {
       <Link to="/viewPastEvents"><button>View Past Itineraries</button></Link>
       <Link to="/viewUpcomingEvents"><button>View Upcoming Itineraries</button></Link>
     </div>
+     <div>
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search by museum name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button onClick={handleSearchClick}>Search</button>
+      </div>
     <div style={{display:"flex" }}>
       {itineraries.map((itinerary) => (
         <ItineraryItem
           key={itinerary._id}
           itinerary={itinerary}
           onBook={openModal}
-          onUnbook={() => handleUnbook(itinerary._id)} // Pass the onBook function to ItineraryItem
+          onUnbook={() => handleUnbook(itinerary._id)} 
           userType={userType} // Pass the userType prop
-          isBooked={bookedItineraries.includes(itinerary._id)} // Check if the itinerary is already booked
-        />
-      ))}
+          isBooked={bookedItineraries.includes(itinerary._id)} />))};
+
+     
 
     </div>
 
@@ -354,8 +392,23 @@ const ViewItinerary = () => {
           <button style={{ marginTop: "50px" }} onClick={closeModal}>Close</button>
         </div>
       </Modal>
-    <Link to="/home"><button style={{display: "center", alignItems:"center"}}>Back</button></Link>
     <ToastContainer/>
+      <div style={{ display: "flex" }}>
+        {filteredItineraries.map((itinerary) => (
+          <ItineraryItem
+            key={itinerary._id}
+            itinerary={itinerary}
+            onBook={handleBook}
+            onUnbook={handleUnbook}
+            userType={userType}
+            isBooked={bookedItineraries.includes(itinerary._id)}
+          />
+        ))}
+      </div>
+
+      <Link to="/home">
+        <button style={{ display: "center", alignItems: "center" }}>Back</button>
+      </Link>
     </div>
   );
 };

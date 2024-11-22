@@ -68,10 +68,18 @@ const TempHomePage = () => {
   }
 
   const handleViewProfile = () => {
-    if (username) {
-      navigate(`/view-profile${userType === "tourGuide" ? "" : userType}`, {
-        state: { username },
-      });
+    const loggedInUser = Cookies.get("username");
+    const userType = Cookies.get("userType");
+    if (loggedInUser) {
+      if (userType === "tourGuide") {
+        navigate("/view-profile", { state: { username: loggedInUser } });
+      } else if (userType === "advertiser") {
+        navigate("/view-profileAdv", { state: { username: loggedInUser } });
+      } else if (userType === "seller") {
+        navigate("/view-profileSeller", { state: { username: loggedInUser } });
+      } else {
+        navigate("/TouristProfile", { state: { username: loggedInUser } });
+      }
     }
   };
 
@@ -183,6 +191,12 @@ const TempHomePage = () => {
 
       {userType === "tourGuide" && (
         <>
+          <Link to="/itinerary">
+            <button>View Itineraries</button>
+          </Link>
+          <Link to="/revenue">
+            <button>Financial Report</button>
+          </Link>
           <Link to="/itinerary">
             <button>View Itineraries</button>
           </Link>
