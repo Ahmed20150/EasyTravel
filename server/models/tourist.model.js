@@ -2,60 +2,61 @@ const mongoose = require("mongoose");
 const Itinerary = require("./itinerary.model");
 const Preference = require("./preference.model");
 
-const touristSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  mobileNumber: {
-    type: Number,
-    required: true,
-  },
-  wallet: {
-    type: Number,
-    default: 0,
-  },
-  nationality: {
-    type: String,
-    required: true,
-  },
-  dateOfBirth: {
-    type: Date,
-    required: true,
-  },
-  occupation: {
-    type: String,
-    required: true,
-  },
-  firstTimeLogin: {
-    type: Boolean,
-    default: true,
-  },
-  bookedItineraries: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Itinerary",
+const touristSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
     },
-  ],
-  BookedFlights: [{ type: String }],
-  BookedHotels: [{ type: String }],
-});
-  preferences: [
-    {
-      type: String, // Store the names of preferences directly
-      
+    email: {
+      type: String,
+      required: true,
     },
-  ],
-  
-},{ timestamps: true });
+    password: {
+      type: String,
+      required: true,
+    },
+    mobileNumber: {
+      type: Number,
+      required: true,
+    },
+    wallet: {
+      type: Number,
+      default: 0,
+    },
+    nationality: {
+      type: String,
+      required: true,
+    },
+    dateOfBirth: {
+      type: Date,
+      required: true,
+    },
+    occupation: {
+      type: String,
+      required: true,
+    },
+    firstTimeLogin: {
+      type: Boolean,
+      default: true,
+    },
+    bookedItineraries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Itinerary",
+      },
+    ],
+    BookedFlights: [{ type: String }],
+    BookedHotels: [{ type: String }],
+    preferences: [
+      {
+        type: String, // Store the names of preferences directly
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
 
 const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
 

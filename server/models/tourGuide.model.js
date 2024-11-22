@@ -74,7 +74,8 @@ const tourGuideSchema = new mongoose.Schema({
     ],
     totalRatingCount: { type: Number, default: 0 },
     avgRating: { type: Number, default: 0 }
-});
+}
+,{ timestamps: true });
 tourGuideSchema.methods.updateRatings = function () {
     this.totalRatingCount = this.ratings.length;
     const sum = this.ratings.reduce((acc, review) => acc + review.rating, 0);
@@ -88,7 +89,7 @@ tourGuideSchema.methods.createReview = function (rating, comment) {
     return this.updateRatings(); // Update total count and average rating
 };
 
-},{ timestamps: true });
+
 
 const TourGuide = mongoose.model("TourGuide", tourGuideSchema); //store in table "Tourist"
 

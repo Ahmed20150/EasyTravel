@@ -225,11 +225,10 @@ router.patch("/tourist/:username/preferences", authenticate, async (req, res) =>
     }
 
     // Verify the provided preferences exist in the Preference model
-    const validPreferences = await Preference.find({ name: { $in: preferences } });
-    const validPreferenceNames = validPreferences.map((p) => p.name);
+  
 
     // Update the tourist's preferences
-    tourist.preferences = validPreferenceNames;
+    tourist.preferences = preferences;
     await tourist.save();
 
     res.status(200).json({

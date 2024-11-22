@@ -30,11 +30,13 @@ const PreferenceSelector = ({ username, currentPreferences, onPreferencesUpdate 
 
   const handleSavePreferences = async () => {
     try {
+      //alert("selectedPreferences: " + selectedPreferences);
       await axios.patch(`http://localhost:3000/api/tourist/${username}/preferences`, {
         preferences: selectedPreferences,
       });
       onPreferencesUpdate(selectedPreferences); // Update parent component with new preferences
     } catch (err) {
+      alert("error");
       console.error("Error updating preferences:", err);
     }
   };
