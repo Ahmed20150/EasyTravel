@@ -323,19 +323,6 @@ app.post("/api/preference", async (req, res) => {
   }
 });
 
-app.get("/api/preference", async (req, res) =>{
-  try{
-    const preference = await Preference.find({});
-    res.status(200).json(preference);
-
-  }catch{
-    res.status(500).json({message:error.message});
-
-  }
-})
-
-
-
 
 
 app.put("/api/preference/:name", async (req, res) => {

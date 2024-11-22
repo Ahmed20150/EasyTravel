@@ -88,6 +88,8 @@ tourGuideSchema.methods.createReview = function (rating, comment) {
     return this.updateRatings(); // Update total count and average rating
 };
 
+},{ timestamps: true });
+
 const TourGuide = mongoose.model("TourGuide", tourGuideSchema); //store in table "Tourist"
 
 module.exports = TourGuide; //export for use in other files

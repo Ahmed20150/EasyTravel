@@ -407,4 +407,150 @@ router.put('/seller/:id/accept-terms', async (req, res) => {
     }
 });
 
+
+/////////////////////////// 
+
+  
+  
+//////////////
+
+
+
+// // Helper function to count new users grouped by month and year
+// const countNewUsersGroupedByMonth = async (Model) => {
+//     const result = await Model.aggregate([
+//       {
+//         $group: {
+//           _id: {
+//             year: { $year: "$createdAt" },
+//             month: { $month: "$createdAt" }
+//           },
+//           count: { $sum: 1 }
+//         }
+//       },
+//       {
+//         $sort: { "_id.year": -1, "_id.month": -1 } // Sort by year and month descending
+//       }
+//     ]);
+//     return result;
+//   };
+  
+//   // Admin Route to get user statistics
+//   router.get('/stats', async (req, res) => {
+//     try {
+//       // Get new users grouped by month for each role (excluding Admins)
+//       const touristsByMonth = await countNewUsersGroupedByMonth(Tourist);
+//       const sellersByMonth = await countNewUsersGroupedByMonth(Seller);
+//       const advertisersByMonth = await countNewUsersGroupedByMonth(Advertiser);
+//       const tourGuidesByMonth = await countNewUsersGroupedByMonth(TourGuide);
+//       const tourismGovernorsByMonth = await countNewUsersGroupedByMonth(TourismGoverner);
+  
+//       // Calculate total user count across all roles (excluding Admins)
+//       const totalTourists = await Tourist.countDocuments();
+//       const totalSellers = await Seller.countDocuments();
+//       const totalAdvertisers = await Advertiser.countDocuments();
+//       const totalTourGuides = await TourGuide.countDocuments();
+//       const totalTourismGovernors = await TourismGoverner.countDocuments();
+  
+//       const totalUsers = totalTourists + totalSellers + totalAdvertisers + totalTourGuides + totalTourismGovernors;
+  
+//       // Prepare response
+//       res.status(200).json({
+//         totalUsers,
+//         totalTourists,
+//         totalSellers,
+//         totalAdvertisers,
+//         totalTourGuides,
+//         totalTourismGovernors,
+//         newUsersByMonth: {
+//           tourists: touristsByMonth,
+//           sellers: sellersByMonth,
+//           advertisers: advertisersByMonth,
+//           tourGuides: tourGuidesByMonth,
+//           tourismGovernors: tourismGovernorsByMonth,
+//         },
+//       });
+//     } catch (error) {
+//       res.status(500).json({ message: error.message });
+//     }
+//   });
+
+
+
+ //Helper function to count new users grouped by month and year
+const countNewUsersGroupedByMonth = async (Model) => {
+  const result = await Model.aggregate([
+    {
+      $group: {
+        _id: {
+          year: { $year: "$createdAt" },
+          month: { $month: "$createdAt" }
+        },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { "_id.year": -1, "_id.month": -1 } // Sort by year and month descending
+    }
+  ]);
+  return result;
+};
+
+// Admin Route to get user statistics (total new users per month)
+router.get('/stats', async (req, res) => {
+  try {
+    // Get new users grouped by month for all roles (excluding Admins)
+    const touristsByMonth = await countNewUsersGroupedByMonth(Tourist);
+    const sellersByMonth = await countNewUsersGroupedByMonth(Seller);
+    const advertisersByMonth = await countNewUsersGroupedByMonth(Advertiser);
+    const tourGuidesByMonth = await countNewUsersGroupedByMonth(TourGuide);
+    const tourismGovernorsByMonth = await countNewUsersGroupedByMonth(TourismGoverner);
+
+    // Combine all user groups by month into a single array
+    const allUsersByMonth = [
+      ...touristsByMonth,
+      ...sellersByMonth,
+      ...advertisersByMonth,
+      ...tourGuidesByMonth,
+      ...tourismGovernorsByMonth
+    ];
+
+    // Group by month and year to calculate total new users per month
+    const totalNewUsersByMonth = allUsersByMonth.reduce((acc, user) => {
+      const { year, month } = user._id;
+      const monthKey = `${year}-${month < 10 ? '0' + month : month}`; // Format as 'YYYY-MM'
+
+      if (!acc[monthKey]) {
+        acc[monthKey] = 0;
+      }
+      acc[monthKey] += user.count;
+
+      return acc;
+    }, {});
+
+    // Calculate total user count across all roles (excluding Admins)
+    const totalTourists = await Tourist.countDocuments();
+    const totalSellers = await Seller.countDocuments();
+    const totalAdvertisers = await Advertiser.countDocuments();
+    const totalTourGuides = await TourGuide.countDocuments();
+    const totalTourismGovernors = await TourismGoverner.countDocuments();
+
+    const totalUsers = totalTourists + totalSellers + totalAdvertisers + totalTourGuides + totalTourismGovernors;
+
+    // Prepare response
+    res.status(200).json({
+      totalUsers,
+      totalTourists,
+      totalSellers,
+      totalAdvertisers,
+      totalTourGuides,
+      totalTourismGovernors,
+      totalNewUsersByMonth
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+  
 module.exports = router;

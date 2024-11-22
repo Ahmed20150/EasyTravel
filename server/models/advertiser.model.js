@@ -55,7 +55,9 @@ const advertiserSchema = new mongoose.Schema({
   },
 
 
-  });  
+  },
+  { timestamps: true });
+
 
 const Advertiser = mongoose.model("Advertiser", advertiserSchema); //store in table "Tourist"
 

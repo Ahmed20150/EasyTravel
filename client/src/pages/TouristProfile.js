@@ -1,11 +1,10 @@
 // client/src/pages/TouristProfile.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TouristForm from '../components/TouristForm';
+import PreferenceSelector from '../components/PreferenceSelector';  // Import the new component
 import { useLocation, Link } from 'react-router-dom';
 import { useCookies } from "react-cookie";
-
 
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
@@ -15,9 +14,9 @@ const TouristProfile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+    const [isPreferencesEditing, setIsPreferencesEditing] = useState(false); // State to toggle preferences editing
     const location = useLocation();
     const { username } = location.state || {};
-
 
     useEffect(() => {
         const fetchTouristProfile = async () => {
@@ -39,13 +38,9 @@ const TouristProfile = () => {
     }, [username]); // Use username as dependency
 
     const handleRequest = async (username, role) => {
-        //const input = { username, role };
         try {
-            // Construct the URL with the username and role as query parameters
             const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
-            // Update state to remove the deleted user
             window.alert(`Request sent successfully: ${response.data.message}`);
-            // Filter out the deleted user from the UI
         } catch (error) {
             console.error("Error deleting user:", error);
             if (error.response) {
@@ -55,7 +50,6 @@ const TouristProfile = () => {
             }
         }
     };
-
 
     const handleUpdate = async (updatedTourist) => {
         try {
@@ -67,13 +61,21 @@ const TouristProfile = () => {
         }
     };
 
+    const handlePreferencesUpdate = (updatedPreferences) => {
+        setTourist(prevTourist => ({
+            ...prevTourist,
+            preferences: updatedPreferences
+        }));
+        setIsPreferencesEditing(false);
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
     return (
         <div>
             {isEditing ? (
-                tourist ? ( // Ensure tourist is defined before rendering TouristForm
+                tourist ? (
                     <TouristForm tourist={tourist} onUpdate={handleUpdate} isEditing={isEditing} setIsEditing={setIsEditing} />
                 ) : (
                     <div>No tourist data available</div>
@@ -87,16 +89,26 @@ const TouristProfile = () => {
                     <p>Nationality: {tourist.nationality}</p>
                     <p>Date of Birth: {new Date(tourist.dateOfBirth).toLocaleDateString()}</p>
                     <p>Occupation: {tourist.occupation}</p>
-                    <p>wallet: {tourist.wallet}</p>
+                    <p>Wallet: {tourist.wallet}</p>
                     <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+                    <button onClick={() => setIsPreferencesEditing(true)}>Edit Preferences</button> {/* Edit preferences button */}
                     <button
                         className="delete-button"
-                        onClick={() => { handleRequest(tourist.username, userType) }}  // Pass the correct user details
+                        onClick={() => { handleRequest(tourist.username, userType); }}  // Pass the correct user details
                     >
                         Request Delete
                     </button>
                     <Link to="/home"><button>Back</button></Link>
                 </div>
+            )}
+
+            {/* Show the PreferenceSelector component when editing preferences */}
+            {isPreferencesEditing && tourist && (
+                <PreferenceSelector
+                    username={tourist.username}
+                    currentPreferences={tourist.preferences}
+                    onPreferencesUpdate={handlePreferencesUpdate}
+                />
             )}
         </div>
     );
