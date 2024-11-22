@@ -1,11 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const bodyParser = require("body-parser");
 const app = express();
 const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
 const path = require("path");
 
 
@@ -24,7 +24,6 @@ require('./config/db');
 const port = process.env.PORT || 3000;
 
 // Routes imports
-const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const activityRoutes = require("./routes/activity.routes.js");
 const itineraryRoutes = require("./routes/itinerary.routes.js");
 const giftRoutes = require("./routes/gift.routes.js");
@@ -40,7 +39,6 @@ const hotelOffers = require("./routes/hotelOffer.routes.js");
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
-const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
@@ -53,7 +51,6 @@ const Transportation=require("./routes/transportation.routes.js")
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
-const bodyParser = require('body-parser');
 const fileRoutes = require('./routes/file.routes.js');
 const Grid = require('gridfs-stream');
 const searchRoutes = require("./routes/search.router.js");
@@ -81,7 +78,6 @@ const Preference= require("./models/preference.model.js");
 //connect admin.routes.js to index.js
 
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -107,9 +103,6 @@ app.use("/tourguide", tourGuideRoutes);
 app.use("/booking", bookingRoutes);
 app.use("/hotelOffer", hotelOffers);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
 
 
 //TODO arrange routes in their seperate files, keep index clean

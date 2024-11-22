@@ -5,6 +5,8 @@ import ViewActivityCard from "../components/ViewActivityCard";
 import ViewMuseumCard from "../components/ViewMuseumCard";
 import { useCookies } from "react-cookie";
 import "../css/ExplorePage.css";
+import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const ExplorePage = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -21,6 +23,8 @@ const ExplorePage = () => {
 
   const [sortOptionItineraries, setSortOptionItineraries] = useState("default");
   const [sortOptionActivities, setSortOptionActivities] = useState("default");
+
+  const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   const [cookies] = useCookies(["nationality", "occupation"]);
   const nationality = cookies.nationality;
@@ -45,8 +49,6 @@ const ExplorePage = () => {
   const [searchItineraryCreator, setSearchItineraryCreator] = useState(""); // Search by itinerary creator
   const [searchActivityCreator, setSearchActivityCreator] = useState(""); // Search by activity creator
 
-  
-  
   const itineraryScrollRef = useRef(null);
   const activityScrollRef = useRef(null);
   const museumScrollRef = useRef(null);
@@ -72,12 +74,17 @@ const ExplorePage = () => {
 
   useEffect(() => {
     applyFiltersItineraries();
-  }, [filterCriteriaItineraries, itineraries,searchItineraryCreator]);
+  }, [filterCriteriaItineraries, itineraries, searchItineraryCreator]);
 
   useEffect(() => {
     applyFiltersActivities();
-  }, [filterCriteriaActivities, activities, searchCategory, searchTags, searchActivityCreator]); // Added searchActivityCreator to the dependency array
-  
+  }, [
+    filterCriteriaActivities,
+    activities,
+    searchCategory,
+    searchTags,
+    searchActivityCreator,
+  ]); // Added searchActivityCreator to the dependency array
 
   useEffect(() => {
     applyFiltersMuseums();
@@ -86,14 +93,28 @@ const ExplorePage = () => {
   const fetchItineraries = async () => {
     setLoadingItineraries(true);
     const response = await axios.get("http://localhost:3000/itinerary");
-    setItineraries(response.data);
+    const currentDate = new Date();
+    const upcomingItineraries = response.data
+      .filter((itinerary) => itinerary.flagged === "no") // Exclude flagged itineraries
+      .map((itinerary) => ({
+        ...itinerary,
+        availableDates: itinerary.availableDates.filter(
+          (date) => new Date(date) > currentDate
+        ),
+      }))
+      .filter((itinerary) => itinerary.availableDates.length > 0);
+    setItineraries(upcomingItineraries);
     setLoadingItineraries(false);
   };
 
   const fetchActivities = async () => {
     setLoadingActivities(true);
     const response = await axios.get("http://localhost:3000/activities");
-    setActivities(response.data);
+    const currentDate = new Date();
+    const upcomingActivities = response.data
+      .filter((activity) => activity.flagged === "no") // Exclude flagged activities
+      .filter((activity) => new Date(activity.date) > currentDate);
+    setActivities(upcomingActivities);
     setLoadingActivities(false);
   };
 
@@ -143,7 +164,6 @@ const ExplorePage = () => {
   const handleSearchItineraryCreatorChange = (e) => {
     setSearchItineraryCreator(e.target.value); // Handle itinerary creator search input change
   };
-  
 
   const handleSearchTagsChange = (e) => {
     setSearchTags(e.target.value); // Handle tags search input change
@@ -191,7 +211,9 @@ const ExplorePage = () => {
       filtered = filtered.filter(
         (itinerary) =>
           itinerary.creator &&
-          itinerary.creator.toLowerCase().includes(searchItineraryCreator.toLowerCase())
+          itinerary.creator
+            .toLowerCase()
+            .includes(searchItineraryCreator.toLowerCase())
       );
     }
 
@@ -203,8 +225,9 @@ const ExplorePage = () => {
 
     // Apply category search filter if present
     if (searchCategory) {
-      filtered = filtered.filter((activity) =>
-        activity.category.toLowerCase().includes(searchCategory.toLowerCase()) // Filter by category
+      filtered = filtered.filter(
+        (activity) =>
+          activity.category.toLowerCase().includes(searchCategory.toLowerCase()) // Filter by category
       );
     }
 
@@ -212,20 +235,17 @@ const ExplorePage = () => {
       filtered = filtered.filter(
         (activity) =>
           activity.creator &&
-          activity.creator.toLowerCase().includes(searchActivityCreator.toLowerCase())
+          activity.creator
+            .toLowerCase()
+            .includes(searchActivityCreator.toLowerCase())
       );
     }
-    
-    
-
-
-    
 
     // Apply tag search filter if present
     if (searchTags) {
       filtered = filtered.filter((activity) =>
-        activity.tags.some((tag) =>
-          tag.toLowerCase().includes(searchTags.toLowerCase()) // Filter by tags
+        activity.tags.some(
+          (tag) => tag.toLowerCase().includes(searchTags.toLowerCase()) // Filter by tags
         )
       );
     }
@@ -299,17 +319,50 @@ const ExplorePage = () => {
     setActivities(sortedActivities);
   };
 
+  const username = Cookies.get("username");
+  const handleBookmark = async (id) => {
+    try {
+      // Toggle the itinerary in the bookmarked itineraries list
+      await axios.patch("http://localhost:3000/api/bookmarkEvent", {
+        username,
+        eventId: id, // Send only the event ID
+      });
+
+      // Update the local state based on whether the event is already bookmarked
+      setBookmarkedItineraries((prevBookmarkedItineraries) => {
+        const isBookmarked = prevBookmarkedItineraries.includes(id);
+
+        // If it's already bookmarked, remove it; otherwise, add it
+        if (isBookmarked) {
+          return prevBookmarkedItineraries.filter(
+            (itineraryId) => itineraryId !== id
+          ); // Remove bookmark
+        } else {
+          return [...prevBookmarkedItineraries, id]; // Add bookmark
+        }
+      });
+    } catch (error) {
+      console.error(
+        "Error bookmarking itinerary:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   const handleSearchActivityCreatorChange = (e) => {
     setSearchActivityCreator(e.target.value);
   };
-  
-  
 
   return (
     <div className="explore-page">
       <h1>Explore Upcoming Attractions</h1>
-
-      {/* Museums Filter Section */}
+      <p>Discover activities, itineraries, and historical places near you.</p>
+      <Link to="/home" className="back-button">
+        {" "}
+        {/* Adjust the path as needed */}
+        &larr; Back
+      </Link>
+      {/* Itineraries Filter Section */}
       <div className="filter-section">
         <h2 className="filters-title">Filter Museums</h2>
         <div className="filters">
@@ -401,8 +454,11 @@ const ExplorePage = () => {
               onChange={handleFilterChangeItineraries}
               placeholder="Enter language"
             />
-          </div><div className="filter">
-            <label htmlFor="search-itinerary-creator">Search by Itinerary Creator:</label>
+          </div>
+          <div className="filter">
+            <label htmlFor="search-itinerary-creator">
+              Search by Itinerary Creator:
+            </label>
             <input
               type="text"
               id="search-itinerary-creator"
@@ -502,18 +558,18 @@ const ExplorePage = () => {
             />
           </div>
           <div className="filter">
-          <label htmlFor="search-activity-creator">Search by Activity Creator:</label>
-          <input
-            type="text"
-            id="search-activity-creator"
-            value={searchActivityCreator}
-            onChange={handleSearchActivityCreatorChange}
-            placeholder="Enter creator name"
-          />
-        </div>
+            <label htmlFor="search-activity-creator">
+              Search by Activity Creator:
+            </label>
+            <input
+              type="text"
+              id="search-activity-creator"
+              value={searchActivityCreator}
+              onChange={handleSearchActivityCreatorChange}
+              placeholder="Enter creator name"
+            />
+          </div>
 
- 
-          
           <div className="filter">
             <label htmlFor="rating-activity">Min Rating:</label>
             <input
