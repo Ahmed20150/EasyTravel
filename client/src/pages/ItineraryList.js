@@ -98,6 +98,7 @@ const ItineraryList = () => {
 
   const handleEdit = (id) => {
     localStorage.clear();
+    localStorage.clear();
     navigate(`/itinerary/edit/${id}`);
   };
 

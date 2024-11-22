@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 const router = express.Router();
 const cors = require("cors");
 const Activity = require("../models/activity.model.js");
@@ -8,6 +9,7 @@ const sendEmail = require('../sendEmail');
 const axios = require('axios');
 
 router.use(express.json());
+router.use(cookieParser());
 router.use(cookieParser());
 router.use(cors()); // This allows requests from any origin
 
@@ -66,8 +68,15 @@ router.put("/:id", async (req, res) => {
       req.params.id,
       req.body,
       { new: true, runValidators: true }
+      { new: true, runValidators: true }
     );
     res.status(200).json(updatedActivity);
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).send({ errors });
+    }
+    res.status(500).json({ error: error.message });
   } catch (error) {
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err) => err.message);

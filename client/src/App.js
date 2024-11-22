@@ -42,6 +42,7 @@ import ActivityEdit from "./pages/ActivityEdit";
 import ItineraryEdit from "./pages/ItineraryEdit";
 import ItineraryForm from "./pages/ItineraryForm";
 import ViewItinerary from "./pages/ViewItinerary";
+import ViewItinerary from "./pages/ViewItinerary";
 import ItineraryList from "./pages/ItineraryList";
 import SelectActivity from "./pages/SelectActivity";
 import MuseumsList from "./pages/museumsList";
@@ -63,6 +64,11 @@ import GiftItemForm from "./pages/GiftItemPage";
 
 function App() {
   return (
+    <div className="App">
+      {/* for notifications across all pages */}
+      <ToastContainer />
+
+      <BrowserRouter>
     <div className="App">
       {/* for notifications across all pages */}
       <ToastContainer />
@@ -125,8 +131,8 @@ function App() {
           <Route path="/itinerary" element={<ItineraryList />} />
           <Route path="/itinerary/create" element={<ItineraryForm />} />
           <Route
-            path="/itinerary/create/selectActivity"
-            element={<SelectActivity />}
+            path="/edit-profileSeller"
+            element={<EditProfilePageSeller />}
           />
           <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
           <Route path="/museums" element={<MuseumsList />} />
@@ -148,6 +154,7 @@ function App() {
       </BrowserRouter>
     </div>
   );
+}
 }
 
 export default App;

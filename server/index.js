@@ -1,7 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const app = express();
+app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+const cors = require("cors");
+const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const cors = require("cors");
@@ -48,6 +53,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ limit:'50mb',  extended: true }));
 app.use(cors());
 
+require('./config/db');
 require('./config/db');
 
 

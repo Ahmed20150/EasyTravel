@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Map from "../components/Map";
 import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 import mapboxgl from "mapbox-gl";
 import { useCookies } from "react-cookie";
+import { useCookies } from "react-cookie";
 
+//TODO time input should be of type time not string
 //TODO time input should be of type time not string
 // Set your Mapbox access token
 mapboxgl.accessToken =
   "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
 
 const ActivityForm = () => {
+  const [errors, setErrors] = useState([]); // State to store validation errors
   const [errors, setErrors] = useState([]); // State to store validation errors
   const [formData, setFormData] = useState({
     date: "",
@@ -30,6 +34,8 @@ const ActivityForm = () => {
     flagged: "",
   });
   const navigate = useNavigate();
+  const [cookies] = useCookies(["username"]);
+  const [categories, setCategories] = useState([]);
   const [cookies] = useCookies(["username"]);
   const [categories, setCategories] = useState([]);
 
@@ -69,9 +75,17 @@ const ActivityForm = () => {
         ...formData,
         tags: formData.tags.split(",").map((tag) => tag.trim()),
         creator: cookies.username || "default_username", // Pass the username from cookies
+        creator: cookies.username || "default_username", // Pass the username from cookies
       });
       navigate(`/activities`);
       console.log("Activity created:", response.data);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
+      } else {
+        console.error("An error occurred:", err);
+      }
     } catch (err) {
       if (err.response && err.response.status === 400) {
         setErrors(err.response.data.errors);
@@ -85,6 +99,21 @@ const ActivityForm = () => {
     localStorage.clear();
     navigate("/activities");
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -116,6 +145,7 @@ const ActivityForm = () => {
       <label>
         Time:
         <input
+          type="time"
           type="time"
           name="time"
           value={formData.time}
@@ -195,6 +225,14 @@ const ActivityForm = () => {
             </option>
           ))}
         </select>
+        >
+          <option value="">Select a category</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </label>
       <label>
         Tags (comma-separated):
@@ -207,7 +245,9 @@ const ActivityForm = () => {
       </label>
       <label>
         Special Discounts (in %):
+        Special Discounts (in %):
         <input
+          type="number"
           type="number"
           name="specialDiscounts"
           value={formData.specialDiscounts}

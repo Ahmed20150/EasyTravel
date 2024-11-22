@@ -20,6 +20,12 @@ router.post("/", async (req, res) => {
       return res.status(400).send({ errors });
     }
     res.status(500).json({ error: error.message });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).send({ errors });
+    }
+    res.status(500).json({ error: error.message });
   }
 });
 
