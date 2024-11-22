@@ -76,7 +76,7 @@ function App() {
     <div className="App">
       {/* for notifications across all pages */}
       <ToastContainer />
-
+      <CurrencyProvider>
       <BrowserRouter>
 
         <Routes>
@@ -166,6 +166,7 @@ function App() {
           
           </Routes>
       </BrowserRouter>
+      </CurrencyProvider>
     </div>
   );
 }
