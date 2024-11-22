@@ -48,6 +48,12 @@ const activityRouter= require("./routes/activity.routes.js");
 
 const Review=require("./routes/review.routes.js")
 const Transportation=require("./routes/transportation.routes.js")
+const touristReport = require('./routes/touristReport.routes.js');
+const  totalTouristActivity = require("./routes/totalTouristActivity.routes.js");
+
+
+
+
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
@@ -523,6 +529,39 @@ app.get('/api/giftitems', async (req, res) => {
     console.error('Error fetching gift items:', error);
     res.status(500).json({ message: 'Server error' });
   }
+}); 
+
+
+
+app.get('/api/giftitems/all', async (req, res) => {
+  try {
+    const giftItems = await GiftItem.find(); // Fetch all items
+    res.status(200).json(giftItems);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch gift items', error });
+  }
+});
+
+
+
+
+
+app.get('/api/giftitems/filter', async (req, res) => {
+  try {
+    const { purchases } = req.query;
+
+    // Build a filter object
+    let filter = {};
+    if (purchases) {
+      filter.purchases = { $gte: parseInt(purchases, 10) };
+    }
+
+    const giftItems = await GiftItem.find(filter); // Fetch filtered items
+    res.status(200).json(giftItems);
+  } catch (error) {
+    console.error('Error filtering gift items:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
@@ -532,3 +571,5 @@ app.use('/advertiser', advRoutes);
 app.use('/api/seller', sellerRoutes);
 app.use('/api/send' , activityRouter);
 
+app.use('/api/reports', touristReport);
+app.use("/api", totalTouristActivity);

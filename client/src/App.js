@@ -55,6 +55,13 @@ import ExplorePage from "./pages/ExplorePage";
 
 
 
+import TouristReport from './pages/TouristReport'; 
+import TotalTourists from './pages/TotalActivityTourist'; 
+import GiftItemsFilter from './pages/GiftItemsFilter'; 
+//TODO add navigation buttons between all pages
+//
+
+
 
 import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
@@ -145,7 +152,13 @@ function App() {
             <Route path="/bookTransport" element={<BookTransportation />}/>
             <Route path="/ExplorePage" element={<ExplorePage />} />
 
-        </Routes>
+            
+            <Route path="/tourist-report" element={<TouristReport />} />
+            <Route path="/totaltouristactivity" element={<TotalTourists />} />  
+            <Route path="/giftfilter" element={<GiftItemsFilter />} />
+            
+          
+          </Routes>
       </BrowserRouter>
     </div>
   );
