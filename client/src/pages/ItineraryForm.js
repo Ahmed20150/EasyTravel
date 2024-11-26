@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
-//import "../css/ItineraryForm.css"; // Import the CSS file
-
 const ItineraryForm = () => {
-  const [errors, setErrors] = useState([]); // State to store validation errors
-  const navigate = useNavigate(); // Use useNavigate for navigation
+  const navigate = useNavigate();
   const location = useLocation();
-  const { state } = location;
-  const selectedActivities = state?.selectedActivities || [];
   const [cookies] = useCookies(["username"]);
-  const initialFormData = state?.formData || {
-    // Use formData from state if available
+  const [errors, setErrors] = useState({});
+
+  // Initial form state matching the exact schema requirements
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    tags: [],
     activities: [],
     locationsToVisit: [],
     timeline: "",
     duration: "",
-    flagged: "",
     languageOfTour: "",
     priceOfTour: "",
     availableDates: [],
@@ -26,134 +25,154 @@ const ItineraryForm = () => {
     accessibility: "",
     pickupLocation: "",
     dropoffLocation: "",
-    touristsBooked: [],
-  };
+    flagged: "no",
+    creator: cookies.username || ""
+  });
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [activityCategories, setActivityCategories] = useState([]);
+  const [selectedActivities, setSelectedActivities] = useState([]);
 
-  useEffect(() => {
-    if (selectedActivities.length > 0) {
-      setActivityCategories(
-        selectedActivities.map((activity) => activity.category)
-      );
-      setFormData((prevState) => ({
-        ...prevState,
-        activities: selectedActivities.map((activity) => activity._id), // Store the selected activity IDs
-      }));
-    }
-  }, [selectedActivities]);
-
+  // Handle input changes with type-specific processing
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
 
-    if (name === "locationsToVisit") {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: value.split(",").map((item) => item.trim()), // Split by comma and trim spaces
-      }));
-    } else if (name === "availableDates" || name === "availableTimes") {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: value.split(",").map((item) => item.trim()), // Split by comma and trim spaces
-      }));
-    } else {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
+    switch(name) {
+      case 'tags':
+      case 'locationsToVisit':
+      case 'availableTimes':
+        setFormData(prev => ({
+          ...prev,
+          [name]: value.split(',').map(item => item.trim())
+        }));
+        break;
+      case 'availableDates':
+        setFormData(prev => ({
+          ...prev,
+          [name]: value.split(',').map(item => new Date(item.trim()))
+        }));
+        break;
+      case 'duration':
+      case 'priceOfTour':
+        setFormData(prev => ({
+          ...prev,
+          [name]: type === 'number' ? parseFloat(value) : value
+        }));
+        break;
+      default:
+        setFormData(prev => ({
+          ...prev,
+          [name]: value
+        }));
     }
   };
 
+  // Navigate to activity selection
+  const handleChooseActivities = () => {
+    navigate('/itinerary/create/selectActivity', {
+      state: { 
+        locations: formData.locationsToVisit,
+        existingFormData: formData
+      }
+    });
+  };
+
+  // Submit form handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting itinerary:", formData);
-
+    
     try {
-      // Transform activities to match the itinerary schema
-      alert(`username: ${cookies.username}`);
-      const updatedFormData = {
+      // Transform activities to match schema
+      const submissionData = {
         ...formData,
-        activities: selectedActivities.map((activity) => ({
-          activity: activity._id,
-        })),
-        creator: cookies.username || "default_username",
+        activities: selectedActivities.map(activity => ({ activity: activity._id })),
+        creator: cookies.username || "anonymous"
       };
 
       const response = await axios.post(
-        "http://localhost:3000/itinerary",
-        updatedFormData
+        "http://localhost:3000/itinerary", 
+        submissionData
       );
 
-      console.log("Itinerary created successfully:", response.data);
-      navigate("/itinerary"); // Redirect to the itinerary list page
+      navigate("/itinerary");
     } catch (err) {
-      if (err.response && err.response.status === 400) {
-        setErrors(err.response.data.errors);
-        alert(`Error updating activity: ${err.response.data.errors}`);
-      } else {
-        console.error("An error occurred:", err);
+      if (err.response?.data?.errors) {
+        const errorMap = err.response.data.errors.reduce((acc, error) => {
+          acc[error.param] = error.msg;
+          return acc;
+        }, {});
+        setErrors(errorMap);
       }
     }
   };
 
-  const handleChooseActivities = () => {
-    const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string with comma
-    const selectedActivityIds = selectedActivities.map(
-      (activity) => activity._id // Directly map from selectedActivities to get IDs
-    );
-    console.log(selectedActivityIds);
-    navigate(
-      `/itinerary/create/selectActivity?locations=${encodeURIComponent(
-        locationsQuery
-      )}`,
-      {
-        state: {
-          selectedActivities,
-          selectedActivityIds,
-          formData,
-          returnTo: "create", // Indicate that the source is from the edit
-        },
-      } // Pass the selected activities and form data
-    );
-  };
-  const handleCancel = () => {
-    localStorage.clear();
-    navigate("/itinerary");
-  };
+  // Effect to update selected activities from routing state
+  useEffect(() => {
+    if (location.state?.selectedActivities) {
+      setSelectedActivities(location.state.selectedActivities);
+    }
+  }, [location.state]);
+
   return (
     <form onSubmit={handleSubmit}>
       <h2>Create New Itinerary</h2>
-      <label>
-        Locations to Visit (comma-separated):
+      
+      {/* Name Input */}
+      <div>
+        <label>Itinerary Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        {errors.name && <p>{errors.name}</p>}
+      </div>
+
+      {/* Category Input */}
+      <div>
+        <label>Category:</label>
+        <input
+          type="text"
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        />
+        {errors.category && <p>{errors.category}</p>}
+      </div>
+
+      {/* Tags Input */}
+      <div>
+        <label>Tags (comma-separated):</label>
+        <input
+          type="text"
+          name="tags"
+          value={formData.tags.join(", ")}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Locations & Activities Section */}
+      <div>
+        <label>Locations to Visit (comma-separated):</label>
         <input
           type="text"
           name="locationsToVisit"
-          value={formData.locationsToVisit.join(", ")} // Join for display with comma
+          value={formData.locationsToVisit.join(", ")}
           onChange={handleChange}
         />
-      </label>
-      <button
-        type="button"
-        onClick={handleChooseActivities}
-        disabled={
-          formData.locationsToVisit.length === 0 ||
-          formData.locationsToVisit[0] === ""
-        }
-      >
-        Choose Activities
-      </button>
-      <h3>Selected Activities</h3>
-      <ul>
-        {selectedActivities.map((activity) => (
-          <li key={activity._id}>
-            Category: {activity.category || "N/A"} - Location:{" "}
-            {activity.location.address || "N/A"}
-          </li>
-        ))}
-      </ul>
-      <label>
-        Timeline:
+        <button 
+          type="button" 
+          onClick={handleChooseActivities}
+          disabled={!formData.locationsToVisit.length}
+        >
+          Choose Activities
+        </button>
+      </div>
+
+      {/* Timeline */}
+      <div>
+        <label>Timeline:</label>
         <input
           type="text"
           name="timeline"
@@ -161,29 +180,24 @@ const ItineraryForm = () => {
           onChange={handleChange}
           required
         />
-      </label>
-      <label>
-        Duration (in hours):
+      </div>
+
+      {/* Duration */}
+      <div>
+        <label>Duration (hours):</label>
         <input
           type="number"
           name="duration"
           value={formData.duration}
           onChange={handleChange}
+          min="1"
           required
         />
-      </label>
-      <label>
-        Flagged:
-        <input
-          type="text"
-          name="flagged"
-          value={formData.flagged}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Language of Tour:
+      </div>
+
+      {/* Language of Tour */}
+      <div>
+        <label>Language of Tour:</label>
         <input
           type="text"
           name="languageOfTour"
@@ -191,37 +205,46 @@ const ItineraryForm = () => {
           onChange={handleChange}
           required
         />
-      </label>
-      <label>
-        Price of Tour:
+      </div>
+
+      {/* Price of Tour */}
+      <div>
+        <label>Price of Tour:</label>
         <input
           type="number"
           name="priceOfTour"
           value={formData.priceOfTour}
           onChange={handleChange}
+          min="0"
           required
         />
-      </label>
-      <label>
-        Available Dates (comma-separated):
+      </div>
+
+      {/* Available Dates */}
+      <div>
+        <label>Available Dates (comma-separated):</label>
         <input
           type="text"
           name="availableDates"
-          value={formData.availableDates.join(", ")} // join for display
+          value={formData.availableDates.map(date => date.toISOString().split('T')[0]).join(", ")}
           onChange={handleChange}
         />
-      </label>
-      <label>
-        Available Times (comma-separated):
+      </div>
+
+      {/* Available Times */}
+      <div>
+        <label>Available Times (comma-separated):</label>
         <input
           type="text"
           name="availableTimes"
-          value={formData.availableTimes.join(", ")} // join for display
+          value={formData.availableTimes.join(", ")}
           onChange={handleChange}
         />
-      </label>
-      <label>
-        Accessibility:
+      </div>
+
+      {/* Accessibility */}
+      <div>
+        <label>Accessibility:</label>
         <input
           type="text"
           name="accessibility"
@@ -229,9 +252,11 @@ const ItineraryForm = () => {
           onChange={handleChange}
           required
         />
-      </label>
-      <label>
-        Pickup Location:
+      </div>
+
+      {/* Pickup Location */}
+      <div>
+        <label>Pickup Location:</label>
         <input
           type="text"
           name="pickupLocation"
@@ -239,9 +264,11 @@ const ItineraryForm = () => {
           onChange={handleChange}
           required
         />
-      </label>
-      <label>
-        Dropoff Location:
+      </div>
+
+      {/* Dropoff Location */}
+      <div>
+        <label>Dropoff Location:</label>
         <input
           type="text"
           name="dropoffLocation"
@@ -249,11 +276,28 @@ const ItineraryForm = () => {
           onChange={handleChange}
           required
         />
-      </label>
-      <button type="button" onClick={handleCancel}>
-        Cancel
-      </button>
-      <button type="submit">Create Itinerary</button>
+      </div>
+
+      {/* Flagged Status */}
+      <div>
+        <label>Flagged:</label>
+        <select
+          name="flagged"
+          value={formData.flagged}
+          onChange={handleChange}
+          required
+        >
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+      </div>
+
+      <div>
+        <button type="submit">Create Itinerary</button>
+        <button type="button" onClick={() => navigate('/itinerary')}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };

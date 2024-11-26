@@ -1,23 +1,38 @@
 import React from "react";
-import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
+import { useNavigate } from "react-router-dom";
+import { useCurrency } from "../components/CurrencyContext";
 
 const ViewActivityCard = ({ activity, openModal }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();
+  const navigate = useNavigate();
 
-  // Function to convert price to selected currency
   const convertPrice = (priceInUSD) => {
     if (exchangeRates[selectedCurrency]) {
       return (priceInUSD * exchangeRates[selectedCurrency]).toFixed(2);
     }
-    return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
+    return priceInUSD.toFixed(2);
   };
 
-  // Share button handler
+  const handleCopyLink = () => {
+    const detailsUrl = `${window.location.origin}/activity/${activity._id}`;
+    navigator.clipboard.writeText(detailsUrl)
+      .then(() => {
+        alert("Activity link copied to clipboard!");
+      })
+      .catch(err => {
+        console.error("Failed to copy link:", err);
+      });
+  };
+
   const handleShare = async () => {
     const shareData = {
       title: `${activity.creator}'s Activity`,
-      text: `Check out this amazing activity by ${activity.creator}!\nCategory: ${activity.category}\nDate: ${new Date(activity.date).toLocaleDateString()}\nLocation: ${activity.location.address}\nPrice Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price.max)} ${selectedCurrency}\nMore details available here: `,
-      url: activity.shareUrl || window.location.href, // Use a provided share URL or fallback to the current page URL
+      text: `Check out this amazing activity by ${activity.creator}!
+Category: ${activity.category}
+Date: ${new Date(activity.date).toLocaleDateString()}
+Location: ${activity.location.address}
+Price Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price.max)} ${selectedCurrency}`,
+      url: `${window.location.origin}/activity/${activity._id}`,
     };
 
     if (navigator.share) {
@@ -28,69 +43,74 @@ const ViewActivityCard = ({ activity, openModal }) => {
         console.error("Error sharing activity:", error);
       }
     } else {
-      // Fallback for unsupported browsers
-      alert("Sharing is not supported on this browser.");
+      handleCopyLink();
     }
   };
 
   return (
-    <div className="view-activity-card">
+    <div className="activity-card">
       <div className="activity-header">
         <h2 className="activity-title">{activity.creator}'s Activity</h2>
+        <span className={`booking-status ${activity.isBookingOpen ? "open" : "closed"}`}>
+          {activity.isBookingOpen ? "Booking Open" : "Booking Closed"}
+        </span>
       </div>
 
-      <div className="activity-details">
-        <p>
-          <strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>Time:</strong> {activity.time}
-        </p>
-        <p>
-          <strong>Location:</strong> {activity.location.address}
-        </p>
-        <p>
-          <strong>Price Range:</strong>{" "}
-          <span className="price-value">
+      <div className="activity-info">
+        <div className="info-item">
+          <label>Date:</label>
+          <span>{new Date(activity.date).toLocaleDateString()}</span>
+        </div>
+        <div className="info-item">
+          <label>Time:</label>
+          <span>{activity.time}</span>
+        </div>
+        <div className="info-item">
+          <label>Location:</label>
+          <span>{activity.location.address}</span>
+        </div>
+        <div className="info-item">
+          <label>Price Range:</label>
+          <span>
             {convertPrice(activity.price.min)} - {convertPrice(activity.price.max)} {selectedCurrency}
           </span>
-        </p>
-        <p>
-          <strong>Category:</strong> {activity.category}
-        </p>
-        <p>
-          <strong>Special Discounts:</strong> {activity.specialDiscounts}%
-        </p>
-        <p>
-          <strong>Booking Status:</strong>{" "}
-          {activity.isBookingOpen ? "Open" : "Closed"}
-        </p>
-        <p>
-          <strong>Average Rating:</strong> {activity.avgRating.toFixed(1)} ⭐
-        </p>
-        <p>
-          <strong>Total Ratings:</strong> {activity.totalRatingCount}
-        </p>
-      </div>
-
-      <div className="activity-tags">
-        <div className="tags">
-          {activity.tags.map((tag, index) => (
-            <span key={index} className="tag">
-              {tag}
-            </span>
-          ))}
+        </div>
+        <div className="info-item">
+          <label>Category:</label>
+          <span>{activity.category}</span>
+        </div>
+        <div className="info-item">
+          <label>Rating:</label>
+          <span>{activity.avgRating.toFixed(1)} ⭐ ({activity.totalRatingCount} reviews)</span>
         </div>
       </div>
 
-      {/* Share Button */}
-      <div className="activity-share">
-        <button className="share-button" onClick={handleShare}>
-          Share Activity
+      <div className="activity-tags">
+        {activity.tags.map((tag, index) => (
+          <span key={index} className="tag">
+            {tag}
+          </span>
+        ))}
+      </div>
+
+            <div className="activity-actions">
+        <button 
+          className="action-button view-button"
+          onClick={() => navigate(`/activity/${activity._id}`, { state: { activity } })}
+        >
+          View Details
         </button>
-        <button className="share-button" onClick={() => openModal(activity._id)}>
-          Book
-        </button>
+        <div className="action-group">
+          <button className="action-button share-button" onClick={handleShare}>
+            Share
+          </button>
+          <button className="action-button link-button" onClick={handleCopyLink}>
+            Copy Link
+          </button>
+          <button className="action-button book-button" onClick={() => openModal(activity._id)}>
+            Book Now
+          </button>
+        </div>
       </div>
     </div>
   );
