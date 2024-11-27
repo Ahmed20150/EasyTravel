@@ -6,24 +6,39 @@ const ViewActivityCard = ({ activity, openModal }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();
   const navigate = useNavigate();
 
+  // Function to convert price to the selected currency
   const convertPrice = (priceInUSD) => {
     if (exchangeRates[selectedCurrency]) {
       return (priceInUSD * exchangeRates[selectedCurrency]).toFixed(2);
     }
-    return priceInUSD.toFixed(2);
+    return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
   };
 
+  // Handle copy link action
   const handleCopyLink = () => {
-    const detailsUrl = `${window.location.origin}/activity/${activity._id}`;
-    navigator.clipboard.writeText(detailsUrl)
-      .then(() => {
+    const link = `${window.location.origin}/activity/${activity._id}`;
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(link)
+        .then(() => alert("Activity link copied to clipboard!"))
+        .catch((error) => console.error("Failed to copy link:", error));
+    } else {
+      // Fallback for browsers without clipboard API support
+      const textArea = document.createElement("textarea");
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
         alert("Activity link copied to clipboard!");
-      })
-      .catch(err => {
-        console.error("Failed to copy link:", err);
-      });
+      } catch (error) {
+        console.error("Fallback: Failed to copy link:", error);
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
+  // Handle share functionality
   const handleShare = async () => {
     const shareData = {
       title: `${activity.creator}'s Activity`,
@@ -43,7 +58,7 @@ Price Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price
         console.error("Error sharing activity:", error);
       }
     } else {
-      handleCopyLink();
+      handleCopyLink(); // Fallback to copy link if share is not supported
     }
   };
 
@@ -81,7 +96,9 @@ Price Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price
         </div>
         <div className="info-item">
           <label>Rating:</label>
-          <span>{activity.avgRating.toFixed(1)} ⭐ ({activity.totalRatingCount} reviews)</span>
+          <span>
+            {activity.avgRating.toFixed(1)} ⭐ ({activity.totalRatingCount} reviews)
+          </span>
         </div>
       </div>
 
@@ -93,8 +110,8 @@ Price Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price
         ))}
       </div>
 
-            <div className="activity-actions">
-        <button 
+      <div className="activity-actions">
+        <button
           className="action-button view-button"
           onClick={() => navigate(`/activity/${activity._id}`, { state: { activity } })}
         >
