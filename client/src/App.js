@@ -64,6 +64,8 @@ import GiftItemForm from "./pages/GiftItemPage";
 import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 import ItineraryDetailsPage from "./pages/ItineraryDetailsPage"; // Added import for ItineraryDetailsPage
 import ActivityDetails from './pages/ActivityDetails';
+import MuseumDetails from './pages/MuseumDetails';
+
 
 function App() {
   return (
@@ -88,6 +90,8 @@ function App() {
             <Route path="/edit-profileAdv" element={<EditProfilePageAdv />} />
             <Route path="/itinerary/:id" element={<ItineraryDetailsPage />} />
             <Route path="/activity/:id" element={<ActivityDetails />} />
+            <Route path="/museum/:id" element={<MuseumDetails />} />
+
 
 
             
