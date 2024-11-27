@@ -9,9 +9,8 @@ import TouristForm from "../components/TouristForm";
 
 
 const TouristProfile = () => {
-    const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
-    const userType = cookies.userType; // Access the userType
-
+    const [cookies] = useCookies(["userType", "username"]);
+    const userType = cookies.userType;
     const [tourist, setTourist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

@@ -1,0 +1,7 @@
+How to import Bootstrap in my file: import bootstrap from 'bootstrap/dist/css/bootstrap.css';
+
+Where can to get bootstrap components: https://getbootstrap.com/docs/5.3/getting-started/introduction/
+
+Important Notes:
+1. When copying bootstrap code, be sure to change "class" to "className", because we are writing in react not html.
+2. When copying bootstrap code, make sure to close any open img tags (<img ..... />), because we are writing in react not html.
