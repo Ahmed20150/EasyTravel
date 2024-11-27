@@ -38,4 +38,36 @@ router.get('/profile/:username', async (req, res) => {
   }
 });
 
+// Assuming the route is set up in tourGuide.routes.js or a similar file
+
+// Route to find a tour guide by username
+router.get("/tourguide/username/:username", async (req, res) => {
+  const { username } = req.params;
+  
+  try {
+    const tourGuide = await TourGuide.findOne({ username: username }); // Assuming 'creator' is the username
+    if (!tourGuide) {
+      return res.status(404).json({ error: "Tour guide not found" });
+    }
+    res.json(tourGuide); // Return the full TourGuide document
+  } catch (error) {
+    res.status(500).json({ error: "Error finding tour guide" });
+  }
+});
+
+
+router.get('/email/:username', async (req, res) => {
+  const { username } = req.params;
+  try {
+    const profile = await TourGuide.findOne({ username });
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+    const { email } = profile;
+    res.status(200).json({ email });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 module.exports = router;

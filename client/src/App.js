@@ -1,4 +1,5 @@
 // import logo from './logo.svg';
+import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ChangePassword from "./components/changePassword";
@@ -21,10 +22,10 @@ import LandingPage from "./pages/LandingPage";
 import TempHomePage from "./pages/tempHomePage";
 import ViewProfilePage from "./pages/ViewProfilePage";
 import ViewProfilePageAdv from "./pages/ViewProfilePageAdv";
+import ViewTables from "./pages/viewTables";
 import ViewProfilePageSeller from "./pages/ViewProfilePageSeller";
-import ViewTables from './pages/viewTables';
-// import EditProfilePage from './pages/';
-import { ToastContainer } from "react-toastify";
+import FileUpload from "./components/fileUpload";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddNewAdmin from "./components/AddNewAdmins";
 import AddNewTourismGoverner from "./components/AddNewTourismGoverner";
@@ -32,12 +33,6 @@ import FileUpload from "./components/fileUpload";
 import ViewRequest from "./components/ViewRequests";
 import ViewUsers from "./components/ViewUsersAndDelete";
 import AdminAccountManagement from "./pages/AdminAccountManagement";
-import PendingRequestsPage from "./pages/PendingRequestsPage";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import TouristProfile from "./pages/TouristProfile";
-// import { CookiesProvider } from 'react-cookie';
-import ActivityEdit from "./pages/ActivityEdit";
-import ActivityForm from "./pages/ActivityForm";
 import ActivityList from "./pages/ActivityList";
 import GiftList from './pages/GiftList';
 import ItineraryEdit from "./pages/ItineraryEdit";
@@ -45,31 +40,42 @@ import ItineraryForm from "./pages/ItineraryForm";
 import ItineraryList from "./pages/ItineraryList";
 import MuseumsList from "./pages/museumsList";
 import SelectActivity from "./pages/SelectActivity";
-import ViewItinerary from "./pages/ViewItinerary";
+import MuseumsList from "./pages/museumsList";
+import GiftList from "./pages/GiftList";
+import BookFLight from "./pages/BookFlight";
+import BookHotel from "./pages/BookHotel";
 import ViewPastEvents from './pages/ViewPastEvents';
 import ViewUpcomingEvents from './pages/ViewUpcomingEvents';
+import BookTransportation from './components/BookTransportation';
+import ExplorePage from "./pages/ExplorePage";
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import Help from './pages/Help';
 
 
 
+import TouristReport from './pages/TouristReport'; 
+import TotalTourists from './pages/TotalActivityTourist'; 
+import GiftItemsFilter from './pages/GiftItemsFilter'; 
+//TODO add navigation buttons between all pages
+//
 
 
-import Categories from './pages/Categories';
-import GiftItemForm from './pages/GiftItemPage';
-import PreferencePage from './pages/PreferencePage';
-import Revenue from './pages/Revenue';
 
-
+import Categories from "./pages/Categories";
+import PreferencePage from "./pages/PreferencePage";
+import Revenue from "./pages/Revenue";
+import GiftItemForm from "./pages/GiftItemPage";
+import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 
 function App() {
   return (
     <div className="App">
       {/* for notifications across all pages */}
       <ToastContainer />
-
+      <CurrencyProvider>
       <BrowserRouter>
+
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/fileUpload" element={<FileUpload />} />
@@ -98,19 +104,28 @@ function App() {
           />
           {/* <Route path="/create-profile" element={<CreateProfilePage />}>
             <Route path="/view-profile/:email" element={<ViewProfilePage />} /> */}
-            {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
-            <Route path='/adminAccountManagement' element={<AdminAccountManagement />} />
-            <Route path='/pendingRequestsPage' element={<PendingRequestsPage />} />
-            <Route path='/TouristProfile' element={<TouristProfile />} />
-            <Route path='/termsAndConditions' element={<TermsAndConditions />} />
-            <Route path="/view-users" element={<ViewUsers />} />
-            <Route path="/view-requests" element={<ViewRequest />} />
-            <Route path="/add-tourismGoverner" element={<AddNewTourismGoverner />} />
-            <Route path="/add-admin" element={<AddNewAdmin />} />
-            <Route path="/activities" element={<ActivityList />} />           
-            <Route path="/activities/create" element={<ActivityForm />} />
-            <Route path="/activities/edit/:id" element={<ActivityEdit />} />
-            <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
+          {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
+          <Route
+            path="/adminAccountManagement"
+            element={<AdminAccountManagement />}
+          />
+          <Route
+            path="/pendingRequestsPage"
+            element={<PendingRequestsPage />}
+          />
+          <Route path="/TouristProfile" element={<TouristProfile />} />
+          <Route path="/termsAndConditions" element={<TermsAndConditions />} />
+          <Route path="/view-users" element={<ViewUsers />} />
+          <Route path="/view-requests" element={<ViewRequest />} />
+          <Route
+            path="/add-tourismGoverner"
+            element={<AddNewTourismGoverner />}
+          />
+          <Route path="/add-admin" element={<AddNewAdmin />} />
+          <Route path="/activities" element={<ActivityList />} />
+          <Route path="/activities/create" element={<ActivityForm />} />
+          <Route path="/activities/edit/:id" element={<ActivityEdit />} />
+          <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
             <Route path="/viewPastEvents" element={<ViewPastEvents />} />
             <Route path="/viewUpcomingEvents" element={<ViewUpcomingEvents />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
@@ -118,27 +133,40 @@ function App() {
             <Route path="/Help" element={<Help />} />
 
 
-            <Route path="/itinerary" element={<ItineraryList />} />
-            <Route path="/itinerary/create" element={<ItineraryForm />} />
-            <Route path="/itinerary/create/selectActivity" element={<SelectActivity />}/>
-            <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
-            <Route path="/museums" element={<MuseumsList />} />
+          <Route path="/itinerary" element={<ItineraryList />} />
+          <Route path="/itinerary/create" element={<ItineraryForm />} />
+          <Route
+            path="/edit-profileSeller"
+            element={<EditProfilePageSeller />}
+          />
+          <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
+          <Route path="/museums" element={<MuseumsList />} />
 
+          <Route path="/Categorycontrol" element={<Categories />} />
+          <Route path="/preferences" element={<PreferencePage />} />
 
-            <Route path='/Categorycontrol' element={< Categories/>} />
-            <Route path="/preferences" element={<PreferencePage />} />
+          <Route path="/giftlist" element={<GiftList />} />
+
+          <Route path="/view" element={<ViewTables />} />
+          <Route path="/revenue" element={<Revenue />} />
+          <Route path="/giftitem" element={<GiftItemForm />} />
+          <Route path="/BookFlight" element={<BookFLight />} />
+          <Route path="/BookHotel" element={<BookHotel />} />
+            <Route path="/bookTransport" element={<BookTransportation />}/>
+            <Route path="/ExplorePage" element={<ExplorePage />} />
 
             
-
-            <Route path="/giftlist"element={<GiftList />}/>
-
-            <Route path="/view" element={<ViewTables />}/>
-            <Route path="/revenue" element={<Revenue />}/>
-            <Route path="/giftitem" element={<GiftItemForm />}/>
+            <Route path="/tourist-report" element={<TouristReport />} />
+            <Route path="/totaltouristactivity" element={<TotalTourists />} />  
+            <Route path="/giftfilter" element={<GiftItemsFilter />} />
+            
+          
           </Routes>
       </BrowserRouter>
+      </CurrencyProvider>
     </div>
   );
 }
+
 
 export default App;

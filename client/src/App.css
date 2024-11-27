@@ -3,8 +3,13 @@
   align-items:center;
 }
 
+*{
+  justify-content:center;
+  align-items:center;
+}
+
 body {
-  background-color: #f0f0f0;
+  background-color: #000;
   color: #333;
   font-family: Arial, sans-serif;
 }
@@ -28,11 +33,17 @@ li {
 
 button {
   background-color: #7357b8;
+  background-color: #7357b8;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 10px 15px;
+  border-radius: 5px;
+  padding: 10px 15px;
   cursor: pointer;
+  margin: 5px;
+  font-size: 1rem;
+  transition: background-color 0.3s;
   margin: 5px;
   font-size: 1rem;
   transition: background-color 0.3s;

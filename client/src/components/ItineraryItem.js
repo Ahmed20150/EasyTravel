@@ -1,3 +1,6 @@
+import React from "react";
+import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
+
 const ItineraryCard = ({
   itinerary,
   onEdit,
@@ -7,15 +10,27 @@ const ItineraryCard = ({
   isBooked,
   onUnbook,
   onActivationToggle,
-  onBookmark,  // New prop to handle bookmark
-  isBookmarked,  // New prop to check if itinerary is bookmarked
-  isProfilePage, 
+  onBookmark, // New prop to handle bookmark
+  isBookmarked, // New prop to check if itinerary is bookmarked
+  isProfilePage,
 }) => {
+  const { selectedCurrency, exchangeRates } = useCurrency();
+
+  // Function to convert price to selected currency
+  const convertPrice = (price) => {
+    if (exchangeRates[selectedCurrency]) {
+      return (price * exchangeRates[selectedCurrency]).toFixed(2); // Assuming the exchange rate is the factor
+    }
+    return price.toFixed(2); // Return original price if no rate found
+  };
+
   return (
     <div className="itinerary-card">
       <h2 className="itinerary-title">{itinerary.name}</h2>
       <p className="itinerary-duration">Duration: {itinerary.duration} hours</p>
-      <p className="itinerary-price">Price: ${itinerary.priceOfTour}</p>
+      <p className="itinerary-price">
+        Price: {selectedCurrency} {convertPrice(itinerary.priceOfTour)}
+      </p>
       <p className="itinerary-language">Language: {itinerary.languageOfTour}</p>
       <p className="itinerary-timeline">
         Timeline: {new Date(itinerary.timeline).toLocaleString()}
@@ -50,19 +65,20 @@ const ItineraryCard = ({
             </button>
           </>
         )}
-        {userType === "tourist" && !isProfilePage && ( // Hide buttons in profile view
-          <>
-            <button
-              onClick={() => onBook(itinerary._id)}
-              disabled={isBooked} // Disable if already booked
-            >
-              {isBooked ? "Already Booked" : "Book"}
-            </button>
-            <button onClick={() => onUnbook(itinerary._id)}>
-              {isBooked ? "UnBook" : "Not Booked Yet"}
-            </button>
-          </>
-        )}
+        {userType === "tourist" &&
+          !isProfilePage && ( // Hide buttons in profile view
+            <>
+              <button
+                onClick={() => onBook(itinerary._id)}
+                disabled={isBooked} // Disable if already booked
+              >
+                {isBooked ? "Already Booked" : "Book"}
+              </button>
+              <button onClick={() => onUnbook(itinerary._id)}>
+                {isBooked ? "UnBook" : "Not Booked Yet"}
+              </button>
+            </>
+          )}
         {userType === "tourist" && ( // Hide bookmark button in profile view
           <button
             onClick={() => onBookmark(itinerary._id)} // Handle bookmarking

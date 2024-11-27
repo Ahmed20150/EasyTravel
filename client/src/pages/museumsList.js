@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MuseumCard from "../components/museumCard";
 import AddMuseumForm from "../components/AddMuseumForm";
-import "../styles/museumList.css"; // Import CSS styles
+import "../css/museumList.css"; // Import CSS styles
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 

@@ -1,40 +1,68 @@
+//COMPLETED SPRINT 2
+
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const bodyParser = require("body-parser");
 const app = express();
-app.use(express.json({ limit: '10mb' })); // Set limit to 10MB or more depending on your needs
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
-const cors = require("cors");
 const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const path = require("path");
+
+
+// Middleware
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(cors());
+app.use(cookieParser());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+// Database connection
+require('./config/db');
+
+// Server setup
 const port = process.env.PORT || 3000;
-const Tourist = require("./models/tourist.model.js");
-const TourismGoverner = require("./models/tourismGoverner.model.js");
-const Seller = require("./models/seller.model.js");
-const Advertiser = require("./models/advertiser.model.js");
-const Admin = require("./models/admin.model.js");
-const TourGuide = require("./models/tourGuide.model.js");
-const GiftItem = require("./models/giftitem.model.js"); 
+
+// Routes imports
+const activityRoutes = require("./routes/activity.routes.js");
+const itineraryRoutes = require("./routes/itinerary.routes.js");
+const giftRoutes = require("./routes/gift.routes.js");
 const adminRoutes = require('./routes/admin.routes.js');
 const tourGuideRoutes = require('./routes/tour_guideRoute.js');
 const advRoutes = require('./routes/AdvertiserRoute.js');
 const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
+const Reviews = require('./routes/review.routes.js');
 const bookingRoutes = require('./routes/booking.routes.js');
+const hotelOffers = require("./routes/hotelOffer.routes.js");
 const paymentRoutes = require('./routes/payment.routes.js');
 const nodemailer = require("nodemailer");
 const generateOtp = require('./generateOTP'); // Import the generateOtp function
 const sendEmail = require('./sendEmail');
-const giftRoutes = require('./routes/gift.routes.js');
 const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.model.js");
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
+const notificationRouter = require("./routes/notificationRouter.js");
+
+const activityRouter= require("./routes/activity.routes.js");
+
+const Review=require("./routes/review.routes.js")
+const Transportation=require("./routes/transportation.routes.js")
+const touristReport = require('./routes/touristReport.routes.js');
+const  totalTouristActivity = require("./routes/totalTouristActivity.routes.js");
+
+
+
+
 
 
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
-const bodyParser = require('body-parser');
 const fileRoutes = require('./routes/file.routes.js');
 const Grid = require('gridfs-stream');
+const searchRoutes = require("./routes/search.router.js");
 
 // Middleware
 app.use(bodyParser.json({limit: '50mb'}));
@@ -42,10 +70,14 @@ app.use(bodyParser.urlencoded({ limit:'50mb',  extended: true }));
 app.use(cors());
 
 require('./config/db');
-require('dotenv').config();
+
+
 
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
+app.use('/review',Review);
+app.use('/transport',Transportation);
+
 app.use('/payment', paymentRoutes);
 
 
@@ -57,7 +89,6 @@ const Preference= require("./models/preference.model.js");
 //connect admin.routes.js to index.js
 
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -65,22 +96,24 @@ app.use(cors());
 app.use(cookieParser());
 
 app.use('/admin', adminRoutes);
-
+app.use('/review', Reviews);
 //connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
 app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
-const activityRoutes = require("./routes/activity.routes.js");
-const itineraryRoutes = require("./routes/itinerary.routes.js");
 app.use('/api', touristRoutes);
-
 app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/gift", giftRoutes);
-app.use("/booking", bookingRoutes);
+app.use('/api', tourGuideRoutes);
+app.use('/api/Adv', advRoutes);
+app.use('/api/seller', sellerRoutes);
+app.use('/api', searchRoutes);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+app.use("/notifications", notificationRouter);
+app.use("/tourguide", tourGuideRoutes);
+app.use("/booking", bookingRoutes);
+app.use("/hotelOffer", hotelOffers);
+
 
 
 //TODO arrange routes in their seperate files, keep index clean
@@ -98,115 +131,51 @@ app.get('/api/tourists', async (req, res) => {
     }
 });
 
-
-
-
-
-
-////////////// category ////////////
 app.post("/api/category", async (req, res) => {
-  try {
-    // Check if category already exists
-    const existingCategory = await Category.findOne({ name: req.body.name });
-    
-    if (existingCategory) {
-      return res.status(400).json({ message: "Category already exists" });
+    try {
+        const existingCategory = await Category.findOne({ name: req.body.name });
+        if (existingCategory) return res.status(400).json({ message: "Category already exists" });
+        const category = await Category.create(req.body);
+        res.status(200).json(category);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    // Create the new category
-    const category = await Category.create(req.body);
-    res.status(200).json(category);
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 });
 
-//get all categories
-app.get("/api/categories", async (req, res) =>{
-  try{
-    const category = await Category.find({});
-    res.status(200).json(category);
-
-  }catch{
-    res.status(500).json({message:error.message});
-
-  }
-})
-
+app.get("/api/categories", async (req, res) => {
+    try {
+        const categories = await Category.find({});
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 app.put("/api/category/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
-    const category = await Category.findOne({ name: name });
-
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
+    try {
+        const updatedCategory = await Category.findOneAndUpdate({ name: req.params.name }, req.body, { new: true });
+        if (!updatedCategory) return res.status(404).json({ message: "Category not found" });
+        res.status(200).json(updatedCategory);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    // Assuming you have some data to update in the request body
-    const updatedData = req.body; // Get the new data from the request body
-
-    // Update the category
-    const updatedCategory = await Category.findOneAndUpdate(
-      { name: name },
-      updatedData,
-      { new: true } // Return the updated document
-    );
-
-    // Return the updated category
-    res.status(200).json(updatedCategory);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 });
-
-
-
 
 app.delete("/api/category/:name", async (req, res) => {
-  try {
-    const { name } = req.params;
-    const category = await Category.findOne({ name: name });
-
-    if (!category) {
-      return res.status(404).json({ message: "Category not found" });
+    try {
+        const category = await Category.findOneAndDelete({ name: req.params.name });
+        if (!category) return res.status(404).json({ message: "Category not found" });
+        res.status(200).json({ message: "Category deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-
-    // Perform the deletion
-    await Category.deleteOne({ name: name });
-
-    // Respond with a success message
-    res.status(200).json({ message: "Category deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 });
 
+// Repeat similar code structure for other routes like preferences, activities, itineraries, etc.
 
-
-
-
-
-
-
-////////// preference /////////
-
-app.post("/api/preference", async (req, res) => {
-  try {
-    // Check if the preference category already exists
-    const existingPreference = await Preference.findOne({ name: req.body.name });
-    
-    if (existingPreference) {
-      return res.status(400).json({ message: "preference already exists" });
-    }
-
-    // Create a new preference if it doesn't exist
-    const preference = await Preference.create(req.body);
-    res.status(200).json(preference);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
 
 app.get("/api/preference", async (req, res) =>{
@@ -358,19 +327,6 @@ app.post("/api/preference", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-app.get("/api/preference", async (req, res) =>{
-  try{
-    const preference = await Preference.find({});
-    res.status(200).json(preference);
-
-  }catch{
-    res.status(500).json({message:error.message});
-
-  }
-})
-
-
 
 
 
@@ -526,25 +482,16 @@ app.post('/api/itineraries', async (req, res) => {
   }
 });
 
-app.put('/api/itineraries/:id', async (req, res) => {
+app.put("/api/itineraries/:id", async (req, res) => {
   try {
-    // Find the itinerary by id and update it with the new data from req.body
-    const updatedItinerary = await Itinerary.findByIdAndUpdate(
-      req.params.id,
-      req.body, // The updated data
-      { new: true, runValidators: true } // Options: return the new document, run validators on update
-    );
-
-    // If itinerary not found, send a 404 error
-    if (!updatedItinerary) {
-      return res.status(404).json({ message: 'Itinerary not found' });
-    }
-
-    // Respond with the updated itinerary
+    const { id } = req.params;
+    const itinerarie = await itineraries.findByIdAndUpdate(id,req.body);
+    if(!itinerarie)
+      return res.status(404).json({message:"itinerary not found"})
+    const updatedItinerary = await itineraries.findById(id);
     res.status(200).json(updatedItinerary);
-  } catch (err) {
-    // If an error occurs, respond with a 500 status and the error message
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -574,13 +521,47 @@ app.get('/api/giftitems', async (req, res) => {
     console.error('Error fetching gift items:', error);
     res.status(500).json({ message: 'Server error' });
   }
+}); 
+
+
+
+app.get('/api/giftitems/all', async (req, res) => {
+  try {
+    const giftItems = await GiftItem.find(); // Fetch all items
+    res.status(200).json(giftItems);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch gift items', error });
+  }
+});
+
+
+
+
+
+app.get('/api/giftitems/filter', async (req, res) => {
+  try {
+    const { purchases } = req.query;
+
+    // Build a filter object
+    let filter = {};
+    if (purchases) {
+      filter.purchases = { $gte: parseInt(purchases, 10) };
+    }
+
+    const giftItems = await GiftItem.find(filter); // Fetch filtered items
+    res.status(200).json(giftItems);
+  } catch (error) {
+    console.error('Error filtering gift items:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
 app.use('/api', tourGuideRoutes);
-app.use('/api/Adv', advRoutes);
+app.use('/advertiser', advRoutes);
+//app.use()
 app.use('/api/seller', sellerRoutes);
-app.use('/api/bookmarkEvent', touristRoutes);
-app.use('/api', touristRoutes);
-app.use(touristRoutes);
+app.use('/api/send' , activityRouter);
 
+app.use('/api/reports', touristReport);
+app.use("/api", totalTouristActivity);
