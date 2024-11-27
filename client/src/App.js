@@ -29,7 +29,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddNewAdmin from "./components/AddNewAdmins";
 import AddNewTourismGoverner from "./components/AddNewTourismGoverner";
-import FileUpload from "./components/fileUpload";
 import ViewRequest from "./components/ViewRequests";
 import ViewUsers from "./components/ViewUsersAndDelete";
 import AdminAccountManagement from "./pages/AdminAccountManagement";
@@ -40,8 +39,6 @@ import ItineraryForm from "./pages/ItineraryForm";
 import ItineraryList from "./pages/ItineraryList";
 import MuseumsList from "./pages/museumsList";
 import SelectActivity from "./pages/SelectActivity";
-import MuseumsList from "./pages/museumsList";
-import GiftList from "./pages/GiftList";
 import BookFLight from "./pages/BookFlight";
 import BookHotel from "./pages/BookHotel";
 import ViewPastEvents from './pages/ViewPastEvents';
@@ -51,6 +48,13 @@ import ExplorePage from "./pages/ExplorePage";
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import Help from './pages/Help';
+import ActivityForm from "./pages/ActivityForm";
+import ActivityEdit from "./pages/ActivityEdit";
+import ViewItinerary from "./pages/ViewItinerary";
+import TouristProfile from "./pages/TouristProfile";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PendingRequestsPage from "./pages/PendingRequestsPage";
+
 
 
 
