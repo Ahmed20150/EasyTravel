@@ -11,7 +11,7 @@ const ItineraryDetailsPage = () => {
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
-        const response = await axios.get(`/api/itinerary/${id}`);
+        const response = await axios.get(`http://localhost:3000/itinerary/${id}`);
         setItinerary(response.data);
         setError("");
       } catch (err) {
