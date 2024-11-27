@@ -72,6 +72,8 @@ import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
 import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 
+import bootstrap from 'bootstrap';
+
 function App() {
   return (
     <div className="App">

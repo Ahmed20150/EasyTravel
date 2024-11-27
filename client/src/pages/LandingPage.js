@@ -7,6 +7,8 @@ import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ExplorePage from "./ExplorePage";
+import bootstrap from 'bootstrap/dist/css/bootstrap.css';
+
 
 //COMPLETED SPRINT 2
 
@@ -16,6 +18,8 @@ const landingPage = () => {
     return (  
         <div className="landing-body">
             <div className=" landingContainer">
+
+
             <h1 style={{fontSize:"50px"}}>Welcome to EasyTravel! </h1>
             <h2 style={{fontSize:"34px"}}>Your one stop shop for all things Travel, Tourism & Adventure!</h2>
             <div style={{display:"flex"}}>
