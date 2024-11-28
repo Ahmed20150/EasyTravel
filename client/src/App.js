@@ -70,6 +70,7 @@ import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
+import ProductOrders from "./pages/ProductOrders";
 import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 
 import bootstrap from 'bootstrap';
@@ -165,6 +166,8 @@ function App() {
             <Route path="/tourist-report" element={<TouristReport />} />
             <Route path="/totaltouristactivity" element={<TotalTourists />} />  
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
+
+            <Route path="/productOrders" element={<ProductOrders/>} />
             
           
           </Routes>

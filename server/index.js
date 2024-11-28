@@ -35,6 +35,7 @@ const advRoutes = require('./routes/AdvertiserRoute.js');
 const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
+const purchaseRoutes = require('./routes/purchase.routes.js');
 const Reviews = require('./routes/review.routes.js');
 const bookingRoutes = require('./routes/booking.routes.js');
 const hotelOffers = require("./routes/hotelOffer.routes.js");
@@ -77,6 +78,7 @@ app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
 app.use('/review',Review);
 app.use('/transport',Transportation);
+app.use('/purchase', purchaseRoutes);
 
 app.use('/payment', paymentRoutes);
 

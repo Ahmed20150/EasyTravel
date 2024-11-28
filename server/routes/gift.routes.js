@@ -12,6 +12,22 @@ router.get('/', async (req, res) => {
     }
 }); 
 
+//Get with Id
+router.get('/:id', async (req, res) => {
+    try {
+        const giftItem = await GiftItem.findById(req.params.id);
+        if (!giftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+        res.json(giftItem);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching gift item', error });
+    }
+});
+
+
+
+
 // Get all gift items along with their revenue (with optional filter by name)
 router.get('/filter/itemsWithRevenue', async (req, res) => {
     try {
@@ -164,4 +180,4 @@ router.post('/purchase/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = router;
