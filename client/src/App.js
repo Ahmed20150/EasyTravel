@@ -141,6 +141,7 @@ function App() {
             <Route path="/Help" element={<Help />} />
             <Route path="/itinerary" element={<ItineraryList />} />
             <Route path="/itinerary/create" element={<ItineraryForm />} />
+            <Route path="/itinerary/create/selectActivity" element={<SelectActivity />} />
             <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
             <Route path="/museums" element={<MuseumsList />} />
             <Route path="/Categorycontrol" element={<Categories />} />

@@ -28,8 +28,8 @@ const SelectActivity = () => {
     const fetchActivities = async () => {
       try {
         const response = await axios.get("http://localhost:3000/activities"); // Adjust the endpoint as necessary
-
         // Filter activities based on whether the address contains any of the specified locations
+        
         const filteredActivities = response.data.filter((activity) => {
           const activityAddress = activity.location?.address
             ?.trim()
@@ -41,7 +41,9 @@ const SelectActivity = () => {
 
         setActivities(filteredActivities);
       } catch (error) {
+        
         console.error("Error fetching activities:", error);
+        alert("error fetching");
       }
     };
 
@@ -86,6 +88,7 @@ const SelectActivity = () => {
       });
     } else {
       console.error("Unknown return path");
+      alert("Unknown return path");
     }
   };
 

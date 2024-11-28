@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
 // READ (Get all activities)
 router.get("/", async (req, res) => {
   try {
-    const activities = await Activity.find();
+  const activities = await Activity.find();
     res.status(200).json(activities);
   } catch (err) {
     res.status(500).json({ error: err.message });
