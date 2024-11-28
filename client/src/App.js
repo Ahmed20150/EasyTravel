@@ -60,17 +60,16 @@ import PendingRequestsPage from "./pages/PendingRequestsPage";
 
 import TouristReport from './pages/TouristReport'; 
 import TotalTourists from './pages/TotalActivityTourist'; 
-import GiftItemsFilter from './pages/GiftItemsFilter'; 
-//TODO add navigation buttons between all pages
-//
-
-
-
+import GiftItemsFilter from './pages/GiftItemsFilter';
 import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
 import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
+import ItineraryDetailsPage from "./pages/ItineraryDetailsPage"; // Added import for ItineraryDetailsPage
+import ActivityDetails from './pages/ActivityDetails';
+import MuseumDetails from './pages/MuseumDetails';
+
 
 import bootstrap from 'bootstrap';
 
@@ -80,99 +79,88 @@ function App() {
       {/* for notifications across all pages */}
       <ToastContainer />
       <CurrencyProvider>
-      <BrowserRouter>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/fileUpload" element={<FileUpload />} />
+            <Route path="/signUp" element={<GeneralSignUpForm />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/changePassword" element={<ChangePassword />} />
+            <Route path="/home" element={<TempHomePage />} />
+            <Route path="/forgotPassword" element={<ForgotPasswordForm />} />
+            <Route path="/create-profile" element={<CreateProfilePage />} />
+            <Route path="/view-profile" element={<ViewProfilePage />} />
+            <Route path="/edit-profile" element={<EditProfilePage />} />
+            <Route path="/create-profileAdv" element={<CreateProfilePageAdv />} />
+            <Route path="/view-profileAdv" element={<ViewProfilePageAdv />} />
+            <Route path="/edit-profileAdv" element={<EditProfilePageAdv />} />
+            <Route path="/itinerary/:id" element={<ItineraryDetailsPage />} />
+            <Route path="/activity/:id" element={<ActivityDetails />} />
+            <Route path="/museum/:id" element={<MuseumDetails />} />
 
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/fileUpload" element={<FileUpload />} />
-          <Route path="/signUp" element={<GeneralSignUpForm />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/changePassword" element={<ChangePassword />} />
-          <Route path="/home" element={<TempHomePage />} />
-          <Route path="/forgotPassword" element={<ForgotPasswordForm />} />
-          <Route path="/create-profile" element={<CreateProfilePage />} />
-          <Route path="/view-profile" element={<ViewProfilePage />} />
-          <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/create-profileAdv" element={<CreateProfilePageAdv />} />
-          <Route path="/view-profileAdv" element={<ViewProfilePageAdv />} />
-          <Route path="/edit-profileAdv" element={<EditProfilePageAdv />} />
-          <Route
-            path="/create-profileSeller"
-            element={<CreateProfilePageSeller />}
-          />
-          <Route
-            path="/view-profileSeller"
-            element={<ViewProfilePageSeller />}
-          />
-          <Route
-            path="/edit-profileSeller"
-            element={<EditProfilePageSeller />}
-          />
-          {/* <Route path="/create-profile" element={<CreateProfilePage />}>
-            <Route path="/view-profile/:email" element={<ViewProfilePage />} /> */}
-          {/* <Route path="/edit-profile/:email" element={<EditProfilePage />} /> */}
-          <Route
-            path="/adminAccountManagement"
-            element={<AdminAccountManagement />}
-          />
-          <Route
-            path="/pendingRequestsPage"
-            element={<PendingRequestsPage />}
-          />
-          <Route path="/TouristProfile" element={<TouristProfile />} />
-          <Route path="/termsAndConditions" element={<TermsAndConditions />} />
-          <Route path="/view-users" element={<ViewUsers />} />
-          <Route path="/view-requests" element={<ViewRequest />} />
-          <Route
-            path="/add-tourismGoverner"
-            element={<AddNewTourismGoverner />}
-          />
-          <Route path="/add-admin" element={<AddNewAdmin />} />
-          <Route path="/activities" element={<ActivityList />} />
-          <Route path="/activities/create" element={<ActivityForm />} />
-          <Route path="/activities/edit/:id" element={<ActivityEdit />} />
-          <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
+
+
+            
+            <Route
+              path="/create-profileSeller"
+              element={<CreateProfilePageSeller />}
+            />
+            <Route
+              path="/view-profileSeller"
+              element={<ViewProfilePageSeller />}
+            />
+            <Route
+              path="/edit-profileSeller"
+              element={<EditProfilePageSeller />}
+            />
+            <Route
+              path="/adminAccountManagement"
+              element={<AdminAccountManagement />}
+            />
+            <Route
+              path="/pendingRequestsPage"
+              element={<PendingRequestsPage />}
+            />
+            <Route path="/TouristProfile" element={<TouristProfile />} />
+            <Route path="/termsAndConditions" element={<TermsAndConditions />} />
+            <Route path="/view-users" element={<ViewUsers />} />
+            <Route path="/view-requests" element={<ViewRequest />} />
+            <Route
+              path="/add-tourismGoverner"
+              element={<AddNewTourismGoverner />}
+            />
+            <Route path="/add-admin" element={<AddNewAdmin />} />
+            <Route path="/activities" element={<ActivityList />} />
+            <Route path="/activities/create" element={<ActivityForm />} />
+            <Route path="/activities/edit/:id" element={<ActivityEdit />} />
+            <Route path="/ViewAllItinerary" element={<ViewItinerary />} />
             <Route path="/viewPastEvents" element={<ViewPastEvents />} />
             <Route path="/viewUpcomingEvents" element={<ViewUpcomingEvents />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
             <Route path="/Help" element={<Help />} />
-
-
-          <Route path="/itinerary" element={<ItineraryList />} />
-          <Route path="/itinerary/create" element={<ItineraryForm />} />
-          <Route
-            path="/edit-profileSeller"
-            element={<EditProfilePageSeller />}
-          />
-          <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
-          <Route path="/museums" element={<MuseumsList />} />
-
-          <Route path="/Categorycontrol" element={<Categories />} />
-          <Route path="/preferences" element={<PreferencePage />} />
-
-          <Route path="/giftlist" element={<GiftList />} />
-
-          <Route path="/view" element={<ViewTables />} />
-          <Route path="/revenue" element={<Revenue />} />
-          <Route path="/giftitem" element={<GiftItemForm />} />
-          <Route path="/BookFlight" element={<BookFLight />} />
-          <Route path="/BookHotel" element={<BookHotel />} />
-            <Route path="/bookTransport" element={<BookTransportation />}/>
+            <Route path="/itinerary" element={<ItineraryList />} />
+            <Route path="/itinerary/create" element={<ItineraryForm />} />
+            <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
+            <Route path="/museums" element={<MuseumsList />} />
+            <Route path="/Categorycontrol" element={<Categories />} />
+            <Route path="/preferences" element={<PreferencePage />} />
+            <Route path="/giftlist" element={<GiftList />} />
+            <Route path="/view" element={<ViewTables />} />
+            <Route path="/revenue" element={<Revenue />} />
+            <Route path="/giftitem" element={<GiftItemForm />} />
+            <Route path="/BookFlight" element={<BookFLight />} />
+            <Route path="/BookHotel" element={<BookHotel />} />
+            <Route path="/bookTransport" element={<BookTransportation />} />
             <Route path="/ExplorePage" element={<ExplorePage />} />
-
-            
             <Route path="/tourist-report" element={<TouristReport />} />
-            <Route path="/totaltouristactivity" element={<TotalTourists />} />  
+            <Route path="/totaltouristactivity" element={<TotalTourists />} />
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
-            
-          
           </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
       </CurrencyProvider>
     </div>
   );
 }
-
 
 export default App;

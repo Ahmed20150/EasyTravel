@@ -116,9 +116,6 @@ app.use("/hotelOffer", hotelOffers);
 
 
 
-//TODO arrange routes in their seperate files, keep index clean
-//TODO store sendEmail & generateOTP Files in a folder
-
 
 
 //getting all tourists

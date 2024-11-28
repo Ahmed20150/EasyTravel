@@ -39,9 +39,22 @@ const ViewMuseumCard = ({ museum, nationality, occupation }) => {
         console.error("Error sharing museum:", error);
       }
     } else {
-      // Fallback for unsupported browsers
       alert("Sharing is not supported on this browser.");
     }
+  };
+
+  // Copy link handler
+  const handleCopyLink = () => {
+    const link = `${window.location.origin}/museum/${museum._id}`; // Generate museum-specific link
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error("Failed to copy link:", error);
+        alert("Failed to copy the link.");
+      });
   };
 
   return (
@@ -72,10 +85,15 @@ const ViewMuseumCard = ({ museum, nationality, occupation }) => {
                   </span>
                 ))}
             </div>
-            {/* Share Button */}
-            <button className="share-button" onClick={handleShare}>
-              Share Museum
-            </button>
+            {/* Share and Copy Link Buttons */}
+            <div className="button-container">
+              <button className="share-button" onClick={handleShare}>
+                Share Museum
+              </button>
+              <button className="copy-link-button" onClick={handleCopyLink}>
+                Copy Link
+              </button>
+            </div>
           </div>
         </div>
       </article>

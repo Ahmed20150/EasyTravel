@@ -32,6 +32,20 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
     }
   };
 
+  // Copy link handler
+  const handleCopyLink = () => {
+    const link = `${window.location.origin}/itinerary/${itinerary._id}`;
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error("Failed to copy link:", error);
+      });
+  };
+  
+
   return (
     <div className="view-itinerary-card">
       <div className="itinerary-header">
@@ -98,10 +112,13 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
         </ul>
       </div>
 
-      {/* Share Button */}
+      {/* Share and Copy Link Buttons */}
       <div className="itinerary-share">
         <button className="share-button" onClick={handleShare}>
           Share Itinerary
+        </button>
+        <button className="copy-link-button" onClick={handleCopyLink}>
+          Copy Link
         </button>
       </div>
 
