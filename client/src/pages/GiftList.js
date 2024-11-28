@@ -3,12 +3,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useCurrency } from '../components/CurrencyContext'; // Assuming CurrencyContext is in components
+import { useCookies } from 'react-cookie'; // Import useCookies to manage cookies
 
 const GiftList = () => {
     const [gifts, setGifts] = useState([]);
     
     // Get the selected currency and exchange rates from context
     const { selectedCurrency, exchangeRates } = useCurrency();
+    
+    // Use cookies to get the username
+    const [cookies] = useCookies(['username']);
+    const username = cookies.username; // Assuming the username is stored in a cookie
 
     useEffect(() => {
         const fetchGifts = async () => {
@@ -39,6 +44,27 @@ const GiftList = () => {
         }
     };
 
+    const handleAddToWishlist = async (giftName) => {
+        if (!username) {
+            alert("user not found")
+            console.log('No username found in cookies');
+            return;
+        }
+
+        try {
+            const response = await axios.patch(
+                `http://localhost:3000/api/tourist/${username}/addToWishlist`, 
+                { giftName }
+            );
+            alert("Added " + giftName + " to your wishlist");
+            console.log(response.data.message);
+
+            // Optionally, you can update the UI or inform the user that the gift was added to the wishlist
+        } catch (error) {
+            console.error('Error adding gift to wishlist:', error);
+        }
+    };
+
     // Function to convert price to selected currency
     const convertPrice = (price) => {
         if (exchangeRates[selectedCurrency]) {
@@ -60,6 +86,7 @@ const GiftList = () => {
                         <p>Price: {selectedCurrency} {convertPrice(gift.price)}</p> {/* Display price in selected currency */}
                         <p>Purchases: {gift.purchases}</p>
                         <button onClick={() => handlePurchase(gift._id)}>Buy</button>
+                        <button onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</button>
                     </li>
                 ))}
             </ul>

@@ -29,6 +29,8 @@ const TouristProfile = () => {
 
 
     useEffect(() => {
+
+
       const fetchTouristProfile = async () => {
         if (!username) {
           setError("Username not provided");

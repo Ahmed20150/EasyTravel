@@ -74,6 +74,9 @@ import { CurrencyProvider } from "./components/CurrencyContext"; // Added Curren
 
 import bootstrap from 'bootstrap';
 
+
+import Wishlist from "./pages/Wishlist";
+
 function App() {
   return (
     <div className="App">
@@ -165,6 +168,9 @@ function App() {
             <Route path="/tourist-report" element={<TouristReport />} />
             <Route path="/totaltouristactivity" element={<TotalTourists />} />  
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
+
+
+            <Route path="/Wishlist" element={<Wishlist />} /> 
             
           
           </Routes>

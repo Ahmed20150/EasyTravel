@@ -8,6 +8,22 @@ const authenticate = (req, res, next) => {
   // Your authentication logic here
   next();
 };
+
+router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
+  try {
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    res.status(200).json({ preferences: tourist.preferences });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 router.get("/api/bookings/:username", async (req, res) => {
   const { username } = req.params;
 
@@ -418,6 +434,102 @@ router.post("/itineraries/fetch", async (req, res) => {
     res.status(500).json({ message: "Error fetching itineraries" });
   }
 });
+
+router.get("/tourist/:username/wishlist", authenticate, async (req, res) => {
+  try {
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Respond with the wishlist attribute
+    res.status(200).json({ wishlist: tourist.wishlist });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+router.patch("/tourist/:username/addToWishlist", authenticate, async (req, res) => {
+  const { giftName } = req.body;
+
+  try {
+    // Ensure `giftName` is provided
+    if (!giftName) {
+      return res.status(400).json({ message: "Gift name is required" });
+    }
+
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Add the gift name to the wishlist if not already in the array
+    if (!tourist.wishlist.includes(giftName)) {
+      tourist.wishlist.push(giftName);
+      await tourist.save(); // Save the updated document
+      return res.status(200).json({
+        message: "Gift added to wishlist successfully",
+        wishlist: tourist.wishlist,
+      });
+    } else {
+      return res.status(200).json({
+        message: "Gift is already in the wishlist",
+        wishlist: tourist.wishlist,
+      });
+    }
+  } catch (error) {
+    console.error("Error updating wishlist:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
+router.patch("/tourist/:username/removeFromWishlist", authenticate, async (req, res) => {
+  const { giftName } = req.body;
+
+  try {
+    // Ensure `giftName` is provided
+    if (!giftName) {
+      return res.status(400).json({ message: "Gift name is required" });
+    }
+
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Check if the gift name exists in the wishlist
+    const giftIndex = tourist.wishlist.indexOf(giftName);
+    
+    if (giftIndex === -1) {
+      return res.status(404).json({
+        message: "Gift not found in wishlist",
+        wishlist: tourist.wishlist,
+      });
+    }
+
+    // Remove the gift name from the wishlist
+    tourist.wishlist.splice(giftIndex, 1);
+    await tourist.save(); // Save the updated document
+
+    return res.status(200).json({
+      message: "Gift removed from wishlist successfully",
+      wishlist: tourist.wishlist,
+    });
+  } catch (error) {
+    console.error("Error updating wishlist:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
+
 
 module.exports = router;
 

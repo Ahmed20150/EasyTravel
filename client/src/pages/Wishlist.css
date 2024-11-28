@@ -1,0 +1,40 @@
+.App {
+    font-family: 'Roboto', sans-serif; /* Professional and clean font */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; /* Allows absolute positioning inside */
+    top: 20px; /* Move to the top of the page */
+  }
+  
+  .heart {
+    font-size: 5em; /* Bigger drawn heart */
+    color: rgb(148, 0, 210); /* Purple heart */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow for depth */
+  }
+  
+  .wishlist {
+    font-size: 2.5em; /* Adjust font size for professionalism */
+    font-weight: 500; /* Semi-bold for clear readability */
+    color: #333; /* Neutral text color */
+    margin-top: 10px;
+  }
+  
+  .button1 {
+    position: absolute; /* Positioning at a fixed place relative to its parent */
+    top: 10px;          /* Position from the top */
+    left: -700px;         /* Position from the left */
+  }
+  
+  .back-button1 {
+    padding: 10px 20px; /* Padding inside the button */
+    background-color: rgb(148, 0, 210); /* Purple color */
+    color: white;       /* White text color */
+    border: none;       /* No border */
+    cursor: pointer;    /* Pointer cursor on hover */
+    font-size: 16px;     /* Font size */
+    border-radius: 5px;  /* Rounded corners */
+  }
+  

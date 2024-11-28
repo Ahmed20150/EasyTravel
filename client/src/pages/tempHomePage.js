@@ -18,6 +18,26 @@ const TempHomePage = () => {
     useCurrency();
 
   useEffect(() => {
+                  /**
+         * Fetch the wishlist for a tourist by username.
+         * @param {string} username - The username of the tourist.
+         * @returns {Promise<Object>} - A promise resolving to the wishlist data or an error message.
+         */
+                  const fetchWishlist = async (username) => {
+                    try {
+                      const response = await axios.get(
+                        `http://localhost:3000/api/tourist/${username}/wishlist`
+                      );
+                      return response.data; // Contains the wishlist array
+                    } catch (error) {
+                      console.error("Error fetching wishlist:", error);
+                      throw new Error(error.response?.data?.message || "Failed to fetch wishlist");
+                    }
+                  };
+
+
+
+
     fetchData();
     if (userType !== "admin") {
       fetchNotifications();
@@ -273,6 +293,9 @@ const TempHomePage = () => {
           </Link>
           <Link to="/bookTransport">
             <button>Book Transportation</button>
+          </Link>
+          <Link to="/Wishlist">
+          <button>View Wishlist</button>
           </Link>
         </>
       )}
