@@ -7,6 +7,7 @@ const Notification = require('../models/notification.model'); // Adjust path as 
 const sendEmail = require('../sendEmail');
 const axios = require('axios');
 
+
 router.use(express.json());
 router.use(cookieParser());
 router.use(cookieParser());
@@ -23,6 +24,7 @@ const sendSystemMessage = (creatorUsername, message) => {
     timestamp: new Date(),
   });
 };
+
 
 // CREATE
 router.post("/", async (req, res) => {
@@ -43,7 +45,7 @@ router.post("/", async (req, res) => {
 // READ (Get all activities)
 router.get("/", async (req, res) => {
   try {
-    const activities = await Activity.find();
+  const activities = await Activity.find();
     res.status(200).json(activities);
   } catch (err) {
     res.status(500).json({ error: err.message });
