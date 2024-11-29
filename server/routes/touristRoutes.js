@@ -532,21 +532,27 @@ router.patch("/tourist/:username/removeFromWishlist", authenticate, async (req, 
 
 /////////////         cart        ///////////////////////
 
+
+
 router.get("/tourist/:username/cart", authenticate, async (req, res) => {
   try {
-    // Find the tourist by username
-    const tourist = await Tourist.findOne({ username: req.params.username });
+    // Find the tourist by username and populate the giftItem details in the cart
+    const tourist = await Tourist.findOne({ username: req.params.username }).populate(
+      "cart.giftItem", // Path to populate
+      "name price" // Fields to include from the GiftItem schema
+    );
+
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
 
-    // Respond with the cart attribute
+    // Respond with the populated cart
     res.status(200).json({ cart: tourist.cart });
   } catch (error) {
+    console.error("Error fetching cart:", error);
     res.status(500).json({ message: error.message });
   }
 });
-
 
 
 router.patch("/tourist/:username/addToCart", authenticate, async (req, res) => {
@@ -705,6 +711,58 @@ router.patch("/tourist/:username/updateItemQuantity", authenticate, async (req, 
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+
+
+
+router.patch(
+  "/tourist/:username/addToCartFromWishlist",
+  authenticate,
+  async (req, res) => {
+    const { giftName } = req.body;
+
+    try {
+      if (!giftName) {
+        return res.status(400).json({ message: "Gift name is required" });
+      }
+
+      const tourist = await Tourist.findOne({ username: req.params.username });
+      if (!tourist) {
+        return res.status(404).json({ message: "Tourist not found" });
+      }
+
+      if (!tourist.wishlist.includes(giftName)) {
+        return res.status(404).json({ message: "Gift is not in the wishlist" });
+      }
+
+      const giftItem = await GiftItem.findOne({ name: giftName });
+      if (!giftItem) {
+        return res.status(404).json({ message: "Gift item not found" });
+      }
+
+      const existingCartItem = tourist.cart.find((item) =>
+        item.giftItem.equals(giftItem._id)
+      );
+
+      if (existingCartItem) {
+        existingCartItem.quantity += 1;
+      } else {
+        tourist.cart.push({ giftItem: giftItem._id, quantity: 1 });
+      }
+
+      await tourist.save();
+
+      res.status(200).json({
+        message: "Gift item added to cart successfully",
+        cart: tourist.cart,
+      });
+    } catch (error) {
+      console.error("Error adding to cart from wishlist:", error);
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+  }
+);
+
 
 
 module.exports = router;
