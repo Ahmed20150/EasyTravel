@@ -54,9 +54,8 @@ import ViewItinerary from "./pages/ViewItinerary";
 import TouristProfile from "./pages/TouristProfile";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PendingRequestsPage from "./pages/PendingRequestsPage";
-
-
-
+import ViewComplaints from "./pages/ViewAllComplaints";
+import ReplyComplaints from './pages/ReplyComplaint';
 
 import TouristReport from './pages/TouristReport'; 
 import TotalTourists from './pages/TotalActivityTourist'; 
@@ -69,7 +68,8 @@ import { CurrencyProvider } from "./components/CurrencyContext"; // Added Curren
 import ItineraryDetailsPage from "./pages/ItineraryDetailsPage"; // Added import for ItineraryDetailsPage
 import ActivityDetails from './pages/ActivityDetails';
 import MuseumDetails from './pages/MuseumDetails';
-
+import CreateComplaint from "./pages/CreateComplaint";
+import MyComplaints from "./pages/MyComplaints";
 
 import bootstrap from 'bootstrap';
 
@@ -100,8 +100,10 @@ function App() {
             <Route path="/itinerary/:id" element={<ItineraryDetailsPage />} />
             <Route path="/activity/:id" element={<ActivityDetails />} />
             <Route path="/museum/:id" element={<MuseumDetails />} />
-
-
+            <Route path="/complaint/create" element={<CreateComplaint/>}/>
+            <Route path="/complaint/view" element={<ViewComplaints />} />
+            <Route path="/complaint/reply/:complaintId" element={<ReplyComplaints />} />
+            <Route path="/complaint/myList" element={<MyComplaints />} />
 
             
             <Route
