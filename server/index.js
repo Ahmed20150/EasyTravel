@@ -46,6 +46,7 @@ const museumsandhistoricalplaces = require("./models/museumsAndHistoricalPlaces.
 const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
 const notificationRouter = require("./routes/notificationRouter.js");
+const complaint=require("./routes/complaint.routes.js");
 
 const activityRouter= require("./routes/activity.routes.js");
 
@@ -79,7 +80,7 @@ app.use('/review',Review);
 app.use('/transport',Transportation);
 
 app.use('/payment', paymentRoutes);
-
+app.use('/complaint',complaint);
 
 
 const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
