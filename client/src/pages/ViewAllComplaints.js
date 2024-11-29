@@ -76,7 +76,7 @@ const ViewComplaints = () => {
       {/* Sort Button */}
       <div style={{ marginBottom: "20px" }}>
         <button onClick={handleSortToggle}>
-          Sort by Date {sortOrder === "asc" ? "Descending" : "Ascending"}
+          Sort by {sortOrder === "asc" ? "Older" : "Newer"} Date
         </button>
       </div>
 
