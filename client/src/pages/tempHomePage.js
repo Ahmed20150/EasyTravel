@@ -297,6 +297,9 @@ const TempHomePage = () => {
           <Link to="/Wishlist">
           <button>View Wishlist</button>
           </Link>
+          {/* <Link to="/Cart">
+           <button>View Cart</button>
+          </Link> */}
         </>
       )}
     </div>
