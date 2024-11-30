@@ -32,6 +32,9 @@ const ExplorePage = () => {
   const [sortOptionItineraries, setSortOptionItineraries] = useState("default");
   const [sortOptionActivities, setSortOptionActivities] = useState("default");
 
+  const [preferencesItineraries, setPreferencesItineraries] =
+    useState("no prefrence");
+
   const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   const [cookies] = useCookies(["nationality", "occupation"]);
@@ -310,7 +313,7 @@ const ExplorePage = () => {
   // Sorting for itineraries
   const handleSortItineraries = (e) => {
     const option = e.target.value;
-    setSortOptionItineraries(option);
+    setPreferencesItineraries(option);
 
     const sortedItineraries = [...itineraries];
     if (option === "rating") {
@@ -319,6 +322,28 @@ const ExplorePage = () => {
       sortedItineraries.sort((a, b) => a.priceOfTour - b.priceOfTour); // Ascending by price
     }
     setItineraries(sortedItineraries);
+  };
+
+  const handlePrefrenceItineraries = (e) => {
+    const selectedPreference = e.target.value;
+    setPreferencesItineraries(selectedPreference);
+
+    // If "No Preference" is selected, reset the filtered itineraries to show all
+    if (selectedPreference === "no prefrence") {
+      setFilteredItineraries(itineraries);
+    } else {
+      // Otherwise, filter itineraries based on the selected preference
+      const filtered = itineraries.filter((itinerary) => {
+        // Ensure itinerary.tags is an array, then check if any tag matches the selected preference
+        return (
+          itinerary.tags &&
+          itinerary.tags.some((tag) =>
+            tag.toLowerCase().includes(selectedPreference.toLowerCase())
+          )
+        );
+      });
+      setFilteredItineraries(filtered);
+    }
   };
 
   // Sorting for activities
@@ -705,6 +730,20 @@ const ExplorePage = () => {
               onChange={handleSearchItineraryCreatorChange}
               placeholder="Enter creator name"
             />
+          </div>
+          <div className="filter">
+            <label htmlFor="sort-itineraries">Prefrence:</label>
+            <select
+              id="prefrence"
+              value={preferencesItineraries}
+              onChange={handlePrefrenceItineraries}
+            >
+              <option value="no prefrence">No Prefrence</option>
+              <option value="historic areas">Historic Areas</option>
+              <option value="beaches">Beaches</option>
+              <option value="family friendly">Family Friendly</option>
+              <option value="shopping">Shopping</option>
+            </select>
           </div>
         </div>
       </div>
