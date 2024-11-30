@@ -65,6 +65,30 @@ const GiftList = () => {
         }
     };
 
+
+    
+    const handleAddToCart = async (giftName) => {
+        if (!username) {
+            alert("user not found")
+            console.log('No username found in cookies');
+            return;
+        }
+
+        try {
+            const response = await axios.patch(
+                `http://localhost:3000/api/tourist/${username}/addToCart`, 
+                { giftName }
+            );
+            alert("Added " + giftName + " to your Cart");
+            console.log(response.data.message);
+
+            // Optionally, you can update the UI or inform the user that the gift was added to the cart
+        } catch (error) {
+            console.error('Error adding gift to Cart:', error);
+        }
+    };
+
+
     // Function to convert price to selected currency
     const convertPrice = (price) => {
         if (exchangeRates[selectedCurrency]) {
@@ -87,6 +111,7 @@ const GiftList = () => {
                         <p>Purchases: {gift.purchases}</p>
                         <button onClick={() => handlePurchase(gift._id)}>Buy</button>
                         <button onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</button>
+                        <button onClick={() => handleAddToCart(gift.name)}>Add to cart</button>
                     </li>
                 ))}
             </ul>
