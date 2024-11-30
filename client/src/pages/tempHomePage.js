@@ -305,6 +305,9 @@ const TempHomePage = () => {
           <Link to="/complaint/myList">
             <button>My Complaints</button>
           </Link>
+          <Link to="/address">
+            <button>Manage Address Book</button>
+          </Link>
         </>
       )}
     </div>

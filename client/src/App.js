@@ -70,7 +70,7 @@ import ActivityDetails from './pages/ActivityDetails';
 import MuseumDetails from './pages/MuseumDetails';
 import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
-
+import TouristAddress from "./pages/TouristAddress";
 import bootstrap from 'bootstrap';
 
 
@@ -163,7 +163,7 @@ function App() {
             <Route path="/totaltouristactivity" element={<TotalTourists />} />
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
 
-
+            <Route path="/address" element={<TouristAddress />} />
             <Route path="/Wishlist" element={<Wishlist />} /> 
             
           
