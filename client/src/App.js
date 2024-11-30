@@ -75,7 +75,7 @@ import bootstrap from 'bootstrap';
 
 
 import Wishlist from "./pages/Wishlist";
-
+import Cart from './pages/Cart'; 
 function App() {
   return (
     <div className="App">
@@ -165,7 +165,7 @@ function App() {
 
             <Route path="/address" element={<TouristAddress />} />
             <Route path="/Wishlist" element={<Wishlist />} /> 
-            
+            <Route path="/cart" element={<Cart />} />
           
           </Routes>
         </BrowserRouter>
