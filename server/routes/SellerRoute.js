@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Seller = require('../models/seller.model');
+const GiftItem = require('../models/giftitem.model'); // Adjust the path as per your file structure
 
 // Create or Update Profile
 router.post('/profileSeller', async (req, res) => {
@@ -36,5 +37,39 @@ router.get('/profileSeller/:username', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// requests to view all gifts and edit the archived status
+
+// Route to get all gifts (including archived ones)
+router.get('/all-gifts', async (req, res) => {
+  try {
+    const gifts = await GiftItem.find(); // Fetches all gifts without filtering
+    res.status(200).json(gifts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching gifts', error });
+  }
+});
+
+// Route to toggle the archived status of a gift
+router.patch('/all-gifts/archive/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const gift = await GiftItem.findById(id);
+    if (!gift) {
+      return res.status(404).json({ message: 'Gift item not found' });
+    }
+
+    // Toggle the archived status
+    gift.archived = !gift.archived;
+    await gift.save();
+
+    res.status(200).json({ message: 'Gift archived status updated', gift });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating archive status', error });
+  }
+});
+
+
+
 
 module.exports = router;

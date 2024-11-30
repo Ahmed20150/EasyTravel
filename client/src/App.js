@@ -70,9 +70,7 @@ import ActivityDetails from './pages/ActivityDetails';
 import MuseumDetails from './pages/MuseumDetails';
 import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
-
-import bootstrap from 'bootstrap';
-
+import ViewAllGifts from "./pages/ViewAllGifts";
 
 import Wishlist from "./pages/Wishlist";
 
@@ -104,6 +102,8 @@ function App() {
             <Route path="/complaint/view" element={<ViewComplaints />} />
             <Route path="/complaint/reply/:complaintId" element={<ReplyComplaints />} />
             <Route path="/complaint/myList" element={<MyComplaints />} />
+            <Route path="/all-gifts" element={<ViewAllGifts />} />
+
 
             
             <Route
