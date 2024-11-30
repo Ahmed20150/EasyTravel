@@ -70,6 +70,7 @@ import ActivityDetails from './pages/ActivityDetails';
 import MuseumDetails from './pages/MuseumDetails';
 import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
+import CreatePromoCode from "./pages/CreatePromoCodePage";
 
 import bootstrap from 'bootstrap';
 
@@ -104,6 +105,8 @@ function App() {
             <Route path="/complaint/view" element={<ViewComplaints />} />
             <Route path="/complaint/reply/:complaintId" element={<ReplyComplaints />} />
             <Route path="/complaint/myList" element={<MyComplaints />} />
+            <Route path="/admin-account-management" element={<AdminAccountManagement />} />
+            <Route path="/create-promo-code" element={<CreatePromoCode />} />
 
             
             <Route

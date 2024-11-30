@@ -47,6 +47,7 @@ const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
 const notificationRouter = require("./routes/notificationRouter.js");
 const complaint=require("./routes/complaint.routes.js");
+const promoCodeRoutes = require('./routes/promoCodes.routes.js');
 
 const activityRouter= require("./routes/activity.routes.js");
 
@@ -563,3 +564,5 @@ app.use('/api/send' , activityRouter);
 
 app.use('/api/reports', touristReport);
 app.use("/api", totalTouristActivity);
+
+app.use('/api/promo-codes', promoCodeRoutes);
