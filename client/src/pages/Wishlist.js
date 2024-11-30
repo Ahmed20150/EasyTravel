@@ -67,11 +67,27 @@ function Wishlist() {
         }
     };
 
+    // Function to handle adding item to cart
+    const addToCart = async (item) => {
+        try {
+            const response = await axios.patch(
+                `http://localhost:3000/api/tourist/${username}/addToCartFromWishlist`,
+                { giftName: item }
+            );
+
+            if (response.status === 200) {
+                alert(`${item} successfully added to cart.`);
+            }
+        } catch (error) {
+            console.error("Error adding item to cart:", error);
+        }
+    };
+
     return (
         <div className="App">
             <div className="heart">❤</div>
             <div className="wishlist">My Wishlist</div>
-            
+
             {isLoading ? ( // Show loading indicator while fetching data
                 <p>Loading...</p>
             ) : wishlistItems.length > 0 ? ( // If wishlist is not empty, display items
@@ -79,7 +95,18 @@ function Wishlist() {
                     {wishlistItems.map((item, index) => (
                         <li key={index}>
                             <h2>{item}</h2> {/* Display item (assuming simple string items like "Swiss knife") */}
-                            <button onClick={() => removeItem(item)} className="remove-button">Remove</button> {/* Remove button */}
+                            <button
+                                onClick={() => removeItem(item)}
+                                className="remove-button"
+                            >
+                                Remove
+                            </button> {/* Remove button */}
+                            <button
+                                onClick={() => addToCart(item)}
+                                className="add-to-cart-button"
+                            >
+                                Add to Cart
+                            </button> {/* Add to Cart button */}
                         </li>
                     ))}
                 </ul>
