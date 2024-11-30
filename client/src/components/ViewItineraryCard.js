@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
+import axios from "axios";
 
 const ViewItineraryCard = ({ itinerary, openModal }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();
+  const [promoCodes, setPromoCodes] = useState([]);
+  const [enteredPromoCode, setEnteredPromoCode] = useState("");
+  const [discountedPrice, setDiscountedPrice] = useState(itinerary.priceOfTour); // Default to the original price
 
+  // Fetch promo codes from the server
+  const fetchPromoCodes = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/promo-codes");
+      setPromoCodes(response.data || []);
+    } catch (err) {
+      console.error("Error fetching promo codes", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromoCodes(); // Fetch promo codes when the component mounts
+  }, []);
   // Function to convert price to selected currency
   const convertPrice = (priceInUSD) => {
     if (exchangeRates[selectedCurrency]) {
@@ -12,11 +29,30 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
     return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
   };
 
+  // Redeem promo code
+  const handleRedeemPromo = () => {
+    const promo = promoCodes.find((promo) => promo.promoCode === enteredPromoCode);
+    if (promo) {
+      const currentDate = new Date();
+      const expiryDate = new Date(promo.expiryDate);
+
+      if (currentDate <= expiryDate) {
+        const newPrice = itinerary.priceOfTour * (1 - promo.discount / 100);
+        setDiscountedPrice(newPrice); // Apply the discount
+        alert(`Promo code applied! You saved ${promo.discount}%`);
+      } else {
+        alert("Promo code has expired.");
+      }
+    } else {
+      alert("Invalid promo code.");
+    }
+  };
+
   // Share button handler
   const handleShare = async () => {
     const shareData = {
       title: `${itinerary.creator}'s Itinerary`,
-      text: `Check out this amazing itinerary by ${itinerary.creator}!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(itinerary.priceOfTour)} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
+      text: `Check out this amazing itinerary by ${itinerary.creator}!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(discountedPrice)} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
       url: itinerary.website || window.location.href, // Use itinerary's website or current URL
     };
 
@@ -44,7 +80,6 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
         console.error("Failed to copy link:", error);
       });
   };
-  
 
   return (
     <div className="view-itinerary-card">
@@ -58,7 +93,7 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
         <p>
           <strong>Price:</strong>{" "}
           <span className="price-value">
-            {convertPrice(itinerary.priceOfTour)} {selectedCurrency}
+            {convertPrice(discountedPrice)} {selectedCurrency}
           </span>
         </p>
         <p>
@@ -83,6 +118,17 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
         <p>
           <strong>Total Ratings:</strong> {itinerary.totalRatingCount}
         </p>
+      </div>
+
+      {/* Promo code input */}
+      <div className="promo-code">
+        <input
+          type="text"
+          value={enteredPromoCode}
+          onChange={(e) => setEnteredPromoCode(e.target.value)}
+          placeholder="Enter promo code"
+        />
+        <button onClick={handleRedeemPromo}>Redeem</button>
       </div>
 
       <div className="itinerary-locations">

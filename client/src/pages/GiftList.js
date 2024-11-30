@@ -1,32 +1,47 @@
-// src/GiftList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { useCurrency } from '../components/CurrencyContext'; // Assuming CurrencyContext is in components
-import { useCookies } from 'react-cookie'; // Import useCookies to manage cookies
+import { useCurrency } from '../components/CurrencyContext';
+import { useCookies } from 'react-cookie';
 
 const GiftList = () => {
     const [gifts, setGifts] = useState([]);
-    
-    // Get the selected currency and exchange rates from context
+    const [promoCodes, setPromoCodes] = useState([]); // Store promo codes
+    const [promoCode, setPromoCode] = useState(''); // Store the entered promo code
+    const [promoDiscount, setPromoDiscount] = useState(0); // Store the promo discount
+
     const { selectedCurrency, exchangeRates } = useCurrency();
-    
-    // Use cookies to get the username
     const [cookies] = useCookies(['username']);
-    const username = cookies.username; // Assuming the username is stored in a cookie
+    const username = cookies.username;
 
     useEffect(() => {
-        const fetchGifts = async () => {
+        const fetchGiftsAndPromoCodes = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/gift'); // Adjust based on your backend URL
-                console.log(response.data); // Log the data to check its structure
-                setGifts(response.data);
+                // Fetch gifts
+                const giftsResponse = await axios.get('http://localhost:3000/gift');
+                setGifts(giftsResponse.data);
+
+                // Fetch promo codes
+                const promoResponse = await axios.get('http://localhost:3000/api/promo-codes');
+                setPromoCodes(promoResponse.data || []);
             } catch (error) {
-                console.error('Error fetching gifts:', error);
+                console.error('Error fetching gifts or promo codes:', error);
             }
         };
-        fetchGifts();
+        fetchGiftsAndPromoCodes();
     }, []);
+
+    const handlePromoCodeCheck = () => {
+        const promo = promoCodes.find((code) => code.promoCode === promoCode);
+
+        if (promo && new Date(promo.expiryDate) > new Date()) {
+            setPromoDiscount(promo.discount); // Apply discount
+            alert(`Promo code applied! You get ${promo.discount}% off.`);
+        } else {
+            setPromoDiscount(0); // No discount if invalid or expired
+            alert('Invalid or expired promo code.');
+        }
+    };
 
     const handlePurchase = async (id) => {
         try {
@@ -34,8 +49,8 @@ const GiftList = () => {
             console.log(response.data.message);
 
             // Update the local state to increment the purchase count for the specific gift
-            setGifts((prevGifts) => 
-                prevGifts.map((gift) => 
+            setGifts((prevGifts) =>
+                prevGifts.map((gift) =>
                     gift._id === id ? { ...gift, purchases: Number(gift.purchases) + 1 } : gift
                 )
             );
@@ -46,26 +61,23 @@ const GiftList = () => {
 
     const handleAddToWishlist = async (giftName) => {
         if (!username) {
-            alert("user not found")
+            alert("User not found");
             console.log('No username found in cookies');
             return;
         }
 
         try {
             const response = await axios.patch(
-                `http://localhost:3000/api/tourist/${username}/addToWishlist`, 
+                `http://localhost:3000/api/tourist/${username}/addToWishlist`,
                 { giftName }
             );
-            alert("Added " + giftName + " to your wishlist");
+            alert(`Added ${giftName} to your wishlist`);
             console.log(response.data.message);
-
-            // Optionally, you can update the UI or inform the user that the gift was added to the wishlist
         } catch (error) {
             console.error('Error adding gift to wishlist:', error);
         }
     };
 
-    // Function to convert price to selected currency
     const convertPrice = (price) => {
         if (exchangeRates[selectedCurrency]) {
             return (price * exchangeRates[selectedCurrency]).toFixed(2); // Convert price based on exchange rate
@@ -73,17 +85,41 @@ const GiftList = () => {
         return price.toFixed(2); // Return original price if no exchange rate found
     };
 
+    // Function to apply promo code discount to price
+    const applyPromoDiscount = (price) => {
+        if (promoDiscount) {
+            return (price - (price * promoDiscount) / 100).toFixed(2); // Apply discount
+        }
+        return price.toFixed(2); // Return original price if no discount
+    };
+
     return (
         <div>
             <h1>Gift Items</h1>
             <Link to="/home"><button>Back</button></Link>
+
+            {/* Promo Code Section */}
+            <div>
+                <label>
+                    Promo Code:
+                    <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                    />
+                </label>
+                <button type="button" onClick={handlePromoCodeCheck}>
+                    Apply Promo Code
+                </button>
+            </div>
+
             <ul>
                 {gifts.map(gift => (
                     <li key={gift._id}>
                         <h2>{gift.name}</h2>
                         <img src={gift.image} alt={gift.name} width="100" />
                         <p>{gift.description}</p>
-                        <p>Price: {selectedCurrency} {convertPrice(gift.price)}</p> {/* Display price in selected currency */}
+                        <p>Price: {selectedCurrency} {convertPrice(applyPromoDiscount(gift.price))}</p>
                         <p>Purchases: {gift.purchases}</p>
                         <button onClick={() => handlePurchase(gift._id)}>Buy</button>
                         <button onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</button>

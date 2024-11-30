@@ -36,13 +36,56 @@ const BookFlight = () => {
   const itemsPerPage = 5;
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [promoCodes, setPromoCodes] = useState([]);
+  const [promoCode, setPromoCode] = useState(""); // Store entered promo code
+  const [discount, setDiscount] = useState(0); // Store discount value
+  
+  useEffect(() => {
+    fetchPromoCodes();
+  }, []);
+  
+  const fetchPromoCodes = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/promo-codes");
+      setPromoCodes(response.data || []);
+    } catch (err) {
+      console.error("Error fetching promo codes", err);
+    }
+  };
   useEffect(() => {
     if (showSuccessPopup) {
       console.log("Success Popup should be visible");
     }
   }, [showSuccessPopup]);
+  const validatePromoCode = () => {
+    const promo = promoCodes.find((code) => code.promoCode === promoCode);
+  
+    if (!promo) {
+      setError("Invalid promo code");
+      return false;
+    }
+  
+    const today = new Date();
+    const expiryDate = new Date(promo.expiryDate);
+  
+    if (expiryDate < today) {
+      setError("Promo code has expired");
+      return false;
+    }
+  
+    // Apply discount (assumes promo code has a discount percentage field)
+    setDiscount(promo.discountPercentage);
+    setSuccessMessage("Promo code applied successfully!");
+    return true;
+  };
 
+  const getDiscountedPrice = (price) => {
+    if (discount) {
+      const discountAmount = (price * discount) / 100;
+      return price - discountAmount;
+    }
+    return price;
+  };
   const getAccessToken = async () => {
     try {
       const body = new URLSearchParams({
@@ -250,11 +293,16 @@ const BookFlight = () => {
           },
         ],
       }));
-
+      const discountedPrice = getDiscountedPrice(selectedOffer.price.total);
       const requestBody = {
         data: {
           type: "flight-order",
-          flightOffers: confirmedFlightOffers,
+          flightOffers: [
+            {
+              ...selectedOffer,
+              price: { ...selectedOffer.price, total: discountedPrice },
+            },
+          ],
           travelers: formattedTravelers,
           remarks: {
             general: [
@@ -393,6 +441,20 @@ const BookFlight = () => {
                   onChange={(e) => setReturnDate(e.target.value)}
                 />
               </div>
+              <div className="form-group">
+              <label>Promo Code</label>
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="Enter promo code"
+              />
+              <button type="button" onClick={validatePromoCode}>Apply</button>
+            </div>
+            {/* Display any success/error messages */}
+            {error && <div className="error">{error}</div>}
+            {successMessage && <div className="success">{successMessage}</div>}
+            <button type="submit">Search</button>
             </div>
           </div>
 
