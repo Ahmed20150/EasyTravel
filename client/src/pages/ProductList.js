@@ -45,6 +45,15 @@ const ProductList = () => {
     fetchGifts();
   }, []);
 
+  useEffect(() => {
+    if (userType === "seller") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        seller: username,
+      }));
+    }
+  }, [userType, username]);
+
   // Handle Add Gift
   const handleAddGift = async () => {
     try {
@@ -196,29 +205,16 @@ const ProductList = () => {
           />
 
           <label htmlFor="gift-creator">Creator Name</label>
-          {userType === "seller" && (
-            <input
-              id="gift-creator"
-              type="text"
-              placeholder={username}
-              value={username}
-              onChange={(e) =>
-                setFormData({ ...formData, seller: e.target.value })
-              }
-              disabled
-            />
-          )}
-          {userType === "admin" && (
-            <input
-              id="gift-creator"
-              type="text"
-              placeholder="Creator Name"
-              value={formData.seller}
-              onChange={(e) =>
-                setFormData({ ...formData, seller: e.target.value })
-              }
-            />
-          )}
+          <input
+            id="gift-creator"
+            type="text"
+            placeholder="Creator Name"
+            value={userType === "seller" ? username : formData.seller}
+            onChange={(e) =>
+              setFormData({ ...formData, seller: e.target.value })
+            }
+            disabled={userType === "seller"} // Disable input for sellers
+          />
 
           <label htmlFor="image-upload">Image</label>
           <input
