@@ -9,6 +9,73 @@ const bcrypt = require('bcrypt');
 const Tourist = require('../models/tourist.model')
 const DeletionRequest = require('../models/DeletionRequest.model');
 router.use(express.json());
+
+const GiftItem = require('../models/giftitem.model');
+
+
+// Admin: Add a new gift item with its details, price, and available quantity
+router.post('/addGiftItem', async (req, res) => {
+    const { name, image, description, price, purchases,quantity, date, seller} = req.body;
+
+    try {
+        // Creating a new GiftItem with purchases and date fields included
+        const newGiftItem = new GiftItem({
+            name,
+            image,
+            description,
+            price,
+            purchases: purchases || 0,  // Defaults to 0 if not provided
+            quantity,
+            date,
+            seller,
+        });
+
+        await newGiftItem.save();
+        res.status(201).json({ message: 'Gift item added successfully', newGiftItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding gift item', error });
+    }
+});
+
+// Admin: Update an existing gift item
+router.put('/updateGiftItem/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, image, description, price, purchases,quantity, date,seller } = req.body;
+
+    try {
+        const updatedGiftItem = await GiftItem.findByIdAndUpdate(
+            id,
+            { name, image, description, price, purchases,quantity, date,seller },
+            { new: true }
+        );
+
+        if (!updatedGiftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+
+        res.status(200).json({ message: 'Gift item updated successfully', updatedGiftItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating gift item', error });
+    }
+});
+
+// Admin: Delete a gift item
+router.delete('/deleteGiftItem/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedGiftItem = await GiftItem.findByIdAndDelete(id);
+
+        if (!deletedGiftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+        res.status(200).json({ message: 'Gift item deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting gift item', error });
+    }
+});
+
+
 // Add Tourism Governer
 router.post('/add-tourismGoverner', async (req, res) => {
     const { username, password } = req.body;

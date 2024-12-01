@@ -58,7 +58,6 @@ const  totalTouristActivity = require("./routes/totalTouristActivity.routes.js")
 
 
 
-
 /////////////////UPLOADING IMPORTS///////////////////////////////////////////////////////
 const fileRoutes = require('./routes/file.routes.js');
 const Grid = require('gridfs-stream');

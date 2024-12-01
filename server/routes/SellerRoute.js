@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Seller = require('../models/seller.model');
 
+
+
+
 // Create or Update Profile
 router.post('/profileSeller', async (req, res) => {
   const { username, mobileNumber, firstLastName,description, dateOfBirth,profilePicture } = req.body;
