@@ -221,6 +221,36 @@ body {
   color: #ff9800;
 }
 
+/* Review Card */
+.review-card {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.review-author {
+  font-weight: bold;
+  color: #e98b43;
+}
+
+.review-rating {
+  color: #7357b8;
+}
+
+.review-content {
+  color: #555;
+}
+
 /* Loading message */
 .loading {
   text-align: center;

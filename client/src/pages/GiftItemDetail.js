@@ -52,20 +52,19 @@ const GiftItemDetail = () => {
         <h2>Customer Reviews</h2>
         {giftItem.reviews && giftItem.reviews.length > 0 ? (
           giftItem.reviews.map((review, index) => (
-            <div key={index} className="review">
-              <p className="review-author">
-                <strong>{review.author}</strong>
-              </p>
-              <p className="review-content">{review.content}</p>
+            <div key={index} className="review-card">
+              <div className="review-header">
+                <p className="review-author">
+                  <strong>{review.username}</strong>
+                </p>
+                <p className="review-rating">Rating: {review.rating} ⭐</p>
+              </div>
+              <p className="review-content">{review.review}</p>
             </div>
           ))
         ) : (
           <p>No reviews available.</p>
         )}
-      </div>
-      <div className="gift-item-ratings">
-        <h2>Ratings</h2>
-        <p className="ratings-score">{giftItem.ratings} / 5</p>
       </div>
     </div>
   );
