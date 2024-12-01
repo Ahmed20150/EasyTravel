@@ -10,13 +10,6 @@ const activitySchema = new mongoose.Schema({
     type: Date,
     required: [true, "Date is required"],
   },
-  creator: {
-    type: String,
-  },
-  date: {
-    type: Date,
-    required: [true, "Date is required"],
-  },
   time: {
     type: String,
     required: [true, "Time is required"],
@@ -70,7 +63,7 @@ const activitySchema = new mongoose.Schema({
     validate: {
       validator: (v) => v.every((tag) => typeof tag === "string"), // Ensure all tags are strings
       message: "All tags must be strings",
-      message: "All tags must be strings",
+    
     },
   },
   specialDiscounts: {

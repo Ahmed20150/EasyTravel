@@ -17,22 +17,29 @@ const MyComplaints = () => {
         setLoading(false);
         return;
       }
-
+    
       try {
         const response = await axios.get(`http://localhost:3000/complaint/view/${username}`);
-
+    
         if (response.data && Array.isArray(response.data.complaints)) {
           setComplaints(response.data.complaints); // Make sure complaints is an array
         } else {
           setError("No complaints found for this tourist.");
         }
-
+    
         setLoading(false);
       } catch (err) {
-        setError(err.response?.data?.error || "Failed to fetch complaints.");
+        // Handle different error responses based on status code
+        if (err.response) {
+          // This will display the error message returned from the backend
+          setError(err.response.data.error || err.response.data.message || "Failed to fetch complaints.");
+        } else {
+          setError("An unknown error occurred.");
+        }
         setLoading(false);
       }
     };
+    
 
     fetchComplaints();
   }, [username]);

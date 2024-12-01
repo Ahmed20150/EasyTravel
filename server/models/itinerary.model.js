@@ -17,7 +17,7 @@ const itinerarySchema = new mongoose.Schema({
     type: [String],
     validate: {
       validator: (v) => v.every((tag) => typeof tag === "string"), // Ensure all tags are strings
-      message: "All tags must be strings", // Custom error message
+      message: "All tags must be strings",
     },
   },
   creator: {

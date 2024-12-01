@@ -35,6 +35,7 @@ const ItineraryForm = () => {
 
 
 
+  	
   const handleChooseActivities = () => {
     const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string with comma
     const selectedActivityIds = selectedActivities.map(
@@ -55,6 +56,7 @@ const ItineraryForm = () => {
       } // Pass the selected activities and form data
     );
   };
+  
 
   const handleCancel = () => {
     localStorage.clear();
@@ -85,7 +87,7 @@ const ItineraryForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "locationsToVisit") {
+    if (name === "locationsToVisit" || name==="tags") {
       setFormData((prevState) => ({
         ...prevState,
         [name]: value.split(",").map((item) => item.trim()), // Split by comma and trim spaces
@@ -174,7 +176,7 @@ const ItineraryForm = () => {
         <input
           type="text"
           name="tags"
-          value={formData.tags.join(", ")}
+          value={formData.tags.join(",")}
           onChange={handleChange}
         />
       </div>
