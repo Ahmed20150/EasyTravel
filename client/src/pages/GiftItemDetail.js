@@ -6,7 +6,7 @@ import "../css/ProductList.css"; // Updated CSS file
 const GiftItemDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { giftItem } = location.state || {};
+  const { giftItem, userType } = location.state || {};
   const { selectedCurrency, exchangeRates } = useCurrency();
 
   const convertPrice = (priceInUSD) => {
@@ -37,6 +37,15 @@ const GiftItemDetail = () => {
             {convertPrice(giftItem.price)} {selectedCurrency}
           </p>
           <p className="gift-item-description">{giftItem.description}</p>
+          {userType === "admin" || userType === "seller" ? (
+            <>
+              <p className="gift-item-quantity">
+                Quantity: {giftItem.quantity}
+              </p>
+              <p className="gift-item-purchases">Sales: {giftItem.purchases}</p>
+            </>
+          ) : null}
+          <p className="gift-item-seller">Seller: {giftItem.seller}</p>
         </div>
       </div>
       <div className="gift-item-reviews">

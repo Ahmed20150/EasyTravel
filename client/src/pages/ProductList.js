@@ -11,7 +11,8 @@ const ProductList = () => {
   const [loadingGifts, setLoadingGifts] = useState(true);
 
   const { selectedCurrency, convertPrice } = useCurrency();
-  const [cookies] = useCookies(["username"]);
+  const [cookies] = useCookies(["userType", "username"]);
+  const userType = cookies.userType;
   const username = cookies.username;
 
   useEffect(() => {
@@ -42,6 +43,7 @@ const ProductList = () => {
             <ViewGiftItemCard
               key={gift._id}
               giftItem={gift}
+              userType={userType}
               convertPrice={convertPrice}
               selectedCurrency={selectedCurrency}
             />
