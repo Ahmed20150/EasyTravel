@@ -13,12 +13,18 @@ const ProductList = () => {
     name: "",
     image: "",
     description: "",
-    price: 0,
-    quantity: 0,
+    price: "",
+    quantity: "",
     date: "",
     seller: "",
   });
   const [editingId, setEditingId] = useState(null);
+
+  // Search and Filter States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc"); // Sorting by ratings (asc/desc)
 
   const { selectedCurrency, convertPrice } = useCurrency();
   const [cookies] = useCookies(["userType", "username"]);
@@ -38,19 +44,17 @@ const ProductList = () => {
     fetchGifts();
   }, []);
 
+  // Handle Add Gift
   const handleAddGift = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/admin/addGiftItem",
-        formData
-      );
+      const response = await axios.post("http://localhost:3000/admin/addGiftItem", formData);
       setGifts([...gifts, response.data.newGiftItem]);
       setFormData({
         name: "",
         image: "",
         description: "",
-        price: 0,
-        quantity: 0,
+        price: "",
+        quantity: "",
         date: "",
         seller: "",
       });
@@ -59,6 +63,7 @@ const ProductList = () => {
     }
   };
 
+  // Handle Update Gift
   const handleUpdateGift = async () => {
     try {
       const response = await axios.put(
@@ -75,8 +80,8 @@ const ProductList = () => {
         name: "",
         image: "",
         description: "",
-        price: 0,
-        quantity: 0,
+        price: "",
+        quantity: "",
         date: "",
         seller: "",
       });
@@ -85,6 +90,7 @@ const ProductList = () => {
     }
   };
 
+  // Handle Delete Gift
   const handleDeleteGift = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/admin/deleteGiftItem/${id}`);
@@ -94,6 +100,39 @@ const ProductList = () => {
     }
   };
 
+  // Filter and Sort Gifts
+  const filteredGifts = gifts
+    .filter((gift) => {
+      // Filter by name
+      return gift.name.toLowerCase().includes(searchQuery.toLowerCase());
+    })
+    .filter((gift) => {
+      // Filter by price range
+      return (
+        (minPrice ? gift.price >= minPrice : true) &&
+        (maxPrice ? gift.price <= maxPrice : true)
+      );
+    })
+    .sort((a, b) => {
+      // Calculate average rating for gift items
+      const getAverageRating = (gift) => {
+        if (gift.reviews && gift.reviews.length > 0) {
+          const totalRating = gift.reviews.reduce((acc, review) => acc + review.rating, 0);
+          return totalRating / gift.reviews.length;
+        }
+        return 0; // Default to 0 if no reviews exist
+      };
+
+      const avgRatingA = getAverageRating(a);
+      const avgRatingB = getAverageRating(b);
+
+      if (sortOrder === "asc") {
+        return avgRatingA - avgRatingB; // Sort low to high
+      } else {
+        return avgRatingB - avgRatingA; // Sort high to low
+      }
+    });
+
   return (
     <div className="product-list-container">
       <h1>All Products</h1>
@@ -101,10 +140,42 @@ const ProductList = () => {
         <button className="back-button">Back</button>
       </Link>
 
-      {userType === "admin" && (
+      {/* Search and Filter Section */}
+      <div className="search-filter-sort">
+        <input
+          type="text"
+          placeholder="Search by product name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <div className="price-filter">
+          <input
+            type="number"
+            placeholder="Min Price"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Max Price"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+        </div>
+
+        <div className="rating-sort">
+          <select onChange={(e) => setSortOrder(e.target.value)} value={sortOrder}>
+            <option value="asc">Sort by Rating (Low to High)</option>
+            <option value="desc">Sort by Rating (High to Low)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Gift Form (for Admin) */}
+      {(userType === "admin" || userType === "seller") && (
         <div className="gift-form">
           <h2>{editingId ? "Update Gift Item" : "Add New Gift Item"}</h2>
-
           <label htmlFor="gift-name">Name</label>
           <input
             id="gift-name"
@@ -142,13 +213,6 @@ const ProductList = () => {
               }
             }}
           />
-          {formData.image && (
-            <img
-              src={formData.image}
-              alt="Uploaded Preview"
-              className="uploaded-image-preview"
-            />
-          )}
 
           <label htmlFor="gift-description">Description</label>
           <input
@@ -199,11 +263,12 @@ const ProductList = () => {
         </div>
       )}
 
+      {/* Display Gifts */}
       {loadingGifts ? (
         <div className="loader">Loading Gifts/Products...</div>
-      ) : gifts.length > 0 ? (
+      ) : filteredGifts.length > 0 ? (
         <div className="gift-items-grid">
-          {gifts.map((gift) => (
+          {filteredGifts.map((gift) => (
             <div key={gift._id} className="gift-item-card">
               <ViewGiftItemCard
                 giftItem={gift}
@@ -211,7 +276,7 @@ const ProductList = () => {
                 convertPrice={convertPrice}
                 selectedCurrency={selectedCurrency}
               />
-              {userType === "admin" && (
+              {(userType === "admin" || userType === "seller") && (
                 <div className="admin-buttons">
                   <button
                     onClick={() =>
@@ -229,10 +294,11 @@ const ProductList = () => {
           ))}
         </div>
       ) : (
-        <div className="no-results">No gifts/products available</div>
+        <div>No products found.</div>
       )}
     </div>
   );
 };
 
 export default ProductList;
+
