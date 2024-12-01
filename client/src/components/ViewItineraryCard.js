@@ -16,7 +16,11 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
   const handleShare = async () => {
     const shareData = {
       title: `${itinerary.creator}'s Itinerary`,
-      text: `Check out this amazing itinerary by ${itinerary.creator}!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(itinerary.priceOfTour)} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
+      text: `Check out this amazing itinerary by ${
+        itinerary.creator
+      }!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(
+        itinerary.priceOfTour
+      )} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
       url: itinerary.website || window.location.href, // Use itinerary's website or current URL
     };
 
@@ -30,6 +34,19 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
     } else {
       alert("Sharing is not supported on this browser.");
     }
+  };
+
+  // Copy link handler
+  const handleCopyLink = () => {
+    const link = `${window.location.origin}/itinerary/${itinerary._id}`;
+    navigator.clipboard
+      .writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch((error) => {
+        console.error("Failed to copy link:", error);
+      });
   };
 
   return (
@@ -97,16 +114,30 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
           ))}
         </ul>
       </div>
-
-      {/* Share Button */}
+      {/* Display Tags */}
+      <div className="tags-cont">
+        {itinerary.tags &&
+          itinerary.tags.map((tag, index) => (
+            <span key={index} className="tag">
+              {tag}
+            </span>
+          ))}
+      </div>
+      {/* Share and Copy Link Buttons */}
       <div className="itinerary-share">
         <button className="share-button" onClick={handleShare}>
           Share Itinerary
         </button>
+        <button className="copy-link-button" onClick={handleCopyLink}>
+          Copy Link
+        </button>
       </div>
 
       <div className="itinerary-share">
-        <button className="share-button" onClick={() => openModal(itinerary._id)}>
+        <button
+          className="share-button"
+          onClick={() => openModal(itinerary._id)}
+        >
           Book
         </button>
       </div>

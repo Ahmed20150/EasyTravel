@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
-//import "../css/ItineraryForm.css"; // Import the CSS file
-
 const ItineraryForm = () => {
-  const [errors, setErrors] = useState([]); // State to store validation errors
-  const navigate = useNavigate(); // Use useNavigate for navigation
+  const navigate = useNavigate();
   const location = useLocation();
-  const { state } = location;
-  const selectedActivities = state?.selectedActivities || [];
   const [cookies] = useCookies(["username"]);
-  const initialFormData = state?.formData || {
-    // Use formData from state if available
+  const [errors, setErrors] = useState({});
+  const [activityCategories, setActivityCategories] = useState([]);
+
+
+  // Initial form state matching the exact schema requirements
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    tags: [],
     activities: [],
     locationsToVisit: [],
     timeline: "",
     duration: "",
-    flagged: "",
     languageOfTour: "",
     priceOfTour: "",
     availableDates: [],
@@ -26,11 +27,48 @@ const ItineraryForm = () => {
     accessibility: "",
     pickupLocation: "",
     dropoffLocation: "",
-    touristsBooked: [],
+    flagged: "no",
+    creator: cookies.username || ""
+  });
+
+  const [selectedActivities, setSelectedActivities] = useState([]);
+
+
+
+  const handleChooseActivities = () => {
+    const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string with comma
+    const selectedActivityIds = selectedActivities.map(
+      (activity) => activity._id // Directly map from selectedActivities to get IDs
+    );
+    console.log(selectedActivityIds);
+    navigate(
+      `/itinerary/create/selectActivity?locations=${encodeURIComponent(
+        locationsQuery
+      )}`,
+      {
+        state: {
+          selectedActivities,
+          selectedActivityIds,
+          formData,
+          returnTo: "create", // Indicate that the source is from the edit
+        },
+      } // Pass the selected activities and form data
+    );
   };
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [activityCategories, setActivityCategories] = useState([]);
+  const handleCancel = () => {
+    localStorage.clear();
+    navigate("/itinerary");
+  };
+
+
+  // Effect to update selected activities from routing state
+  useEffect(() => {
+    if (location.state?.selectedActivities) {
+      setSelectedActivities(location.state.selectedActivities);
+    }
+  }, [location.state]);
+
 
   useEffect(() => {
     if (selectedActivities.length > 0) {
@@ -97,33 +135,51 @@ const ItineraryForm = () => {
     }
   };
 
-  const handleChooseActivities = () => {
-    const locationsQuery = formData.locationsToVisit.join(","); // Join locations into a string with comma
-    const selectedActivityIds = selectedActivities.map(
-      (activity) => activity._id // Directly map from selectedActivities to get IDs
-    );
-    console.log(selectedActivityIds);
-    navigate(
-      `/itinerary/create/selectActivity?locations=${encodeURIComponent(
-        locationsQuery
-      )}`,
-      {
-        state: {
-          selectedActivities,
-          selectedActivityIds,
-          formData,
-          returnTo: "create", // Indicate that the source is from the edit
-        },
-      } // Pass the selected activities and form data
-    );
-  };
-  const handleCancel = () => {
-    localStorage.clear();
-    navigate("/itinerary");
-  };
+
+
+
   return (
     <form onSubmit={handleSubmit}>
       <h2>Create New Itinerary</h2>
+
+      {/* Name Input */}
+      <div>
+        <label>Itinerary Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        {errors.name && <p>{errors.name}</p>}
+      </div>
+
+      {/* Category Input */}
+      <div>
+        <label>Category:</label>
+        <input
+          type="text"
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        />
+        {errors.category && <p>{errors.category}</p>}
+      </div>
+
+      {/* Tags Input */}
+      <div>
+        <label>Tags (comma-separated):</label>
+        <input
+          type="text"
+          name="tags"
+          value={formData.tags.join(", ")}
+          onChange={handleChange}
+        />
+      </div>
+
+      {/* Locations & Activities Section */}
       <label>
         Locations to Visit (comma-separated):
         <input
@@ -168,16 +224,6 @@ const ItineraryForm = () => {
           type="number"
           name="duration"
           value={formData.duration}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Flagged:
-        <input
-          type="text"
-          name="flagged"
-          value={formData.flagged}
           onChange={handleChange}
           required
         />

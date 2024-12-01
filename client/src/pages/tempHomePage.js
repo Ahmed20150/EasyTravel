@@ -18,6 +18,25 @@ const TempHomePage = () => {
     useCurrency();
 
   useEffect(() => {
+    /**
+     * Fetch the wishlist for a tourist by username.
+     * @param {string} username - The username of the tourist.
+     * @returns {Promise<Object>} - A promise resolving to the wishlist data or an error message.
+     */
+    const fetchWishlist = async (username) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/tourist/${username}/wishlist`
+        );
+        return response.data; // Contains the wishlist array
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+        throw new Error(
+          error.response?.data?.message || "Failed to fetch wishlist"
+        );
+      }
+    };
+
     fetchData();
     if (userType !== "admin") {
       fetchNotifications();
@@ -99,26 +118,26 @@ const TempHomePage = () => {
 
   return (
     <div className="container">
-  {userType === "tourist" && (
-      <div
-        className="currency-selector"
-        style={{
-          position: "absolute",
-          top: "70px", // Adjust as needed
-          left: "20px", // Adjust as needed
-          zIndex: 1000, // Ensure it stays on top of other elements
-        }}
-      >
-        <h2>Select Currency:</h2>
-        <select value={selectedCurrency} onChange={handleCurrencyChange}>
-          {Object.keys(exchangeRates).map((currency) => (
-            <option key={currency} value={currency}>
-              {currency}
-            </option>
-          ))}
-        </select>
-      </div>
-    )}
+      {userType === "tourist" && (
+        <div
+          className="currency-selector"
+          style={{
+            position: "absolute",
+            top: "70px", // Adjust as needed
+            left: "20px", // Adjust as needed
+            zIndex: 1000, // Ensure it stays on top of other elements
+          }}
+        >
+          <h2>Select Currency:</h2>
+          <select value={selectedCurrency} onChange={handleCurrencyChange}>
+            {Object.keys(exchangeRates).map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <h1>
         Welcome {username}, you are a {userType}!!
@@ -181,6 +200,9 @@ const TempHomePage = () => {
 
       {userType === "admin" && (
         <>
+          <Link to="/productList">
+            <button>All Gifts/Products</button>
+          </Link>
           <Link to="/pendingRequestsPage">
             <button>Pending Requests</button>
           </Link>
@@ -202,11 +224,17 @@ const TempHomePage = () => {
           <Link to="/activities">
             <button>View Events</button>
           </Link>
+          <Link to="/complaint/view">
+            <button>View Complaints</button>
+          </Link>
         </>
       )}
 
       {userType === "advertiser" && (
         <>
+          <Link to="/productList">
+            <button>All Gifts/Products</button>
+          </Link>
           <Link to="/activities">
             <button>View Activities</button>
           </Link>
@@ -221,6 +249,9 @@ const TempHomePage = () => {
 
       {userType === "seller" && (
         <>
+          <Link to="/productList">
+            <button>All Gifts/Products</button>
+          </Link>
           <Link to="/revenue">
             <button>Financial Report</button>
           </Link>
@@ -256,6 +287,9 @@ const TempHomePage = () => {
 
       {userType === "tourist" && (
         <>
+          <Link to="/productList">
+            <button>All Gifts/Products</button>
+          </Link>
           <Link to="/ExplorePage">
             <button>Explore All Activities, Itineraries, Museums</button>
           </Link>
@@ -273,6 +307,15 @@ const TempHomePage = () => {
           </Link>
           <Link to="/bookTransport">
             <button>Book Transportation</button>
+          </Link>
+          <Link to="/Wishlist">
+            <button>View Wishlist</button>{" "}
+          </Link>
+          <Link to="/complaint/create">
+            <button>File Complaint</button>
+          </Link>
+          <Link to="/complaint/myList">
+            <button>My Complaints</button>
           </Link>
         </>
       )}

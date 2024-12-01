@@ -4,6 +4,8 @@ const Preference = require("./preference.model");
 
 const touristSchema = new mongoose.Schema(
   {
+    wishlist: { type: [String], default: [] }, // Array to store wishlist item IDs or names
+    
     username: {
       type: String,
       required: true,

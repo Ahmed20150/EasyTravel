@@ -1,0 +1,230 @@
+/* Global styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f7;
+  margin: 0;
+  padding: 0;
+}
+
+/* Product List Container */
+.product-list-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.product-list-container h1 {
+  text-align: center;
+  color: #7357b8;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+
+.loader {
+  text-align: center;
+  color: #6a6a93;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #777;
+}
+
+.gift-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Gift Item Card */
+.gift-item-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gift-item-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.gift-item-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.gift-item-image:hover {
+  transform: scale(1.05);
+}
+
+.gift-item-details {
+  padding: 15px 0;
+  text-align: center;
+}
+
+.gift-item-title {
+  margin: 0;
+  color: #e98b43;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.gift-item-description {
+  color: #2c2c2d;
+  margin-top: 10px;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.gift-item-price {
+  font-size: 1.2rem;
+  color: #28a745;
+  font-weight: 700;
+  margin: 10px 0;
+}
+
+.gift-item-quantity,
+.gift-item-seller {
+  font-size: 0.875rem;
+  color: #6c6c7a;
+  margin: 5px 0;
+}
+
+/* Gift Item Detail */
+.gift-item-detail {
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.gift-item-main {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.gift-item-image-container {
+  flex: 1;
+}
+
+.gift-item-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.gift-item-image:hover {
+  transform: scale(1.05);
+}
+
+.gift-item-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gift-item-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.gift-item-price {
+  font-size: 1.5rem;
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.gift-item-quantity,
+.gift-item-purchases,
+.gift-item-seller {
+  font-size: 1rem;
+  color: #6c6c7a;
+  margin-bottom: 5px;
+}
+
+.gift-item-description {
+  margin-top: 20px;
+}
+
+.gift-item-description h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.gift-item-description p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.gift-item-reviews {
+  margin-top: 30px;
+}
+
+.gift-item-reviews h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.review {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.review-author {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.review-content {
+  margin-top: 5px;
+  color: #555;
+}
+
+.review-rating {
+  margin-top: 5px;
+  color: #ff9800;
+}
+
+.ratings-score {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff9800;
+}
+
+/* Loading message */
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #777;
+  padding: 20px;
+}

@@ -14,10 +14,7 @@ import FormControl from "@mui/material/FormControl";
 import Modal from "react-modal";
 import { ToastContainer, toast } from "react-toastify";
 
-
-
 Modal.setAppElement("#root");
-
 
 const ExplorePage = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -35,6 +32,9 @@ const ExplorePage = () => {
   const [sortOptionItineraries, setSortOptionItineraries] = useState("default");
   const [sortOptionActivities, setSortOptionActivities] = useState("default");
 
+  const [preferencesItineraries, setPreferencesItineraries] =
+    useState("no prefrence");
+
   const [bookmarkedItineraries, setBookmarkedItineraries] = useState([]); // Store bookmarked itineraries
 
   const [cookies] = useCookies(["nationality", "occupation"]);
@@ -49,9 +49,6 @@ const ExplorePage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedItineraryId, setSelectedItineraryId] = useState(null);
   const [bookedItineraries, setBookedItineraries] = useState([]); // Store booked itineraries
-
-
-
 
   const [filterCriteriaItineraries, setFilterCriteriaItineraries] = useState({
     maxBudget: "",
@@ -72,8 +69,12 @@ const ExplorePage = () => {
   const [searchItineraryCreator, setSearchItineraryCreator] = useState(""); // Search by itinerary creator
   const [searchActivityCreator, setSearchActivityCreator] = useState(""); // Search by activity creator
 
-  const normalizedDate = Array.isArray(availableDates) ? availableDates : [availableDates];
-  const normalizedTime = Array.isArray(availableTimes) ? availableTimes : [availableTimes];
+  const normalizedDate = Array.isArray(availableDates)
+    ? availableDates
+    : [availableDates];
+  const normalizedTime = Array.isArray(availableTimes)
+    ? availableTimes
+    : [availableTimes];
 
   const itineraryScrollRef = useRef(null);
   const activityScrollRef = useRef(null);
@@ -114,7 +115,7 @@ const ExplorePage = () => {
 
   useEffect(() => {
     applyFiltersMuseums();
-  }, [museums, searchMuseumTags, searchMuseumName]); // Re-run filter when searchMuseumTags or searchMuseumName changes
+  }, [museums, selectedTags, searchMuseumName]); // Re-run filter when searchMuseumTags or searchMuseumName changes
 
   const fetchItineraries = async () => {
     setLoadingItineraries(true);
@@ -159,17 +160,9 @@ const ExplorePage = () => {
     );
   };
 
-  const filteredMuseumsByTags = searchMuseumTags
+  const filteredMuseumsByTags = selectedTags.length
     ? museums.filter((museum) =>
-        museum.tags.some((tag) =>
-          tag.toLowerCase().includes(searchMuseumTags.toLowerCase())
-        )
-      )
-    : museums;
-
-  const filteredMuseumsByName = searchMuseumName
-    ? museums.filter((museum) =>
-        museum.name.toLowerCase().includes(searchMuseumName.toLowerCase())
+        museum.tags.some((tag) => selectedTags.includes(tag))
       )
     : museums;
 
@@ -320,7 +313,7 @@ const ExplorePage = () => {
   // Sorting for itineraries
   const handleSortItineraries = (e) => {
     const option = e.target.value;
-    setSortOptionItineraries(option);
+    setPreferencesItineraries(option);
 
     const sortedItineraries = [...itineraries];
     if (option === "rating") {
@@ -329,6 +322,28 @@ const ExplorePage = () => {
       sortedItineraries.sort((a, b) => a.priceOfTour - b.priceOfTour); // Ascending by price
     }
     setItineraries(sortedItineraries);
+  };
+
+  const handlePrefrenceItineraries = (e) => {
+    const selectedPreference = e.target.value;
+    setPreferencesItineraries(selectedPreference);
+
+    // If "No Preference" is selected, reset the filtered itineraries to show all
+    if (selectedPreference === "no prefrence") {
+      setFilteredItineraries(itineraries);
+    } else {
+      // Otherwise, filter itineraries based on the selected preference
+      const filtered = itineraries.filter((itinerary) => {
+        // Ensure itinerary.tags is an array, then check if any tag matches the selected preference
+        return (
+          itinerary.tags &&
+          itinerary.tags.some((tag) =>
+            tag.toLowerCase().includes(selectedPreference.toLowerCase())
+          )
+        );
+      });
+      setFilteredItineraries(filtered);
+    }
   };
 
   // Sorting for activities
@@ -389,7 +404,10 @@ const ExplorePage = () => {
       setAvailableDates(itineraryResponse.data.availableDates);
       setAvailableTimes(itineraryResponse.data.availableTimes);
     } catch (itineraryError) {
-      console.warn("Itinerary not found, searching for activity...", itineraryError);
+      console.warn(
+        "Itinerary not found, searching for activity...",
+        itineraryError
+      );
       try {
         const activityResponse = await axios.get(
           `http://localhost:3000/activities/${id}`
@@ -412,9 +430,11 @@ const ExplorePage = () => {
 
   const checkAge = async (username) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/tourist/${username}`);
+      const response = await axios.get(
+        `http://localhost:3000/api/tourist/${username}`
+      );
       const { dateOfBirth } = response.data;
-  
+
       const today = new Date();
       const birthDate = new Date(dateOfBirth);
       let age = today.getFullYear() - birthDate.getFullYear();
@@ -425,7 +445,7 @@ const ExplorePage = () => {
       ) {
         age--;
       }
-  
+
       return age >= 18;
     } catch (error) {
       console.error("Error checking age:", error);
@@ -433,159 +453,21 @@ const ExplorePage = () => {
     }
   };
 
-
-  // const handleWalletPurchase = async () => {
-    
-  //   try {
-  //     const itinerary = await axios.get(
-  //       `http://localhost:3000/itinerary/${selectedItineraryId}`
-  //     );
-  //     if(itinerary.response.data){
-
-      
-  //     const isOldEnough = await checkAge(username);
-  //     if (!isOldEnough) {
-  //       toast.error("You must be 18 or older to book an itinerary.");
-  //       return;
-  //     }
-
-  //     const today = new Date();
-  //     const selectedDateObj = new Date(selectedDate);
-  //     if (selectedDateObj <= today) {
-  //       toast.error("The selected date must be after Todays date.");
-  //       return;
-  //     }
-
-  //     //Update Activity Purchases
-  //     await axios.patch(
-  //       `http://localhost:3000/itinerary/increment-purchases/${selectedItineraryId}`
-  //     );
-
-  //     const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update Itenararies Booked List in Tourist Model
-
-  //     //Updating Tourists Booked List in Itinerary
-      
-
-  //     const touristsBook = [...itinerary.data.touristsBooked, username];
-
-  //     await axios.patch(
-  //       `http://localhost:3000/itinerary/${selectedItineraryId}/touristsBook`,
-  //       {
-  //         touristsBooked: touristsBook,
-  //       }
-  //     );
-
-  //     // Call the backend route to book the itinerary and update the wallet
-  //     const response = await axios.patch(
-  //       "http://localhost:3000/api/bookItinerary",
-  //       {
-  //         username,
-  //         newBookedItineraries,
-  //         selectedItineraryId,
-  //       }
-  //     );
-
-  //     console.log("TOURIST USERNAME : ", username);
-
-  //     await axios.post("http://localhost:3000/booking/createBooking", {
-  //       touristUsername: username,
-  //       itineraryId: selectedItineraryId,
-  //       bookingDate: selectedDate,
-  //       bookingTime: selectedTime,
-  //     });
-
-  //     // Update the state with the new booked itineraries and wallet balance
-  //     setBookedItineraries(response.data.bookedItineraries);
-
-  //     //Send Email Reciept
-
-  //     const user = await axios.get(
-  //       `http://localhost:3000/api/tourist/${username}`
-  //     );
-  //     const email = user.data.email;
-
-  //     const pickupLocation = itinerary.data.pickupLocation;
-  //     const dropoffLocation = itinerary.data.dropoffLocation;
-  //     const price = itinerary.data.priceOfTour;
-  //     const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} Euro(s) by Wallet was successfully recieved, Please check your Account for the payment details.`;
-  //     await axios.post("http://localhost:3000/auth/sendPaymentEmail", {
-  //       email,
-  //       text,
-  //     });
-
-  //     toast.success("Event booked successfully!");
-  //   }
-  //   else{
-  //     const activity = await axios.get(
-  //       `http://localhost:3000/activities/${selectedItineraryId}`
-  //     );
-  //     const isOldEnough = await checkAge(username);
-  //     if (!isOldEnough) {
-  //       toast.error("You must be 18 or older to book an itinerary.");
-  //       return;
-  //     }
-
-  //     const today = new Date();
-  //     const selectedDateObj = new Date(selectedDate);
-  //     if (selectedDateObj <= today) {
-  //       toast.error("The selected date must be after Todays date.");
-  //       return;
-  //     }
-
-  //     //Update Activity Purchases
-  //     await axios.patch(
-  //       `http://localhost:3000/activities/increment/${selectedItineraryId}`
-  //     );
-
-  //     const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update
-
-      
-  //     await axios.post("http://localhost:3000/booking/createBooking", {
-  //       touristUsername: username,
-  //       itineraryId: selectedItineraryId,
-  //       bookingDate: selectedDate,
-  //       bookingTime: selectedTime,
-  //     });
-
-      
-  //     const user = await axios.get(
-  //       `http://localhost:3000/api/tourist/${username}`
-  //     );
-  //     const email = user.data.email;
-
-  //     const date = activity.data.date;
-  //     const time = activity.data.time;
-  //     const creator = activity.data.creator;
-  //     const text = `You have successfully booked an activity at the following Date: ${date}, and the corrosponding Time: ${time}. The Creator ${creator} is eager to meet you! Dont be late!! Please check your Account for the payment details.`;
-  //     await axios.post("http://localhost:3000/auth/sendPaymentEmail", {
-  //       email,
-  //       text,
-  //     });
-
-  //     toast.success("Event booked successfully!");
-
-  //   }
-  //     closeModal();
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error.response?.data?.message ||
-  //       "Error booking itinerary. Please try again.";
-  //     toast.error(errorMessage);
-  //   }
-  // };
-
   const handleWalletPurchase = async () => {
     try {
       let itinerary;
       let activity;
       let isItinerary = true;
-  
+
       try {
         itinerary = await axios.get(
           `http://localhost:3000/itinerary/${selectedItineraryId}`
         );
       } catch (itineraryError) {
-        console.warn("Itinerary not found, searching for activity...", itineraryError);
+        console.warn(
+          "Itinerary not found, searching for activity...",
+          itineraryError
+        );
         isItinerary = false;
         try {
           activity = await axios.get(
@@ -596,38 +478,41 @@ const ExplorePage = () => {
           throw new Error("Neither itinerary nor activity found.");
         }
       }
-  
+
       // const isOldEnough = await checkAge(username);
       // if (!isOldEnough) {
       //   toast.error("You must be 18 or older to book an itinerary.");
       //   return;
       // }
-  
+
       const today = new Date();
       const selectedDateObj = new Date(selectedDate);
       if (selectedDateObj <= today) {
         toast.error("The selected date must be after today's date.");
         return;
       }
-  
+
       if (isItinerary) {
         // Update Itinerary Purchases
         await axios.patch(
           `http://localhost:3000/itinerary/increment-purchases/${selectedItineraryId}`
         );
-  
-        const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update Itineraries Booked List in Tourist Model
-  
+
+        const newBookedItineraries = [
+          ...bookedItineraries,
+          selectedItineraryId,
+        ]; // Update Itineraries Booked List in Tourist Model
+
         // Updating Tourists Booked List in Itinerary
         const touristsBook = [...itinerary.data.touristsBooked, username];
-  
+
         await axios.patch(
           `http://localhost:3000/itinerary/${selectedItineraryId}/touristsBook`,
           {
             touristsBooked: touristsBook,
           }
         );
-  
+
         // Call the backend route to book the itinerary and update the wallet
         const response = await axios.patch(
           "http://localhost:3000/api/bookItinerary",
@@ -637,25 +522,25 @@ const ExplorePage = () => {
             selectedItineraryId,
           }
         );
-  
+
         console.log("TOURIST USERNAME : ", username);
-        console.log(username, selectedItineraryId, selectedDate, selectedTime );
+        console.log(username, selectedItineraryId, selectedDate, selectedTime);
         await axios.post("http://localhost:3000/booking/createBooking", {
           touristUsername: username,
           itineraryId: selectedItineraryId,
           bookingDate: selectedDate,
           bookingTime: selectedTime,
         });
-  
+
         // Update the state with the new booked itineraries and wallet balance
         setBookedItineraries(response.data.bookedItineraries);
-  
+
         // Send Email Receipt
         const user = await axios.get(
           `http://localhost:3000/api/tourist/${username}`
         );
         const email = user.data.email;
-  
+
         const pickupLocation = itinerary.data.pickupLocation;
         const dropoffLocation = itinerary.data.dropoffLocation;
         const price = itinerary.data.priceOfTour;
@@ -664,28 +549,31 @@ const ExplorePage = () => {
           email,
           text,
         });
-  
+
         toast.success("Event booked successfully!");
       } else {
         // Update Activity Purchases
         await axios.post(
           `http://localhost:3000/activities/increment/${selectedItineraryId}`
         );
-  
-        const newBookedItineraries = [...bookedItineraries, selectedItineraryId]; // Update
-  
+
+        const newBookedItineraries = [
+          ...bookedItineraries,
+          selectedItineraryId,
+        ]; // Update
+
         // await axios.post("http://localhost:3000/booking/createBooking", {
         //   touristUsername: username,
         //   itineraryId: selectedItineraryId,
         //   bookingDate: selectedDate,
         //   bookingTime: selectedTime,
         // });
-  
+
         const user = await axios.get(
           `http://localhost:3000/api/tourist/${username}`
         );
         const email = user.data.email;
-  
+
         const date = activity.data.date;
         const time = activity.data.time;
         const creator = activity.data.creator;
@@ -694,10 +582,10 @@ const ExplorePage = () => {
           email,
           text,
         });
-  
+
         toast.success("Event booked successfully!");
       }
-  
+
       closeModal();
     } catch (error) {
       const errorMessage =
@@ -706,73 +594,34 @@ const ExplorePage = () => {
       toast.error(errorMessage);
     }
   };
-  // const handleCreditCardPurchase = async () => {
-  //   const isOldEnough = await checkAge(username);
-  //   if (!isOldEnough) {
-  //     toast.error("You must be 18 or older to book an itinerary.");
-  //     return;
-  //   }
 
-  //   const today = new Date();
-  //   const selectedDateObj = new Date(selectedDate);
-  //   if (selectedDateObj <= today) {
-  //     toast.error("The selected date must be after Todays date.");
-  //     return;
-  //   }
-
-  //   const itinerary = await axios.get(
-  //     `http://localhost:3000/itinerary/${selectedItineraryId}`
-  //   );
-
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:3000/payment/create-checkout-session",
-  //       {
-  //         itineraryId: selectedItineraryId,
-  //         itineraryName: "Itinerary",
-  //         price: itinerary.data.priceOfTour,
-  //         selectedDate,
-  //         selectedTime,
-  //       },
-  //       {
-  //         headers: { Authorization: `Bearer ${cookies.token}` },
-  //       }
-  //     );
-  //     console.log("RESPONSE : ", response);
-  //     window.location.href = response.data.url;
-  //   } catch (error) {
-  //     console.error("Error during credit card purchase:", error);
-  //     toast.error(
-  //       "An error occurred during the credit card purchase. Please try again."
-  //     );
-  //   }
-  // };
-  
-  
   const handleCreditCardPurchase = async () => {
     const isOldEnough = await checkAge(username);
     if (!isOldEnough) {
       toast.error("You must be 18 or older to book an itinerary.");
       return;
     }
-  
+
     const today = new Date();
     const selectedDateObj = new Date(selectedDate);
     if (selectedDateObj <= today) {
       toast.error("The selected date must be after today's date.");
       return;
     }
-  
+
     let itinerary;
     let activity;
     let isItinerary = true;
-  
+
     try {
       itinerary = await axios.get(
         `http://localhost:3000/itinerary/${selectedItineraryId}`
       );
     } catch (itineraryError) {
-      console.warn("Itinerary not found, searching for activity...", itineraryError);
+      console.warn(
+        "Itinerary not found, searching for activity...",
+        itineraryError
+      );
       isItinerary = false;
       try {
         activity = await axios.get(
@@ -784,14 +633,16 @@ const ExplorePage = () => {
         return;
       }
     }
-  
+
     try {
       const response = await axios.post(
         "http://localhost:3000/payment/create-checkout-session",
         {
           itineraryId: selectedItineraryId,
           itineraryName: isItinerary ? "Itinerary" : "Activity",
-          price: isItinerary ? itinerary.data.priceOfTour : activity.data.price.max,
+          price: isItinerary
+            ? itinerary.data.priceOfTour
+            : activity.data.price.max,
           selectedDate,
           selectedTime,
         },
@@ -808,12 +659,10 @@ const ExplorePage = () => {
       );
     }
   };
-  
-  
-  
+
   return (
     <div className="explore-page">
-      <ToastContainer/>
+      <ToastContainer />
       <h1>Explore Upcoming Attractions</h1>
       <p>Discover activities, itineraries, and historical places near you.</p>
       <Link to="/home" className="back-button">
@@ -821,67 +670,23 @@ const ExplorePage = () => {
         {/* Adjust the path as needed */}
         &larr; Back
       </Link>
+
       {/* Itineraries Filter Section */}
-      <div className="filter-section">
-        <h2 className="filters-title">Filter Museums</h2>
-        <div className="filters">
-          <div className="filter">
-            <label htmlFor="museum-name">Search by Museum Name:</label>
-            <input
-              type="text"
-              id="museum-name"
-              value={searchMuseumName}
-              onChange={handleSearchMuseumNameChange}
-              placeholder="Enter museum name"
-            />
-          </div>
-          <div className="filter">
-            <label htmlFor="museum-tags">Search by Tags:</label>
-            <input
-              type="text"
-              id="museum-tags"
-              value={searchMuseumTags}
-              onChange={handleSearchMuseumTagsChange}
-              placeholder="Enter tags (comma separated)"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Museums Section */}
-      <div className="section">
-        <h2 className="section-title">Museums</h2>
-        <div className="card-scroll-container">
-          <button
-            onClick={() => handleScroll("left", museumScrollRef)}
-            className="scroll-button left"
-          >
-            ←
-          </button>
-          <div className="card-scroll" ref={museumScrollRef}>
-            {loadingMuseums ? (
-              <p>Loading museums...</p>
-            ) : filteredMuseums.length > 0 ? (
-              filteredMuseums.map((museum) => (
-                <ViewMuseumCard key={museum._id} museum={museum} />
-              ))
-            ) : (
-              <p>No museums match your filters or selected tags.</p>
-            )}
-          </div>
-          <button
-            onClick={() => handleScroll("right", museumScrollRef)}
-            className="scroll-button right"
-          >
-            →
-          </button>
-        </div>
-      </div>
-
-      {/* Itinerary Filter Section */}
       <div className="filter-section">
         <h2 className="filters-title">Filter Itineraries</h2>
         <div className="filters">
+          <div className="filter">
+            <label htmlFor="sort-itineraries">Sort by:</label>
+            <select
+              id="sort-itineraries"
+              value={sortOptionItineraries}
+              onChange={handleSortItineraries}
+            >
+              <option value="default">Default</option>
+              <option value="rating">Average Rating ⭐</option>
+              <option value="price">Price</option>
+            </select>
+          </div>
           <div className="filter">
             <label htmlFor="maxBudget-itinerary">Max Budget:</label>
             <input
@@ -927,15 +732,17 @@ const ExplorePage = () => {
             />
           </div>
           <div className="filter">
-            <label htmlFor="sort-itinerary">Sort By:</label>
+            <label htmlFor="sort-itineraries">Prefrence:</label>
             <select
-              id="sort-itinerary"
-              value={sortOptionItineraries}
-              onChange={handleSortItineraries}
+              id="prefrence"
+              value={preferencesItineraries}
+              onChange={handlePrefrenceItineraries}
             >
-              <option value="default">Default</option>
-              <option value="rating">Average Rating</option>
-              <option value="price">Price</option>
+              <option value="no prefrence">No Prefrence</option>
+              <option value="historic areas">Historic Areas</option>
+              <option value="beaches">Beaches</option>
+              <option value="family friendly">Family Friendly</option>
+              <option value="shopping">Shopping</option>
             </select>
           </div>
         </div>
@@ -944,6 +751,8 @@ const ExplorePage = () => {
       {/* Itineraries Section */}
       <div className="section">
         <h2 className="section-title">Itineraries</h2>
+
+        {/* Render Itineraries */}
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", itineraryScrollRef)}
@@ -953,13 +762,17 @@ const ExplorePage = () => {
           </button>
           <div className="card-scroll" ref={itineraryScrollRef}>
             {loadingItineraries ? (
-              <p>Loading itineraries...</p>
+              <div className="loader">Loading Itineraries...</div>
             ) : filteredItineraries.length > 0 ? (
               filteredItineraries.map((itinerary) => (
-                <ViewItineraryCard key={itinerary._id} itinerary={itinerary} openModal={openModal}  />
+                <ViewItineraryCard
+                  key={itinerary._id}
+                  itinerary={itinerary}
+                  openModal={openModal}
+                />
               ))
             ) : (
-              <p>No itineraries match your filters.</p>
+              <div className="no-results">No itineraries match the filters</div>
             )}
           </div>
           <button
@@ -975,6 +788,18 @@ const ExplorePage = () => {
       <div className="filter-section">
         <h2 className="filters-title">Filter Activities</h2>
         <div className="filters">
+          <div className="filter">
+            <label htmlFor="sort-activities">Sort by:</label>
+            <select
+              id="sort-activities"
+              value={sortOptionActivities}
+              onChange={handleSortActivities}
+            >
+              <option value="default">Default</option>
+              <option value="rating">Average Rating ⭐</option>
+              <option value="price">Starting Price</option>
+            </select>
+          </div>
           <div className="filter">
             <label htmlFor="maxBudget-activity">Max Budget:</label>
             <input
@@ -1028,7 +853,6 @@ const ExplorePage = () => {
               placeholder="Enter creator name"
             />
           </div>
-
           <div className="filter">
             <label htmlFor="rating-activity">Min Rating:</label>
             <input
@@ -1043,24 +867,14 @@ const ExplorePage = () => {
               placeholder="Enter minimum rating"
             />
           </div>
-          <div className="filter">
-            <label htmlFor="sort-activity">Sort By:</label>
-            <select
-              id="sort-activity"
-              value={sortOptionActivities}
-              onChange={handleSortActivities}
-            >
-              <option value="default">Default</option>
-              <option value="rating">Average Rating</option>
-              <option value="price">Price</option>
-            </select>
-          </div>
         </div>
       </div>
 
       {/* Activities Section */}
       <div className="section">
         <h2 className="section-title">Activities</h2>
+
+        {/* Render Activities */}
         <div className="card-scroll-container">
           <button
             onClick={() => handleScroll("left", activityScrollRef)}
@@ -1070,17 +884,84 @@ const ExplorePage = () => {
           </button>
           <div className="card-scroll" ref={activityScrollRef}>
             {loadingActivities ? (
-              <p>Loading activities...</p>
+              <div className="loader">Loading Activities...</div>
             ) : filteredActivities.length > 0 ? (
               filteredActivities.map((activity) => (
-                <ViewActivityCard key={activity._id} activity={activity} openModal={openModal} />
+                <ViewActivityCard
+                  key={activity._id}
+                  activity={activity}
+                  openModal={openModal}
+                />
               ))
             ) : (
-              <p>No activities match your filters.</p>
+              <div className="no-results">No activities match the filters</div>
             )}
           </div>
           <button
             onClick={() => handleScroll("right", activityScrollRef)}
+            className="scroll-button right"
+          >
+            →
+          </button>
+        </div>
+      </div>
+
+      {/* Museum Filter Section */}
+      <div className="filter-section">
+        <h2 className="filters-title">Filter Museums</h2>
+        <div className="filters">
+          <div className="filter">
+            <label htmlFor="museum-name">Search by Museum Name:</label>
+            <input
+              type="text"
+              id="museum-name"
+              value={searchMuseumName}
+              onChange={handleSearchMuseumNameChange}
+              placeholder="Enter museum name"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Museums Section */}
+      <div className="section">
+        <h2 className="section-title">Museums & Historical Places</h2>
+        <div className="museum-tag-filter">
+          {predefinedTags.map((tag) => (
+            <div
+              key={tag}
+              className={`tag ${selectedTags.includes(tag) ? "active" : ""}`}
+              onClick={() => toggleTag(tag)}
+            >
+              {tag}
+            </div>
+          ))}
+        </div>
+        <div className="card-scroll-container">
+          <button
+            onClick={() => handleScroll("left", museumScrollRef)}
+            className="scroll-button left"
+          >
+            ←
+          </button>
+          <div className="card-scroll" ref={museumScrollRef}>
+            {loadingMuseums ? (
+              <div className="loader">Loading Museums...</div>
+            ) : filteredMuseums.length > 0 ? (
+              filteredMuseums.map((museum) => (
+                <ViewMuseumCard
+                  key={museum._id}
+                  museum={museum}
+                  nationality={nationality}
+                  occupation={occupation}
+                />
+              ))
+            ) : (
+              <div className="no-results">No Museums match the filters</div>
+            )}
+          </div>
+          <button
+            onClick={() => handleScroll("right", museumScrollRef)}
             className="scroll-button right"
           >
             →
