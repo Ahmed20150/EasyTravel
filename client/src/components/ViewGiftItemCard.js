@@ -1,9 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
 import "../css/ProductList.css";
 
 const ViewGiftItemCard = ({ giftItem }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();
+  const navigate = useNavigate();
 
   // Function to convert price to selected currency
   const convertPrice = (priceInUSD) => {
@@ -13,68 +15,29 @@ const ViewGiftItemCard = ({ giftItem }) => {
     return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
   };
 
-  //   // Share button handler
-  //   const handleShare = async () => {
-  //     const shareData = {
-  //       title: giftItem.name,
-  //       text: `Check out this gift item: ${giftItem.name}\nDescription: ${giftItem.description}\nPrice: $${giftItem.price}\nFind out more here: `,
-  //       url: window.location.href, // Use current URL or a dynamic link if available
-  //     };
-
-  //     if (navigator.share) {
-  //       try {
-  //         await navigator.share(shareData);
-  //         console.log("Gift item shared successfully");
-  //       } catch (error) {
-  //         console.error("Error sharing gift item:", error);
-  //       }
-  //     } else {
-  //       alert("Sharing is not supported on this browser.");
-  //     }
-  //   };
-
-  //   // Copy link handler
-  //   const handleCopyLink = () => {
-  //     const link = `${window.location.origin}/giftItem/${giftItem._id}`; // Generate gift item-specific link
-  //     navigator.clipboard
-  //       .writeText(link)
-  //       .then(() => {
-  //         alert("Link copied to clipboard!");
-  //       })
-  //       .catch((error) => {
-  //         console.error("Failed to copy link:", error);
-  //         alert("Failed to copy the link.");
-  //       });
-  //   };
+  const handleClick = () => {
+    console.log("id = " + giftItem._id);
+    console.log("Gift item:", giftItem); // Debugging log
+    navigate(`/productList/gift-item/${giftItem._id}`, { state: { giftItem } });
+  };
 
   return (
-    <>
-      <div className="view-gift-item-card">
-        <div className="gift-item-header">
-          <img
-            src={giftItem.image}
-            alt={giftItem.name}
-            className="gift-item-image"
-          />
-        </div>
-        <div className="gift-item-body">
-          <h2 className="gift-item-title">{giftItem.name}</h2>
-          <p className="gift-item-description">{giftItem.description}</p>
-          <p className="gift-item-price">
-            Price:{" "}
-            <span className="price-value">
-              {convertPrice(giftItem.price)} {selectedCurrency}
-            </span>
-          </p>
-          <p className="gift-item-purchases">
-            Purchased: {giftItem.purchases} times
-          </p>
-          <p className="gift-item-date">
-            Added on: {new Date(giftItem.date).toLocaleDateString()}
-          </p>
-        </div>
+    <div className="view-gift-item-card" onClick={handleClick}>
+      <div className="gift-item-header">
+        <img
+          className="gift-item-image"
+          src={giftItem.image}
+          alt={giftItem.name}
+        />
       </div>
-    </>
+      <div className="gift-item-body">
+        <h2 className="gift-item-title">{giftItem.name}</h2>
+        <p className="gift-item-description">{giftItem.description}</p>
+        <p className="gift-item-price">
+          Price: {convertPrice(giftItem.price)} {selectedCurrency}
+        </p>
+      </div>
+    </div>
   );
 };
 

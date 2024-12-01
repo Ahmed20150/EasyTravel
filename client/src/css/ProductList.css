@@ -56,3 +56,110 @@
   color: #6c6c7a;
   margin: 5px 0;
 }
+
+
+
+
+/* Global styles for the product detail page */
+.gift-item-detail {
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Back button styling */
+/* .back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+} */
+
+/* Header section styling */
+.gift-item-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.gift-item-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.gift-item-info {
+  flex: 1;
+}
+
+.gift-item-price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.gift-item-description {
+  margin-top: 10px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Reviews and ratings styling */
+.gift-item-reviews,
+.gift-item-ratings {
+  margin-top: 30px;
+}
+
+.gift-item-reviews h2,
+.gift-item-ratings h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.review {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.review-author {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.review-content {
+  margin-top: 5px;
+  color: #555;
+}
+
+.ratings-score {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff9800;
+}
+
+/* Loading message */
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #777;
+  padding: 20px;
+}

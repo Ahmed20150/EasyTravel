@@ -46,6 +46,8 @@ import ViewUpcomingEvents from "./pages/ViewUpcomingEvents";
 import BookTransportation from "./components/BookTransportation";
 import ExplorePage from "./pages/ExplorePage";
 import ProductList from "./pages/ProductList";
+import ViewGiftItemCard from "./components/ViewGiftItemCard";
+import GiftItemDetail from "./pages/GiftItemDetail";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
 import Help from "./pages/Help";
@@ -174,6 +176,10 @@ function App() {
             <Route path="/bookTransport" element={<BookTransportation />} />
             <Route path="/ExplorePage" element={<ExplorePage />} />
             <Route path="/productList" element={<ProductList />} />
+            <Route
+              path="/productList/gift-item/:id"
+              element={<GiftItemDetail />}
+            />
             <Route path="/tourist-report" element={<TouristReport />} />
             <Route path="/totaltouristactivity" element={<TotalTourists />} />
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
