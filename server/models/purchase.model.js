@@ -31,12 +31,6 @@ const purchaseSchema = new mongoose.Schema({
         enum:["Pending","Completed","Canceled"],
         default: "Pending"
     },
-    rating:{
-        type:Number,
-    },
-    review:{
-        type:String,
-    }
   });  
 
 const Purchase = mongoose.model("Purchase", purchaseSchema); 

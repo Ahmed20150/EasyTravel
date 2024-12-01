@@ -66,8 +66,7 @@ const ProductOrders = () => {
   
   const handleSubmitReview = async () => {
     try {
-      await axios.post(`http://localhost:3000/purchase/review`, {
-        productId: currentProductId,
+      await axios.post(`http://localhost:3000/gift/${currentProductId}/review`, {
         username,
         rating,
         review,

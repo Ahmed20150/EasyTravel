@@ -81,33 +81,6 @@ router.post("/createPurchase", async (req, res) => {
     }
   });
 
-  router.post("/review", async (req, res) => {
-    const { productId, username, rating, review } = req.body;
-  
-    // Validate required fields
-    if (!productId || !username || !rating || !review) {
-      return res.status(400).json({ message: "All required fields must be provided." });
-    }
-  
-    try {
-      const purchase = await Purchase.findOne({ productId, touristUsername: username, status:"Completed" });
-  
-      if (!purchase) {
-        return res.status(404).json({ message: "Purchase not found" });
-      }
-  
-      // Update the purchase with the review and rating
-      purchase.rating = rating;
-      purchase.review = review;
-  
-      await purchase.save();
-  
-      res.status(200).json({ message: "Review submitted successfully" });
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      res.status(500).json({ message: "Error submitting review" });
-    }
-  });
 
   module.exports = router;
 

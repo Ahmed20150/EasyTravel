@@ -180,4 +180,26 @@ router.post('/purchase/:id', async (req, res) => {
     }
 });
 
+router.post('/:id/review', async (req, res) => {
+    const { username, rating, review } = req.body;
+
+    if (!username || !rating || !review) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        const giftItem = await GiftItem.findById(req.params.id);
+        if (!giftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+
+        giftItem.reviews.push({ username, rating, review });
+        await giftItem.save();
+
+        res.status(200).json({ message: 'Review added successfully', giftItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding review', error });
+    }
+});
+
 module.exports = router;
