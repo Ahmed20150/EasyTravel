@@ -29,6 +29,7 @@ const ProductList = () => {
   const { selectedCurrency, convertPrice } = useCurrency();
   const [cookies] = useCookies(["userType", "username"]);
   const userType = cookies.userType;
+  const username = cookies.username;
 
   useEffect(() => {
     const fetchGifts = async () => {
@@ -47,7 +48,10 @@ const ProductList = () => {
   // Handle Add Gift
   const handleAddGift = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/admin/addGiftItem", formData);
+      const response = await axios.post(
+        "http://localhost:3000/admin/addGiftItem",
+        formData
+      );
       setGifts([...gifts, response.data.newGiftItem]);
       setFormData({
         name: "",
@@ -117,7 +121,10 @@ const ProductList = () => {
       // Calculate average rating for gift items
       const getAverageRating = (gift) => {
         if (gift.reviews && gift.reviews.length > 0) {
-          const totalRating = gift.reviews.reduce((acc, review) => acc + review.rating, 0);
+          const totalRating = gift.reviews.reduce(
+            (acc, review) => acc + review.rating,
+            0
+          );
           return totalRating / gift.reviews.length;
         }
         return 0; // Default to 0 if no reviews exist
@@ -165,7 +172,10 @@ const ProductList = () => {
         </div>
 
         <div className="rating-sort">
-          <select onChange={(e) => setSortOrder(e.target.value)} value={sortOrder}>
+          <select
+            onChange={(e) => setSortOrder(e.target.value)}
+            value={sortOrder}
+          >
             <option value="asc">Sort by Rating (Low to High)</option>
             <option value="desc">Sort by Rating (High to Low)</option>
           </select>
@@ -186,15 +196,29 @@ const ProductList = () => {
           />
 
           <label htmlFor="gift-creator">Creator Name</label>
-          <input
-            id="gift-creator"
-            type="text"
-            placeholder="Creator Name"
-            value={formData.seller}
-            onChange={(e) =>
-              setFormData({ ...formData, seller: e.target.value })
-            }
-          />
+          {userType === "seller" && (
+            <input
+              id="gift-creator"
+              type="text"
+              placeholder={username}
+              value={username}
+              onChange={(e) =>
+                setFormData({ ...formData, seller: e.target.value })
+              }
+              disabled
+            />
+          )}
+          {userType === "admin" && (
+            <input
+              id="gift-creator"
+              type="text"
+              placeholder="Creator Name"
+              value={formData.seller}
+              onChange={(e) =>
+                setFormData({ ...formData, seller: e.target.value })
+              }
+            />
+          )}
 
           <label htmlFor="image-upload">Image</label>
           <input
@@ -252,9 +276,7 @@ const ProductList = () => {
             id="gift-date"
             type="date"
             value={formData.date}
-            onChange={(e) =>
-              setFormData({ ...formData, date: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
           />
 
           <button onClick={editingId ? handleUpdateGift : handleAddGift}>
@@ -279,9 +301,7 @@ const ProductList = () => {
               {(userType === "admin" || userType === "seller") && (
                 <div className="admin-buttons">
                   <button
-                    onClick={() =>
-                      setEditingId(gift._id) || setFormData(gift)
-                    }
+                    onClick={() => setEditingId(gift._id) || setFormData(gift)}
                   >
                     Edit
                   </button>
@@ -301,4 +321,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
