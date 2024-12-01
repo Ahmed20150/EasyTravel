@@ -40,6 +40,7 @@ const ProductList = () => {
   const { selectedCurrency, convertPrice } = useCurrency();
   const [cookies] = useCookies(["userType", "username"]);
   const userType = cookies.userType;
+  const username = cookies.username;
 
   useEffect(() => {
     const fetchGifts = async () => {
@@ -54,6 +55,15 @@ const ProductList = () => {
     };
     fetchGifts();
   }, []);
+
+  useEffect(() => {
+    if (userType === "seller") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        seller: username,
+      }));
+    }
+  }, [userType, username]);
 
   // Validate Form Data
   const validateForm = () => {
@@ -75,7 +85,10 @@ const ProductList = () => {
     if (!validateForm()) return; // Do not submit if validation fails
 
     try {
-      const response = await axios.post("http://localhost:3000/admin/addGiftItem", formData);
+      const response = await axios.post(
+        "http://localhost:3000/admin/addGiftItem",
+        formData
+      );
       setGifts([...gifts, response.data.newGiftItem]);
       setFormData({
         name: "",
@@ -144,7 +157,10 @@ const ProductList = () => {
     .sort((a, b) => {
       const getAverageRating = (gift) => {
         if (gift.reviews && gift.reviews.length > 0) {
-          const totalRating = gift.reviews.reduce((acc, review) => acc + review.rating, 0);
+          const totalRating = gift.reviews.reduce(
+            (acc, review) => acc + review.rating,
+            0
+          );
           return totalRating / gift.reviews.length;
         }
         return 0;
@@ -192,7 +208,10 @@ const ProductList = () => {
         </div>
 
         <div className="rating-sort">
-          <select onChange={(e) => setSortOrder(e.target.value)} value={sortOrder}>
+          <select
+            onChange={(e) => setSortOrder(e.target.value)}
+            value={sortOrder}
+          >
             <option value="asc">Sort by Rating (Low to High)</option>
             <option value="desc">Sort by Rating (High to Low)</option>
           </select>
@@ -218,8 +237,11 @@ const ProductList = () => {
             id="gift-creator"
             type="text"
             placeholder="Creator Name"
-            value={formData.seller}
-            onChange={(e) => setFormData({ ...formData, seller: e.target.value })}
+            value={userType === "seller" ? username : formData.seller}
+            onChange={(e) =>
+              setFormData({ ...formData, seller: e.target.value })
+            }
+            disabled={userType === "seller"} // Disable input for sellers
           />
           {errors.seller && <p className="error-message">{errors.seller}</p>}
 
@@ -309,9 +331,7 @@ const ProductList = () => {
               {(userType === "admin" || userType === "seller") && (
                 <div className="admin-buttons">
                   <button
-                    onClick={() =>
-                      setEditingId(gift._id) || setFormData(gift)
-                    }
+                    onClick={() => setEditingId(gift._id) || setFormData(gift)}
                   >
                     Edit
                   </button>
