@@ -78,7 +78,6 @@ const ProductList = () => {
     if (!formData.quantity) newErrors.quantity = "Quantity is required.";
     if (userType === "admin" && !formData.seller)
       newErrors.seller = "Seller name is required for admins.";
-    if (!formData.date) newErrors.date = "Date is required.";
     if (userType === "admin" && !formData.seller)
       newErrors.seller = "Seller name is required for admins.";
 
