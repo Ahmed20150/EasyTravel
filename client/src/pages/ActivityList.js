@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-
-
+import NotificationsIcon from "@mui/icons-material/Notifications"; // Import Notifications Icon
 import "../css/ActivityLists.css";
 
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(true); // State to toggle visibility
   const navigate = useNavigate();
   const [cookies] = useCookies(["username", "userType"]);
 
@@ -81,7 +81,6 @@ const ActivityLists = () => {
     navigate(`/activities/create`);
   };
 
-  // New function to send email notification to the creator
   const sendFlagNotification = async (creatorEmail, category) => {
     try {
       await axios.post("http://localhost:3000/api/send/send-notification", {
@@ -119,9 +118,18 @@ const ActivityLists = () => {
     <div className="activity-list">
       <h1>Activities</h1>
 
-      {userType !== 'admin' && notifications.length > 0 && (
+      {userType !== 'admin' && notifications.length > 0 && showNotifications && (
         <div className="notifications">
-          <h2>Your Notifications</h2>
+          <div className="notifications-header">
+            <h2>Your Notifications</h2>
+            <button
+              className="close-button"
+              onClick={() => setShowNotifications(false)}
+              aria-label="Close Notifications"
+            >
+              &times;
+            </button>
+          </div>
           <ul>
             {notifications.map((notification, index) => (
               <li key={index}>
@@ -131,6 +139,15 @@ const ActivityLists = () => {
             ))}
           </ul>
         </div>
+      )}
+
+      {!showNotifications && notifications.length > 0 && (
+        <button
+          className="show-notifications-button"
+          onClick={() => setShowNotifications(true)}
+        >
+          <NotificationsIcon />
+        </button>
       )}
 
       <div className="button-container">
