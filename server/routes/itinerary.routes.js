@@ -2,12 +2,43 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 const Itinerary = require("../models/itinerary.model.js");
+const Tourist = require("../models/tourist.model.js");
 const Notification = require("../models/notification.model.js"); // Import the Notification model
-const sendEmail = require('../sendEmail');
+const sendEmail = require("../sendEmail");
 
 const Activity = require("../models/activity.model.js");
 router.use(express.json());
 router.use(cors()); // This allows requests from any origin
+
+// Points calculation logic
+const calculatePoints = (amountPaid, level) => {
+  let points = 0;
+  switch (level) {
+    case 1:
+      points = amountPaid * 0.5;
+      break;
+    case 2:
+      points = amountPaid * 1;
+      break;
+    case 3:
+      points = amountPaid * 1.5;
+      break;
+    default:
+      points = amountPaid * 0.5;
+  }
+  return points;
+};
+
+// Level determination logic
+const determineLevel = (points) => {
+  if (points <= 100000) {
+    return 1;
+  } else if (points <= 500000) {
+    return 2;
+  } else {
+    return 3;
+  }
+};
 
 // CREATE
 router.post("/", async (req, res) => {
@@ -37,7 +68,9 @@ router.get("/", async (req, res) => {
 // READ (Get specific itinerary)
 router.get("/:id", async (req, res) => {
   try {
-    const itinerary = await Itinerary.findById(req.params.id).populate("activities.activity");
+    const itinerary = await Itinerary.findById(req.params.id).populate(
+      "activities.activity"
+    );
     if (!itinerary) {
       return res.status(404).json({ error: "Itinerary not found." });
     }
@@ -64,7 +97,9 @@ router.get("/search", async (req, res) => {
     const itineraries = await Itinerary.find(searchQuery);
 
     if (itineraries.length === 0) {
-      return res.status(404).json({ message: "No itineraries found matching the search criteria" });
+      return res
+        .status(404)
+        .json({ message: "No itineraries found matching the search criteria" });
     }
 
     res.status(200).json(itineraries);
@@ -73,7 +108,78 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// UPDATE
+// PUT route to handle loyalty points
+router.put("/loyaltyPoints", async (req, res) => {
+  const { price, username } = req.body;
+  console.log(price, username);
+  try {
+    // Fetch the tourist by username
+    const tourist = await Tourist.findOne({ username });
+
+    if (!tourist) {
+      return res.status(404).json({ error: "Tourist not found" });
+    }
+
+    // Calculate new points
+    const newPoints = calculatePoints(price, tourist.level);
+
+    // Update tourist's total points and current points
+    tourist.totalPoints += newPoints;
+    tourist.currentPoints += newPoints;
+
+    // Determine new level
+    tourist.level = determineLevel(tourist.totalPoints);
+    console.log(tourist.level);
+    console.log(determineLevel(tourist.totalPoints));
+    // Save updated tourist data
+    await tourist.save();
+
+    res
+      .status(200)
+      .json({ message: "Loyalty points updated successfully", tourist });
+  } catch (error) {
+    console.error("Error updating loyalty points:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.put("/refundPoints", async (req, res) => {
+  const { price, username } = req.body;
+
+  try {
+    // Fetch the tourist by username
+    const tourist = await Tourist.findOne({ username });
+
+    if (!tourist) {
+      return res.status(404).json({ error: "Tourist not found" });
+    }
+
+    // Calculate points to be deducted
+    const pointsToDeduct = calculatePoints(price, tourist.level);
+
+    // Update tourist's total points and current points
+    tourist.totalPoints -= pointsToDeduct;
+    tourist.currentPoints -= pointsToDeduct;
+
+    // Ensure points do not go negative
+    if (tourist.totalPoints < 0) tourist.totalPoints = 0;
+    if (tourist.currentPoints < 0) tourist.currentPoints = 0;
+
+    // Determine new level
+    tourist.level = determineLevel(tourist.totalPoints);
+
+    // Save updated tourist data
+    await tourist.save();
+
+    res
+      .status(200)
+      .json({ message: "Loyalty points refunded successfully", tourist });
+  } catch (error) {
+    console.error("Error refunding loyalty points:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 router.put("/:id", async (req, res) => {
   try {
     const updatedItinerary = await Itinerary.findByIdAndUpdate(
@@ -103,7 +209,7 @@ router.put("/toggleActivation/:id", async (req, res) => {
     }
 
     itinerary.activated = !itinerary.activated;
-    itinerary.changed = true
+    itinerary.changed = true;
     await itinerary.save();
     res.send(itinerary);
   } catch (error) {
@@ -183,7 +289,9 @@ router.put("/deactivateAll/:username", async (req, res) => {
     if (result.modifiedCount > 0) {
       res.status(200).json({ message: "All itineraries deactivated" });
     } else {
-      res.status(404).json({ message: "No itineraries found for the given username" });
+      res
+        .status(404)
+        .json({ message: "No itineraries found for the given username" });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -217,12 +325,16 @@ router.patch("/:id/flag", async (req, res) => {
       user: itinerary.creator,
       message: `Your itinerary with locations "${itinerary.locationsToVisit.join(
         ", "
-      )}" and timeline "${itinerary.timeline}" has been flagged as inappropriate.`,
+      )}" and timeline "${
+        itinerary.timeline
+      }" has been flagged as inappropriate.`,
     });
 
     await notification.save();
 
-    res.status(200).json({ message: "Itinerary flagged and notification sent.", itinerary });
+    res
+      .status(200)
+      .json({ message: "Itinerary flagged and notification sent.", itinerary });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -231,13 +343,14 @@ router.patch("/:id/flag", async (req, res) => {
 // Optional: Endpoint to retrieve notifications for a user
 router.get("/notifications/:username", async (req, res) => {
   try {
-    const notifications = await Notification.find({ user: req.params.username });
+    const notifications = await Notification.find({
+      user: req.params.username,
+    });
     res.status(200).json(notifications);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch notifications" });
   }
 });
-
 
 router.post("/sendNotification", async (req, res) => {
   const { email, text } = req.body;
@@ -281,21 +394,20 @@ router.get("/search", async (req, res) => {
     console.error("Error searching for itineraries:", error);
     res.status(500).json({ message: "Server error" });
   }
-}
-);
-router.patch('/increment-purchases/:itineraryId', async (req, res) => {
+});
+router.patch("/increment-purchases/:itineraryId", async (req, res) => {
   try {
     const { itineraryId } = req.params;
 
     // Fetch the itinerary by ID
     const itinerary = await Itinerary.findById(itineraryId);
     if (!itinerary) {
-      return res.status(404).json({ message: 'Itinerary not found' });
+      return res.status(404).json({ message: "Itinerary not found" });
     }
 
     // Iterate through the list of activity IDs and increment numOfPurchases
     const activityUpdates = itinerary.activities.map(async (activityId) => {
-      console.log('Processing activityId:', activityId.activity);
+      console.log("Processing activityId:", activityId.activity);
 
       const activity = await Activity.findById(activityId.activity);
       console.log(activity);
@@ -308,26 +420,28 @@ router.patch('/increment-purchases/:itineraryId', async (req, res) => {
     // Wait for all updates to complete
     await Promise.all(activityUpdates);
 
-    res.status(200).json({ message: 'numOfPurchases incremented for all activities in the itinerary' });
+    res.status(200).json({
+      message: "numOfPurchases incremented for all activities in the itinerary",
+    });
   } catch (error) {
-    console.error('Error incrementing numOfPurchases:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error incrementing numOfPurchases:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-router.patch('/decrement-purchases/:itineraryId', async (req, res) => {
+router.patch("/decrement-purchases/:itineraryId", async (req, res) => {
   try {
     const { itineraryId } = req.params;
 
     // Fetch the itinerary by ID
     const itinerary = await Itinerary.findById(itineraryId);
     if (!itinerary) {
-      return res.status(404).json({ message: 'Itinerary not found' });
+      return res.status(404).json({ message: "Itinerary not found" });
     }
 
     // Iterate through the list of activity IDs and increment numOfPurchases
     const activityUpdates = itinerary.activities.map(async (activityId) => {
-      console.log('Processing activityId:', activityId.activity);
+      console.log("Processing activityId:", activityId.activity);
 
       const activity = await Activity.findById(activityId.activity);
       console.log(activity);
@@ -340,13 +454,13 @@ router.patch('/decrement-purchases/:itineraryId', async (req, res) => {
     // Wait for all updates to complete
     await Promise.all(activityUpdates);
 
-    res.status(200).json({ message: 'numOfPurchases incremented for all activities in the itinerary' });
+    res.status(200).json({
+      message: "numOfPurchases incremented for all activities in the itinerary",
+    });
   } catch (error) {
-    console.error('Error incrementing numOfPurchases:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error incrementing numOfPurchases:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-
 module.exports = router;
-

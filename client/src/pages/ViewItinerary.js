@@ -198,6 +198,10 @@ const ViewItinerary = () => {
       });
 
       toast.success("Itinerary booked successfully!");
+      await axios.put("http://localhost:3000/itinerary/loyaltyPoints", {
+        price,
+        username,
+      });
 
       closeModal();
     } catch (error) {
@@ -340,7 +344,11 @@ const ViewItinerary = () => {
         `http://localhost:3000/booking/deleteBooking/${id}/${username}`
       );
       toast.success("Unbooking Successful, Amount is refunded to your wallet");
-
+      const price = itinerary.data.priceOfTour;
+      await axios.put("http://localhost:3000/itinerary/refundPoints", {
+        price,
+        username,
+      });
       setBookedItineraries(newBookedItineraries);
     } catch (error) {
       const errorMessage =
