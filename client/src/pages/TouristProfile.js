@@ -101,32 +101,6 @@ const TouristProfile = () => {
     }, [username]);
 
 
-    const filteredPromoCodes = promoCodes.filter((promo) => {
-      const dob = new Date(tourist.dateOfBirth);
-      const expiryDate = new Date(promo.expiryDate);
-    
-      // Get today's date
-      const today = new Date();
-      
-      // Get the tourist's birthday month and day, and today's month and day
-      const dobMonthDay = `${dob.getMonth()}-${dob.getDate()}`;
-      const todayMonthDay = `${today.getMonth()}-${today.getDate()}`;
-    
-      // Check if today is the tourist's birthday and if the promo code is still valid
-      const isBirthday = dobMonthDay === todayMonthDay;
-      const isPromoValid = expiryDate > today;
-      // Return true only if it is the tourist's birthday and the promo code is valid
-      return isBirthday && isPromoValid;
-    });
-    
-    if (filteredPromoCodes.length > 0) {
-      // There are promo codes available on the tourist's birthday
-      console.log('Available promo codes:', filteredPromoCodes);
-    } else {
-      // No promo codes available on the tourist's birthday
-      console.log('No available promo codes for today.');
-    }
-
     const handleRequest = async (username, role) => {
         try {
             const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
@@ -189,6 +163,31 @@ const TouristProfile = () => {
          });
        }
      }, [tourist, bookedItineraries]);
+     const filteredPromoCodes = 0;
+     useEffect(() => {
+      if (!tourist) return; // Ensure tourist data is available before proceeding
+    
+      const dob = new Date(tourist.dateOfBirth);
+    
+      const filteredPromoCodes = promoCodes.filter((promo) => {
+        const expiryDate = new Date(promo.expiryDate);
+        const today = new Date();
+        const dobMonthDay = `${dob.getMonth()}-${dob.getDate()}`;
+        const todayMonthDay = `${today.getMonth()}-${today.getDate()}`;
+        const isBirthday = dobMonthDay === todayMonthDay;
+        const isPromoValid = expiryDate > today;
+    
+        return isBirthday && isPromoValid;
+      });
+    
+      console.log(
+        filteredPromoCodes.length > 0
+          ? `Available promo codes: ${filteredPromoCodes}`
+          : "No available promo codes for today."
+      );
+    
+      // Additional operations like sending emails based on filtered promo codes
+    }, [tourist, promoCodes]); // Runs whenever tourist or promoCodes changes
 
      useEffect(() => {
       const sendEmail = async (to, subject, text) => {
