@@ -78,7 +78,7 @@ import bootstrap from "bootstrap";
 import ViewAllGifts from "./pages/ViewAllGifts";
 
 import Wishlist from "./pages/Wishlist";
-import Cart from './pages/Cart'; 
+import Cart from "./pages/Cart";
 
 function App() {
   return (
@@ -115,7 +115,6 @@ function App() {
             />
             <Route path="/complaint/myList" element={<MyComplaints />} />
             <Route path="/all-gifts" element={<ViewAllGifts />} />
-
 
             <Route
               path="/create-profileSeller"
@@ -188,10 +187,8 @@ function App() {
             <Route path="/totaltouristactivity" element={<TotalTourists />} />
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
 
-
-            <Route path="/Wishlist" element={<Wishlist />} /> 
+            <Route path="/Wishlist" element={<Wishlist />} />
             <Route path="/cart" element={<Cart />} />
-          
           </Routes>
         </BrowserRouter>
       </CurrencyProvider>

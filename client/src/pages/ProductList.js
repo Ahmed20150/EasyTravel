@@ -37,7 +37,7 @@ const ProductList = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const { selectedCurrency, convertPrice } = useCurrency();
+  const { selectedCurrency, exchangeRates } = useCurrency();
   const [cookies] = useCookies(["userType", "username"]);
   const userType = cookies.userType;
   const username = cookies.username;
@@ -72,9 +72,13 @@ const ProductList = () => {
     const newErrors = {};
     if (!formData.name) newErrors.name = "Name is required.";
     if (!formData.image) newErrors.image = "Image is required.";
-    if (!formData.description) newErrors.description = "Description is required.";
+    if (!formData.description)
+      newErrors.description = "Description is required.";
     if (!formData.price) newErrors.price = "Price is required.";
     if (!formData.quantity) newErrors.quantity = "Quantity is required.";
+    if (userType === "admin" && !formData.seller)
+      newErrors.seller = "Seller name is required for admins.";
+    if (!formData.date) newErrors.date = "Date is required.";
     if (userType === "admin" && !formData.seller)
       newErrors.seller = "Seller name is required for admins.";
 
@@ -152,6 +156,71 @@ const ProductList = () => {
     }
   };
 
+  // Handle Purchase
+  const handlePurchase = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/gift/purchase/${id}`
+      );
+      console.log(response.data.message);
+
+      // Update the local state to increment the purchase count for the specific gift
+      setGifts((prevGifts) =>
+        prevGifts.map((gift) =>
+          gift._id === id
+            ? { ...gift, purchases: Number(gift.purchases) + 1 }
+            : gift
+        )
+      );
+    } catch (error) {
+      console.error("Error purchasing gift:", error);
+    }
+  };
+
+  // Handle Add to Wishlist
+  const handleAddToWishlist = async (giftName) => {
+    if (!username) {
+      alert("user not found");
+      console.log("No username found in cookies");
+      return;
+    }
+
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/tourist/${username}/addToWishlist`,
+        { giftName }
+      );
+      alert("Added " + giftName + " to your wishlist");
+      console.log(response.data.message);
+
+      // Optionally, you can update the UI or inform the user that the gift was added to the wishlist
+    } catch (error) {
+      console.error("Error adding gift to wishlist:", error);
+    }
+  };
+
+  // Handle Add to Cart
+  const handleAddToCart = async (giftName) => {
+    if (!username) {
+      alert("user not found");
+      console.log("No username found in cookies");
+      return;
+    }
+
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/tourist/${username}/addToCart`,
+        { giftName }
+      );
+      alert("Added " + giftName + " to your Cart");
+      console.log(response.data.message);
+
+      // Optionally, you can update the UI or inform the user that the gift was added to the cart
+    } catch (error) {
+      console.error("Error adding gift to Cart:", error);
+    }
+  };
+
   // Filter and Sort Gifts
   const filteredGifts = gifts
     .filter((gift) => {
@@ -185,9 +254,17 @@ const ProductList = () => {
       }
     });
 
+  // Function to convert price to selected currency
+  const convertPrice = (price) => {
+    if (exchangeRates[selectedCurrency]) {
+      return (price * exchangeRates[selectedCurrency]).toFixed(2); // Convert price based on exchange rate
+    }
+    return price.toFixed(2); // Return original price if no exchange rate found
+  };
+
   return (
     <div className="product-list-container">
-      <h1>All Products</h1>
+      <h1>Gift Items</h1>
       <Link to="/home">
         <button className="back-button">Back</button>
       </Link>
@@ -227,7 +304,7 @@ const ProductList = () => {
         </div>
       </div>
 
-      {/* Gift Form (for Admin) */}
+      {/* Gift Form (for Admin and Seller) */}
       {(userType === "admin" || userType === "seller") && (
         <div className="gift-form">
           <h2>{editingId ? "Update Gift Item" : "Add New Gift Item"}</h2>
@@ -286,7 +363,9 @@ const ProductList = () => {
               setFormData({ ...formData, description: e.target.value })
             }
           />
-          {errors.description && <p className="error-message">{errors.description}</p>}
+          {errors.description && (
+            <p className="error-message">{errors.description}</p>
+          )}
 
           <label htmlFor="gift-price">Price</label>
           <input
@@ -310,7 +389,9 @@ const ProductList = () => {
               setFormData({ ...formData, quantity: Number(e.target.value) })
             }
           />
-          {errors.quantity && <p className="error-message">{errors.quantity}</p>}
+          {errors.quantity && (
+            <p className="error-message">{errors.quantity}</p>
+          )}
 
           <button onClick={editingId ? handleUpdateGift : handleAddGift}>
             {editingId ? "Update Gift" : "Add Gift"}
@@ -340,6 +421,17 @@ const ProductList = () => {
                   </button>
                   <button onClick={() => handleDeleteGift(gift._id)}>
                     Delete
+                  </button>
+                </div>
+              )}
+              {userType === "tourist" && (
+                <div className="buttons">
+                  <button onClick={() => handlePurchase(gift._id)}>Buy</button>
+                  <button onClick={() => handleAddToWishlist(gift.name)}>
+                    Add to Wishlist
+                  </button>
+                  <button onClick={() => handleAddToCart(gift.name)}>
+                    Add to cart
                   </button>
                 </div>
               )}
