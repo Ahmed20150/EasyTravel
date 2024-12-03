@@ -101,64 +101,44 @@ router.get('/tourists/:username/addresses', async (req, res) => {
     }
   });
 
-// Route to edit an address for a tourist
-// Route to edit an address for a tourist
-router.put('/tourists/:username/addresses/:label', async (req, res) => {
-    try {
-      const { username, label } = req.params;
-      const { street, city, state, postalCode, country, newLabel, isDefault } = req.body;
-  
-      // Find the tourist by username
-      const tourist = await Tourist.findOne({ username });
-  
-      if (!tourist) {
-        return res.status(404).json({ error: 'Tourist not found!' });
-      }
-  
-      // Find the address to be edited
-      const addressToEdit = tourist.addresses.find(
-        (address) => address.label === label
-      );
-  
-      if (!addressToEdit) {
-        console.error('Address not found:', label); // Add this for debugging
-        return res.status(404).json({ error: 'Address not found!' });
-      }
-      
-  
-      // Update the address details
-      addressToEdit.street = street || addressToEdit.street;
-      addressToEdit.city = city || addressToEdit.city;
-      addressToEdit.state = state || addressToEdit.state;
-      addressToEdit.postalCode = postalCode || addressToEdit.postalCode;
-      addressToEdit.country = country || addressToEdit.country;
-      addressToEdit.label = newLabel || addressToEdit.label;
-  
-      // Handle `isDefault` update if provided
-      if (isDefault !== undefined) {
-        // Reset all addresses to not be default
-        tourist.addresses.forEach((address) => {
-          address.isDefault = false;
-        });
-  
-        // If `isDefault` is true, set this address as the default
-        if (isDefault) {
-          addressToEdit.isDefault = true;
-        }
-      }
-  
-      // Save the changes
-      await tourist.save();
-  
-      return res.status(200).json({
-        message: 'Address updated successfully!',
-        address: addressToEdit,
-      });
-    } catch (error) {
-      return res.status(500).json({ error: 'Failed to update address.' });
+// Update address by ID
+router.put('/tourists/:username/addresses/:addressId', async (req, res) => {
+  const { username, addressId } = req.params;
+  const { street, city, state, postalCode, country, label } = req.body;
+
+  try {
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username });
+
+    if (!tourist) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  });
-  
+
+    // Find the address within the addresses array
+    const address = tourist.addresses.id(addressId);
+
+    if (!address) {
+      return res.status(404).json({ error: 'Address not found' });
+    }
+
+    // Update the address fields
+    if (street) address.street = street;
+    if (city) address.city = city;
+    if (state) address.state = state;
+    if (postalCode) address.postalCode = postalCode;
+    if (country) address.country = country;
+    if (label) address.label = label;
+
+    // Save the updated tourist document
+    await tourist.save();
+
+    res.status(200).json({ message: 'Address updated successfully', address });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the address' });
+  }
+});
+
   router.delete('/tourists/:username/addresses/:label', async (req, res) => {
     try {
         console.log(`Deleting address for ${req.params.username}, label: ${req.params.label}`);
