@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
 import { useCookies } from "react-cookie";
 import ViewGiftItemCard from "../components/ViewGiftItemCard";
+import { toast } from "react-toastify"; // Import the toast component
+import "react-toastify/dist/ReactToastify.css"; // Import toast styles
 import "../css/ProductList.css";
 
 const ProductList = () => {
@@ -15,7 +17,6 @@ const ProductList = () => {
     description: "",
     price: "",
     quantity: "",
-    date: "",
     seller: "",
   });
   const [editingId, setEditingId] = useState(null);
@@ -27,7 +28,6 @@ const ProductList = () => {
     description: "",
     price: "",
     quantity: "",
-    date: "",
     seller: "",
   });
 
@@ -35,12 +35,14 @@ const ProductList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc"); // Sorting by ratings (asc/desc)
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const { selectedCurrency, convertPrice } = useCurrency();
   const [cookies] = useCookies(["userType", "username"]);
   const userType = cookies.userType;
   const username = cookies.username;
+
+  const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     const fetchGifts = async () => {
@@ -73,8 +75,8 @@ const ProductList = () => {
     if (!formData.description) newErrors.description = "Description is required.";
     if (!formData.price) newErrors.price = "Price is required.";
     if (!formData.quantity) newErrors.quantity = "Quantity is required.";
-    if (!formData.date) newErrors.date = "Date is required.";
-    if (userType === "admin" && !formData.seller) newErrors.seller = "Seller name is required for admins.";
+    if (userType === "admin" && !formData.seller)
+      newErrors.seller = "Seller name is required for admins.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
@@ -96,9 +98,13 @@ const ProductList = () => {
         description: "",
         price: "",
         quantity: "",
-        date: "",
         seller: "",
       });
+
+      toast.success("Gift added successfully!"); // Show success toast
+      setTimeout(() => {
+        navigate("/home"); // Redirect after 2 seconds (optional)
+      }, 2000);
     } catch (error) {
       console.error("Error adding gift:", error);
     }
@@ -125,9 +131,10 @@ const ProductList = () => {
         description: "",
         price: "",
         quantity: "",
-        date: "",
         seller: "",
       });
+
+      toast.success("Gift updated successfully!"); // Show success toast
     } catch (error) {
       console.error("Error updating gift:", error);
     }
@@ -138,6 +145,8 @@ const ProductList = () => {
     try {
       await axios.delete(`http://localhost:3000/admin/deleteGiftItem/${id}`);
       setGifts(gifts.filter((gift) => gift._id !== id));
+
+      toast.success("Gift deleted successfully!"); // Show success toast
     } catch (error) {
       console.error("Error deleting gift:", error);
     }
@@ -256,7 +265,10 @@ const ProductList = () => {
               if (file) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                  setFormData({ ...formData, image: reader.result });
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    image: reader.result,
+                  }));
                 };
                 reader.readAsDataURL(file);
               }
@@ -299,15 +311,6 @@ const ProductList = () => {
             }
           />
           {errors.quantity && <p className="error-message">{errors.quantity}</p>}
-
-          <label htmlFor="gift-date">Date</label>
-          <input
-            id="gift-date"
-            type="date"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          />
-          {errors.date && <p className="error-message">{errors.date}</p>}
 
           <button onClick={editingId ? handleUpdateGift : handleAddGift}>
             {editingId ? "Update Gift" : "Add Gift"}
