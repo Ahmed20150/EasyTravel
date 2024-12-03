@@ -24,24 +24,27 @@ const ViewMuseumCard = ({ museum, nationality, occupation }) => {
   }
 
   // Share button handler
-  const handleShare = async () => {
-    const shareData = {
-      title: museum.name,
-      text: `Check out this amazing museum: ${museum.name}\nLocated at: ${museum.location}\nFind out more here: `,
-      url: museum.website || window.location.href, // Use museum's website or current URL
-    };
+const handleShare = async () => {
+  // Generate the link for the museum dynamically
+  const link = `${window.location.origin}/museum/${museum._id}`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        console.log("Museum shared successfully");
-      } catch (error) {
-        console.error("Error sharing museum:", error);
-      }
-    } else {
-      alert("Sharing is not supported on this browser.");
-    }
+  const shareData = {
+    title: museum.name,
+    text: `Check out this amazing museum: ${museum.name}\nLocated at: ${museum.location}\nFind out more here: ${link}`,
+
   };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      console.log("Museum shared successfully");
+    } catch (error) {
+      console.error("Error sharing museum:", error);
+    }
+  } else {
+    alert("Sharing is not supported on this browser.");
+  }
+};
 
   // Copy link handler
   const handleCopyLink = () => {

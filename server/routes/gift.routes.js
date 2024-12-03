@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const GiftItem = require("../models/giftitem.model.js"); 
+const Seller = require("../models/seller.model.js"); // Adjust the path as per your project structure
 const sendEmail = require('../sendEmail'); // Include your email utility
 
 
@@ -204,11 +205,13 @@ router.post("/createGiftItem",async(req,res)=> {
 //     }
 // });
 
+
 // Increment purchase count and decrease quantity by 1
 router.post('/purchase/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
+        // Find the gift item by ID
         const gift = await GiftItem.findById(id);
         if (!gift) {
             return res.status(404).json({ message: 'GiftItem not found' });
@@ -227,10 +230,17 @@ router.post('/purchase/:id', async (req, res) => {
         // Save the updated gift
         await gift.save();
 
-        // Send email if quantity is 0 after the purchase
+        // Check if quantity is now 0 and send email notification to the seller
         if (gift.quantity === 0) {
+            // Find the seller's email using the seller username from the gift item
+            const seller = await Seller.findOne({ username: gift.seller });
+            if (!seller) {
+                return res.status(404).json({ message: 'Seller not found' });
+            }
+
+            // Send an email to the seller
             await sendEmail(
-                'youssefhipa887@gmail.com',
+                seller.email,
                 'Gift Out of Stock Notification',
                 `The gift item "${gift.name}" is now out of stock.`
             );
@@ -238,8 +248,10 @@ router.post('/purchase/:id', async (req, res) => {
 
         res.json({ message: 'Purchase successful', gift });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Error processing purchase', error });
     }
 });
+
 
 module.exports = router;

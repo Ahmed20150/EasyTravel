@@ -14,9 +14,12 @@ const ViewActivityCard = ({ activity, openModal }) => {
     return priceInUSD.toFixed(2); // Default to USD if no exchange rate is found
   };
 
+  // Generate the activity link
+  const generateActivityLink = () => `${window.location.origin}/activity/${activity._id}`;
+
   // Handle copy link action
   const handleCopyLink = () => {
-    const link = `${window.location.origin}/activity/${activity._id}`;
+    const link = generateActivityLink();
     if (navigator.clipboard) {
       navigator.clipboard
         .writeText(link)
@@ -40,14 +43,16 @@ const ViewActivityCard = ({ activity, openModal }) => {
 
   // Handle share functionality
   const handleShare = async () => {
+    const link = generateActivityLink();
     const shareData = {
       title: `${activity.creator}'s Activity`,
       text: `Check out this amazing activity by ${activity.creator}!
 Category: ${activity.category}
 Date: ${new Date(activity.date).toLocaleDateString()}
 Location: ${activity.location.address}
-Price Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price.max)} ${selectedCurrency}`,
-      url: `${window.location.origin}/activity/${activity._id}`,
+Price Range: ${convertPrice(activity.price.min)} - ${convertPrice(activity.price.max)} ${selectedCurrency}
+Link: ${link}`,
+      
     };
 
     if (navigator.share) {
