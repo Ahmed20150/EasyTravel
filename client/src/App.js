@@ -75,6 +75,7 @@ import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
 
 import bootstrap from "bootstrap";
+import ViewAllGifts from "./pages/ViewAllGifts";
 
 import Wishlist from "./pages/Wishlist";
 
@@ -112,6 +113,8 @@ function App() {
               element={<ReplyComplaints />}
             />
             <Route path="/complaint/myList" element={<MyComplaints />} />
+            <Route path="/all-gifts" element={<ViewAllGifts />} />
+
 
             <Route
               path="/create-profileSeller"

@@ -227,6 +227,9 @@ const TempHomePage = () => {
           <Link to="/complaint/view">
             <button>View Complaints</button>
           </Link>
+          <Link to="/all-gifts">
+            <button>View All Gifts</button>
+          </Link>
         </>
       )}
 
@@ -254,6 +257,9 @@ const TempHomePage = () => {
           </Link>
           <Link to="/revenue">
             <button>Financial Report</button>
+          </Link>
+          <Link to="/all-gifts">
+            <button>View All Gifts</button>
           </Link>
         </>
       )}

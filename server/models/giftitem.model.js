@@ -15,6 +15,7 @@ const giftitemSchema = new mongoose.Schema({
   purchases: { type: Number, default: 0 }, // Tracks how many times the item has been purchased
   date: { type: Date, required: true },
   seller: { type: String, required: true },
+  archived: { type: Boolean, default: false },
   reviews: [reviewSchema],
 });
 
