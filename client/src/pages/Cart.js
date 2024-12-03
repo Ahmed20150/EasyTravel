@@ -92,7 +92,7 @@ function Cart() {
     const handleBack = () => {
         navigate('/home');
     };
-
+ //TODO Fix price conversion & display  
     return (
         <div className="cart-container">
             <h1>My Cart</h1>
@@ -103,23 +103,23 @@ function Cart() {
                 <ul>
                     {cartItems.map((item, index) => (
                         <li key={index}>
-                            <h2>{item.giftItem.name}</h2>
-                            <p>Price: {convertPrice(item.giftItem.price)} {selectedCurrency}</p>
+                            <h2>{item.name}</h2>
+                            <p>Price: {convertPrice(item.price)} {selectedCurrency}</p>
                             <div>
                                 <button
-                                    onClick={() => removeItem(item.giftItem.name)}
+                                    onClick={() => removeItem(item.name)}
                                     className="remove-button"
                                 >
                                     Remove
                                 </button>
                                 <button
-                                    onClick={() => updateItemQuantity(item.giftItem.name, item.quantity + 1)}
+                                    onClick={() => updateItemQuantity(item.name, item.quantity + 1)}
                                     className="update-button"
                                 >
                                     +1
                                 </button>
                                 <button
-                                    onClick={() => updateItemQuantity(item.giftItem.name, item.quantity - 1)}
+                                    onClick={() => updateItemQuantity(item.name, item.quantity - 1)}
                                     className="update-button"
                                 >
                                     -1
