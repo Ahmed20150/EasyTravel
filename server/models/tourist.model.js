@@ -56,6 +56,18 @@ const touristSchema = new mongoose.Schema(
       },
     ],
     bookmarkedEvents: { type: [String], default: [] }, // Array to store event IDs
+    cart: [
+      {
+        giftItem: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "GiftItem", // Reference to GiftItem model
+        },
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
