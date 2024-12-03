@@ -20,6 +20,17 @@ const ProductList = () => {
   });
   const [editingId, setEditingId] = useState(null);
 
+  // Error State
+  const [errors, setErrors] = useState({
+    name: "",
+    image: "",
+    description: "",
+    price: "",
+    quantity: "",
+    date: "",
+    seller: "",
+  });
+
   // Search and Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [minPrice, setMinPrice] = useState("");
@@ -54,8 +65,25 @@ const ProductList = () => {
     }
   }, [userType, username]);
 
+  // Validate Form Data
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.image) newErrors.image = "Image is required.";
+    if (!formData.description) newErrors.description = "Description is required.";
+    if (!formData.price) newErrors.price = "Price is required.";
+    if (!formData.quantity) newErrors.quantity = "Quantity is required.";
+    if (!formData.date) newErrors.date = "Date is required.";
+    if (userType === "admin" && !formData.seller) newErrors.seller = "Seller name is required for admins.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   // Handle Add Gift
   const handleAddGift = async () => {
+    if (!validateForm()) return; // Do not submit if validation fails
+
     try {
       const response = await axios.post(
         "http://localhost:3000/admin/addGiftItem",
@@ -78,6 +106,8 @@ const ProductList = () => {
 
   // Handle Update Gift
   const handleUpdateGift = async () => {
+    if (!validateForm()) return; // Do not submit if validation fails
+
     try {
       const response = await axios.put(
         `http://localhost:3000/admin/updateGiftItem/${editingId}`,
@@ -116,18 +146,15 @@ const ProductList = () => {
   // Filter and Sort Gifts
   const filteredGifts = gifts
     .filter((gift) => {
-      // Filter by name
       return gift.name.toLowerCase().includes(searchQuery.toLowerCase());
     })
     .filter((gift) => {
-      // Filter by price range
       return (
         (minPrice ? gift.price >= minPrice : true) &&
         (maxPrice ? gift.price <= maxPrice : true)
       );
     })
     .sort((a, b) => {
-      // Calculate average rating for gift items
       const getAverageRating = (gift) => {
         if (gift.reviews && gift.reviews.length > 0) {
           const totalRating = gift.reviews.reduce(
@@ -136,16 +163,16 @@ const ProductList = () => {
           );
           return totalRating / gift.reviews.length;
         }
-        return 0; // Default to 0 if no reviews exist
+        return 0;
       };
 
       const avgRatingA = getAverageRating(a);
       const avgRatingB = getAverageRating(b);
 
       if (sortOrder === "asc") {
-        return avgRatingA - avgRatingB; // Sort low to high
+        return avgRatingA - avgRatingB;
       } else {
-        return avgRatingB - avgRatingA; // Sort high to low
+        return avgRatingB - avgRatingA;
       }
     });
 
@@ -203,6 +230,7 @@ const ProductList = () => {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
+          {errors.name && <p className="error-message">{errors.name}</p>}
 
           <label htmlFor="gift-creator">Creator Name</label>
           <input
@@ -215,6 +243,7 @@ const ProductList = () => {
             }
             disabled={userType === "seller"} // Disable input for sellers
           />
+          {errors.seller && <p className="error-message">{errors.seller}</p>}
 
           <label htmlFor="image-upload">Image</label>
           <input
@@ -233,6 +262,7 @@ const ProductList = () => {
               }
             }}
           />
+          {errors.image && <p className="error-message">{errors.image}</p>}
 
           <label htmlFor="gift-description">Description</label>
           <input
@@ -244,6 +274,7 @@ const ProductList = () => {
               setFormData({ ...formData, description: e.target.value })
             }
           />
+          {errors.description && <p className="error-message">{errors.description}</p>}
 
           <label htmlFor="gift-price">Price</label>
           <input
@@ -255,6 +286,7 @@ const ProductList = () => {
               setFormData({ ...formData, price: Number(e.target.value) })
             }
           />
+          {errors.price && <p className="error-message">{errors.price}</p>}
 
           <label htmlFor="gift-quantity">Quantity</label>
           <input
@@ -266,6 +298,7 @@ const ProductList = () => {
               setFormData({ ...formData, quantity: Number(e.target.value) })
             }
           />
+          {errors.quantity && <p className="error-message">{errors.quantity}</p>}
 
           <label htmlFor="gift-date">Date</label>
           <input
@@ -274,6 +307,7 @@ const ProductList = () => {
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
           />
+          {errors.date && <p className="error-message">{errors.date}</p>}
 
           <button onClick={editingId ? handleUpdateGift : handleAddGift}>
             {editingId ? "Update Gift" : "Add Gift"}
