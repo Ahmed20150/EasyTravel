@@ -11,7 +11,6 @@ const DeletionRequest = require('../models/DeletionRequest.model');
 const GiftItem = require('../models/giftitem.model'); // Adjust the path as per your file structure
 router.use(express.json());
 
-const GiftItem = require('../models/giftitem.model');
 
 
 // Admin: Add a new gift item with its details, price, and available quantity
