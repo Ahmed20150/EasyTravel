@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
 import { useCookies } from "react-cookie";
 import ViewGiftItemCard from "../components/ViewGiftItemCard";
-import { toast } from "react-toastify"; // Import the toast component
-import "react-toastify/dist/ReactToastify.css"; // Import toast styles
+import { toast, ToastContainer } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css"; 
 import "../css/ProductList.css";
 
 const ProductList = () => {
@@ -105,9 +105,6 @@ const ProductList = () => {
       });
 
       toast.success("Gift added successfully!"); // Show success toast
-      setTimeout(() => {
-        navigate("/home"); // Redirect after 2 seconds (optional)
-      }, 2000);
     } catch (error) {
       console.error("Error adding gift:", error);
     }
@@ -263,6 +260,7 @@ const ProductList = () => {
 
   return (
     <div className="product-list-container">
+      <ToastContainer/>
       <h1>Gift Items</h1>
       <Link to="/home">
         <button className="back-button">Back</button>
@@ -445,3 +443,5 @@ const ProductList = () => {
 };
 
 export default ProductList;
+
+
