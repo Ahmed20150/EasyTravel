@@ -1,11 +1,7 @@
-const mongoose = require("mongoose");
-const Itinerary = require("./itinerary.model");
-const Preference = require("./preference.model");
+const mongoose = require('mongoose');
 
 const touristSchema = new mongoose.Schema(
   {
-    wishlist: { type: [String], default: [] }, // Array to store wishlist item IDs or names
-    
     username: {
       type: String,
       required: true,
@@ -45,7 +41,7 @@ const touristSchema = new mongoose.Schema(
     bookedItineraries: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Itinerary",
+        ref: 'Itinerary',
       },
     ],
     BookedFlights: [{ type: String }],
@@ -68,11 +64,42 @@ const touristSchema = new mongoose.Schema(
         },
       },
     ],
+    bookmarkedEvents: { type: [String], default: [] },
+    addresses: [ // Array to store multiple delivery addresses
+      {
+        street: {
+          type: String,
+          required: true,
+        },
+        city: {
+          type: String,
+          required: true,
+        },
+        state: {
+          type: String,
+          required: true,
+        },
+        postalCode: {
+          type: String,
+          required: true,
+        },
+        country: {
+          type: String,
+          required: true,
+        },
+        label: { // A label to help identify the address (e.g., "Home", "Work")
+          type: String,
+          required: false,
+        },
+        isDefault: { type: Boolean, default: false  // Add this field if not present
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 
-const Tourist = mongoose.model("Tourist", touristSchema); //store in table "Tourist"
+const Tourist = mongoose.model('Tourist', touristSchema);
 
-module.exports = Tourist; //export for use in other files
+module.exports = Tourist;

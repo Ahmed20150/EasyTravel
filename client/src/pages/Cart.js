@@ -93,6 +93,13 @@ function Cart() {
         navigate('/home');
     };
  //TODO Fix price conversion & display  
+
+    // Handle checkout
+    const handleCheckout = () => {
+        // Navigate to checkout page or implement checkout logic
+        navigate('/address');
+    };
+
     return (
         <div className="cart-container">
             <h1>My Cart</h1>
@@ -136,6 +143,13 @@ function Cart() {
             <div className="back-button-container">
                 <button className="back-button" onClick={handleBack}>
                     Back
+                </button>
+            </div>
+
+            {/* Add Check Out Button here */}
+            <div className="checkout-button-container">
+                <button className="checkout-button" onClick={handleCheckout}>
+                    Check Out
                 </button>
             </div>
         </div>
