@@ -73,6 +73,7 @@ import ActivityDetails from "./pages/ActivityDetails";
 import MuseumDetails from "./pages/MuseumDetails";
 import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
+import CreatePromoCode from "./pages/CreatePromoCodePage";
 
 import bootstrap from "bootstrap";
 import ViewAllGifts from "./pages/ViewAllGifts";
@@ -117,6 +118,8 @@ function App() {
             <Route path="/complaint/myList" element={<MyComplaints />} />
             <Route path="/all-gifts" element={<ViewAllGifts />} />
 
+            <Route path="/admin-account-management" element={<AdminAccountManagement />} />
+            <Route path="/create-promo-code" element={<CreatePromoCode />} />
 
             <Route
               path="/create-profileSeller"
