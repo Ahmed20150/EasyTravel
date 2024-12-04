@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const touristSchema = new mongoose.Schema(
   {
+    wishlist: { type: [String], default: [] }, // Array to store wishlist item IDs or names
+
     username: {
       type: String,
       required: true,
@@ -95,6 +97,9 @@ const touristSchema = new mongoose.Schema(
         },
       },
     ],
+    currentPoints: { type: Number, default: 0 },
+    level: { type: Number, default: 1 },
+    totalPoints: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
