@@ -554,7 +554,7 @@ router.put(
       }
 
       // Deduct the points from the tourist's account
-      tourist.currentPoints -= points;
+      tourist.points -= points;
 
       // Calculate the amount to add to the wallet
       const dollarsToAdd = Math.floor(points / 10000) * 10;
@@ -570,7 +570,7 @@ router.put(
       res.status(500).json({ message: error.message });
     }
   }
-});
+);
 
 
 /////////////         cart        ///////////////////////
