@@ -49,17 +49,18 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
   };
 
   // Share button handler
+// share button
   const handleShare = async () => {
+    const link = `${window.location.origin}/itinerary/${itinerary._id}`; // Generate the itinerary link
     const shareData = {
       title: `${itinerary.creator}'s Itinerary`,
       text: `Check out this amazing itinerary by ${
         itinerary.creator
       }!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(
         itinerary.priceOfTour
-      )} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
-      url: itinerary.website || window.location.href, // Use itinerary's website or current URL
+      )} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}\n\nView more details here: ${link}`,
     };
-
+  
     if (navigator.share) {
       try {
         await navigator.share(shareData);
@@ -71,7 +72,6 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
       alert("Sharing is not supported on this browser.");
     }
   };
-
   // Copy link handler
   const handleCopyLink = () => {
     const link = `${window.location.origin}/itinerary/${itinerary._id}`;
