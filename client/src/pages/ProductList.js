@@ -414,6 +414,16 @@ const handlePromoCodeCheck = () => {
     <div className="product-list-container">
       <h1>Gift Items</h1>
       <ToastContainer/>
+      <Link to="/productOrders">
+        <button style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          padding: "10px 20px",
+        }}>
+          View Your Orders
+        </button>
+        </Link>
       <Link to="/home">
         <button className="back-button">Back</button>
       </Link>
