@@ -42,6 +42,10 @@ const ProductList = () => {
   const userType = cookies.userType;
   const username = cookies.username;
 
+  const [promoCodes, setPromoCodes] = useState([]); // Store promo codes
+  const [promoCode, setPromoCode] = useState(''); // Store the entered promo code
+  const [promoDiscount, setPromoDiscount] = useState(0); // Store the promo discount
+
   useEffect(() => {
     const fetchGifts = async () => {
       try {
@@ -64,6 +68,43 @@ const ProductList = () => {
       }));
     }
   }, [userType, username]);
+
+  useEffect(() => {
+    const fetchGiftsAndPromoCodes = async () => {
+        try {
+            // Fetch gifts
+            const giftsResponse = await axios.get('http://localhost:3000/gift');
+            setGifts(giftsResponse.data);
+
+            // Fetch promo codes
+            const promoResponse = await axios.get('http://localhost:3000/api/promo-codes');
+            setPromoCodes(promoResponse.data || []);
+        } catch (error) {
+            console.error('Error fetching gifts or promo codes:', error);
+        }
+    };
+    fetchGiftsAndPromoCodes();
+}, []);
+
+const handlePromoCodeCheck = () => {
+  const promo = promoCodes.find((code) => code.promoCode === promoCode);
+
+  if (promo && new Date(promo.expiryDate) > new Date()) {
+      setPromoDiscount(promo.discount); // Apply discount
+      alert(`Promo code applied! You get ${promo.discount}% off.`);
+  } else {
+      setPromoDiscount(0); // No discount if invalid or expired
+      alert('Invalid or expired promo code.');
+  }
+};
+
+    // Function to apply promo code discount to price
+    const applyPromoDiscount = (price) => {
+      if (promoDiscount) {
+          return (price - (price * promoDiscount) / 100).toFixed(2); // Apply discount
+      }
+      return price.toFixed(2); // Return original price if no discount
+  };
 
   // Validate Form Data
   const validateForm = () => {
@@ -258,6 +299,21 @@ const ProductList = () => {
         <button className="back-button">Back</button>
       </Link>
 
+         {/* Promo Code Section */}
+         <div>
+                <label>
+                    Promo Code:
+                    <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                    />
+                </label>
+                <button type="button" onClick={handlePromoCodeCheck}>
+                    Apply Promo Code
+                </button>
+            </div>
+
       {/* Search and Filter Section */}
       <div className="search-filter-sort">
         <input
@@ -404,7 +460,7 @@ const ProductList = () => {
               <ViewGiftItemCard
                 giftItem={gift}
                 userType={userType}
-                convertPrice={convertPrice}
+                convertPrice={convertPrice(applyPromoDiscount(gift.price))}
                 selectedCurrency={selectedCurrency}
               />
               {(userType === "admin" || userType === "seller") && (
