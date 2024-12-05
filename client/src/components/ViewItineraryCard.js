@@ -16,7 +16,11 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
   const handleShare = async () => {
     const shareData = {
       title: `${itinerary.creator}'s Itinerary`,
-      text: `Check out this amazing itinerary by ${itinerary.creator}!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(itinerary.priceOfTour)} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
+      text: `Check out this amazing itinerary by ${
+        itinerary.creator
+      }!\nDuration: ${itinerary.duration} hours\nPrice: ${convertPrice(
+        itinerary.priceOfTour
+      )} ${selectedCurrency}\nLanguage: ${itinerary.languageOfTour}`,
       url: itinerary.website || window.location.href, // Use itinerary's website or current URL
     };
 
@@ -44,7 +48,6 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
         console.error("Failed to copy link:", error);
       });
   };
-  
 
   return (
     <div className="view-itinerary-card">
@@ -111,7 +114,15 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
           ))}
         </ul>
       </div>
-
+      {/* Display Tags */}
+      <div className="tags-cont">
+        {itinerary.tags &&
+          itinerary.tags.map((tag, index) => (
+            <span key={index} className="tag">
+              {tag}
+            </span>
+          ))}
+      </div>
       {/* Share and Copy Link Buttons */}
       <div className="itinerary-share">
         <button className="share-button" onClick={handleShare}>
@@ -123,7 +134,10 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
       </div>
 
       <div className="itinerary-share">
-        <button className="share-button" onClick={() => openModal(itinerary._id)}>
+        <button
+          className="share-button"
+          onClick={() => openModal(itinerary._id)}
+        >
           Book
         </button>
       </div>

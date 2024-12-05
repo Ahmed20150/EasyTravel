@@ -1,16 +1,79 @@
 const express = require('express');
 const router = express.Router();
 const GiftItem = require("../models/giftitem.model.js"); 
+const sendEmail = require('../sendEmail'); // Include your email utility
 
-// Get all gifts
+
+// // Get all gifts
+// router.get('/', async (req, res) => {
+//     try {
+//         const gifts = await GiftItem.find();
+//         res.json(gifts);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error fetching gifts', error });
+//     }
+// }); 
+// Check all gift quantities and send email if any gift has quantity 0
+// const checkGiftQuantities = async () => {
+//     try {
+//         const gifts = await GiftItem.find();  // Fetch all gift items
+
+//         gifts.forEach((gift) => {
+//             if (gift.quantity === 0) {
+//                 // If the gift quantity is 0, send an email
+//                 const subject = `Stock Alert: ${gift.name} is Out of Stock`;
+//                 const text = `The gift item "${gift.name}" has run out of stock. Quantity: 0.`;
+
+//                 // Send email (Adjust the email recipient as needed)
+//                 sendEmail('youssefhipa887@gmail.com', subject, text)
+//                     .then(response => {
+//                         console.log(`Email sent successfully: ${response}`);
+//                     })
+//                     .catch(error => {
+//                         console.log('Error sending email:', error);
+//                     });
+//             }
+//         });
+//     } catch (error) {
+//         console.error('Error checking gift quantities:', error);
+//     }
+// };
+
+
+
+ // Get all unarchived gifts
+
+ router.get('/search/:name', async (req, res) => {
+    try {
+        const { name } = req.params; // Extract the "name" from route parameters
+
+        // Use a case-insensitive regex to match the name
+        const gifts = await GiftItem.find({ 
+            name: { $regex: new RegExp(name, 'i') },
+            archived: false // Only include non-archived gifts
+        });
+
+        if (gifts.length === 0) {
+            return res.status(404).json({ message: `No gifts found matching the name "${name}"` });
+        }
+
+        res.status(200).json(gifts);
+    } catch (error) {
+        res.status(500).json({ message: 'Error searching for gifts', error });
+    }
+});
+
+
+
 router.get('/', async (req, res) => {
     try {
-        const gifts = await GiftItem.find();
+        // Fetch gifts where 'archived' is false
+        const gifts = await GiftItem.find({ archived: false });
         res.json(gifts);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching gifts', error });
     }
-}); 
+});
 
 // Get all gift items along with their revenue (with optional filter by name)
 router.get('/filter/itemsWithRevenue', async (req, res) => {
@@ -145,7 +208,26 @@ router.post("/createGiftItem",async(req,res)=> {
     }
   });
 
-// Increment purchase count
+// // Increment purchase count
+// router.post('/purchase/:id', async (req, res) => {
+//     const { id } = req.params;
+
+//     try {
+//         const gift = await GiftItem.findById(id);
+//         if (!gift) {
+//             return res.status(404).json({ message: 'GiftItem not found' });
+//         }
+
+//         gift.purchases += 1; // Increment purchase count
+//         await gift.save(); // Save the updated gift
+
+//         res.json({ message: 'Purchase successful', gift });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error processing purchase', error });
+//     }
+// });
+
+// Increment purchase count and decrease quantity by 1
 router.post('/purchase/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -155,8 +237,27 @@ router.post('/purchase/:id', async (req, res) => {
             return res.status(404).json({ message: 'GiftItem not found' });
         }
 
-        gift.purchases += 1; // Increment purchase count
-        await gift.save(); // Save the updated gift
+        // Increment the purchase count
+        gift.purchases += 1;
+
+        // Decrease the quantity by 1
+        if (gift.quantity > 0) {
+            gift.quantity -= 1;
+        } else {
+            return res.status(400).json({ message: 'Not enough quantity to complete the purchase' });
+        }
+
+        // Save the updated gift
+        await gift.save();
+
+        // Send email if quantity is 0 after the purchase
+        if (gift.quantity === 0) {
+            await sendEmail(
+                'youssefhipa887@gmail.com',
+                'Gift Out of Stock Notification',
+                `The gift item "${gift.name}" is now out of stock.`
+            );
+        }
 
         res.json({ message: 'Purchase successful', gift });
     } catch (error) {
