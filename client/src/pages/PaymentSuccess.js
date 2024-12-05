@@ -139,7 +139,7 @@ const PaymentSuccess = () => {
       {itemType === "itinerary" ? (
         <Link to="/ViewAllItinerary"><button>Continue</button></Link>
       ) : (
-        <Link to="/giftlist"><button>Continue</button></Link>
+        <Link to="/productList"><button>Continue</button></Link>
       )}
     </div>
   );

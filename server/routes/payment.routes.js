@@ -76,8 +76,8 @@ router.get("/verify-payment", async (req, res) => {
           },
         ],
         mode: "payment",
-        success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&itemType=product&itemId=${productId}`,
-        cancel_url: `${process.env.CLIENT_URL}/payment-cancel?itemType=product`,
+        success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}&itemType=product&itemId=${productId}`,
+        cancel_url: `http://localhost:5000/payment-cancel?itemType=product`,
       });
   
       res.json({ url: session.url });

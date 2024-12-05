@@ -42,10 +42,20 @@ function Cart() {
 
     // Convert price to selected currency
     const convertPrice = (price) => {
-        if (exchangeRates[selectedCurrency]) {
+        if (!price || isNaN(price)) {
+            return "Invalid price"; // Handle invalid price
+        }
+        if (exchangeRates && selectedCurrency && exchangeRates[selectedCurrency]) {
             return (price * exchangeRates[selectedCurrency]).toFixed(2);
         }
         return price.toFixed(2);
+    };
+
+    const calculateTotalPrice = () => {
+        return cartItems.reduce((total, item) => {
+            const itemPrice = parseFloat(convertPrice(item.price));
+            return total + (isNaN(itemPrice) ? 0 : itemPrice);
+        }, 0).toFixed(2);
     };
 
     // Handle item removal
@@ -132,10 +142,13 @@ function Cart() {
                                     -1
                                 </button>
                                 <p>Quantity: {item.quantity}</p>
+                                
                             </div>
                         </li>
                     ))}
+                     <h2>Total Price: {calculateTotalPrice()} {selectedCurrency}</h2>
                 </ul>
+                
             ) : (
                 <p>Your Cart is empty</p>
             )}
