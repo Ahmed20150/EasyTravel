@@ -98,6 +98,7 @@ function ChangePassword() {
 
   return (
     <CookiesProvider>
+      <ToastContainer/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
