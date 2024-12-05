@@ -43,6 +43,29 @@ const sendEmail = require('../sendEmail'); // Include your email utility
 
 
  // Get all unarchived gifts
+
+ router.get('/search/:name', async (req, res) => {
+    try {
+        const { name } = req.params; // Extract the "name" from route parameters
+
+        // Use a case-insensitive regex to match the name
+        const gifts = await GiftItem.find({ 
+            name: { $regex: new RegExp(name, 'i') },
+            archived: false // Only include non-archived gifts
+        });
+
+        if (gifts.length === 0) {
+            return res.status(404).json({ message: `No gifts found matching the name "${name}"` });
+        }
+
+        res.status(200).json(gifts);
+    } catch (error) {
+        res.status(500).json({ message: 'Error searching for gifts', error });
+    }
+});
+
+
+
 router.get('/', async (req, res) => {
     try {
         // Fetch gifts where 'archived' is false

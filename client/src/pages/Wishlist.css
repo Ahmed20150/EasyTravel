@@ -25,7 +25,7 @@
   .button1 {
     position: absolute; /* Positioning at a fixed place relative to its parent */
     top: 10px;          /* Position from the top */
-    left: -700px;         /* Position from the left */
+    left: -500px;         /* Position from the left */
   }
   
   .back-button1 {
