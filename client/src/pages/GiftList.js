@@ -43,21 +43,7 @@ const GiftList = () => {
         }
     };
 
-    const handlePurchase = async (id) => {
-        try {
-            const response = await axios.post(`http://localhost:3000/gift/purchase/${id}`);
-            console.log(response.data.message);
 
-            // Update the local state to increment the purchase count for the specific gift
-            setGifts((prevGifts) =>
-                prevGifts.map((gift) =>
-                    gift._id === id ? { ...gift, purchases: Number(gift.purchases) + 1 } : gift
-                )
-            );
-        } catch (error) {
-            console.error('Error purchasing gift:', error);
-        }
-    };
 
     const handleAddToWishlist = async (giftName) => {
         if (!username) {
@@ -77,38 +63,56 @@ const GiftList = () => {
             console.error('Error adding gift to wishlist:', error);
         }
     };
+  const handlePurchase = async (id) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/gift/purchase/${id}`
+      );
+      console.log(response.data.message);
+
+      // Update the local state to increment the purchase count for the specific gift
+      setGifts((prevGifts) =>
+        prevGifts.map((gift) =>
+          gift._id === id
+            ? { ...gift, purchases: Number(gift.purchases) + 1 }
+            : gift
+        )
+      );
+    } catch (error) {
+      console.error("Error purchasing gift:", error);
+    }
+  };
 
 
-    
-    const handleAddToCart = async (giftName) => {
-        if (!username) {
-            alert("user not found")
-            console.log('No username found in cookies');
-            return;
-        }
 
-        try {
-            const response = await axios.patch(
-                `http://localhost:3000/api/tourist/${username}/addToCart`, 
-                { giftName }
-            );
-            alert("Added " + giftName + " to your Cart");
-            console.log(response.data.message);
+  const handleAddToCart = async (giftName) => {
+    if (!username) {
+      alert("user not found");
+      console.log("No username found in cookies");
+      return;
+    }
 
-            // Optionally, you can update the UI or inform the user that the gift was added to the cart
-        } catch (error) {
-            console.error('Error adding gift to Cart:', error);
-        }
-    };
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/api/tourist/${username}/addToCart`,
+        { giftName }
+      );
+      alert("Added " + giftName + " to your Cart");
+      console.log(response.data.message);
 
+      // Optionally, you can update the UI or inform the user that the gift was added to the cart
+    } catch (error) {
+      console.error("Error adding gift to Cart:", error);
+    }
+  };
 
-    // Function to convert price to selected currency
-    const convertPrice = (price) => {
-        if (exchangeRates[selectedCurrency]) {
-            return (price * exchangeRates[selectedCurrency]).toFixed(2); // Convert price based on exchange rate
-        }
-        return price.toFixed(2); // Return original price if no exchange rate found
-    };
+  // Function to convert price to selected currency
+  const convertPrice = (price) => {
+    if (exchangeRates[selectedCurrency]) {
+      return (price * exchangeRates[selectedCurrency]).toFixed(2); // Convert price based on exchange rate
+    }
+    return price.toFixed(2); // Return original price if no exchange rate found
+  };
 
     // Function to apply promo code discount to price
     const applyPromoDiscount = (price) => {

@@ -79,7 +79,7 @@ import bootstrap from "bootstrap";
 import ViewAllGifts from "./pages/ViewAllGifts";
 
 import Wishlist from "./pages/Wishlist";
-import Cart from './pages/Cart'; 
+import Cart from "./pages/Cart";
 
 import TouristAddress from "./pages/TouristAddress";
 function App() {
@@ -195,7 +195,6 @@ function App() {
             <Route path="/address" element={<TouristAddress />} />
             <Route path="/Wishlist" element={<Wishlist />} /> 
             <Route path="/cart" element={<Cart />} />
-          
           </Routes>
         </BrowserRouter>
       </CurrencyProvider>
