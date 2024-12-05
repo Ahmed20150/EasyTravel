@@ -1,13 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
+
 
 const PaymentCancel = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const itemType = params.get('itemType');
   return (
     <div style={{display:"flex", flexDirection: "column"}}>
       <h1>Payment Cancelled</h1>
       <p>Your payment was not completed.</p>
 
-      <Link to="/ViewAllItinerary"><button>Continue</button></Link>
+      {itemType === "itinerary" ? (
+        <Link to="/ViewAllItinerary"><button>Continue</button></Link>
+      ) : (
+        <Link to="/giftlist"><button>Continue</button></Link>
+      )}    
     </div>
   );
 };

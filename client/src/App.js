@@ -67,6 +67,7 @@ import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
+import ProductOrders from "./pages/ProductOrders";
 import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 import ItineraryDetailsPage from "./pages/ItineraryDetailsPage"; // Added import for ItineraryDetailsPage
 import ActivityDetails from "./pages/ActivityDetails";
@@ -195,6 +196,9 @@ function App() {
             <Route path="/address" element={<TouristAddress />} />
             <Route path="/Wishlist" element={<Wishlist />} /> 
             <Route path="/cart" element={<Cart />} />
+            <Route path="/productOrders" element={<ProductOrders/>} />
+            
+          
           </Routes>
         </BrowserRouter>
       </CurrencyProvider>

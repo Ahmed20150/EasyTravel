@@ -453,6 +453,9 @@ const ExplorePage = () => {
     }
   };
 
+
+  
+
   const handleWalletPurchase = async () => {
     try {
       let itinerary;
@@ -595,6 +598,8 @@ const ExplorePage = () => {
     }
   };
 
+  
+  
   const handleCreditCardPurchase = async () => {
     const isOldEnough = await checkAge(username);
     if (!isOldEnough) {

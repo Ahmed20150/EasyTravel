@@ -76,6 +76,22 @@ router.get('/', async (req, res) => {
     }
 });
 
+//Get with Id
+router.get('/:id', async (req, res) => {
+    try {
+        const giftItem = await GiftItem.findById(req.params.id);
+        if (!giftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+        res.json(giftItem);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching gift item', error });
+    }
+});
+
+
+
+
 // Get all gift items along with their revenue (with optional filter by name)
 router.get('/filter/itemsWithRevenue', async (req, res) => {
     try {
@@ -276,5 +292,26 @@ router.post('/purchase/:id', async (req, res) => {
     }
 });
 
+router.post('/:id/review', async (req, res) => {
+    const { username, rating, review } = req.body;
 
-module.exports = router;
+    if (!username || !rating || !review) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        const giftItem = await GiftItem.findById(req.params.id);
+        if (!giftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+
+        giftItem.reviews.push({ username, rating, review });
+        await giftItem.save();
+
+        res.status(200).json({ message: 'Review added successfully', giftItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding review', error });
+    }
+});
+
+module.exports = router;
