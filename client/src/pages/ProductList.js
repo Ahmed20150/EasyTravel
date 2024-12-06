@@ -268,7 +268,10 @@ const handlePromoCodeCheck = () => {
   // Handle Update Gift
   const handleUpdateGift = async () => {
     if (!validateForm()) return; // Do not submit if validation fails
-
+    if (userType==="seller" && formData.seller!==username){
+      alert("you do not have access to edit this product");
+      return;
+    }
     try {
       const response = await axios.put(
         `http://localhost:3000/admin/updateGiftItem/${editingId}`,
@@ -414,6 +417,8 @@ const handlePromoCodeCheck = () => {
     <div className="product-list-container">
       <h1>Gift Items</h1>
       <ToastContainer/>
+      {userType === "tourist" && (
+        <>
       <Link to="/productOrders">
         <button style={{
           position: "absolute",
@@ -423,7 +428,7 @@ const handlePromoCodeCheck = () => {
         }}>
           View Your Orders
         </button>
-        </Link>
+        </Link></>)}
       <Link to="/home">
         <button className="back-button">Back</button>
       </Link>
@@ -501,7 +506,7 @@ const handlePromoCodeCheck = () => {
             onChange={(e) =>
               setFormData({ ...formData, seller: e.target.value })
             }
-            disabled={userType === "seller"} // Disable input for sellers
+            disabled={userType === "seller" || editingId} // Disable input for sellers
           />
           {errors.seller && <p className="error-message">{errors.seller}</p>}
 

@@ -29,6 +29,7 @@ router.post('/addGiftItem', async (req, res) => {
             date,
             seller,
         });
+       
 
         await newGiftItem.save();
         res.status(201).json({ message: 'Gift item added successfully', newGiftItem });
@@ -40,12 +41,12 @@ router.post('/addGiftItem', async (req, res) => {
 // Admin: Update an existing gift item
 router.put('/updateGiftItem/:id', async (req, res) => {
     const { id } = req.params;
-    const { name, image, description, price, purchases,quantity, date,seller } = req.body;
+    const { name, image, description, price, purchases,quantity, date } = req.body;
 
     try {
         const updatedGiftItem = await GiftItem.findByIdAndUpdate(
             id,
-            { name, image, description, price, purchases,quantity, date,seller },
+            { name, image, description, price, purchases,quantity, date },
             { new: true }
         );
 

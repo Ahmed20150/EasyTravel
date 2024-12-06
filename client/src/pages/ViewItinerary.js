@@ -202,7 +202,10 @@ const ViewItinerary = () => {
         price,
         username,
       });
-
+      await axios.put("http://localhost:3000/itinerary/loyaltyPoints", {
+        price,
+        username,
+      });
       closeModal();
     } catch (error) {
       const errorMessage =
