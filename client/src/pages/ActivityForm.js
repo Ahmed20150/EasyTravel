@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import axios from "axios";
 import Map from "../components/Map"; 
 import mapboxgl from "mapbox-gl"; // Import mapbox-gl CSS
 
 const ActivityForm = () => {
+  const [errors, setErrors] = useState([]); // State to store validation errors
   const [formData, setFormData] = useState({
     date: "",
     time: "",
