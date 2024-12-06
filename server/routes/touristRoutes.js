@@ -10,6 +10,22 @@ const authenticate = (req, res, next) => {
   next();
 };
 
+// Route to get tourist details by username
+router.get("/:username", authenticate, async (req, res) => {
+  try {
+    // Find the tourist by username
+    const tourist = await Tourist.findOne({ username: req.params.username });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    res.status(200).json(tourist);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
   try {
     // Find the tourist by username
@@ -23,6 +39,8 @@ router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
 
 router.get("/api/bookings/:username", async (req, res) => {
   const { username } = req.params;

@@ -328,7 +328,7 @@ const ViewPastEvents = () => {
         </ul>
       )}
 
-      <Link to="/ViewAllItinerary">
+      <Link to="/ExplorePage">
         <button>Back</button>
       </Link>
 

@@ -68,6 +68,7 @@ const ExplorePage = () => {
   const [searchMuseumName, setSearchMuseumName] = useState(""); // Added state for searching museums by name
   const [searchItineraryCreator, setSearchItineraryCreator] = useState(""); // Search by itinerary creator
   const [searchActivityCreator, setSearchActivityCreator] = useState(""); // Search by activity creator
+  const [bookedItems, setBookedItems] = useState({ itineraries: [], activities: [] });
 
   const normalizedDate = Array.isArray(availableDates)
     ? availableDates
@@ -129,7 +130,8 @@ const ExplorePage = () => {
           (date) => new Date(date) > currentDate
         ),
       }))
-      .filter((itinerary) => itinerary.availableDates.length > 0);
+      .filter((itinerary) => itinerary.availableDates.length > 0)
+      .filter((itinerary) => !itinerary.touristsBooked.includes(username));
     setItineraries(upcomingItineraries);
     setLoadingItineraries(false);
   };
@@ -675,6 +677,13 @@ const ExplorePage = () => {
         {/* Adjust the path as needed */}
         &larr; Back
       </Link>
+
+      <Link to="/viewPastEvents">
+          <button>View Past Itineraries</button>
+        </Link>
+        <Link to="/viewUpcomingEvents">
+          <button>View Upcoming Itineraries</button>
+        </Link>
 
       {/* Itineraries Filter Section */}
       <div className="filter-section">
