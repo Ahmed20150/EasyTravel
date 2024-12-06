@@ -45,6 +45,8 @@ const ProductOrders = () => {
     try {
       await axios.delete(`http://localhost:3000/purchase/deletePurchase/${productId}/${username}`);
       toast.success("Purchase cancelled successfully, Amount has been refunded in your wallet!");
+      const response = await axios.get(`http://localhost:3000/purchase/user/${username}`);
+        setPurchases(response.data);
     } catch (error) {
       console.error("Error cancelling purchase:", error);
       toast.error("Error cancelling purchase");
@@ -82,7 +84,7 @@ const ProductOrders = () => {
   return (
     <div>
       <h1>Product Orders</h1>
-      <Link to="/giftlist"><button>Back</button> </Link>
+      <Link to="/productList"><button>Back</button> </Link>
       <ToastContainer/>
 
       <div>
