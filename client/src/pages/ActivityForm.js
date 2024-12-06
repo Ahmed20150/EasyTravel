@@ -53,9 +53,24 @@ const ActivityForm = () => {
   const handleCancel = () => {
     navigate("/"); // Navigate to the desired route on cancel
   };
-
-  const handleButtonClick = () => {
-    // Handle form submission logic here
+  const handleButtonClick = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:3000/activities", {
+        ...formData,
+        tags: formData.tags.split(",").map((tag) => tag.trim()),
+        creator: cookies.username || "default_username", // Pass the username from cookies
+      });
+      navigate(`/activities`);
+      console.log("Activity created:", response.data);
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        setErrors(err.response.data.errors);
+        alert(`Error updating activity: ${err.response.data.errors}`);
+      } else {
+        console.error("An error occurred:", err);
+      }
+    }
     console.log("Form submitted:", formData);
   };
 
