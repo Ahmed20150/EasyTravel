@@ -144,7 +144,7 @@ const TouristProfile = () => {
         `http://localhost:3000/api/tourist/redeemPoints/${username}`,
         { points: redeemablePoints }
       );
-      setTourist(response.data);
+      setTourist(response.data.tourist);
     } catch (err) {
       console.error("Error redeeming points", err);
     }
