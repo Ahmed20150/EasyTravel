@@ -15,4 +15,6 @@
 1. Cart, My complaints, manage address, wishlist, help - Gasser
 2. explore (+ move any missing features from the old itenrary page to explore), book hotels, book flights, book transport - Wael
 
+*General Layout of Home Page* - Gasser & Wael
+
 *Read Me Report* - Ali
