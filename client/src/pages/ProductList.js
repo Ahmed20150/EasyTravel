@@ -4,13 +4,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
 import { useCookies } from "react-cookie";
 import ViewGiftItemCard from "../components/ViewGiftItemCard";
-import { toast, ToastContainer } from "react-toastify"; 
-import "react-toastify/dist/ReactToastify.css"; 
-import "../css/ProductList.css";
+// import "../css/ProductList.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Modal from "react-modal";
+
 
 const ProductList = () => {
   const [gifts, setGifts] = useState([]);
   const [loadingGifts, setLoadingGifts] = useState(true);
+  
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedGiftId, setSelectedGiftId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     image: "",
@@ -19,6 +24,117 @@ const ProductList = () => {
     quantity: "",
     seller: "",
   });
+
+  const openModal = async (id) => {
+    setSelectedGiftId(id);
+    setModalIsOpen(true);
+  };
+
+
+const closeModal = () => {
+setModalIsOpen(false);
+setSelectedGiftId(null);
+// setAvailableDates([]);
+// setSelectedDate(null);
+// setSelectedTime(null);
+};
+
+
+const handleWalletPurchase = async () => {
+  try {
+    let gift;
+
+    try {
+      gift = await axios.get(
+        `http://localhost:3000/gift/${selectedGiftId}`
+      );
+    } catch (error) {
+      console.error("Gift not found, searching for activity...", error);
+    }
+
+
+    const today = new Date();
+    const productName = gift.data.name;
+    const purchaseDate = today;
+    const quantity = 1;
+    const totalPrice = gift.data.price * quantity;
+
+    await axios.patch("http://localhost:3000/api/wallet/purchaseProduct", {
+      username,
+      totalPrice
+    })
+
+
+      const response = await axios.post("http://localhost:3000/purchase/createPurchase", {
+          touristUsername: username,
+          productId: selectedGiftId,
+          productName,
+          purchaseDate,
+          quantity,
+          totalPrice,
+          });
+
+
+  toast.success("Product Purchased Successfully!");
+
+  closeModal();
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message ||
+      "Error Purchasing Product. Please try again.";
+    toast.error(errorMessage);
+  }
+};
+
+
+const handleCreditCardPurchase = async () => {
+  let gift;
+
+
+  try {
+   gift = await axios.get(
+     `http://localhost:3000/gift/${selectedGiftId}`
+   );
+ } catch (error) {
+   console.error("Gift not found, searching for activity...", error);
+ }
+
+   const today = new Date();
+   const productName = gift.data.name;
+   const purchaseDate = today;
+   const quantity = 1;
+   const totalPrice = gift.data.price * quantity;
+
+   try {
+       const response = await axios.post(
+         "http://localhost:3000/payment/product/create-checkout-session",
+         {
+           productId: selectedGiftId,
+           productName: gift.data.name,
+           price: totalPrice,
+         },
+       //   {
+       //     headers: { Authorization: `Bearer ${cookies.token}` },
+       //   }
+       );
+       console.log("RESPONSE : ", response);
+       window.location.href = response.data.url;
+     } catch (error) {
+       console.error("Error during credit card purchase:", error);
+       toast.error(
+         "An error occurred during the credit card purchase. Please try again."
+       );
+     }
+
+
+
+
+
+ closeModal();
+  
+ };
+
+
   const [editingId, setEditingId] = useState(null);
 
   // Error State
@@ -42,7 +158,9 @@ const ProductList = () => {
   const userType = cookies.userType;
   const username = cookies.username;
 
-  const navigate = useNavigate(); // Initialize navigate hook
+  const [promoCodes, setPromoCodes] = useState([]); // Store promo codes
+  const [promoCode, setPromoCode] = useState(''); // Store the entered promo code
+  const [promoDiscount, setPromoDiscount] = useState(0); // Store the promo discount
 
   useEffect(() => {
     const fetchGifts = async () => {
@@ -66,6 +184,43 @@ const ProductList = () => {
       }));
     }
   }, [userType, username]);
+
+  useEffect(() => {
+    const fetchGiftsAndPromoCodes = async () => {
+        try {
+            // Fetch gifts
+            const giftsResponse = await axios.get('http://localhost:3000/gift');
+            setGifts(giftsResponse.data);
+
+            // Fetch promo codes
+            const promoResponse = await axios.get('http://localhost:3000/api/promo-codes');
+            setPromoCodes(promoResponse.data || []);
+        } catch (error) {
+            console.error('Error fetching gifts or promo codes:', error);
+        }
+    };
+    fetchGiftsAndPromoCodes();
+}, []);
+
+const handlePromoCodeCheck = () => {
+  const promo = promoCodes.find((code) => code.promoCode === promoCode);
+
+  if (promo && new Date(promo.expiryDate) > new Date()) {
+      setPromoDiscount(promo.discount); // Apply discount
+      alert(`Promo code applied! You get ${promo.discount}% off.`);
+  } else {
+      setPromoDiscount(0); // No discount if invalid or expired
+      alert('Invalid or expired promo code.');
+  }
+};
+
+    // Function to apply promo code discount to price
+    const applyPromoDiscount = (price) => {
+      if (promoDiscount) {
+          return (price - (price * promoDiscount) / 100).toFixed(2); // Apply discount
+      }
+      return price.toFixed(2); // Return original price if no discount
+  };
 
   // Validate Form Data
   const validateForm = () => {
@@ -113,7 +268,10 @@ const ProductList = () => {
   // Handle Update Gift
   const handleUpdateGift = async () => {
     if (!validateForm()) return; // Do not submit if validation fails
-
+    if (userType==="seller" && formData.seller!==username){
+      alert("you do not have access to edit this product");
+      return;
+    }
     try {
       const response = await axios.put(
         `http://localhost:3000/admin/updateGiftItem/${editingId}`,
@@ -262,9 +420,37 @@ const ProductList = () => {
     <div className="product-list-container">
       <ToastContainer/>
       <h1>Gift Items</h1>
+      <ToastContainer/>
+      {userType === "tourist" && (
+        <>
+      <Link to="/productOrders">
+        <button style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          padding: "10px 20px",
+        }}>
+          View Your Orders
+        </button>
+        </Link></>)}
       <Link to="/home">
         <button className="back-button">Back</button>
       </Link>
+
+         {/* Promo Code Section */}
+         <div>
+                <label>
+                    Promo Code:
+                    <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                    />
+                </label>
+                <button type="button" onClick={handlePromoCodeCheck}>
+                    Apply Promo Code
+                </button>
+            </div>
 
       {/* Search and Filter Section */}
       <div className="search-filter-sort">
@@ -324,7 +510,7 @@ const ProductList = () => {
             onChange={(e) =>
               setFormData({ ...formData, seller: e.target.value })
             }
-            disabled={userType === "seller"} // Disable input for sellers
+            disabled={userType === "seller" || editingId} // Disable input for sellers
           />
           {errors.seller && <p className="error-message">{errors.seller}</p>}
 
@@ -406,7 +592,7 @@ const ProductList = () => {
               <ViewGiftItemCard
                 giftItem={gift}
                 userType={userType}
-                convertPrice={convertPrice}
+                convertPrice={convertPrice(applyPromoDiscount(gift.price))}
                 selectedCurrency={selectedCurrency}
               />
               {(userType === "admin" || userType === "seller") && (
@@ -423,7 +609,7 @@ const ProductList = () => {
               )}
               {userType === "tourist" && (
                 <div className="buttons">
-                  <button onClick={() => handlePurchase(gift._id)}>Buy</button>
+                  <button onClick={() => openModal(gift._id)}>Buy</button>
                   <button onClick={() => handleAddToWishlist(gift.name)}>
                     Add to Wishlist
                   </button>
@@ -438,7 +624,63 @@ const ProductList = () => {
       ) : (
         <div>No products found.</div>
       )}
+
+<Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Example Modal"
+        style={{
+          overlay: {
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+          },
+          content: {
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            width: "60%", // Increase width
+            height: "80%", // Increase height
+            padding: "40px", // Increase padding
+          },
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <h2>Payment Method</h2>
+          <h3 style={{ marginBottom: "40px" }}>
+            Please Choose your Payment Method
+          </h3>
+          <div style={{ display: "flex" }}>
+            
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "30px",
+            }}
+          >
+            <button onClick={handleWalletPurchase}>by Wallet</button>
+            <button onClick={handleCreditCardPurchase}>by Credit Card</button>
+          </div>
+          <button style={{ marginTop: "50px" }} onClick={closeModal}>
+            Close
+          </button>
+        </div>
+      </Modal>
     </div>
+
+    
   );
 };
 

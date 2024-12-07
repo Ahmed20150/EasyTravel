@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import "../css/ActivityLists.css";
+// import "../css/ActivityLists.css";
 
 const UserList = () => {
     const [users, setUsers] = useState([]); // State to hold users

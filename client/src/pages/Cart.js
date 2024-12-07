@@ -1,4 +1,4 @@
-import './Cart.css'; 
+// import './Cart.css'; 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
@@ -42,10 +42,20 @@ function Cart() {
 
     // Convert price to selected currency
     const convertPrice = (price) => {
-        if (exchangeRates[selectedCurrency]) {
+        if (!price || isNaN(price)) {
+            return "Invalid price"; // Handle invalid price
+        }
+        if (exchangeRates && selectedCurrency && exchangeRates[selectedCurrency]) {
             return (price * exchangeRates[selectedCurrency]).toFixed(2);
         }
         return price.toFixed(2);
+    };
+
+    const calculateTotalPrice = () => {
+        return cartItems.reduce((total, item) => {
+            const itemPrice = parseFloat(convertPrice(item.price));
+            return total + (isNaN(itemPrice) ? 0 : itemPrice);
+        }, 0).toFixed(2);
     };
 
     // Handle item removal
@@ -92,6 +102,13 @@ function Cart() {
     const handleBack = () => {
         navigate('/home');
     };
+ //TODO Fix price conversion & display  
+
+    // Handle checkout
+    const handleCheckout = () => {
+        // Navigate to checkout page or implement checkout logic
+        navigate('/address');
+    };
 
     return (
         <div className="cart-container">
@@ -103,32 +120,35 @@ function Cart() {
                 <ul>
                     {cartItems.map((item, index) => (
                         <li key={index}>
-                            <h2>{item.giftItem.name}</h2>
-                            <p>Price: {convertPrice(item.giftItem.price)} {selectedCurrency}</p>
+                            <h2>{item.name}</h2>
+                            <p>Price: {convertPrice(item.price)} {selectedCurrency}</p>
                             <div>
                                 <button
-                                    onClick={() => removeItem(item.giftItem.name)}
+                                    onClick={() => removeItem(item.name)}
                                     className="remove-button"
                                 >
                                     Remove
                                 </button>
                                 <button
-                                    onClick={() => updateItemQuantity(item.giftItem.name, item.quantity + 1)}
+                                    onClick={() => updateItemQuantity(item.name, item.quantity + 1)}
                                     className="update-button"
                                 >
                                     +1
                                 </button>
                                 <button
-                                    onClick={() => updateItemQuantity(item.giftItem.name, item.quantity - 1)}
+                                    onClick={() => updateItemQuantity(item.name, item.quantity - 1)}
                                     className="update-button"
                                 >
                                     -1
                                 </button>
                                 <p>Quantity: {item.quantity}</p>
+                                
                             </div>
                         </li>
                     ))}
+                     <h2>Total Price: {calculateTotalPrice()} {selectedCurrency}</h2>
                 </ul>
+                
             ) : (
                 <p>Your Cart is empty</p>
             )}
@@ -136,6 +156,13 @@ function Cart() {
             <div className="back-button-container">
                 <button className="back-button" onClick={handleBack}>
                     Back
+                </button>
+            </div>
+
+            {/* Add Check Out Button here */}
+            <div className="checkout-button-container">
+                <button className="checkout-button" onClick={handleCheckout}>
+                    Check Out
                 </button>
             </div>
         </div>

@@ -1,5 +1,4 @@
-// src/pages/AdminAccountManagement.js
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import { useNavigate, Link } from "react-router-dom";
 import UserStatistics from '../components/UserStatistics'; // Import the new component
@@ -13,8 +12,6 @@ const AdminAccountManagement = () => {
 
     async function fetchData() {
         const accessToken = Cookies.get('token');
-        const loggedInUser = Cookies.get('username');
-        const userType = Cookies.get('userType');
         const acceptedTerms = Cookies.get('acceptedTerms');
         if (!accessToken || acceptedTerms === "false") {
             console.log('Should not have access to home!');
@@ -22,9 +19,6 @@ const AdminAccountManagement = () => {
             return;
         } else {
             console.log("COOKIES FOUND", accessToken);
-            console.log("LOGGEDINUSER: ", loggedInUser);
-            console.log("USERTYPE: ", userType);
-            console.log("ACCEPTEDTERMS:", acceptedTerms);
         }
     }
 
@@ -37,8 +31,11 @@ const AdminAccountManagement = () => {
             <Link to="/add-admin"><button>Create New Admin</button></Link>
             <Link to="/add-tourismGoverner"><button>Create New Tourism Governor</button></Link>
 
-            {/* Insert the UserStatistics component here */}
+            {/* User Statistics Section */}
             <UserStatistics />
+
+            {/* Navigation to Promo Code Page */}
+            <Link to="/create-promo-code"><button>Create Promo Code</button></Link>
         </div>
     );
 }

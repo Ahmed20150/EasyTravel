@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useCookies } from "react-cookie";
-import '../css/Transport.css';
+// import '../css/Transport.css';
 
 const TransportationForm = () => {
     const [cookies] = useCookies(["username"]); 

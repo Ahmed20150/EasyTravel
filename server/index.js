@@ -35,6 +35,7 @@ const advRoutes = require('./routes/AdvertiserRoute.js');
 const sellerRoutes = require('./routes/SellerRoute.js');
 const authRoutes = require('./routes/authentication.routes.js');
 const touristRoutes = require('./routes/touristRoutes.js');
+const purchaseRoutes = require('./routes/purchase.routes.js');
 const Reviews = require('./routes/review.routes.js');
 const bookingRoutes = require('./routes/booking.routes.js');
 const hotelOffers = require("./routes/hotelOffer.routes.js");
@@ -47,6 +48,7 @@ const activities = require("./models/activity.model.js");
 const itineraries = require("./models/itinerary.model.js");
 const notificationRouter = require("./routes/notificationRouter.js");
 const complaint=require("./routes/complaint.routes.js");
+const promoCodeRoutes = require('./routes/promoCodes.routes.js');
 
 const activityRouter= require("./routes/activity.routes.js");
 
@@ -54,7 +56,7 @@ const Review=require("./routes/review.routes.js")
 const Transportation=require("./routes/transportation.routes.js")
 const touristReport = require('./routes/touristReport.routes.js');
 const  totalTouristActivity = require("./routes/totalTouristActivity.routes.js");
-
+const addressRoutes = require('./routes/Address.routes.js');
 
 
 
@@ -77,10 +79,11 @@ app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
 app.use('/review',Review);
 app.use('/transport',Transportation);
+app.use('/purchase', purchaseRoutes);
 
 app.use('/payment', paymentRoutes);
 app.use('/complaint',complaint);
-
+app.use('/api', addressRoutes); // All routes in Address.routes.js will start with /api
 
 const Tourist_TourGuide_Advertiser_Seller = require('./routes/Tourist_ Tour Guide_Advertiser_ Seller.route.js')
 const Category= require("./models/category.model.js");
@@ -167,6 +170,56 @@ app.delete("/api/category/:name", async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+//Address 
+app.put('/api/tourists/:username/addresses/:addressId/default', async (req, res) => {
+  const { username, addressId } = req.params;
+
+  try {
+    // Find the user by username
+    const tourist = await Tourist.findOne({ username });
+    if (!tourist) {
+      return res.status(404).json({ error: 'Tourist not found' });
+    }
+
+    // Find the address in the addresses array
+    const address = tourist.addresses.id(addressId);
+    if (!address) {
+      return res.status(404).json({ error: 'Address not found' });
+    }
+
+    // Set all addresses to not default and set the selected one as default
+    tourist.addresses.forEach((addr) => (addr.isDefault = false));
+    address.isDefault = true;
+
+    // Save changes to the database
+    await tourist.save();
+
+    res.json({ message: 'Default address set successfully', address });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.delete('/api/tourists/:username/addresses/:label', (req, res) => {
+  const { username, label } = req.params;
+
+  // Find the tourist by username and remove the address with the given label
+  Tourist.findOneAndUpdate(
+    { username },
+    { $pull: { addresses: { label } } }, // This removes the address with the specific label
+    { new: true }
+  )
+    .then((updatedTourist) => {
+      if (!updatedTourist) {
+        return res.status(404).json({ error: 'Tourist or address not found' });
+      }
+      res.json({ message: 'Address removed successfully' });
+    })
+    .catch((error) => {
+      res.status(500).json({ error: 'Failed to remove address' });
+      console.error(error);
+    });
+});
+
 
 // Repeat similar code structure for other routes like preferences, activities, itineraries, etc.
 
@@ -562,3 +615,5 @@ app.use('/api/send' , activityRouter);
 
 app.use('/api/reports', touristReport);
 app.use("/api", totalTouristActivity);
+
+app.use('/api/promo-codes', promoCodeRoutes);

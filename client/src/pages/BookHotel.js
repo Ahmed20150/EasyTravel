@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../css/BookHotel.css";
+// import "../css/BookHotel.css";
 import { useCookies } from "react-cookie";
 import {Link} from "react-router-dom";
 
@@ -21,7 +21,36 @@ const BookHotel = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const offersPerPage = 10;
+  const [promoCode, setPromoCode] = useState("");  // New state for the promo code
+  const [discount, setDiscount] = useState(0);  // To store the applied discount percentage
+  const [promoCodes, setPromoCodes] = useState([]);
 
+  useEffect(() => {
+    fetchPromoCodes();  // Fetch promo codes on component mount
+  }, []);
+  
+  const fetchPromoCodes = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/promo-codes");
+      setPromoCodes(response.data || []);
+    } catch (err) {
+      console.error("Error fetching promo codes", err);
+    }
+  };
+
+  const validatePromoCode = () => {
+    const today = new Date();
+    const validPromo = promoCodes.find(
+      (code) => code.promoCode === promoCode && new Date(code.expiryDate) > today
+    );
+    if (validPromo) {
+      setDiscount(validPromo.discount);  // Set the discount from the promo code
+      setSuccessMessage(`Promo code applied: ${validPromo.discount}% discount!`);
+      setShowSuccessPopup(true);
+    } else {
+      setError("Invalid or expired promo code.");
+    }
+  };
   const validateForm = () => {
     const errors = {};
     const today = new Date();
@@ -83,7 +112,11 @@ const BookHotel = () => {
       setError("Please select a hotel to book");
       return;
     }
-
+  
+    // Apply the discount to the price
+    const originalPrice = selectedOffer.offers[0].price.total;
+    const discountedPrice = originalPrice * (1 - discount / 100);
+  
     try {
       setLoading(true);
       const response = await axios.put(
@@ -91,6 +124,7 @@ const BookHotel = () => {
         {
           username,
           newBookedHotelId: selectedOffer.hotel.hotelId,
+          discountedPrice,  // Pass the discounted price
         }
       );
       setSuccessMessage(response.data.message || "Hotel booked successfully!");
@@ -210,6 +244,19 @@ const BookHotel = () => {
                   </span>
                 )}
               </div>
+              <div className="form-group">
+              <label>Promo Code</label>
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="Enter promo code"
+              />
+              <button onClick={validatePromoCode}>Apply</button>
+            </div>
+            {discount > 0 && (
+              <p>Discount Applied: {discount}%</p>
+            )}
             </div>
           </div>
 

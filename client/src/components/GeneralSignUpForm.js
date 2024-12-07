@@ -1,6 +1,6 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
+import { Navbar, Button, Card, Footer } from "flowbite-react";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -25,7 +25,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Autocomplete from '@mui/material/Autocomplete';
 import countries from '../data/countries';
-
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -45,7 +45,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        EasyTravel
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -208,40 +208,43 @@ export default function GeneralSignUpForm() {
 
   return (
     
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="m">
      
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
+        <Avatar className="bg-black">
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5" style={{ marginBottom: '19px' }}>
           Sign Up
         </Typography>
-        <button
+        <Button
         style={{ position: 'absolute', top: '10px', left: '10px' }}
+        className={buttonStyle}
         onClick={() => navigate('/')}
       >
-        Back to Landing Page
-      </button>
+       Back
+      </Button>
         <form className={classes.form} action='POST'  onSubmit={handleSubmit}>
         {/* General Info for all Account Types */}
         <FormControl>
 
 
-      <FormLabel id="demo-row-radio-buttons-group-label">Register As:</FormLabel>
+      <FormLabel id="demo-row-radio-buttons-group-label" className="justify-center flex">Register As:</FormLabel>
       <RadioGroup
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
-        className={classes.radioGroup}
+        className="flex-col justify-center"
         value={userType}
         onChange={handleRadioButtonChange}
       >
+        <div className={classes.centeredRadio}>
         <FormControlLabel value="tourGuide" control={<Radio />} label="Tour Guide" />
         <FormControlLabel value="advertiser" control={<Radio />} label="Advertiser" />
-        <FormControlLabel value="seller" control={<Radio />} label="Seller" />
+        </div>
         <div className={classes.centeredRadio}>
+        <FormControlLabel value="seller" control={<Radio />} label="Seller" />
             <FormControlLabel value="tourist" control={<Radio />} label="Tourist"/>
           </div>
       </RadioGroup>
@@ -392,8 +395,8 @@ export default function GeneralSignUpForm() {
       )}
  {/* File Upload for Non-Tourist Users */}
  {userType !== 'tourist' && (
-            <div>
-              <h2>File Upload</h2>
+            <div className="mb-5">
+              <h4>File Upload</h4>
               <input type="file" accept="application/pdf" onChange={handleFileChange} required />
               <p>{uploadText}</p>
             </div>
@@ -405,10 +408,7 @@ export default function GeneralSignUpForm() {
           /> */}
           <Button
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
+            className={`${buttonStyle} w-full mb-5`}
           >
             Sign Up
           </Button>

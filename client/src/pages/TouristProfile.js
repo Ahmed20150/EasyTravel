@@ -6,7 +6,9 @@ import { useLocation, Link } from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import ItineraryCard from "../components/ItineraryItem";
 import TouristForm from "../components/TouristForm";
-
+import level1Image from "../images/Level_1.avif"; // Adjust the path as needed
+import level2Image from "../images/Level_2.avif"; // Adjust the path as needed
+import level3Image from "../images/Level_3.webp"; // Adjust the path as needed
 
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]);
@@ -17,19 +19,54 @@ const TouristProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isPreferencesEditing, setIsPreferencesEditing] = useState(false); // State to toggle preferences editing
     const location = useLocation();
+    const [promoCodes, setPromoCodes] = useState([]);  // State to store promo codes
     const { username } = location.state || {};
       const [bookmarkedEvents, setBookmarkedEvents] = useState([]);
       const [itineraries, setItineraries] = useState([]);
       const [bookedItineraries, setBookedItineraries] = useState([]); // New state for booked itineraries
       const isProfilePage = true;
+      const [userLevel, setUserLevel] = useState(null); // State to store user level
 
 
+      const fetchUserLevel = async (username) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/api/tourist/${username}`
+          );
+          setUserLevel(response.data.level); // Assuming the response contains the level
+        } catch (error) {
+          console.error("Error fetching user level:", error);
+        }
+      };
 
-
-
+  const handleRedeemPoints = async () => {
+    const redeemablePoints = Math.floor(tourist.currentPoints / 10000) * 10000;
+    if (redeemablePoints === 0) {
+      alert("You need at least 10,000 points to redeem.");
+      return;
+    }
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/tourist/redeemPoints/${username}`,
+        { points: redeemablePoints }
+      );
+      setTourist(response.data.tourist);
+    } catch (err) {
+      console.error("Error redeeming points", err);
+    }
+  };
 
     useEffect(() => {
-
+      const fetchPromoCodes = async () => {  // New function to fetch promo codes
+        try {
+          const response = await axios.get(
+            "http://localhost:3000/api/promo-codes"
+          );
+          setPromoCodes(response.data || []);
+        } catch (err) {
+          console.error("Error fetching promo codes", err);
+        }
+      };
 
       const fetchTouristProfile = async () => {
         if (!username) {
@@ -43,6 +80,7 @@ const TouristProfile = () => {
           );
           setTourist(response.data);
           setLoading(false);
+          fetchUserLevel(username); // Fetch user level if the user is a tourist
         } catch (err) {
           setError("Failed to fetch tourist profile");
           setLoading(false);
@@ -87,9 +125,8 @@ const TouristProfile = () => {
       fetchBookings();
       fetchTouristProfile();
       fetchBookmarkedEvents();
+      fetchPromoCodes();
     }, [username]);
-
-
 
 
     const handleRequest = async (username, role) => {
@@ -154,6 +191,69 @@ const TouristProfile = () => {
          });
        }
      }, [tourist, bookedItineraries]);
+     const filteredPromoCodes = 0;
+     useEffect(() => {
+      if (!tourist) return; // Ensure tourist data is available before proceeding
+    
+      const dob = new Date(tourist.dateOfBirth);
+    
+      const filteredPromoCodes = promoCodes.filter((promo) => {
+        const expiryDate = new Date(promo.expiryDate);
+        const today = new Date();
+        const dobMonthDay = `${dob.getMonth()}-${dob.getDate()}`;
+        const todayMonthDay = `${today.getMonth()}-${today.getDate()}`;
+        const isBirthday = dobMonthDay === todayMonthDay;
+        const isPromoValid = expiryDate > today;
+    
+        return isBirthday && isPromoValid;
+      });
+    
+      console.log(
+        filteredPromoCodes.length > 0
+          ? `Available promo codes: ${filteredPromoCodes}`
+          : "No available promo codes for today."
+      );
+    
+      // Additional operations like sending emails based on filtered promo codes
+    }, [tourist, promoCodes]); // Runs whenever tourist or promoCodes changes
+
+     useEffect(() => {
+      const sendEmail = async (to, subject, text) => {
+        try {
+          await axios.post("http://localhost:3000/auth/send-email", {
+            to,
+            subject,
+            text,
+          });
+          console.log("Email sent successfully");
+        } catch (error) {
+          console.error("Failed to send email", error);
+        }
+      };
+    
+      if (tourist && filteredPromoCodes.length > 0) {
+        // Check if today is the tourist's birthday
+        const today = new Date();
+        const birthday = new Date(tourist.dateOfBirth);
+    
+        if (today.getDate() === birthday.getDate() && today.getMonth() === birthday.getMonth()) {
+          const promoDetails = filteredPromoCodes
+            .map(
+              (promo) =>
+                `Promo Code: ${promo.promoCode}\nDiscount: ${promo.discount}%\nExpires on: ${new Date(promo.expiryDate).toLocaleDateString()}\n`
+            )
+            .join("\n\n");
+    
+          const subject = "Happy Birthday! Here are your Promo Codes";
+          const text = `Dear ${tourist.username},\n\nHappy Birthday! 🎉\n\nWe have some special promo codes for you:\n\n${promoDetails}\n\nEnjoy your special day!`;
+    
+          // Send the email with promo details
+          sendEmail(tourist.email, subject, text)
+            .then((response) => console.log(`Email sent: ${response}`))
+            .catch((error) => console.error("Error sending email:", error));
+        }
+      }
+    }, [tourist, filteredPromoCodes]);
 
      const handleBookmark = async (eventId) => {
        try {
@@ -263,6 +363,12 @@ const TouristProfile = () => {
             onPreferencesUpdate={handlePreferencesUpdate}
           />
         )}
+         <div className="wallet-points-section">
+        <h2>Wallet and Points</h2>
+        <p>Wallet: {tourist.wallet}</p>
+        <p>Points: {tourist.currentPoints}</p>
+        <button onClick={handleRedeemPoints}>Redeem Points</button>
+      </div>
         <h2>Bookmarked Events:</h2>
         <div className="itinerary-list">
           {itineraries.length > 0 ? (
@@ -329,7 +435,28 @@ const TouristProfile = () => {
             <p>No booked itineraries within the next 2 days</p>
           )}
         </div>
+        <div>
+        <h2>Promo Codes:</h2>
+        {filteredPromoCodes.length > 0 ? (
+          <ul>
+            {filteredPromoCodes.map((promo, index) => (
+              <li key={index}>
+                <strong>Promo Code:</strong> {promo.promoCode} <br />
+                <strong>Discount:</strong> {promo.discount}% <br />
+                <strong>Expires on:</strong> {new Date(promo.expiryDate).toLocaleDateString()} <br />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No valid promo codes available</p>
+        )}
       </div>
+      <div className="user-level-badge">
+        {userLevel === 1 && <img src={level1Image} alt="Level 1 Badge" />}
+        {userLevel === 2 && <img src={level2Image} alt="Level 2 Badge" />}
+        {userLevel === 3 && <img src={level3Image} alt="Level 3 Badge" />}
+      </div>
+    </div>
     );
 };
 

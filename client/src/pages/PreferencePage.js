@@ -76,17 +76,55 @@ const PreferencePage = () => {
     }
   };
 
+  
+  const preferenceOptions = [
+    'Historic Areas',
+    'Beaches',
+    'Family-friendly',
+    'Shopping',
+    'Budget-friendly',
+  ];
+
   return (
     <div className="preferences-container">
       <div className="form-section">
         <h2>Create Preference</h2>
         <Link to="/home"><button>Back</button></Link>
-        <input
+        {/* <input
           type="text"
           placeholder="Enter preference name"
           value={preferenceName}
           onChange={(e) => setPreferenceName(e.target.value)}
-        />
+        /> */}
+          <select
+        id="preference"
+        value={preferenceName}
+        onChange={(e) => setPreferenceName(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.5rem 1rem',
+          border: '1px solid #ccc',
+          borderRadius: '0.375rem',
+          outline: 'none',
+          fontSize: '1rem',
+          marginBottom: '1rem',
+          appearance: 'none', // Removes default arrow, optional
+          backgroundColor: '#FFFFFF',
+          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 0.75rem center',
+          backgroundSize: '1rem',
+        }}
+      >
+        <option value="" disabled>
+          -- Select Preference --
+        </option>
+        {preferenceOptions.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
         <button onClick={createPreference}>Create Preferences</button>
       </div>
 
@@ -102,29 +140,116 @@ const PreferencePage = () => {
 
       <div className="form-section">
         <h2>Update Preference</h2>
-        <input
+        {/* <input
           type="text"
           placeholder="Old preference name"
           value={updateOldName}
           onChange={(e) => setUpdateOldName(e.target.value)}
-        />
-        <input
+        /> */}
+           <select
+        id="preference"
+        value={updateOldName}
+        onChange={(e) => setUpdateOldName(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.5rem 1rem',
+          border: '1px solid #ccc',
+          borderRadius: '0.375rem',
+          outline: 'none',
+          fontSize: '1rem',
+          marginBottom: '1rem',
+          appearance: 'none', // Removes default arrow, optional
+          backgroundColor: '#FFFFFF',
+          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 0.75rem center',
+          backgroundSize: '1rem',
+        }}
+      >
+        <option value="" disabled>
+          -- Select Old Preference --
+        </option>
+        {preferenceOptions.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+        {/* <input
           type="text"
           placeholder="New preference name"
           value={updateNewName}
           onChange={(e) => setUpdateNewName(e.target.value)}
-        />
+        /> */}
+              <select
+        id="preference"
+        value={updateNewName}
+        onChange={(e) => setUpdateNewName(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.5rem 1rem',
+          border: '1px solid #ccc',
+          borderRadius: '0.375rem',
+          outline: 'none',
+          fontSize: '1rem',
+          marginBottom: '1rem',
+          appearance: 'none', // Removes default arrow, optional
+          backgroundColor: '#FFFFFF',
+          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 0.75rem center',
+          backgroundSize: '1rem',
+        }}
+      >
+        <option value="" disabled>
+          -- Select New Preference --
+        </option>
+        {preferenceOptions.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
         <button onClick={updatePreference}>Update Preferences</button>
       </div>
 
       <div className="form-section">
         <h2>Delete Preference</h2>
-        <input
+        {/* <input
           type="text"
           placeholder="Enter preference name to delete"
           value={deletePreferenceName}
           onChange={(e) => setDeletePreferenceName(e.target.value)}
-        />
+        /> */}
+           <select
+        id="preference"
+        value={deletePreferenceName}
+        onChange={(e) => setDeletePreferenceName(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.5rem 1rem',
+          border: '1px solid #ccc',
+          borderRadius: '0.375rem',
+          outline: 'none',
+          fontSize: '1rem',
+          marginBottom: '1rem',
+          appearance: 'none', // Removes default arrow, optional
+          backgroundColor: '#FFFFFF',
+          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 0.75rem center',
+          backgroundSize: '1rem',
+        }}
+      >
+        <option value="" disabled>
+          -- Select Preference --
+        </option>
+        {preferenceOptions.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
         <button onClick={deletePreference}>Delete Preferences</button>
       </div>
 

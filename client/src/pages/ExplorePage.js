@@ -4,7 +4,7 @@ import ViewItineraryCard from "../components/ViewItineraryCard";
 import ViewActivityCard from "../components/ViewActivityCard";
 import ViewMuseumCard from "../components/ViewMuseumCard";
 import { useCookies } from "react-cookie";
-import "../css/ExplorePage.css";
+// import "../css/ExplorePage.css";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import Radio from "@mui/material/Radio";
@@ -68,6 +68,7 @@ const ExplorePage = () => {
   const [searchMuseumName, setSearchMuseumName] = useState(""); // Added state for searching museums by name
   const [searchItineraryCreator, setSearchItineraryCreator] = useState(""); // Search by itinerary creator
   const [searchActivityCreator, setSearchActivityCreator] = useState(""); // Search by activity creator
+  const [bookedItems, setBookedItems] = useState({ itineraries: [], activities: [] });
 
   const normalizedDate = Array.isArray(availableDates)
     ? availableDates
@@ -129,7 +130,8 @@ const ExplorePage = () => {
           (date) => new Date(date) > currentDate
         ),
       }))
-      .filter((itinerary) => itinerary.availableDates.length > 0);
+      .filter((itinerary) => itinerary.availableDates.length > 0)
+      .filter((itinerary) => !itinerary.touristsBooked.includes(username));
     setItineraries(upcomingItineraries);
     setLoadingItineraries(false);
   };
@@ -453,6 +455,9 @@ const ExplorePage = () => {
     }
   };
 
+
+  
+
   const handleWalletPurchase = async () => {
     try {
       let itinerary;
@@ -595,6 +600,8 @@ const ExplorePage = () => {
     }
   };
 
+  
+  
   const handleCreditCardPurchase = async () => {
     const isOldEnough = await checkAge(username);
     if (!isOldEnough) {
@@ -670,6 +677,13 @@ const ExplorePage = () => {
         {/* Adjust the path as needed */}
         &larr; Back
       </Link>
+
+      <Link to="/viewPastEvents">
+          <button>View Past Itineraries</button>
+        </Link>
+        <Link to="/viewUpcomingEvents">
+          <button>View Upcoming Itineraries</button>
+        </Link>
 
       {/* Itineraries Filter Section */}
       <div className="filter-section">

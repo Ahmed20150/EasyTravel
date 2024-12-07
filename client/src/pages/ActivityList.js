@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import NotificationsIcon from "@mui/icons-material/Notifications"; // Import Notifications Icon
-import "../css/ActivityLists.css";
+// import "../css/ActivityLists.css";
 
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]);

@@ -1,6 +1,6 @@
 import Avatar from "@material-ui/core/Avatar";
 import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
+import {Button} from "flowbite-react";
 import Checkbox from "@material-ui/core/Checkbox";
 import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -17,13 +17,16 @@ import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+
+
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        EasyTravel
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -180,12 +183,13 @@ export default function Login() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <button
+        <Button 
           style={{ position: "absolute", top: "10px", left: "10px" }}
+          className={buttonStyle}
           onClick={() => navigate("/")}
         >
-          Back to Landing Page
-        </button>
+          ⬅
+        </Button>
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
@@ -221,10 +225,7 @@ export default function Login() {
           /> */}
           <Button
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
+            className={`${buttonStyle} w-full`}
           >
             Log in
           </Button>

@@ -67,12 +67,14 @@ import Categories from "./pages/Categories";
 import PreferencePage from "./pages/PreferencePage";
 import Revenue from "./pages/Revenue";
 import GiftItemForm from "./pages/GiftItemPage";
+import ProductOrders from "./pages/ProductOrders";
 import { CurrencyProvider } from "./components/CurrencyContext"; // Added CurrencyProvider
 import ItineraryDetailsPage from "./pages/ItineraryDetailsPage"; // Added import for ItineraryDetailsPage
 import ActivityDetails from "./pages/ActivityDetails";
 import MuseumDetails from "./pages/MuseumDetails";
 import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
+import CreatePromoCode from "./pages/CreatePromoCodePage";
 
 import bootstrap from "bootstrap";
 import ViewAllGifts from "./pages/ViewAllGifts";
@@ -80,6 +82,10 @@ import ViewAllGifts from "./pages/ViewAllGifts";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 
+import TouristAddress from "./pages/TouristAddress";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 function App() {
   return (
     <div className="App">
@@ -89,12 +95,13 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+
             <Route path="/fileUpload" element={<FileUpload />} />
-            <Route path="/signUp" element={<GeneralSignUpForm />} />
-            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signUp" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/changePassword" element={<ChangePassword />} />
             <Route path="/home" element={<TempHomePage />} />
-            <Route path="/forgotPassword" element={<ForgotPasswordForm />} />
+            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
             <Route path="/create-profile" element={<CreateProfilePage />} />
             <Route path="/view-profile" element={<ViewProfilePage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />
@@ -115,6 +122,9 @@ function App() {
             />
             <Route path="/complaint/myList" element={<MyComplaints />} />
             <Route path="/all-gifts" element={<ViewAllGifts />} />
+
+            <Route path="/admin-account-management" element={<AdminAccountManagement />} />
+            <Route path="/create-promo-code" element={<CreatePromoCode />} />
 
             <Route
               path="/create-profileSeller"
@@ -187,8 +197,12 @@ function App() {
             <Route path="/totaltouristactivity" element={<TotalTourists />} />
             <Route path="/giftfilter" element={<GiftItemsFilter />} />
 
-            <Route path="/Wishlist" element={<Wishlist />} />
+            <Route path="/address" element={<TouristAddress />} />
+            <Route path="/Wishlist" element={<Wishlist />} /> 
             <Route path="/cart" element={<Cart />} />
+            <Route path="/productOrders" element={<ProductOrders/>} />
+            
+          
           </Routes>
         </BrowserRouter>
       </CurrencyProvider>

@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 const TouristForm = ({ tourist, onUpdate, isEditing, setIsEditing }) => {
     // Initialize formData with default values if tourist is undefined
     const [formData, setFormData] = useState({
-        username: '',
         email: '',
         mobileNumber: '',
         nationality: '',
@@ -16,7 +15,6 @@ const TouristForm = ({ tourist, onUpdate, isEditing, setIsEditing }) => {
     useEffect(() => {
         if (tourist) {
             setFormData({
-                username: tourist.username || '',
                 email: tourist.email || '',
                 mobileNumber: tourist.mobileNumber || '',
                 nationality: tourist.nationality || '',
@@ -38,14 +36,6 @@ const TouristForm = ({ tourist, onUpdate, isEditing, setIsEditing }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Username"
-                required
-            />
             <input
                 type="email"
                 name="email"

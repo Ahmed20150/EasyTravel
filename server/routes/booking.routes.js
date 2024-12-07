@@ -44,6 +44,23 @@ router.post("/createBooking", async (req, res) => {
     }
   });
 
+  router.get('/getBooking/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      // Find the booking by ID
+      const booking = await Booking.findById(id);
+      if (!booking) {
+        return res.status(404).json({ message: 'Booking not found' });
+      }
+  
+      res.status(200).json(booking);
+    } catch (error) {
+      console.error('Error getting booking:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
 
   //get booking by itenraryid and username
   router.get("/getBooking/:itineraryId/:touristUsername", async (req, res) => {

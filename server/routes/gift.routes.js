@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const GiftItem = require("../models/giftitem.model.js"); 
+const Seller = require("../models/seller.model.js"); // Adjust the path as per your project structure
 const sendEmail = require('../sendEmail'); // Include your email utility
 
 
@@ -42,6 +43,29 @@ const sendEmail = require('../sendEmail'); // Include your email utility
 
 
  // Get all unarchived gifts
+
+ router.get('/search/:name', async (req, res) => {
+    try {
+        const { name } = req.params; // Extract the "name" from route parameters
+
+        // Use a case-insensitive regex to match the name
+        const gifts = await GiftItem.find({ 
+            name: { $regex: new RegExp(name, 'i') },
+            archived: false // Only include non-archived gifts
+        });
+
+        if (gifts.length === 0) {
+            return res.status(404).json({ message: `No gifts found matching the name "${name}"` });
+        }
+
+        res.status(200).json(gifts);
+    } catch (error) {
+        res.status(500).json({ message: 'Error searching for gifts', error });
+    }
+});
+
+
+
 router.get('/', async (req, res) => {
     try {
         // Fetch gifts where 'archived' is false
@@ -51,6 +75,22 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: 'Error fetching gifts', error });
     }
 });
+
+//Get with Id
+router.get('/:id', async (req, res) => {
+    try {
+        const giftItem = await GiftItem.findById(req.params.id);
+        if (!giftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+        res.json(giftItem);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching gift item', error });
+    }
+});
+
+
+
 
 // Get all gift items along with their revenue (with optional filter by name)
 router.get('/filter/itemsWithRevenue', async (req, res) => {
@@ -178,7 +218,7 @@ router.get('/filter/byMonth', async (req, res) => {
 router.post("/createGiftItem",async(req,res)=> {
     try{
       const giftitem = await GiftItem.create(req.body);
-  
+     
       res.status(200).json(giftitem); 
     } catch(error){
      res.status(500).json({message: error.message});
@@ -204,11 +244,13 @@ router.post("/createGiftItem",async(req,res)=> {
 //     }
 // });
 
+
 // Increment purchase count and decrease quantity by 1
 router.post('/purchase/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
+        // Find the gift item by ID
         const gift = await GiftItem.findById(id);
         if (!gift) {
             return res.status(404).json({ message: 'GiftItem not found' });
@@ -227,10 +269,17 @@ router.post('/purchase/:id', async (req, res) => {
         // Save the updated gift
         await gift.save();
 
-        // Send email if quantity is 0 after the purchase
+        // Check if quantity is now 0 and send email notification to the seller
         if (gift.quantity === 0) {
+            // Find the seller's email using the seller username from the gift item
+            const seller = await Seller.findOne({ username: gift.seller });
+            if (!seller) {
+                return res.status(404).json({ message: 'Seller not found' });
+            }
+
+            // Send an email to the seller
             await sendEmail(
-                'youssefhipa887@gmail.com',
+                seller.email,
                 'Gift Out of Stock Notification',
                 `The gift item "${gift.name}" is now out of stock.`
             );
@@ -238,8 +287,31 @@ router.post('/purchase/:id', async (req, res) => {
 
         res.json({ message: 'Purchase successful', gift });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Error processing purchase', error });
     }
 });
 
-module.exports = router;
+router.post('/:id/review', async (req, res) => {
+    const { username, rating, review } = req.body;
+
+    if (!username || !rating || !review) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        const giftItem = await GiftItem.findById(req.params.id);
+        if (!giftItem) {
+            return res.status(404).json({ message: 'Gift item not found' });
+        }
+
+        giftItem.reviews.push({ username, rating, review });
+        await giftItem.save();
+
+        res.status(200).json({ message: 'Review added successfully', giftItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding review', error });
+    }
+});
+
+module.exports = router;

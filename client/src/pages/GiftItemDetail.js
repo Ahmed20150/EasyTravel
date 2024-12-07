@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
-import "../css/ProductList.css"; // Updated CSS file
+// import "../css/ProductList.css"; // Updated CSS file
 
 const GiftItemDetail = () => {
   const location = useLocation();

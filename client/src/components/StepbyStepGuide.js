@@ -1,4 +1,4 @@
-import "../css/LandingPage.css";
+// import "../css/LandingPage.css";
 import { Link } from "react-router-dom";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
