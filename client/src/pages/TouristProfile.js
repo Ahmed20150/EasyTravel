@@ -28,6 +28,22 @@ const TouristProfile = () => {
 
 
 
+  const handleRedeemPoints = async () => {
+    const redeemablePoints = Math.floor(tourist.currentPoints / 10000) * 10000;
+    if (redeemablePoints === 0) {
+      alert("You need at least 10,000 points to redeem.");
+      return;
+    }
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/tourist/redeemPoints/${username}`,
+        { points: redeemablePoints }
+      );
+      setTourist(response.data.tourist);
+    } catch (err) {
+      console.error("Error redeeming points", err);
+    }
+  };
 
     useEffect(() => {
       const fetchPromoCodes = async () => {  // New function to fetch promo codes

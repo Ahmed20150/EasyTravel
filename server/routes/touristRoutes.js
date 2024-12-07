@@ -581,8 +581,7 @@ router.put(
       await tourist.save();
       res.status(200).json({
         message: "Points redeemed successfully",
-        points: tourist.points,
-        wallet: tourist.wallet,
+        tourist: tourist,
       });
     } catch (error) {
       res.status(500).json({ message: error.message });
