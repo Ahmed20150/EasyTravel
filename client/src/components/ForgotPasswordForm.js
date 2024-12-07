@@ -1,6 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
+import { Navbar, Button, Card, Footer } from "flowbite-react";
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -15,13 +15,14 @@ import { useCookies } from 'react-cookie';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { buttonStyle } from '../styles/gasserStyles';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        EasyTravel
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -117,29 +118,31 @@ const handleChangePassword = async () => {
  
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs"  className="text-center flex-col justify-center">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
+        <Avatar className="bg-black mb-10">
           <LockOutlinedIcon />
         </Avatar>
-        <button
+        <Button
         style={{ position: 'absolute', top: '10px', left: '10px' }}
+        className = {buttonStyle}
         onClick={() => navigate('/')}
       >
         Back to Landing Page
-      </button>
-        <Typography component="h1" variant="h5">
-          Forget Password
+      </Button>
+
+<div className="text-center flex-col justify-center"> 
+        <Typography component="p" variant="p">
+          Please enter Email associated with your account. 
+
         </Typography>
 
-        <Typography component="h3" variant="h7">
-          Please enter Email associated with your account
+        <Typography component="p" variant="p">
+        A One Time Password (OTP) will be sent to this associated email
         </Typography>
 
-        <Typography component="h3" variant="h8">
-         We will send a One Time Password (OTP) to this associated email
-        </Typography>
+        </div>
         {!showOtpForm && !showChangePasswordForm ? (
           <form>
             <TextField
@@ -154,14 +157,13 @@ const handleChangePassword = async () => {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="mb-10"
             />
             <Button
-              fullWidth
-              variant="contained"
-              color="primary"
               onClick={handleSendEmail}
+              className={buttonStyle}
             >
-              Send Email
+              Send Associated OTP
             </Button>
           </form>
         ) : showOtpForm && !showChangePasswordForm ? (
@@ -180,9 +182,8 @@ const handleChangePassword = async () => {
               onChange={(e) => setOTP(e.target.value)}
             />
             <Button
-              fullWidth
-              variant="contained"
-              color="primary"
+                          className={buttonStyle}
+
               onClick={handleVerifyOtp}
             >
               Verify OTP
@@ -220,23 +221,16 @@ const handleChangePassword = async () => {
               onChange={(e) => setRepeatPassword(e.target.value)}
             />
             <Button
-              fullWidth
-              variant="contained"
-              color="primary"
+            className={buttonStyle}
               onClick={handleChangePassword}
             >
               Change Password
             </Button>
           </form>
         )}
-          <Grid container>
-  
-            <Grid item >
-              <Link href="/signUp" variant="body2">
-                {"Don't have an account? Sign Up"}
+   <Link href="/signUp" variant="body2" className="flex items-center justify-center align-center ml-12" >
+                Don't have an account? Sign Up
               </Link>
-            </Grid>
-          </Grid>
       </div>
       <Box mt={8}>
         <Copyright />

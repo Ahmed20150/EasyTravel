@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import "../css/ActivityEdit.css";
+// import "../css/ActivityEdit.css";
 import Map from "../components/Map";
-import "../css/ActivityForm.css"; // Adjusted path to the CSS file
+// import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 import mapboxgl from "mapbox-gl";
 
 // Set your Mapbox access token

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -18,6 +17,8 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
 
 
 function Copyright() {
@@ -25,7 +26,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        EasyTravel
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -105,12 +106,12 @@ function ChangePassword() {
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
-          <button
+          <Button className={buttonStyle}
         style={{ position: 'absolute', top: '10px', left: '10px' }}
         onClick={() => navigate('/home')}
       >
         Back to Home Page
-      </button>
+      </Button>
           <Typography component="h1" variant="h5">
             Change Password
           </Typography>
@@ -165,11 +166,7 @@ function ChangePassword() {
             />
           
             <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
+              className={`${buttonStyle} ${centerVertically} ml-28`}
             >
               Change Password
             </Button>
@@ -187,7 +184,7 @@ function ChangePassword() {
             </Grid> */}
           </form>
         </div>
-        <Box mt={8}>
+        <Box className="mt-12" >
           <Copyright />
         </Box>
       </Container>

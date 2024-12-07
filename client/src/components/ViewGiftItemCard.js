@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
-import "../css/ProductList.css";
+// import "../css/ProductList.css";
 
 const ViewGiftItemCard = ({ giftItem, userType }) => {
   const { selectedCurrency, exchangeRates } = useCurrency();

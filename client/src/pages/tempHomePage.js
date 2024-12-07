@@ -4,8 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCurrency } from "../components/CurrencyContext";
-import "./TempHomePage.css";
+// import "./TempHomePage.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import GeneralNavbar from "../components/GeneralNavbar";
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+
 
 const TempHomePage = () => {
   const navigate = useNavigate();
@@ -117,7 +121,14 @@ const TempHomePage = () => {
   };
 
   return (
-    <div className="container">
+    <div>
+            <GeneralNavbar />
+            
+      <h1 className="flex items-center justify-center space-between gap-36 mb-12 mt-10">
+        Welcome {username}, you are a {userType}!!
+      </h1>
+
+    <div className="flex items-center justify-center space-between gap-36">
       {userType === "tourist" && (
         <div
           className="currency-selector"
@@ -139,16 +150,30 @@ const TempHomePage = () => {
         </div>
       )}
 
-      <h1>
-        Welcome {username}, you are a {userType}!!
-      </h1>
       {userType === "admin" && userEmail && (
         <p>Your email: {userEmail}</p> // Display the email for admin users
       )}
-      <button onClick={handleLogout}>Logout</button>
-      <Link to="/changePassword">
-        <button>Change Password</button>
-      </Link>
+      {/* <Button className={buttonStyle} onClick={handleLogout}>Logout</Button> */}
+     
+<div
+  className="relative rounded-lg -skew-x-6 -translate-y-2 -translate-y-6 hover:-translate-y-1 hover:-translate-x-0 hover:skew-x-0 duration-500 w-72 h-44 p-2 bg-neutral-50 card-compact hover:bg-base-200 transition-all duration-200 [box-shadow:12px_12px] hover:[box-shadow:4px_4px]"
+>
+  <Link to="/changePassword" className={linkStyle}> 
+  <figure className="w-full h-full">
+    <div
+      alt="change to a img tag"
+      className="bg-neutral-800 text-neutral-50 min-h-full rounded-lg border border-opacity-5"
+    ></div>
+  </figure>
+  <div className="absolute text-neutral-50 bottom-4 left-0 px-4">
+    <span className="font-bold">Change Password</span>
+    <p className="text-sm opacity-60 line-clamp-2">
+      Change your password and keep your account secure!
+    </p>
+  </div>
+  </Link>
+</div>
+
 
       {userType !== "admin" &&
         notifications.length > 0 &&
@@ -156,13 +181,12 @@ const TempHomePage = () => {
           <div className="notifications">
             <div className="notifications-header">
               <h2>Your Notifications</h2>
-              <button
-                className="close-button"
+              <Button className={buttonStyle}
                 onClick={() => setShowNotifications(false)}
                 aria-label="Close Notifications"
               >
                 &times;
-              </button>
+              </Button>
             </div>
             <ul>
               {notifications.map((notification, index) => (
@@ -180,55 +204,72 @@ const TempHomePage = () => {
         )}
 
       {!showNotifications && notifications.length > 0 && (
-        <button
-          className="show-notifications-button"
+        <Button className={buttonStyle}
           onClick={() => setShowNotifications(true)}
         >
           <NotificationsIcon />
-        </button>
+        </Button>
       )}
 
       {userType !== "admin" && userType !== "tourismGoverner" && (
-        <button onClick={handleViewProfile}>View profile</button>
+        <Button className={buttonStyle} onClick={handleViewProfile}>View profile</Button>
       )}
 
       {userType === "tourismGoverner" && (
-        <Link to="/museums">
-          <button>Museums & Historical Places</button>
-        </Link>
+        <>
+        <div
+  className="relative rounded-lg -skew-x-6 -translate-y-2 -translate-y-6 hover:-translate-y-1 hover:-translate-x-0 hover:skew-x-0 duration-500 w-72 h-44 p-2 bg-neutral-50 card-compact hover:bg-base-200 transition-all duration-200 [box-shadow:12px_12px] hover:[box-shadow:4px_4px]"
+>
+  <Link to="/museums" className={linkStyle}> 
+  <figure className="w-full h-full">
+    <div
+      alt="change to a img tag"
+      className="bg-neutral-800 text-neutral-50 min-h-full rounded-lg border border-opacity-5"
+    ></div>
+  </figure>
+  <div className="absolute text-neutral-50 bottom-4 left-0 px-4">
+    <span className="font-bold">Museums & Historical Places</span>
+    <p className="text-sm opacity-60 line-clamp-2">
+      View and Post Museums & Historical Places
+    </p>
+  </div>
+  </Link>
+</div>
+</>
+
       )}
 
       {userType === "admin" && (
         <>
           <Link to="/productList">
-            <button>All Gifts/Products</button>
+            <Button Name={buttonStyle}>All Gifts/Products</Button>
           </Link>
           <Link to="/pendingRequestsPage">
-            <button>Pending Requests</button>
+            <Button className={buttonStyle}>Pending Requests</Button>
           </Link>
           <Link to="/adminAccountManagement">
-            <button>Account Management</button>
+            <Button className={buttonStyle}>Account Management</Button>
           </Link>
           <Link to="/Categorycontrol">
-            <button>Manage Categories</button>
+            <Button className={buttonStyle}>Manage Categories</Button>
           </Link>
           <Link to="/preferences">
-            <button>Manage Prefrence Tags</button>
+            <Button className={buttonStyle}>Manage Prefrence Tags</Button>
           </Link>
           <Link to="/revenue">
-            <button>Financial Report</button>
+            <Button className={buttonStyle}>Financial Report</Button>
           </Link>
           <Link to="/itinerary">
-            <button>View itineraries</button>
+            <Button className={buttonStyle}>View itineraries</Button>
           </Link>
           <Link to="/activities">
-            <button>View Events</button>
+            <Button className={buttonStyle}>View Events</Button>
           </Link>
           <Link to="/complaint/view">
-            <button>View Complaints</button>
+            <Button className={buttonStyle}>View Complaints</Button>
           </Link>
           <Link to="/all-gifts">
-            <button>Gift Archival</button>
+            <Button className={buttonStyle}>Gift Archival</Button>
           </Link>
         </>
       )}
@@ -236,16 +277,16 @@ const TempHomePage = () => {
       {userType === "advertiser" && (
         <>
           <Link to="/productList">
-            <button>All Gifts/Products</button>
+            <Button className={buttonStyle}>All Gifts/Products</Button>
           </Link>
           <Link to="/activities">
-            <button>View Activities</button>
+            <Button className={buttonStyle}>View Activities</Button>
           </Link>
           <Link to="/revenue">
-            <button>Financial Report</button>
+            <Button className={buttonStyle}>Financial Report</Button>
           </Link>
           <Link to="/totaltouristactivity">
-            <button>Tourist Report</button>
+            <Button className={buttonStyle}>Tourist Report</Button>
           </Link>
         </>
       )}
@@ -253,13 +294,13 @@ const TempHomePage = () => {
       {userType === "seller" && (
         <>
           <Link to="/productList">
-            <button>All Gifts/Products</button>
+            <Button className={buttonStyle}>All Gifts/Products</Button>
           </Link>
           <Link to="/revenue">
-            <button>Financial Report</button>
+            <Button className={buttonStyle}>Financial Report</Button>
           </Link>
           <Link to="/all-gifts">
-            <button>Gift Archival</button>
+            <Button className={buttonStyle}>Gift Archival</Button>
           </Link>
         </>
       )}
@@ -267,26 +308,26 @@ const TempHomePage = () => {
       {userType === "tourGuide" && (
         <>
           <Link to="/itinerary">
-            <button>View Itineraries</button>
+            <Button className={buttonStyle}>View Itineraries</Button>
           </Link>
           <Link to="/revenue">
-            <button>Financial Report</button>
+            <Button className={buttonStyle}>Financial Report</Button>
           </Link>
           <Link to="/tourist-report">
-            <button>Tourist Report</button>
+            <Button className={buttonStyle}>Tourist Report</Button>
           </Link>
         </>
       )}
       {userType === "tourist" && (
         <>
           <Link to="/ViewAllItinerary">
-            <button>Manage Events</button>
+            <Button className={buttonStyle}>Manage Events</Button>
           </Link>
           <Link to="/GiftList">
-            <button>Gift Shop</button>
+            <Button className={buttonStyle}>Gift Shop</Button>
           </Link>
           <Link to="/Help">
-            <button>Help</button>
+            <Button className={buttonStyle}>Help</Button>
           </Link>
         </>
       )}
@@ -294,44 +335,45 @@ const TempHomePage = () => {
       {userType === "tourist" && (
         <>
           <Link to="/productList">
-            <button>All Gifts/Products</button>
+            <Button className={buttonStyle}>All Gifts/Products</Button>
           </Link>
           <Link to="/ExplorePage">
-            <button>Explore All Activities, Itineraries, Museums</button>
+            <Button className={buttonStyle}>Explore All Activities, Itineraries, Museums</Button>
           </Link>
           <Link to="/ViewAllItinerary">
-            <button>View Itineraries</button>
+            <Button className={buttonStyle}>View Itineraries</Button>
           </Link>
           <Link to="/GiftList">
-            <button>Gift Shop</button>
+            <Button className={buttonStyle}>Gift Shop</Button>
           </Link>
           <Link to="/BookFLight">
-            <button>Book Flight</button>
+            <Button className={buttonStyle}>Book Flight</Button>
           </Link>
           <Link to="/BookHotel">
-            <button>Book Hotel</button>
+            <Button className={buttonStyle}>Book Hotel</Button>
           </Link>
           <Link to="/bookTransport">
-            <button>Book Transportation</button>
+            <Button className={buttonStyle}>Book Transportation</Button>
           </Link>
           <Link to="/Wishlist">
-            <button>View Wishlist</button>{" "}
+            <Button className={buttonStyle}>View Wishlist</Button>{" "}
           </Link>
           <Link to="/complaint/create">
-            <button>File Complaint</button>
+            <Button className={buttonStyle}>File Complaint</Button>
           </Link>
           <Link to="/complaint/myList">
-            <button>My Complaints</button>
+            <Button className={buttonStyle}>My Complaints</Button>
           </Link>
           <Link to="/cart">
-          <button className="go-to-cart-button">Go to Cart</button>
+          <Button className={buttonStyle} >Go to Cart</Button>
           </Link>
          
           <Link to="/address">
-            <button>Manage Address Book</button>
+            <Button className={buttonStyle}>Manage Address Book</Button>
           </Link>
         </>
       )}
+    </div>
     </div>
   );
 };

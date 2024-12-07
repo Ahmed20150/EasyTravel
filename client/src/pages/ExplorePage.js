@@ -4,7 +4,7 @@ import ViewItineraryCard from "../components/ViewItineraryCard";
 import ViewActivityCard from "../components/ViewActivityCard";
 import ViewMuseumCard from "../components/ViewMuseumCard";
 import { useCookies } from "react-cookie";
-import "../css/ExplorePage.css";
+// import "../css/ExplorePage.css";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import Radio from "@mui/material/Radio";

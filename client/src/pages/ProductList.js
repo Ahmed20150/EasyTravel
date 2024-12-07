@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
 import { useCookies } from "react-cookie";
 import ViewGiftItemCard from "../components/ViewGiftItemCard";
-import "../css/ProductList.css";
+// import "../css/ProductList.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";

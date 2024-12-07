@@ -83,6 +83,9 @@ import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 
 import TouristAddress from "./pages/TouristAddress";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 function App() {
   return (
     <div className="App">
@@ -92,12 +95,13 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+
             <Route path="/fileUpload" element={<FileUpload />} />
-            <Route path="/signUp" element={<GeneralSignUpForm />} />
-            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signUp" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/changePassword" element={<ChangePassword />} />
             <Route path="/home" element={<TempHomePage />} />
-            <Route path="/forgotPassword" element={<ForgotPasswordForm />} />
+            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
             <Route path="/create-profile" element={<CreateProfilePage />} />
             <Route path="/view-profile" element={<ViewProfilePage />} />
             <Route path="/edit-profile" element={<EditProfilePage />} />

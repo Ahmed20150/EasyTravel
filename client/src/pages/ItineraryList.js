@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem";
 import { useNavigate, Link } from "react-router-dom";
-import "../css/ItineraryList.css";
+// import "../css/ItineraryList.css";
 import { useCookies } from "react-cookie";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 

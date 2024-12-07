@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './viewTables.css';  // Import the CSS file for custom styles
+// import './viewTables.css';  // Import the CSS file for custom styles
 
 function ViewTables() {
   const [museumsData, setMuseumsData] = useState([]);             // State to store museums data

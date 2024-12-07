@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../css/BookHotel.css";
+// import "../css/BookHotel.css";
 import { useCookies } from "react-cookie";
 import {Link} from "react-router-dom";
 

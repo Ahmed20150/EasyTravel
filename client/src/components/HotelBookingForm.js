@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../css/TravelerForm.css"; // Reuse existing styles
+// import "../css/TravelerForm.css"; // Reuse existing styles
 
 const HotelBookingForm = ({
   show,
