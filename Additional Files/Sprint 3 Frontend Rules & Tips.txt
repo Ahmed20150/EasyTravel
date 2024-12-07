@@ -1,0 +1,41 @@
+**Rules**:
+1. All Error messages need to be displayed either by alerts or toastify 
+2. Any and all forms should be in their dedictaed page/popup, and NOT displayed on top of a view page
+3. The needed inputs & their formats should be clear to the user (hint messages, form labels, dropdown lists when inputs that specific )
+4. all elements should ahdere to the color scheme present in landing page, login & sign up pages.
+5. no one is allowed to create their own css stylesheet, instead you can find below an alternative way that serves the same purpose
+6. no one is to write any css stylings in app.css or index.css
+7. Frontend should be tested after implementation to make sure no logic is broken.
+8. *NO ONE* is allowed to change anything in the globalStyles without confirming with the rest of the team
+9. any and all buttons should be from GeneralStyles.js
+10. any and all buttons in the *HOME PAGE ONLY* should be made using HomeCard Component 
+
+**HomeCard Component**
+-Ready to use component used for all buttons in home page.
+-Accepts 4 parameters:
+1. title: title of card 
+2. description: short description of card
+3. linkRoute: route that the  card redirects to when pressed
+4. imageSrc: link to image that would be displayed on card (this field is not required, could be not written)
+
+
+**General Tips**:
+1. Use pre-defined components from the component library "flowbite-react", website: https://flowbite-react.com/docs/components/accordion
+
+**Alternative to CSS Stylesheets: Style Files*
+Instead of using stylesheets, I have created a file for each individual in the "styles" folder with their name, as well as a global style file. 
+These files will serve as our alternatives to stylehseets, because they are js files and not css stylehseets, you need to import the specific 
+style that you will use explicitly, which decreseas chance of any confusion. Moreover, if two imported styles have teh same name, the compiler 
+will not accept that, which helps us in avoiding any conflicts in styling. 
+
+**How to use Style files**
+1. import needed styles from your personal/global style file: import {buttonStyle} from "../styles/GlobalStyles"; 
+2. add imported style as a className for whatever element needed: <Button className={buttonStyle}> Get Started </Button>
+
+
+**How to use Toastify (instead of alerts)**
+1. Import toast & ToastContainer: import { ToastContainer, toast } from 'react-toastify';
+2. import toast css styling: import 'react-toastify/dist/ReactToastify.css';
+3. add ToastContainer to any part of the code after the return (the Html part of the code):  <ToastContainer/>
+4. Call your notification with whatever message is required (just like alerts): toast.success("Task Completed!") / toast.error*("Task Failed!")
+(there is also toast.info, find more variants at: https://www.npmjs.com/package/react-toastify/v/4.1.0)

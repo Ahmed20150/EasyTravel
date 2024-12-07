@@ -1,0 +1,18 @@
+*Frontend Tasks*
+
+*Tour Guide(ALL)* - Amr
+
+*Seller(Except Financial Report) & Tourism Governer (Except Financial Report)* - Hipa
+
+*Admin: (Except Gift Archival & All Gifts/products)*
+1. Pending requests, Account management, Manage categories, Manage prefrence tags - Ashraf
+2. financial report , view itenraries, view events, view complaints - abdallah
+
+
+*Advertiser (Except View profile & financial report)*  - Hoss
+
+*Tourist*
+1. Cart, My complaints, manage address, wishlist, help - Gasser
+2. explore (+ move any missing features from the old itenrary page to explore), book hotels, book flights, book transport - Wael
+
+*Read Me Report* - Ali
