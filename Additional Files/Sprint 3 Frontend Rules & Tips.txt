@@ -9,6 +9,7 @@
 8. *NO ONE* is allowed to change anything in the globalStyles without confirming with the rest of the team
 9. any and all buttons should be from GeneralStyles.js
 10. any and all buttons in the *HOME PAGE ONLY* should be made using HomeCard Component 
+11. Back buttons need to be present in ALL PAGES
 
 **HomeCard Component**
 -Ready to use component used for all buttons in home page.
