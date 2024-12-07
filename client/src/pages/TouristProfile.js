@@ -6,7 +6,9 @@ import { useLocation, Link } from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import ItineraryCard from "../components/ItineraryItem";
 import TouristForm from "../components/TouristForm";
-
+import level1Image from "../images/Level_1.avif"; // Adjust the path as needed
+import level2Image from "../images/Level_2.avif"; // Adjust the path as needed
+import level3Image from "../images/Level_3.webp"; // Adjust the path as needed
 
 const TouristProfile = () => {
     const [cookies] = useCookies(["userType", "username"]);
@@ -23,10 +25,19 @@ const TouristProfile = () => {
       const [itineraries, setItineraries] = useState([]);
       const [bookedItineraries, setBookedItineraries] = useState([]); // New state for booked itineraries
       const isProfilePage = true;
+      const [userLevel, setUserLevel] = useState(null); // State to store user level
 
 
-
-
+      const fetchUserLevel = async (username) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/api/tourist/${username}`
+          );
+          setUserLevel(response.data.level); // Assuming the response contains the level
+        } catch (error) {
+          console.error("Error fetching user level:", error);
+        }
+      };
 
   const handleRedeemPoints = async () => {
     const redeemablePoints = Math.floor(tourist.currentPoints / 10000) * 10000;
@@ -69,6 +80,7 @@ const TouristProfile = () => {
           );
           setTourist(response.data);
           setLoading(false);
+          fetchUserLevel(username); // Fetch user level if the user is a tourist
         } catch (err) {
           setError("Failed to fetch tourist profile");
           setLoading(false);
@@ -351,6 +363,12 @@ const TouristProfile = () => {
             onPreferencesUpdate={handlePreferencesUpdate}
           />
         )}
+         <div className="wallet-points-section">
+        <h2>Wallet and Points</h2>
+        <p>Wallet: {tourist.wallet}</p>
+        <p>Points: {tourist.currentPoints}</p>
+        <button onClick={handleRedeemPoints}>Redeem Points</button>
+      </div>
         <h2>Bookmarked Events:</h2>
         <div className="itinerary-list">
           {itineraries.length > 0 ? (
@@ -433,7 +451,12 @@ const TouristProfile = () => {
           <p>No valid promo codes available</p>
         )}
       </div>
+      <div className="user-level-badge">
+        {userLevel === 1 && <img src={level1Image} alt="Level 1 Badge" />}
+        {userLevel === 2 && <img src={level2Image} alt="Level 2 Badge" />}
+        {userLevel === 3 && <img src={level3Image} alt="Level 3 Badge" />}
       </div>
+    </div>
     );
 };
 
