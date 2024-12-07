@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import {
+  cardStyle,
+  buttonStyle,
+  walletSectionStyle,
+  itineraryListStyle,
+  promoCodeListStyle,
+  userLevelBadge,
+  fadeIn
+} from "../styles/AmrStyles"; // Import styles
 // import "../css/ItineraryEdit.css"; // Import the CSS file
 //TODO error when clicking on edit, price is null
 
@@ -183,153 +193,231 @@ const ItineraryEdit = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit Itinerary {id}</h2>
-      <label>
-        Locations to Visit (comma-separated):
-        <input
-          type="text"
-          name="locationsToVisit"
-          value={formData.locationsToVisit} // Use the string value directly
-          onChange={handleChange}
-        />
-      </label>
-      <button
-        type="button"
-        onClick={handleChooseActivities}
-        disabled={
-          formData.locationsToVisit.length === 0 ||
-          formData.locationsToVisit[0] === ""
-        }
-      >
-        Choose Activities
-      </button>
-      <h3>Selected Activities</h3>
-      <ul>
-        {formData.activities.map((activity, index) => (
-          <li key={index}>
-            {activity && activity.price ? (
-              <>
-                <div>
-                  Price: Min: {activity.price.min}, Max: {activity.price.max}
-                </div>
-                <div>Date: {new Date(activity.date).toLocaleDateString()}</div>
-                <div>Time: {activity.time}</div>
-                <div>Category: {activity.category}</div>
-                <div>
-                  Is Booking Open: {activity.isBookingOpen ? "Yes" : "No"}
-                </div>
-              </>
-            ) : (
-              <div>No price information available for this activity.</div>
-            )}
-          </li>
-        ))}
-      </ul>
+    <div className={`min-h-screen overflow-auto ${fadeIn} p-6`}>
+      <div className="flex justify-center items-center bg-gray-100 p-6">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-8 space-y-6"
+        >
+          <h2 className="text-3xl font-semibold text-center mb-6">Edit Itinerary {formData.id}</h2>
 
-      <label>
-        Timeline:
-        <input
-          type="text"
-          name="timeline"
-          value={formData.timeline}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Duration (in hours):
-        <input
-          type="number"
-          name="duration"
-          value={formData.duration}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Flagged:
-        <input
-          type="text"
-          name="flagged"
-          value={formData.flagged}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Language of Tour:
-        <input
-          type="text"
-          name="languageOfTour"
-          value={formData.languageOfTour}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Price of Tour:
-        <input
-          type="number"
-          name="priceOfTour"
-          value={formData.priceOfTour}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Available Dates (comma-separated):
-        <input
-          type="text"
-          name="availableDates"
-          value={formData.availableDates} // Use the string value directly
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Available Times (comma-separated):
-        <input
-          type="text"
-          name="availableTimes"
-          value={formData.availableTimes} // Use the string value directly
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Accessibility:
-        <input
-          type="text"
-          name="accessibility"
-          value={formData.accessibility}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Pickup Location:
-        <input
-          type="text"
-          name="pickupLocation"
-          value={formData.pickupLocation}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Dropoff Location:
-        <input
-          type="text"
-          name="dropoffLocation"
-          value={formData.dropoffLocation}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <button type="button" onClick={handleCancel}>
-        Cancel Changes
-      </button>
-      <button type="submit">Update Itinerary</button>
-    </form>
+          {/* Locations to Visit */}
+
+
+          {/* Choose Activities Button */}
+          <div className="text-center">
+            <Button
+              className={`${buttonStyle} w-full py-3 text-lg rounded-lg`}
+              type="button"
+              onClick={handleChooseActivities}
+              disabled={!formData.locationsToVisit}
+            >
+              Choose Activities
+            </Button>
+          </div>
+          <div>
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Locations to Visit (comma-separated):
+            </label>
+            <input
+              type="text"
+              name="locationsToVisit"
+              value={formData.locationsToVisit}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md mb-4"
+            />
+          </div>
+          {/* Selected Activities */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-4">Selected Activities</h3>
+            <ul className="space-y-4">
+              {formData.activities.map((activity, index) => (
+                <li key={index} className="bg-gray-50 p-4 rounded-lg shadow-md">
+                  {activity && activity.price ? (
+                    <>
+                      <p><strong>Price:</strong> Min: {activity.price.min}, Max: {activity.price.max}</p>
+                      <p><strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}</p>
+                      <p><strong>Time:</strong> {activity.time}</p>
+                      <p><strong>Category:</strong> {activity.category}</p>
+                      <p><strong>Is Booking Open:</strong> {activity.isBookingOpen ? "Yes" : "No"}</p>
+                    </>
+                  ) : (
+                    <p>No price information available for this activity.</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Form Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Timeline:
+              </label>
+              <input
+                type="text"
+                name="timeline"
+                value={formData.timeline}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+            
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Duration (in hours):
+              </label>
+              <input
+                type="number"
+                name="duration"
+                value={formData.duration}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+          </div>
+
+          {/* More Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Flagged:
+              </label>
+              <input
+                type="text"
+                name="flagged"
+                value={formData.flagged}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Language of Tour:
+              </label>
+              <input
+                type="text"
+                name="languageOfTour"
+                value={formData.languageOfTour}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Price of Tour:
+              </label>
+              <input
+                type="number"
+                name="priceOfTour"
+                value={formData.priceOfTour}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Available Dates (comma-separated):
+              </label>
+              <input
+                type="text"
+                name="availableDates"
+                value={formData.availableDates}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Available Times (comma-separated):
+              </label>
+              <input
+                type="text"
+                name="availableTimes"
+                value={formData.availableTimes}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Accessibility:
+              </label>
+              <input
+                type="text"
+                name="accessibility"
+                value={formData.accessibility}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Pickup Location:
+              </label>
+              <input
+                type="text"
+                name="pickupLocation"
+                value={formData.pickupLocation}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Dropoff Location:
+              </label>
+              <input
+                type="text"
+                name="dropoffLocation"
+                value={formData.dropoffLocation}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-between items-center mt-6 space-x-4">
+            <Button
+              className="w-40 py-3 text-lg rounded-lg bg-red-500 text-white"
+              type="button"
+              onClick={handleCancel}
+            >
+              Cancel Changes
+            </Button>
+            <Button
+              className="w-40 py-3 text-lg rounded-lg bg-blue-500 text-white"
+              type="submit"
+            >
+              Update Itinerary
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

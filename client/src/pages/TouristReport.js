@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import {
+  cardStyle,
+  buttonStyle,
+  walletSectionStyle,
+  itineraryListStyle,
+  promoCodeListStyle,
+  userLevelBadge,
+  fadeIn
+} from "../styles/AmrStyles"; // Import styles
 
 const TouristReport = () => {
   const [month, setMonth] = useState(''); // Store the selected month
   const [totalTourists, setTotalTourists] = useState(null);
   const [allTourists, setAllTourists] = useState(null); // For storing total tourists across all months
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // For navigation
 
   // Function to handle the month selection change
   const handleMonthChange = (event) => {
@@ -44,19 +56,29 @@ const TouristReport = () => {
   };
 
   return (
-    <div style={{
-      maxWidth: '450px',
-      margin: '20px auto',
-      padding: '20px',
-      backgroundColor: '#ffffff',
-      borderRadius: '8px',
-      boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h1 style={{ fontSize: '20px', color: '#333', textAlign: 'center', marginBottom: '20px' }}>Tourist Report</h1>
+    <div
+      className={`max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg mt-10 ${fadeIn} `}
+      style={{ fontFamily: "Arial, sans-serif" }}
+    >
+            <button
+        className={`${buttonStyle} absolute top-4 left-4 py-2 px-4 rounded-lg`}
+        onClick={() => navigate('/home')}
+      >
+        Back to Home Page
+      </button> 
+      {/* Header */}
+      <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">
+        Tourist Report
+      </h1>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label htmlFor="month" style={{ fontSize: '14px', color: '#555', marginBottom: '8px', display: 'block' }}>Select Month (1-12):</label>
+      {/* Month Input */}
+      <div className="mb-5">
+        <label
+          htmlFor="month"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Select Month (1-12):
+        </label>
         <input
           type="number"
           id="month"
@@ -65,77 +87,51 @@ const TouristReport = () => {
           min="1"
           max="12"
           placeholder="Enter month"
-          style={{
-            width: '100%',
-            padding: '10px',
-            fontSize: '14px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            boxSizing: 'border-box'
-          }}
+          className="w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-blue-500 focus:border-blue-500"
         />
       </div>
 
+      {/* Action Buttons */}
       <button
         onClick={fetchTouristData}
-        style={{
-          width: '100%',
-          padding: '10px',
-          fontSize: '14px',
-          color: '#fff',
-          backgroundColor: '#007bff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          marginBottom: '10px'
-        }}
+        className="w-full py-2 mb-4 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition duration-300"
       >
         Get Tourist Data for Selected Month
       </button>
 
       <button
         onClick={fetchAllTourists}
-        style={{
-          width: '100%',
-          padding: '10px',
-          fontSize: '14px',
-          color: '#fff',
-          backgroundColor: '#28a745',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          marginBottom: '15px'
-        }}
+        className="w-full py-2 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-800 transition duration-300"
       >
         View All Tourists
       </button>
 
-      {error && <div style={{ color: '#e74c3c', fontSize: '14px', textAlign: 'center', marginBottom: '10px' }}>{error}</div>}
+      {/* Error Display */}
+      {error && (
+        <div className="text-red-500 text-center text-sm my-4">{error}</div>
+      )}
 
+      {/* Total Tourists for Selected Month */}
       {totalTourists !== null && (
-        <div style={{
-          padding: '15px',
-          borderRadius: '6px',
-          backgroundColor: '#f0f9ff',
-          marginBottom: '10px',
-          textAlign: 'center',
-          color: '#007bff'
-        }}>
-          <h2 style={{ fontSize: '16px', marginBottom: '5px' }}>Total Tourists for Month {month}</h2>
-          <p style={{ fontSize: '14px' }}>{totalTourists} tourists have used the itineraries in this month.</p>
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-md mt-6 text-center">
+          <h2 className="text-lg font-semibold text-blue-700">
+            Total Tourists for Month {month}
+          </h2>
+          <p className="text-sm text-blue-600 mt-1">
+            {totalTourists} tourists have used the itineraries this month.
+          </p>
         </div>
       )}
 
+      {/* Total Tourists Across All Months */}
       {allTourists !== null && (
-        <div style={{
-          padding: '15px',
-          borderRadius: '6px',
-          backgroundColor: '#e8f5e9',
-          textAlign: 'center',
-          color: '#28a745'
-        }}>
-          <h2 style={{ fontSize: '16px', marginBottom: '5px' }}>Total Tourists Across All Months</h2>
-          <p style={{ fontSize: '14px' }}>{allTourists} tourists have used the itineraries across all months.</p>
+        <div className="p-4 bg-green-50 border border-green-200 rounded-md mt-6 text-center">
+          <h2 className="text-lg font-semibold text-green-700">
+            Total Tourists Across All Months
+          </h2>
+          <p className="text-sm text-green-600 mt-1">
+            {allTourists} tourists have used the itineraries across all months.
+          </p>
         </div>
       )}
     </div>

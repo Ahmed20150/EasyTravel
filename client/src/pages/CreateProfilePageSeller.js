@@ -42,6 +42,7 @@ const CreateProfilePageSeller = () => {
       const fileSizeMB = file.size / 1024 / 1024;
       if (fileSizeMB > 5) {
         alert('File size exceeds the limit of 5MB.');
+        e.target.value = null;
         return;
       }
       

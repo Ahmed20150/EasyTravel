@@ -5,20 +5,20 @@ import { Link } from "react-router-dom";
 import { MapPin, Sun, ShoppingCart } from "lucide-react";
 import HomeBanner from "../components/HomeBanner";
 import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
-import beachImage from 'client\\src\\images\\Beach.jpeg';
-import BudgetFriendlyImage from 'client\\src\\images\\BudgetFriendly.jpeg';
-import FamilyFriendlyImage from 'client\\src\\images\\FamilyFriendly.png';
-import HistoricAreasImage from 'client\\src\\images\\HistoricAreas.jpeg';
-import ShoppingImage from 'client\\src\\images\\Shopping.jpeg';
-import CommunityImage from 'client\\src\\images\\community.jpg';
+import beachImage from '../images/Beach.jpeg';
+import BudgetFriendlyImage from '../images/BudgetFriendly.jpeg';
+import FamilyFriendlyImage from '../images/FamilyFriendly.png';
+import HistoricAreasImage from '../images/HistoricAreas.jpeg';
+import ShoppingImage from '../images/Shopping.jpeg';
+import CommunityImage from '../images/community.jpg';
 import PeopleIcon from '@mui/icons-material/People';
 import LoginIcon from '@mui/icons-material/Login';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import EasyTravelLogo from 'client\\src\\images\\EasyTravel Transparent logo.png';
-import MiniEasyTravelLogo from 'client\\src\\images\\EasyTravel Mini Logo Transparent.png';
+import EasyTravelLogo from '../images/EasyTravel Transparent logo.png';
+import MiniEasyTravelLogo from '../images/EasyTravel Mini Logo Transparent.png';
 
 
 

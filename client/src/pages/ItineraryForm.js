@@ -2,7 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
-
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import {
+  cardStyle,
+  buttonStyle,
+  walletSectionStyle,
+  itineraryListStyle,
+  promoCodeListStyle,
+  userLevelBadge,
+  fadeIn
+} from "../styles/AmrStyles"; // Import styles
 const ItineraryForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -141,167 +150,211 @@ const ItineraryForm = () => {
 
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Create New Itinerary</h2>
-
-      {/* Name Input */}
-      <div>
-        <label>Itinerary Name:</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        {errors.name && <p>{errors.name}</p>}
+    <form onSubmit={handleSubmit} className="min-h-screen flex justify-center items-start bg-gray-100 p-6">
+      <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-3xl font-semibold mb-6">Create New Itinerary</h2>
+  
+        {/* Itinerary Name */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Itinerary Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        </div>
+  
+        {/* Category */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Category:</label>
+          <input
+            type="text"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+        </div>
+  
+        {/* Tags */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Tags (comma-separated):</label>
+          <input
+            type="text"
+            name="tags"
+            value={formData.tags.join(",")}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Locations & Activities */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Locations to Visit (comma-separated):</label>
+          <input
+            type="text"
+            name="locationsToVisit"
+            value={formData.locationsToVisit.join(", ")}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={handleChooseActivities}
+          disabled={formData.locationsToVisit.length === 0 || formData.locationsToVisit[0] === ""}
+          className="w-full bg-blue-500 text-white py-2 rounded mt-4 disabled:bg-gray-400"
+        >
+          Choose Activities
+        </button>
+  
+        <h3 className="mt-4 text-xl font-semibold">Selected Activities</h3>
+        <ul className="list-disc pl-5">
+          {selectedActivities.map((activity) => (
+            <li key={activity._id} className="mt-2">
+              Category: {activity.category || "N/A"} - Location: {activity.location.address || "N/A"}
+            </li>
+          ))}
+        </ul>
+  
+        {/* Timeline */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Timeline:</label>
+          <input
+            type="text"
+            name="timeline"
+            value={formData.timeline}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Duration */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Duration (in hours):</label>
+          <input
+            type="number"
+            name="duration"
+            value={formData.duration}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Language of Tour */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Language of Tour:</label>
+          <input
+            type="text"
+            name="languageOfTour"
+            value={formData.languageOfTour}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Price of Tour */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Price of Tour:</label>
+          <input
+            type="number"
+            name="priceOfTour"
+            value={formData.priceOfTour}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Available Dates */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Available Dates (comma-separated):</label>
+          <input
+            type="text"
+            name="availableDates"
+            value={formData.availableDates.join(", ")}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Available Times */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Available Times (comma-separated):</label>
+          <input
+            type="text"
+            name="availableTimes"
+            value={formData.availableTimes.join(", ")}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Accessibility */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Accessibility:</label>
+          <input
+            type="text"
+            name="accessibility"
+            value={formData.accessibility}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Pickup Location */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Pickup Location:</label>
+          <input
+            type="text"
+            name="pickupLocation"
+            value={formData.pickupLocation}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Dropoff Location */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Dropoff Location:</label>
+          <input
+            type="text"
+            name="dropoffLocation"
+            value={formData.dropoffLocation}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+        {/* Buttons */}
+        <div className="flex justify-between items-center mt-6">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="bg-red-500 text-white py-2 px-6 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-6 rounded"
+          >
+            Create Itinerary
+          </button>
+        </div>
       </div>
-
-      {/* Category Input */}
-      <div>
-        <label>Category:</label>
-        <input
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        />
-        {errors.category && <p>{errors.category}</p>}
-      </div>
-
-      {/* Tags Input */}
-      <div>
-        <label>Tags (comma-separated):</label>
-        <input
-          type="text"
-          name="tags"
-          value={formData.tags.join(",")}
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* Locations & Activities Section */}
-      <label>
-        Locations to Visit (comma-separated):
-        <input
-          type="text"
-          name="locationsToVisit"
-          value={formData.locationsToVisit.join(", ")} // Join for display with comma
-          onChange={handleChange}
-        />
-      </label>
-      <button
-        type="button"
-        onClick={handleChooseActivities}
-        disabled={
-          formData.locationsToVisit.length === 0 ||
-          formData.locationsToVisit[0] === ""
-        }
-      >
-        Choose Activities
-      </button>
-      <h3>Selected Activities</h3>
-      <ul>
-        {selectedActivities.map((activity) => (
-          <li key={activity._id}>
-            Category: {activity.category || "N/A"} - Location:{" "}
-            {activity.location.address || "N/A"}
-          </li>
-        ))}
-      </ul>
-      <label>
-        Timeline:
-        <input
-          type="text"
-          name="timeline"
-          value={formData.timeline}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Duration (in hours):
-        <input
-          type="number"
-          name="duration"
-          value={formData.duration}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Language of Tour:
-        <input
-          type="text"
-          name="languageOfTour"
-          value={formData.languageOfTour}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Price of Tour:
-        <input
-          type="number"
-          name="priceOfTour"
-          value={formData.priceOfTour}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Available Dates (comma-separated):
-        <input
-          type="text"
-          name="availableDates"
-          value={formData.availableDates.join(", ")} // join for display
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Available Times (comma-separated):
-        <input
-          type="text"
-          name="availableTimes"
-          value={formData.availableTimes.join(", ")} // join for display
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Accessibility:
-        <input
-          type="text"
-          name="accessibility"
-          value={formData.accessibility}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Pickup Location:
-        <input
-          type="text"
-          name="pickupLocation"
-          value={formData.pickupLocation}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Dropoff Location:
-        <input
-          type="text"
-          name="dropoffLocation"
-          value={formData.dropoffLocation}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <button type="button" onClick={handleCancel}>
-        Cancel
-      </button>
-      <button type="submit">Create Itinerary</button>
     </form>
   );
 };

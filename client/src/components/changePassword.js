@@ -102,7 +102,7 @@ function ChangePassword() {
       <ToastContainer/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <div className={classes.paper}>
+        <div className={`${classes.paper} ${fadeIn}`}>
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>

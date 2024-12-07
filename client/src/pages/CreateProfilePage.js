@@ -2,6 +2,15 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom'; // Import useNavigate
 import ProfileForm from '../components/ProfileForm';
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import {
+  cardStyle,
+  buttonStyle,
+  walletSectionStyle,
+  itineraryListStyle,
+  promoCodeListStyle,
+  userLevelBadge,
+} from "../styles/AmrStyles"; // Import styles
 
 const CreateProfilePage = () => {
   const location = useLocation(); // Get the location state
@@ -41,6 +50,7 @@ const CreateProfilePage = () => {
       const fileSizeMB = file.size / 1024 / 1024;
       if (fileSizeMB > 5) {
         alert('File size exceeds the limit of 5MB.');
+        e.target.value = null;
         return;
       }
       
@@ -72,13 +82,13 @@ const CreateProfilePage = () => {
     }
   };
 
-  const handleCancelEdit = (e) => {
-    navigate('/home', { state: { username } });
-  };
+  // const handleCancelEdit = (e) => {
+  //   navigate('/view-profile', { state: { username } });
+  // };
 
   return (
     <div>
-      <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2> 
+      {/* <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2>  */}
       <ProfileForm
         formData={formData}
         handleChange={handleChange}
@@ -87,7 +97,7 @@ const CreateProfilePage = () => {
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
         isEditing={isEditingProfile}
       />
-      <button onClick={handleCancelEdit}>Cancel</button>
+      {/* <Button className={buttonStyle}onClick={handleCancelEdit}>Cancel</Button> */}
 
     </div>
   );

@@ -122,7 +122,7 @@ const TempHomePage = () => {
   };
 
   return (
-    <div>
+    <div className={fadeIn}>
             <GeneralNavbar />
             
       <h1 className="flex items-center justify-center space-between gap-36 mb-12 mt-10">
@@ -200,7 +200,12 @@ const TempHomePage = () => {
       )}
 
       {userType !== "admin" && userType !== "tourismGoverner" && (
-        <Button className={buttonStyle} onClick={handleViewProfile}>View profile</Button>
+                <HomeCard
+                title="View profile"
+                description="View the latest updates of your profile"
+                onClick={handleViewProfile}
+              />
+        // <Button className={buttonStyle} onClick={handleViewProfile}>View profile</Button>
       )}
 
       {userType === "tourismGoverner" && (
@@ -283,15 +288,21 @@ const TempHomePage = () => {
 
       {userType === "tourGuide" && (
         <>
-          <Link to="/itinerary">
-            <Button className={buttonStyle}>View Itineraries</Button>
-          </Link>
-          <Link to="/revenue">
-            <Button className={buttonStyle}>Financial Report</Button>
-          </Link>
-          <Link to="/tourist-report">
-            <Button className={buttonStyle}>Tourist Report</Button>
-          </Link>
+        <HomeCard
+            title="View Itineraries"
+            description="Create and view your Itineraries"
+            linkRoute="/itinerary"
+          />
+          <HomeCard
+            title="Financial Report"
+            description="Get a glimpse on your financial report"
+            linkRoute="/revenue"
+          />
+          <HomeCard
+            title="Tourist Report"
+            description="View how your tourists are acting"
+            linkRoute="/tourist-report"
+          />
         </>
       )}
       {userType === "tourist" && (

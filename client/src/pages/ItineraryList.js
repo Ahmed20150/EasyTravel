@@ -3,16 +3,24 @@ import axios from "axios";
 import ItineraryItem from "../components/ItineraryItem";
 import { useNavigate, Link } from "react-router-dom";
 // import "../css/ItineraryList.css";
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import {
+  cardStyle,
+  buttonStyle,
+  walletSectionStyle,
+  itineraryListStyle,
+  promoCodeListStyle,
+  userLevelBadge,
+  fadeIn
+} from "../styles/AmrStyles"; // Import styles
 import { useCookies } from "react-cookie";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const ItineraryList = () => {
   const [itineraries, setItineraries] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]); // State for notifications
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [creatorEmails, setCreatorEmails] = useState({});
+  const [creatorEmails, setCreatorEmails] = useState({}); // State for storing emails by creator username
   const navigate = useNavigate();
   const [cookies] = useCookies(["username", "userType"]);
   const username = cookies.username;
@@ -22,17 +30,15 @@ const ItineraryList = () => {
     const fetchItineraries = async () => {
       try {
         const response = await axios.get("http://localhost:3000/itinerary");
-        const filteredItineraries =
-          userType === "admin"
-            ? response.data
-            : response.data.filter((itinerary) => itinerary.creator === username);
+        const filteredItineraries = userType === "admin"
+          ? response.data
+          : response.data.filter((itinerary) => itinerary.creator === username);
 
         setItineraries(filteredItineraries);
 
+        // Fetch emails for each unique creator if userType is "admin"
         if (userType === "admin") {
-          const creatorUsernames = [
-            ...new Set(filteredItineraries.map((itinerary) => itinerary.creator)),
-          ];
+          const creatorUsernames = [...new Set(filteredItineraries.map(itinerary => itinerary.creator))];
           const emailPromises = creatorUsernames.map(async (creator) => {
             try {
               const response = await axios.get(`http://localhost:3000/api/email/${creator}`);
@@ -56,9 +62,7 @@ const ItineraryList = () => {
     const fetchNotifications = async () => {
       if (userType === "tourGuide") {
         try {
-          const response = await axios.get(
-            `http://localhost:3000/itinerary/notifications/${username}`
-          );
+          const response = await axios.get(`http://localhost:3000/itinerary/notifications/${username}`);
           setNotifications(response.data);
         } catch (error) {
           console.error("Failed to fetch notifications:", error.message);
@@ -68,9 +72,88 @@ const ItineraryList = () => {
 
     if (username) {
       fetchItineraries();
-      fetchNotifications();
+      fetchNotifications(); // Fetch notifications only if userType is "tourGuide"
     }
   }, [username, userType]);
+
+  const handleDelete = async (id) => {
+    try {
+      const itinerary = await axios.get(`http://localhost:3000/itinerary/${id}`);
+      if (itinerary.data.touristsBooked.length === 0) {
+        await axios.delete(`http://localhost:3000/itinerary/${id}`);
+        setItineraries(itineraries.filter((itinerary) => itinerary._id !== id));
+      } else {
+        alert(`Cannot delete an itinerary with ${itinerary.data.touristsBooked.length} bookings.`);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleToggleActivation = async (id) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/itinerary/toggleActivation/${id}`);
+      setItineraries(
+        itineraries.map((itinerary) =>
+          itinerary._id === id
+            ? { ...itinerary, activated: !itinerary.activated }
+            : itinerary
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling activation:", error);
+      alert("Failed to toggle activation. Please try again.");
+    }
+  };
+
+  const handleEdit = (id) => {
+    localStorage.clear();
+    localStorage.clear();
+    navigate(`/itinerary/edit/${id}`);
+  };
+
+  const handleCreate = () => {
+    navigate(`/itinerary/create`);
+  };
+
+  // Function to send a notification email to the creator
+  const sendNotificationEmail = async (creator) => {
+    const email = creatorEmails[creator];
+    const message = `Your itinerary has been flagged as inappropriate. Please review the details and take necessary actions.`;
+
+    if (email) {
+      try {
+        await axios.post("http://localhost:3000/itinerary/sendNotification", {
+          email,
+          text: message,
+        });
+        alert("Notification email sent successfully.");
+      } catch (error) {
+        console.error("Error sending notification email:", error);
+        alert("Failed to send notification email.");
+      }
+    } else {
+      alert("Creator's email not available.");
+    }
+  };
+
+  const handleFlag = async (id, creator) => {
+    try {
+      const response = await axios.patch(`http://localhost:3000/itinerary/${id}/flag`);
+      setItineraries(
+        itineraries.map((itinerary) =>
+          itinerary._id === id ? { ...itinerary, flagged: "yes" } : itinerary
+        )
+      );
+      alert("Itinerary flagged successfully");
+
+      // Call the function to send the email notification to the creator
+      await sendNotificationEmail(creator);
+    } catch (error) {
+      console.error("Error flagging itinerary:", error);
+      alert("Failed to flag the itinerary.");
+    }
+  };
 
   if (loading) {
     return <p>Loading itineraries...</p>;
@@ -81,91 +164,103 @@ const ItineraryList = () => {
   }
 
   return (
-    <div>
-      <h1>Itineraries</h1>
+    <div className={`relative flex flex-col justify-center items-center h-screen bg-gray-100 ${fadeIn} p-6`}>
+      <button
+        className={`${buttonStyle} absolute top-4 left-4 py-2 px-4 rounded-lg`}
+        onClick={() => navigate('/home')}
+      >
+        Back to Home Page
+      </button>
+      <form
+        className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg"
+      >
+      <h1 className="text-3xl font-semibold mb-6 text-center">Itineraries</h1>
 
+      {/* Notifications */}
       {userType === "tourGuide" && notifications.length > 0 && (
-        <div>
-          {showNotifications ? (
-            <div className="notifications">
-              <div className="notifications-header">
-                <h2>Your Notifications</h2>
-                <button
-                  className="close-button"
-                  onClick={() => setShowNotifications(false)}
-                  aria-label="Close Notifications"
-                >
-                  &times;
-                </button>
-              </div>
-              <ul>
-                {notifications.map((notification) => (
-                  <li key={notification._id}>{notification.message}</li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <button
-              className="show-notifications-button"
-              onClick={() => setShowNotifications(true)}
-            >
-              <NotificationsIcon />
-            </button>
-          )}
+        <div className="notifications mb-6 p-4 bg-white shadow-lg rounded-lg">
+          <div className="notifications-header flex justify-between items-center mb-4">
+            <h2 className="text-xl">Notifications</h2>
+            {/* Leave as original logic, remove setShowNotifications */}
+          </div>
+          <ul className="space-y-2">
+            {notifications.map((notification) => (
+              <li key={notification._id} className="text-lg">{notification.message}</li>
+            ))}
+          </ul>
         </div>
       )}
 
-      <div className="button-container">
+      {/* Create New Itinerary Button */}
+      <div className="button-container mb-6 flex justify-center">
         {userType !== "admin" && (
-          <button className="create-button" onClick={() => navigate(`/itinerary/create`)}>
+          <Button
+            className={`${buttonStyle} w-100 py-3 text-lg rounded-lg`}
+            onClick={handleCreate}
+          >
             Create New Itinerary
-          </button>
+          </Button>
         )}
-        <Link to="/home">
-          <button>Back</button>
-        </Link>
       </div>
 
-      <div className="itinerary-list">
+      {/* Itinerary List */}
+      <div className="itinerary-list w-full max-w-4xl">
         {itineraries.map((itinerary) => (
-          <div key={itinerary._id} className="itinerary-item-container">
-            <ItineraryItem
-              itinerary={itinerary}
-              onDelete={(id) =>
-                setItineraries(itineraries.filter((it) => it._id !== id))
-              }
-              onEdit={(id) => navigate(`/itinerary/edit/${id}`)}
-              onActivationToggle={(id) =>
-                setItineraries(
-                  itineraries.map((it) =>
-                    it._id === id ? { ...it, activated: !it.activated } : it
-                  )
-                )
-              }
-              userType={userType}
-            />
+          <Card key={itinerary._id} className="mb-6 p-6 shadow-lg rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">{itinerary.name}</h3>
+              <span className={`badge ${itinerary.activated ? 'bg-green-500' : 'bg-gray-500'} text-white py-1 px-3 rounded`}>
+                {itinerary.activated ? "Active" : "Inactive"}
+              </span>
+            </div>
+            <div className="text-gray-700 mb-4">
+              <p><strong>Creator:</strong> {itinerary.creator}</p>
+              <p><strong>Details:</strong></p>
+              <p>- Timeline: {itinerary.timeline}</p>
+              <p>- Language: {itinerary.languageOfTour}</p>
+              <p>- Price: {itinerary.priceOfTour}</p>
+
+            </div>
+
+            {/* Admin Actions */}
             {userType === "admin" && (
-              <div className="admin-actions">
-                <p>Created by: {itinerary.creator}</p>
+              <div className="admin-actions space-y-4">
                 <p>Email: {creatorEmails[itinerary.creator] || "Not available"}</p>
                 <p>Flagged: {itinerary.flagged}</p>
-                <button
-                  className="flag-button"
-                  onClick={() => {
-                    setItineraries(
-                      itineraries.map((it) =>
-                        it._id === itinerary._id ? { ...it, flagged: "yes" } : it
-                      )
-                    );
-                  }}
+                <Button
+                  className="flag-button bg-red-500 text-white"
+                  onClick={() => handleFlag(itinerary._id, itinerary.creator)}
                 >
                   Flag
-                </button>
+                </Button>
               </div>
             )}
-          </div>
+
+            {/* User Actions */}
+            <div className="flex space-x-4 mt-6">
+              <Button
+                className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+                onClick={() => handleEdit(itinerary._id)}
+              >
+                Edit
+              </Button>
+              <Button
+                className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+                onClick={() => handleDelete(itinerary._id)}
+              >
+                Delete
+              </Button>
+              <Button
+                className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+                onClick={() => handleToggleActivation(itinerary._id)}
+              >
+                {itinerary.activated ? "Deactivate" : "Activate"}
+              </Button>
+            </div>
+          </Card>
         ))}
       </div>
+      </form>
     </div>
   );
 };
