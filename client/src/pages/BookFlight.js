@@ -54,7 +54,7 @@ const BookFlight = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingMessage, setBookingMessage] = useState("");
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [flightNumber, setFlightNumber] = useState("");
+  const [flightNumber, setFlightNumber] = useState("ABV1234");
 
   const generateFlightNumber = () => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -518,7 +518,7 @@ const BookFlight = () => {
       console.error('Booking error:', error);
       const errorMessage = error.response?.data?.message || 'Failed to book flight';
       toast.error(errorMessage, {
-        position: "top-center",
+        
         autoClose: 3000
       });
     } finally {
@@ -535,15 +535,9 @@ const BookFlight = () => {
   return (
     <div className="min-h-screen bg-white py-12">
       <ToastContainer
-        position="top-center"
+       
         autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+       
       />
 
       <div className="max-w-7xl mx-auto px-4">
