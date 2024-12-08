@@ -86,6 +86,8 @@ import TouristAddress from "./pages/TouristAddress";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import MuseumsPage from "./pages/MuseumsPage";
+
 function App() {
   return (
     <div className="App">
@@ -177,7 +179,7 @@ function App() {
               element={<SelectActivity />}
             />
             <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
-            <Route path="/museums" element={<MuseumsList />} />
+            <Route path="/museums" element={<MuseumsPage />} />
             <Route path="/Categorycontrol" element={<Categories />} />
             <Route path="/preferences" element={<PreferencePage />} />
             <Route path="/giftlist" element={<GiftList />} />

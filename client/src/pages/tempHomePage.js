@@ -296,25 +296,14 @@ const TempHomePage = () => {
       )}
       {userType === "tourist" && (
         <>
-          <Link to="/ViewAllItinerary">
-            <Button className={buttonStyle}>Manage Events</Button>
-          </Link>
-          <Link to="/GiftList">
-            <Button className={buttonStyle}>Gift Shop</Button>
-          </Link>
-          <Link to="/Help">
-            <Button className={buttonStyle}>Help</Button>
-          </Link>
-        </>
-      )}
-
-      {userType === "tourist" && (
-        <>
           <Link to="/productList">
             <Button className={buttonStyle}>All Gifts/Products</Button>
           </Link>
           <Link to="/ExplorePage">
-            <Button className={buttonStyle}>Explore All Activities, Itineraries, Museums</Button>
+            <Button className={buttonStyle}>Explore All Activities, Itineraries</Button>
+          </Link>
+          <Link to="/museums">
+            <Button className={buttonStyle}>Museums & Historical Places</Button>
           </Link>
           <Link to="/ViewAllItinerary">
             <Button className={buttonStyle}>View Itineraries</Button>
