@@ -241,30 +241,32 @@ const BookHotel = () => {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="guests">Guests</label>
-                    <input
-                      type="number"
-                      value={adults}
-                      onChange={(e) => setAdults(e.target.value)}
-                      required
-                      min="1"
-                      className="w-full"
-                    />
+                  <div className="space-y-2 md:space-y-0 md:flex md:items-center md:gap-6">
+                    <div className="flex-1">
+                      <label htmlFor="guests">Guests</label>
+                      <input
+                        type="number"
+                        value={adults}
+                        onChange={(e) => setAdults(e.target.value)}
+                        required
+                        min="1"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label htmlFor="rooms">Rooms</label>
+                      <input
+                        type="number"
+                        value={roomQuantity}
+                        onChange={(e) => setRoomQuantity(e.target.value)}
+                        required
+                        min="1"
+                        max={adults}
+                        className="w-full rounded-md border border-gray-300 px-3 py-2"
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="guests">Rooms</label>
-                    <input
-                      type="number"
-                      value={roomQuantity}
-                      onChange={(e) => setRoomQuantity(e.target.value)}
-                      required
-                      min="1"
-                      max={adults}
-                      className="w-full"
-                    />
-                  </div>
 
                   {/* <div className="form-group flex items-center space-x-2">
   <label>Promo Code</label>
@@ -284,30 +286,16 @@ const BookHotel = () => {
                   {discount > 0 && <p>Discount Applied: {discount}%</p>}
 
                   <div className="button-group">
+                    <Button className={buttonStyle} type="submit" disabled={loading}>
+                      Search Hotels
+                    </Button>
 
-                    <div className="flex justify-right">
-                      <Button type="submit" className={`bg-black hover:bg-gray-800 text-white px-8 py-2 ${buttonStyle} ml-2`} >
-                        Search Hotels
-                      </Button>
-                    </div></div>
+                  </div>
 
                 </div></form></Card>
 
 
 
-            <div className="button-group">
-              <Button className={buttonStyle} type="submit" disabled={loading}>
-                Search Hotels
-              </Button>
-              <Button
-                className={buttonStyle}
-                type="button"
-                onClick={handleBookHotel}
-                disabled={!selectedOffer || loading}
-              >
-                {loading ? "Processing..." : "Book Selected Hotel"}
-              </Button>
-            </div>
 
 
 
