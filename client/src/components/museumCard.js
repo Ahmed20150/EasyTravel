@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
 
 // Predefined tags for selection
 const predefinedTags = [
@@ -253,8 +254,19 @@ const MuseumCard = ({ museum, onDelete, refreshMuseums }) => {
                   </span>
                 ))}
             </div>
-            <button onClick={handleEdit}>Edit</button>
-            <button onClick={handleDelete}>Delete</button>{" "}
+            <button 
+              className={`${buttonStyle} mr-2 px-4 py-2 rounded-full bg-black-500 text-white hover:bg-blue-600`} 
+              onClick={handleEdit}
+            >
+              Edit
+            </button>
+            <button 
+              className={`${buttonStyle} px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600`} 
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+            {" "}
             {/* Use handleDelete here */}
           </div>
         )}

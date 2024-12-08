@@ -8,6 +8,7 @@ import ViewGiftItemCard from "../components/ViewGiftItemCard";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";
+import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
 
 
 const ProductList = () => {
@@ -415,102 +416,113 @@ const handlePromoCodeCheck = () => {
 
   return (
     <div className="product-list-container">
-      <h1>Gift Items</h1>
-      <ToastContainer/>
+      <h1 className="text-center text-2xl font-bold mb-4">Gift Items</h1>
+      <ToastContainer />
       {userType === "tourist" && (
-        <>
-      <Link to="/productOrders">
-        <button style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          padding: "10px 20px",
-        }}>
-          View Your Orders
-        </button>
-        </Link></>)}
+        <div className="relative">
+          <Link to="/productOrders">
+            <button className={`${buttonStyle} absolute top-4 right-4 px-4 py-2`}>
+              View Your Orders
+            </button>
+          </Link>
+        </div>
+      )}
       <Link to="/home">
-        <button className="back-button">Back</button>
+        <button className={`${buttonStyle} mt-4`}>Back</button>
       </Link>
-
-         {/* Promo Code Section */}
-         <div>
-                <label>
-                    Promo Code:
-                    <input
-                        type="text"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                    />
-                </label>
-                <button type="button" onClick={handlePromoCodeCheck}>
-                    Apply Promo Code
-                </button>
-            </div>
-
+  
+      {/* Promo Code Section */}
+      <div className={`${promoCodeListStyle} mt-6`}>
+        <label className="block text-sm font-semibold">
+          Promo Code:
+          <input
+            type="text"
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 mt-1 w-full"
+          />
+        </label>
+        <button
+          type="button"
+          onClick={handlePromoCodeCheck}
+          className={`${buttonStyle} mt-2 px-4 py-2`}
+        >
+          Apply Promo Code
+        </button>
+      </div>
+  
       {/* Search and Filter Section */}
-      <div className="search-filter-sort">
+      <div className="search-filter-sort mt-6 flex flex-col gap-4">
         <input
           type="text"
           placeholder="Search by product name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          className="border border-gray-300 rounded-md p-2"
         />
-
-        <div className="price-filter">
+  
+        <div className="price-filter flex gap-4">
           <input
             type="number"
             placeholder="Min Price"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
+            className="border border-gray-300 rounded-md p-2"
           />
           <input
             type="number"
             placeholder="Max Price"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
+            className="border border-gray-300 rounded-md p-2"
           />
         </div>
-
-        <div className="rating-sort">
-          <select
-            onChange={(e) => setSortOrder(e.target.value)}
-            value={sortOrder}
-          >
-            <option value="asc">Sort by Rating (Low to High)</option>
-            <option value="desc">Sort by Rating (High to Low)</option>
-          </select>
-        </div>
+  
+        <select
+          onChange={(e) => setSortOrder(e.target.value)}
+          value={sortOrder}
+          className="border border-gray-300 rounded-md p-2"
+        >
+          <option value="asc">Sort by Rating (Low to High)</option>
+          <option value="desc">Sort by Rating (High to Low)</option>
+        </select>
       </div>
-
+  
       {/* Gift Form (for Admin and Seller) */}
       {(userType === "admin" || userType === "seller") && (
-        <div className="gift-form">
-          <h2>{editingId ? "Update Gift Item" : "Add New Gift Item"}</h2>
-          <label htmlFor="gift-name">Name</label>
-          <input
-            id="gift-name"
-            type="text"
-            placeholder="Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          {errors.name && <p className="error-message">{errors.name}</p>}
-
-          <label htmlFor="gift-creator">Creator Name</label>
-          <input
-            id="gift-creator"
-            type="text"
-            placeholder="Creator Name"
-            value={userType === "seller" ? username : formData.seller}
-            onChange={(e) =>
-              setFormData({ ...formData, seller: e.target.value })
-            }
-            disabled={userType === "seller" || editingId} // Disable input for sellers
-          />
-          {errors.seller && <p className="error-message">{errors.seller}</p>}
-
-          <label htmlFor="image-upload">Image</label>
+        <div className={`${promoCodeListStyle} mt-6`}>
+          <h2 className="text-xl font-bold mb-4">
+            {editingId ? "Update Gift Item" : "Add New Gift Item"}
+          </h2>
+          <div className="flex flex-col gap-4">
+            <label>
+              Name
+              <input
+                type="text"
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="border border-gray-300 rounded-md p-2"
+              />
+            </label>
+            {errors.name && <p className="error-message">{errors.name}</p>}
+  
+            <label>
+              Creator Name
+              <input
+                type="text"
+                placeholder="Creator Name"
+                value={userType === "seller" ? username : formData.seller}
+                onChange={(e) =>
+                  setFormData({ ...formData, seller: e.target.value })
+                }
+                disabled={userType === "seller" || editingId}
+                className="border border-gray-300 rounded-md p-2"
+              />
+            </label>
+            {errors.seller && <p className="error-message">{errors.seller}</p>}
+            
+            <label htmlFor="image-upload">Image</label>
           <input
             id="image-upload"
             type="file"
@@ -578,19 +590,24 @@ const handlePromoCodeCheck = () => {
           />
           {errors.date && <p className="error-message">{errors.date}</p>}
 
-          <button onClick={editingId ? handleUpdateGift : handleAddGift}>
-            {editingId ? "Update Gift" : "Add Gift"}
-          </button>
+            
+            <button
+              onClick={editingId ? handleUpdateGift : handleAddGift}
+              className={`${buttonStyle} px-4 py-2`}
+            >
+              {editingId ? "Update Gift" : "Add Gift"}
+            </button>
+          </div>
         </div>
       )}
-
+  
       {/* Display Gifts */}
       {loadingGifts ? (
-        <div className="loader">Loading Gifts/Products...</div>
+        <div className={`${fadeIn} text-center mt-4`}>Loading Gifts/Products...</div>
       ) : filteredGifts.length > 0 ? (
-        <div className="gift-items-grid">
+        <div className="gift-items-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredGifts.map((gift) => (
-            <div key={gift._id} className="gift-item-card">
+            <div key={gift._id} className={cardStyle}>
               <ViewGiftItemCard
                 giftItem={gift}
                 userType={userType}
@@ -598,24 +615,39 @@ const handlePromoCodeCheck = () => {
                 selectedCurrency={selectedCurrency}
               />
               {(userType === "admin" || userType === "seller") && (
-                <div className="admin-buttons">
+                <div className="admin-buttons mt-2">
                   <button
                     onClick={() => setEditingId(gift._id) || setFormData(gift)}
+                    className={`${buttonStyle} mr-2 px-2 py-1`}
                   >
                     Edit
                   </button>
-                  <button onClick={() => handleDeleteGift(gift._id)}>
+                  <button
+                    onClick={() => handleDeleteGift(gift._id)}
+                    className={`${buttonStyle} px-2 py-1`}
+                  >
                     Delete
                   </button>
                 </div>
               )}
               {userType === "tourist" && (
-                <div className="buttons">
-                  <button onClick={() => openModal(gift._id)}>Buy</button>
-                  <button onClick={() => handleAddToWishlist(gift.name)}>
+                <div className="buttons mt-2">
+                  <button
+                    onClick={() => openModal(gift._id)}
+                    className={`${buttonStyle} mr-2 px-2 py-1`}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    onClick={() => handleAddToWishlist(gift.name)}
+                    className={`${buttonStyle} mr-2 px-2 py-1`}
+                  >
                     Add to Wishlist
                   </button>
-                  <button onClick={() => handleAddToCart(gift.name)}>
+                  <button
+                    onClick={() => handleAddToCart(gift.name)}
+                    className={`${buttonStyle} px-2 py-1`}
+                  >
                     Add to cart
                   </button>
                 </div>
@@ -624,8 +656,10 @@ const handlePromoCodeCheck = () => {
           ))}
         </div>
       ) : (
-        <div>No products found.</div>
+        <div className="text-center mt-4">No products found.</div>
       )}
+    
+  
 
 <Modal
         isOpen={modalIsOpen}

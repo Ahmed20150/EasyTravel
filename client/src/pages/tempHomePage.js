@@ -200,8 +200,14 @@ const TempHomePage = () => {
       )}
 
       {userType !== "admin" && userType !== "tourismGoverner" && (
-        <Button className={buttonStyle} onClick={handleViewProfile}>View profile</Button>
+        <HomeCard
+          title="View Profile"
+          description="Access and update your personal information."
+          linkRoute="#"
+          onClick={handleViewProfile}
+        />
       )}
+
 
       {userType === "tourismGoverner" && (
         <>
@@ -269,17 +275,24 @@ const TempHomePage = () => {
 
       {userType === "seller" && (
         <>
-          <Link to="/productList">
-            <Button className={buttonStyle}>All Gifts/Products</Button>
-          </Link>
-          <Link to="/revenue">
-            <Button className={buttonStyle}>Financial Report</Button>
-          </Link>
-          <Link to="/all-gifts">
-            <Button className={buttonStyle}>Gift Archival</Button>
-          </Link>
+          <HomeCard
+            title="All Gifts/Products"
+            description="Browse and manage your entire product catalog."
+            linkRoute="/productList"
+          />
+          <HomeCard
+            title="Financial Report"
+            description="View detailed financial reports of your sales and revenue."
+            linkRoute="/revenue"
+          />
+          <HomeCard
+            title="Gift Archival"
+            description="Access and manage archived gifts and products."
+            linkRoute="/all-gifts"
+          />
         </>
       )}
+
 
       {userType === "tourGuide" && (
         <>

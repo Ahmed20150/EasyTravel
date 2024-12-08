@@ -3,13 +3,16 @@ import axios from "axios";
 import MuseumCard from "../components/museumCard";
 import AddMuseumForm from "../components/AddMuseumForm";
 import "../css/museumList.css"; // Import CSS styles
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
+import { Navbar, Button, Card, Footer } from "flowbite-react";
 
 const MuseumsList = () => {
   const [museums, setMuseums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cookies] = useCookies(["username"]);
+  const navigate = useNavigate();
   const username = cookies.username;
 
   useEffect(() => {
@@ -42,6 +45,7 @@ const MuseumsList = () => {
   return (
     <div className="museums-container">
       <h1 className="title">Museums and Historical Places</h1>
+      <AddMuseumForm username={username} refreshMuseums={fetchMuseums} />
       {loading ? (
         <div className="loader">Loading...</div>
       ) : (
@@ -56,10 +60,13 @@ const MuseumsList = () => {
           ))}
         </div>
       )}
-      <AddMuseumForm username={username} refreshMuseums={fetchMuseums} />
-      <Link to="/home">
-        <button>Back</button>
-      </Link>
+      
+      <Button className={buttonStyle}
+        style={{ position: 'absolute', top: '10px', left: '10px' }}
+        onClick={() => navigate('/home')}
+      >
+        Back to Home Page
+      </Button>
     </div>
   );
 };

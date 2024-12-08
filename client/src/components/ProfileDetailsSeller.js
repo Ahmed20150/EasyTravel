@@ -1,19 +1,17 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import axios from 'axios'; // Import axios
+import axios from 'axios';
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
 
 const ProfileDetailsSeller = ({ profile, onEditClick }) => {
-  const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
-  const userType = cookies.userType; // Access the userType
+  const [cookies] = useCookies(["userType", "username"]);
+  const userType = cookies.userType;
+
   const handleRequest = async (username, role) => {
-    //const input = { username, role };
     try {
-      // Construct the URL with the username and role as query parameters
       const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
-      // Update state to remove the deleted user
       window.alert(`Request sent successfully: ${response.data.message}`);
-      // Filter out the deleted user from the UI
     } catch (error) {
       console.error("Error deleting user:", error);
       if (error.response) {
@@ -25,29 +23,50 @@ const ProfileDetailsSeller = ({ profile, onEditClick }) => {
   };
 
   return (
-    <div>
-      <h2>Profile Details</h2>
+    <div className={`${cardStyle} ${fadeIn} p-6 mx-auto`}>
+      <h2 className="text-2xl font-bold mb-4 text-center">Profile Details</h2>
+      
       {profile.profilePicture && (
-        <img
-          src={profile.profilePicture}
-          alt="Profile"
-          style={{ width: '150px', height: '150px', objectFit: 'cover' }}
-        />
+        <div className="flex justify-center mb-4">
+          <img
+            src={profile.profilePicture}
+            alt="Profile"
+            className="w-36 h-36 object-cover rounded-full shadow-md"
+          />
+        </div>
       )}
-      <p>Username: {profile.username}</p>
-      <p>Name: {profile.firstLastName}</p>
-      <p>Description: {profile.description}</p>
-      <p>Mobile: {profile.mobileNumber ? `0${profile.mobileNumber}` : 'Not provided'}</p>
-      <p>Date of Birth: {new Date(profile.dateOfBirth).toLocaleDateString()}</p>
-      <button onClick={onEditClick}>Edit Profile</button>
-      <button
-        className="delete-button"
-        onClick={() => { handleRequest(profile.username, userType) }}  // Pass the correct user details
-      >
-        Request Delete
-      </button>
-      <Link to="/home"><button>Back</button></Link>
-
+      
+      <div className="space-y-2">
+        <p><strong>Username:</strong> {profile.username}</p>
+        <p><strong>Name:</strong> {profile.firstLastName}</p>
+        <p><strong>Description:</strong> {profile.description}</p>
+        <p><strong>Mobile:</strong> {profile.mobileNumber ? `0${profile.mobileNumber}` : 'Not provided'}</p>
+        <p><strong>Date of Birth:</strong> {new Date(profile.dateOfBirth).toLocaleDateString()}</p>
+      </div>
+      
+      <div className="flex justify-between mt-6 space-x-2">
+        <button 
+          onClick={onEditClick} 
+          className={`${buttonStyle} flex-1 py-2 rounded`}
+        >
+          Edit Profile
+        </button>
+        
+        <button
+          className={`${buttonStyle} flex-1 py-2 rounded bg-red-600 hover:bg-red-700`}
+          onClick={() => handleRequest(profile.username, userType)}
+        >
+          Request Delete
+        </button>
+      </div>
+      
+      <div className="mt-4 text-center">
+        <Link to="/home" className={linkStyle}>
+          <button className={`${buttonStyle} py-2 px-4 rounded`}>
+            Back
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
