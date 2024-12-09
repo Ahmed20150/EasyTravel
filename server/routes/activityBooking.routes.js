@@ -125,4 +125,20 @@ router.get("/pastBookings", async (req, res) => {
     }
 });
 
+// Add this route to get upcoming bookings
+router.get('/upcomingBookings', async (req, res) => {
+  try {
+    const { username, currentDate } = req.query;
+    
+    const upcomingBookings = await ActivityBooking.find({
+      touristUsername: username,
+      bookingDate: { $gt: new Date(currentDate) }
+    }).sort({ bookingDate: 1 });
+
+    res.json(upcomingBookings);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching upcoming bookings' });
+  }
+});
+
 module.exports = router; 
