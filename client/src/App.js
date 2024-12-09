@@ -87,6 +87,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import MuseumsPage from "./pages/MuseumsPage";
+import ActivitiesPage from "./pages/ActivitiesPage";
 
 function App() {
   return (
@@ -203,6 +204,7 @@ function App() {
             <Route path="/Wishlist" element={<Wishlist />} /> 
             <Route path="/cart" element={<Cart />} />
             <Route path="/productOrders" element={<ProductOrders/>} />
+            <Route path="/activities-featured" element={<ActivitiesPage />} />
             
           
           </Routes>

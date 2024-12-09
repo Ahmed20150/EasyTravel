@@ -302,6 +302,9 @@ const TempHomePage = () => {
           <Link to="/ExplorePage">
             <Button className={buttonStyle}>Explore All Activities, Itineraries</Button>
           </Link>
+          <Link to="/activities-featured">
+            <Button className={buttonStyle}>Featured Activities</Button>
+          </Link>
           <Link to="/museums">
             <Button className={buttonStyle}>Museums & Historical Places</Button>
           </Link>
