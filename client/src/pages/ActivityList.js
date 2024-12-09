@@ -3,8 +3,10 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import NotificationsIcon from "@mui/icons-material/Notifications"; // Import Notifications Icon
-// import "../css/ActivityLists.css";
-
+//import "../css/ActivityLists.css";
+import { buttonStyle, buttonStyle2 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import HomeBanner from "../components/HomeBanner";
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -115,8 +117,21 @@ const ActivityLists = () => {
   };
 
   return (
+
+    
     <div className="activity-list">
-      <h1>Activities</h1>
+      <HomeBanner />
+
+      <Link to="/home">
+      <Button
+               style={{ position: 'absolute', top: '30px', left: '10px' }}
+               className={buttonStyle}
+               >Back</Button>
+      </Link> 
+      
+
+
+      <h1  className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Activities</h1>
 
       {userType !== 'admin' && notifications.length > 0 && showNotifications && (
         <div className="notifications">
@@ -156,14 +171,12 @@ const ActivityLists = () => {
             Create New Activity
           </button>
         )}
-        <Link to="/home">
-          <button>Back</button>
-        </Link>
+        
       </div>
 
-      <div className="card-container">
+     
         {activities.map((activity) => (
-          <div className="card" key={activity._id}>
+          <Card href="#" className="h-99 w-99 text-2xl mb-8" key={activity._id}>
             <h3 className="activity-category">{activity.category}</h3>
             <p className="activity-location">{activity.location?.address}</p>
             <p className="activity-price">
@@ -179,34 +192,34 @@ const ActivityLists = () => {
               </div>
             )}
 
-            <div className="button-group">
-              <button
-                className="edit-button"
+            <div className="flex flex-wrap gap-2">
+              <Button
+                className={buttonStyle}
                 onClick={() => handleEdit(activity._id)}
               >
                 Edit
-              </button>
-              <button
-                className="delete-button"
+              </Button>
+              <Button
+                className={buttonStyle2}
                 onClick={() => handleDelete(activity._id)}
               >
                 Delete
-              </button>
+              </Button>
 
               {userType === 'admin' && (
-                <button
+                <Button
                   className="flag-button"
                   style={{ backgroundColor: "purple", color: "white" }}
                   onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}  // Pass category for the notification message
                 >
                   Flag
-                </button>
+                </Button>
               )}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
-    </div>
+    
   );
 };
 

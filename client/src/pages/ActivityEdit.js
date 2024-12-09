@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-// import "../css/ActivityEdit.css";
+//import "../css/ActivityEdit.css";
 import Map from "../components/Map";
 // import "../css/ActivityForm.css"; // Adjusted path to the CSS file
 import mapboxgl from "mapbox-gl";
 
+
+
+
+import { buttonStyle, buttonStyle3,buttonStyle2 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
+import { Navbar, Button, Card, Footer,Checkbox, Label, TextInput } from "flowbite-react";
+import HomeBanner from "../components/HomeBanner";
 // Set your Mapbox access token
 mapboxgl.accessToken =
   "pk.eyJ1IjoieW91c3NlZm1lZGhhdGFzbHkiLCJhIjoiY2x3MmpyZzYzMHAxbDJxbXF0dDN1MGY2NSJ9.vrWqL8FrrRzm0yAfUNpu6g"; // Replace with your actual Mapbox token
@@ -123,22 +129,28 @@ const ActivityEdit = () => {
     navigate("/activities");
   };
   return (
-    <div className="activity">
-      <h1>Edit Activity</h1>
+    <div>
+       <HomeBanner />
+    <div className="flex flex-col items-center justify-center mt-8">   
+    <h1 className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Edit Activity</h1>
+    <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg ">
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Date:</label>
-          <input
-            type="date"
-            name="date"
-            value={new Date(activity.date).toISOString().split("T")[0]} // Format the date for the input
-            onChange={handleChange}
-            required
-          />
+        <div className="mb-2 block">
+        <Label htmlFor="date" value="Date" className="text-2xl font-bold mb-4" />
+        <TextInput
+          id="date"
+          type="date"
+          name="date"
+          value={new Date(activity.date).toISOString().split("T")[0]} // Format the date for the input
+          onChange={handleChange}
+          required
+        />
         </div>
         <div>
-          <label>Time:</label>
-          <input
+        <Label htmlFor="time" value="Time  " className="text-2xl font-bold mb-4" />
+        
+          <TextInput
+            id="time"
             type="time"
             name="time"
             value={activity.time}
@@ -147,8 +159,10 @@ const ActivityEdit = () => {
           />
         </div>
         <div>
-          <label>Address:</label>
-          <input
+         <Label htmlFor="address" value="Address  " className="text-2xl font-bold mb-4" /> 
+          
+          <TextInput
+            id="address"
             type="text"
             name="location.address"
             value={activity.location?.address || ""}
@@ -157,13 +171,15 @@ const ActivityEdit = () => {
           />
         </div>
         {/* Add the Map component here */}
-        <div>
-          <label>Select Location on Map:</label>
+        <div className="mb-2 block">
+        <Label value="Select Location on Map" className="text-2xl font-bold mb-4" />
           <Map onLocationSelect={handleLocationSelect} />
         </div>
         <div>
-          <label>Price Min:</label>
-          <input
+        <Label htmlFor="price.min" value="Price Min  " className="text-2xl font-bold mb-4" /> 
+          
+          <TextInput
+            id="price.min"
             type="number"
             name="price.min"
             value={activity.price.min}
@@ -172,8 +188,10 @@ const ActivityEdit = () => {
           />
         </div>
         <div>
-          <label>Price Max:</label>
-          <input
+        <Label htmlFor="price.max" value="Price Max  " className="text-2xl font-bold mb-4" /> 
+          
+          <TextInput
+            id="price.max"
             type="number"
             name="price.max"
             value={activity.price.max}
@@ -183,22 +201,24 @@ const ActivityEdit = () => {
         </div>
 
       <div>
-        <label>
-        Flagged:
-        <input
+        <Label htmlFor="flagged" value="Flagged " className="text-2xl font-bold mb-4" /> 
+        <TextInput
+          id="flagged"
           type="text"
           name="flagged"
           value={activity.flagged}
           onChange={handleChange}
           required
         />
-      </label>
+     
       </div>
 
 
         <div>
-        <label>
-        Category:
+        
+        
+        <Label htmlFor="category" value="Category " className="text-2xl font-bold mb-4" /> 
+
         <select
           name="category"
           value={activity.category}
@@ -212,11 +232,12 @@ const ActivityEdit = () => {
             </option>
           ))}
         </select>
-      </label>
+      
         </div>
         <div>
-          <label>Tags:</label>
-          <input
+        <Label htmlFor="tags" value="Tags " className="text-2xl font-bold mb-4" />
+          <TextInput
+            id="tags"
             type="text"
             name="tags"
             value={activity.tags.join(", ")} // Join tags for input display
@@ -231,8 +252,11 @@ const ActivityEdit = () => {
           />
         </div>
         <div>
-          <label>Special Discounts:</label>
-          <input
+        
+          <Label htmlFor="specialDiscounts" value="Special Discounts " className="text-2xl font-bold mb-4" />
+
+          <TextInput
+            id="specialDiscounts"
             type="number"
             name="specialDiscounts"
             value={activity.specialDiscounts || ""}
@@ -240,20 +264,29 @@ const ActivityEdit = () => {
           />
         </div>
         <div>
-          <label>Is Booking Open:</label>
-          <input
+          <Label htmlFor="isBookingOpen" value="Is Booking Open" className="text-2xl font-bold mb-4" />
+
+          <TextInput
+            className="mb-4"
+            id="isBookingOpen"
             type="checkbox"
             name="isBookingOpen"
             checked={activity.isBookingOpen}
             onChange={handleChange}
           />
         </div>
-        <button type="button" onClick={handleCancel}>
+        <div className="flex flex-wrap gap-2">
+        <Button type="button" onClick={handleCancel} 
+         className={buttonStyle}>
           Cancel
-        </button>
-        <button type="submit">Save Changes</button>
+        </Button>
+        <Button type="submit" className={buttonStyle3}>Save Changes</Button>
+        </div>
       </form>
-    </div>
+     
+    </Card>
+    </div> 
+  </div>  
   );
 };
 

@@ -18,7 +18,7 @@ const HomeBanner = () => {
           alt="logo"
           className="h-40 w-40"
         />
-          </div>
+          </div> 
     
 
         {/* <Navbar.Collapse className="mr-8">

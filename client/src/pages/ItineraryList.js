@@ -6,6 +6,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
+import { buttonStyle, buttonStyle2 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import HomeBanner from "../components/HomeBanner";
+
+
 const ItineraryList = () => {
   const [itineraries, setItineraries] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -73,7 +78,14 @@ const ItineraryList = () => {
   }, [username, userType]);
 
   if (loading) {
-    return <p>Loading itineraries...</p>;
+    return (
+      <div>
+      <HomeBanner />
+    
+       <p className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Loading itineraries...</p>
+      </div> 
+
+    );
   }
 
   if (error) {
@@ -82,7 +94,15 @@ const ItineraryList = () => {
 
   return (
     <div>
-      <h1>Itineraries</h1>
+      <HomeBanner />
+
+      <Link to="/home">
+      <Button
+               style={{ position: 'absolute', top: '30px', left: '10px' }}
+               className={buttonStyle}
+               >Back</Button>
+      </Link> 
+      <h1 className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Itineraries</h1>
 
       {userType === "tourGuide" && notifications.length > 0 && (
         <div>
@@ -121,14 +141,12 @@ const ItineraryList = () => {
             Create New Itinerary
           </button>
         )}
-        <Link to="/home">
-          <button>Back</button>
-        </Link>
+
       </div>
 
       <div className="itinerary-list">
         {itineraries.map((itinerary) => (
-          <div key={itinerary._id} className="itinerary-item-container">
+          <Card href="#" className="h-99 w-99 text-2xl mb-8" key={itinerary._id}>
             <ItineraryItem
               itinerary={itinerary}
               onDelete={(id) =>
@@ -148,9 +166,10 @@ const ItineraryList = () => {
               <div className="admin-actions">
                 <p>Created by: {itinerary.creator}</p>
                 <p>Email: {creatorEmails[itinerary.creator] || "Not available"}</p>
-                <p>Flagged: {itinerary.flagged}</p>
-                <button
-                  className="flag-button"
+                <p className="mb-8">Flagged: {itinerary.flagged}</p>
+                <Button
+                  
+                  className={buttonStyle}
                   onClick={() => {
                     setItineraries(
                       itineraries.map((it) =>
@@ -160,10 +179,10 @@ const ItineraryList = () => {
                   }}
                 >
                   Flag
-                </button>
+                </Button>
               </div>
             )}
-          </div>
+          </Card>
         ))}
       </div>
     </div>

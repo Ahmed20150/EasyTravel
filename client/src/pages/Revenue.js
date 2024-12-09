@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import { useCookies } from "react-cookie";
+
+import { buttonStyle, buttonStyle2,buttonStyle3 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import HomeBanner from "../components/HomeBanner";
+import { Link } from "react-router-dom";
+
 function Revenue() {
   const [cookies] = useCookies(["userType", "username"]); 
   const userType = cookies.userType; 
@@ -220,39 +226,6 @@ function Revenue() {
       setLoading(false);
     }
   };
-  
-
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    height: '100vh',
-    padding: '20px 0',
-    boxSizing: 'border-box',
-  };
-
-  const buttonContainerStyle = {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '20px',
-  };
-
-  const buttonStyle = {
-    backgroundColor: 'purple',
-    color: 'white',
-    fontSize: '20px',
-    padding: '15px 30px',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-  };
-
-  const buttonHoverStyle = {
-    backgroundColor: '#5e2f8a',
-  };
-
   const outputStyle = {
     marginTop: '40px',
     textAlign: 'center',
@@ -269,39 +242,30 @@ function Revenue() {
     backgroundColor: '#f9f9f9',
   };
 
-  const backButtonStyle = {
-    position: 'absolute',
-    top: '10px',
-    left: '10px',
-    padding: '10px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '16px',
-    borderRadius: '5px',
-  };
-
-
   return (
-    <div style={containerStyle}>
-       {/* Back Button */}
-       <button
-        style={backButtonStyle}
-        onClick={() => navigate("/home")}
-      >
-        Back
-      </button>
-      <div style={buttonContainerStyle}>
+
+
+
+    
+     <div >
+      
+      
+      <HomeBanner/>
+       <Link to="/home">
+      <Button
+               style={{ position: 'absolute', top: '30px', left: '10px' }}
+               className={buttonStyle}
+               >Back</Button>
+      </Link>
+      <div className="flex flex-col items-center justify-center mt-8" >
+      <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg ">
         {/* Show All Revenue Button */}
-        <button
-          style={buttonStyle}
-          onMouseOver={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
+        <Button
+          className={buttonStyle}
           onClick={handleShowAllRevenueClick}
         >
           Show All Revenue
-        </button>
+        </Button>
 
 
         {userType !== 'admin'  && userType !== 'seller' && (
@@ -337,15 +301,12 @@ function Revenue() {
           />
         )}
         {userType !== 'admin'  && userType !== 'seller' && (
-        <button
-          style={buttonStyle}
-          onMouseOver={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
+        <Button
           onClick={handleFilterClick}
-        >
+          className={buttonStyle3} >
           Filter
-        </button>)}
-      </div>
+        </Button>)}
+      
 
       {/* Render the filtered data */}
       {filterData.length > 0 && (
@@ -363,7 +324,7 @@ function Revenue() {
       
 
       {/* Show total revenue and individual revenues */}
-      <div style={outputStyle}>
+      {/* <Card href="#" className="w-full max-w-3xl text-3xl mt-8 p-8 shadow-lg "> */}
         {/* && userType !== 'advertiser' */}
       {userType !== 'seller' && (
          <p>Itinerary Total Revenue: ${it_totalRevenue.toFixed(2)}</p>
@@ -388,7 +349,7 @@ function Revenue() {
     </p>
      )}
 {(userType === 'admin' || userType === 'seller') && (
-  <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+  <Card href="#" className="w-full max-w-3xl mt-20 text-3xl p-8 shadow-lg " >
     {/* Filter Selection */}
     <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Filter Products</h2>
     
@@ -458,26 +419,14 @@ function Revenue() {
         />
       </div>
     )}
-
-    {/* Fetch Button */}
     <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-      <button
+      <Button
         onClick={fetchGiftItems}
-        style={{ 
-          padding: '10px 20px', 
-          backgroundColor: '#5e2f8a', 
-          color: '#fff', 
-          border: 'none', 
-          borderRadius: '4px', 
-          fontSize: '16px', 
-          cursor: 'pointer' 
-        }}
-        onMouseOver={(e) => (e.target.style.backgroundColor = '#5e2f8a')}
-        onMouseOut={(e) => (e.target.style.backgroundColor = 'purple')}
+        className={buttonStyle3}
         disabled={loading}
       >
         {loading ? 'Loading...' : 'Fetch Products'}
-      </button>
+      </Button>
     </div>
 
     {/* Error Handling */}
@@ -515,10 +464,10 @@ function Revenue() {
         </p>
       )}
     </div>
-  </div>
+  </Card>
 )}
-    
-      </div>
+      </Card >  
+    </div>
     </div>
   ) ;
 }
