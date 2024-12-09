@@ -164,8 +164,8 @@ const ExplorePage = () => {
 
   const filteredMuseumsByTags = selectedTags.length
     ? museums.filter((museum) =>
-        museum.tags.some((tag) => selectedTags.includes(tag))
-      )
+      museum.tags.some((tag) => selectedTags.includes(tag))
+    )
     : museums;
 
   const handleFilterChangeItineraries = (e) => {
@@ -456,7 +456,7 @@ const ExplorePage = () => {
   };
 
 
-  
+
 
   const handleWalletPurchase = async () => {
     try {
@@ -569,7 +569,7 @@ const ExplorePage = () => {
 
         await axios.post("http://localhost:3000/booking/createBooking", {
           touristUsername: username,
-          activityId: activity.data._id,
+          activityId: selectedItineraryId,
           bookingDate: selectedDate,
           bookingTime: selectedTime,
         });
@@ -600,8 +600,8 @@ const ExplorePage = () => {
     }
   };
 
-  
-  
+
+
   const handleCreditCardPurchase = async () => {
     const isOldEnough = await checkAge(username);
     if (!isOldEnough) {
@@ -679,11 +679,11 @@ const ExplorePage = () => {
       </Link>
 
       <Link to="/viewPastEvents">
-          <button>View Past Itineraries</button>
-        </Link>
-        <Link to="/viewUpcomingEvents">
-          <button>View Upcoming Itineraries</button>
-        </Link>
+        <button>View Past Itineraries</button>
+      </Link>
+      <Link to="/viewUpcomingEvents">
+        <button>View Upcoming Itineraries</button>
+      </Link>
 
       {/* Itineraries Filter Section */}
       <div className="filter-section">

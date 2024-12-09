@@ -88,7 +88,7 @@ const ActivitiesPage = () => {
     try {
       const response = await axios.get("http://localhost:3000/activities");
       const currentDate = new Date();
-      
+
       const filteredActivities = response.data
         .filter(activity => activity.flagged === "no")
         .filter(activity => new Date(activity.date) > currentDate)
@@ -127,20 +127,20 @@ const ActivitiesPage = () => {
           url: shareUrl
         });
         toast.success('Shared successfully!', {
-          
+
           autoClose: 3000,
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
         toast.success('Link copied to clipboard!', {
-        
+
           autoClose: 3000,
         });
       }
     } catch (error) {
       console.error('Error sharing:', error);
       toast.error('Failed to share', {
-        
+
         autoClose: 3000,
       });
     }
@@ -166,7 +166,7 @@ const ActivitiesPage = () => {
     // Search filter by title
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(activity => 
+      filtered = filtered.filter(activity =>
         activity.name?.toLowerCase().includes(searchLower) ||
         activity.category?.toLowerCase().includes(searchLower)
       );
@@ -174,7 +174,7 @@ const ActivitiesPage = () => {
 
     // Category filter
     if (selectedCategory !== "All Categories") {
-      filtered = filtered.filter(activity => 
+      filtered = filtered.filter(activity =>
         activity.category === selectedCategory
       );
     }
@@ -182,7 +182,7 @@ const ActivitiesPage = () => {
     // Rating filter
     if (selectedRating !== "All Ratings") {
       const minRating = parseFloat(selectedRating.replace("+", ""));
-      filtered = filtered.filter(activity => 
+      filtered = filtered.filter(activity =>
         parseFloat(activity.avgRating || 0) >= minRating
       );
     }
@@ -193,7 +193,7 @@ const ActivitiesPage = () => {
       const maxPrice = activity.price?.max || 0;
       // Show activities where either min or max price falls within the range
       return (minPrice >= priceRange[0] && minPrice <= priceRange[1]) ||
-             (maxPrice >= priceRange[0] && maxPrice <= priceRange[1]);
+        (maxPrice >= priceRange[0] && maxPrice <= priceRange[1]);
     });
 
     setFilteredActivities(filtered);
@@ -203,18 +203,18 @@ const ActivitiesPage = () => {
   const handlePriceRangeChange = (e) => {
     const maxPrice = parseInt(e.target.value);
     setPriceRange([0, maxPrice]);
-    
+
     // Convert the filtered price back to EUR for filtering
     const rate = exchangeRates[selectedCurrency];
     const maxPriceEUR = rate ? maxPrice / rate : maxPrice;
-    
+
     let filtered = [...activities];
     filtered = filtered.filter(activity => {
       const minPrice = activity.price?.min || 0;
       const maxPrice = activity.price?.max || 0;
       return (minPrice <= maxPriceEUR) || (maxPrice <= maxPriceEUR);
     });
-    
+
     setFilteredActivities(filtered);
   };
 
@@ -244,7 +244,7 @@ const ActivitiesPage = () => {
     setModalIsOpen(true);
     setPromoCode("");
     setDiscount(0);
-    
+
     try {
       const response = await axios.get(`http://localhost:3000/activities/${id}`);
       const activity = response.data;
@@ -278,7 +278,7 @@ const ActivitiesPage = () => {
     const username = Cookies.get("username");
     if (!username) {
       toast.error("Please log in to book an activity", {
-      
+
         autoClose: 3000,
       });
       return;
@@ -286,7 +286,7 @@ const ActivitiesPage = () => {
 
     if (!selectedDate || !selectedTime) {
       toast.error("Please select both date and time", {
-  
+
         autoClose: 3000,
       });
       return;
@@ -300,7 +300,7 @@ const ActivitiesPage = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Booking failed", {
-       
+
         autoClose: 3000,
       });
     }
@@ -312,10 +312,10 @@ const ActivitiesPage = () => {
       // Only fetch the specific activity that was updated
       if (selectedActivityId) {
         const response = await axios.get(`http://localhost:3000/activities/${selectedActivityId}`);
-        
+
         // Update the specific activity in the activities array
         setActivities(prevActivities => {
-          const updatedActivities = prevActivities.map(activity => 
+          const updatedActivities = prevActivities.map(activity =>
             activity._id === selectedActivityId ? { ...response.data } : activity
           );
           return updatedActivities;
@@ -323,7 +323,7 @@ const ActivitiesPage = () => {
 
         // Update filtered activities as well
         setFilteredActivities(prevFiltered => {
-          const updatedFiltered = prevFiltered.map(activity => 
+          const updatedFiltered = prevFiltered.map(activity =>
             activity._id === selectedActivityId ? { ...response.data } : activity
           );
           return updatedFiltered;
@@ -343,7 +343,7 @@ const ActivitiesPage = () => {
     try {
       const response = await axios.get("http://localhost:3000/activities");
       const currentDate = new Date();
-      
+
       const filteredActivities = response.data
         .filter(activity => activity.flagged === "no")
         .filter(activity => new Date(activity.date) > currentDate)
@@ -369,7 +369,7 @@ const ActivitiesPage = () => {
   const handleWalletBooking = async () => {
     try {
       const username = Cookies.get("username");
-      
+
       // Validate date selection
       const today = new Date();
       const selectedDateObj = new Date(selectedDate);
@@ -425,11 +425,11 @@ const ActivitiesPage = () => {
         });
 
         toast.success("🎉 Activity booked successfully! Check your email for confirmation.", {
-       
+
           autoClose: 5000,
-         
+
         });
-        
+
         await refreshAllData();
         closeModal();
       }
@@ -448,7 +448,7 @@ const ActivitiesPage = () => {
       const bookingStatus = bookingStatuses[activityId];
       if (!bookingStatus?.isBooked) {
         toast.error("No booking found", {
-       
+
           autoClose: 3000,
         });
         return;
@@ -461,24 +461,24 @@ const ActivitiesPage = () => {
 
       if (hoursUntilBooking < 48) {
         toast.error("Cannot unbook activities within 48 hours of the booking date", {
-         
+
           autoClose: 5000,
         });
         return;
       }
 
       await axios.delete(`http://localhost:3000/activityBooking/unbook/${bookingStatus.bookingId}`);
-      
+
       toast.success("Activity unbooked successfully!", {
-       
+
         autoClose: 3000,
       });
-      
+
       await refreshAllData();
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to unbook activity";
       toast.error(errorMessage, {
-       
+
         autoClose: 3000,
       });
     }
@@ -488,7 +488,7 @@ const ActivitiesPage = () => {
   const handleCreditCardBooking = async () => {
     try {
       const username = Cookies.get("username");
-      
+
       // Validate date selection
       const today = new Date();
       const selectedDateObj = new Date(selectedDate);
@@ -525,7 +525,7 @@ const ActivitiesPage = () => {
 
       if (bookingResponse.status === 201) {
         await refreshAllData();
-        
+
         const response = await axios.post(
           "http://localhost:3000/payment/create-checkout-session",
           {
@@ -549,7 +549,7 @@ const ActivitiesPage = () => {
     } catch (error) {
       console.error("Error during credit card booking:", error);
       toast.error(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         "An error occurred during booking. Please try again."
       );
     }
@@ -566,7 +566,7 @@ const ActivitiesPage = () => {
 
     try {
       const promo = promoCodes.find((promo) => promo.promoCode === enteredPromoCode);
-      
+
       if (promo) {
         const currentDate = new Date();
         const expiryDate = new Date(promo.expiryDate);
@@ -576,25 +576,25 @@ const ActivitiesPage = () => {
           setDiscountedPrice(newPrice);
           setDiscount(promo.discount);
           toast.success(`Promo code applied! ${promo.discount}% discount. New price: ${getCurrencySymbol(selectedCurrency)}${convertPrice(newPrice)}`, {
-            
+
             autoClose: 5000,
           });
         } else {
           toast.error("Promo code has expired", {
-           
+
             autoClose: 3000,
           });
         }
       } else {
         toast.error("Invalid promo code", {
-          
+
           autoClose: 3000,
         });
       }
     } catch (error) {
       console.error("Error validating promo code:", error);
       toast.error("Error validating promo code", {
-       
+
         autoClose: 3000,
       });
     }
@@ -664,17 +664,17 @@ const ActivitiesPage = () => {
               onClick={resetFilters}
               className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-md transition-colors border border-gray-200"
             >
-              <svg 
-                className="w-4 h-4" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
               Reset All Filters
@@ -695,17 +695,17 @@ const ActivitiesPage = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-                <svg 
-                  className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
               </div>
@@ -728,17 +728,17 @@ const ActivitiesPage = () => {
                     </option>
                   ))}
                 </select>
-                <svg 
-                  className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    d="M19 9l-7 7-7-7" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
                   />
                 </svg>
               </div>
@@ -761,17 +761,17 @@ const ActivitiesPage = () => {
                     </option>
                   ))}
                 </select>
-                <svg 
-                  className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="absolute right-3 top-2.5 w-5 h-5 text-gray-400 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    d="M19 9l-7 7-7-7" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
                   />
                 </svg>
               </div>
@@ -803,7 +803,7 @@ const ActivitiesPage = () => {
             {searchTerm && (
               <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
                 Search: {searchTerm}
-                <button 
+                <button
                   onClick={() => setSearchTerm("")}
                   className="ml-1 hover:text-blue-900"
                 >
@@ -814,7 +814,7 @@ const ActivitiesPage = () => {
             {selectedCategory !== "All Categories" && (
               <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
                 Category: {selectedCategory}
-                <button 
+                <button
                   onClick={() => setSelectedCategory("All Categories")}
                   className="ml-1 hover:text-blue-900"
                 >
@@ -825,7 +825,7 @@ const ActivitiesPage = () => {
             {selectedRating !== "All Ratings" && (
               <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
                 Rating: {selectedRating}
-                <button 
+                <button
                   onClick={() => setSelectedRating("All Ratings")}
                   className="ml-1 hover:text-blue-900"
                 >
@@ -878,7 +878,7 @@ const ActivitiesPage = () => {
                   </h3>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {activity.tags?.map((tag, index) => (
-                      <span 
+                      <span
                         key={index}
                         className="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-full"
                       >
@@ -932,7 +932,7 @@ const ActivitiesPage = () => {
                           <div className="text-green-600 text-sm mt-1">
                             <span className="flex items-center gap-1">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               {activity.specialDiscounts}% discount available
@@ -941,22 +941,21 @@ const ActivitiesPage = () => {
                         )}
                       </div>
                     </div>
-                    <button 
-                      onClick={() => bookingStatuses[activity._id]?.isBooked 
+                    <button
+                      onClick={() => bookingStatuses[activity._id]?.isBooked
                         ? handleUnbook(activity._id)
                         : openModal(activity._id)
                       }
-                      className={`px-4 py-2 rounded-md transition-colors ${
-                        !activity.isBookingOpen 
-                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : bookingStatuses[activity._id]?.isBooked
-                            ? "bg-red-500 text-white hover:bg-red-600"
-                            : "bg-black text-white hover:bg-gray-800"
-                      }`}
+                      className={`px-4 py-2 rounded-md transition-colors ${!activity.isBookingOpen
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : bookingStatuses[activity._id]?.isBooked
+                          ? "bg-red-500 text-white hover:bg-red-600"
+                          : "bg-black text-white hover:bg-gray-800"
+                        }`}
                       disabled={!activity.isBookingOpen}
                     >
-                      {!activity.isBookingOpen 
-                        ? "Fully Booked" 
+                      {!activity.isBookingOpen
+                        ? "Fully Booked"
                         : bookingStatuses[activity._id]?.isBooked
                           ? "Unbook Activity"
                           : "Book Now"
@@ -1012,7 +1011,7 @@ const ActivitiesPage = () => {
                         key={index}
                         value={date}
                         control={
-                          <Radio 
+                          <Radio
                             sx={{
                               '&.Mui-checked': {
                                 color: '#3B82F6',
@@ -1052,7 +1051,7 @@ const ActivitiesPage = () => {
                         key={index}
                         value={time}
                         control={
-                          <Radio 
+                          <Radio
                             sx={{
                               '&.Mui-checked': {
                                 color: '#3B82F6',
@@ -1133,7 +1132,7 @@ const ActivitiesPage = () => {
                 Book with Credit Card
               </button>
             </div>
-            
+
             <button
               onClick={closeModal}
               className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
