@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MuseumCard from "../components/museumCard";
-import AddMuseumForm from "../components/AddMuseumForm";
 import "../css/museumList.css"; // Import CSS styles
 import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -45,7 +44,35 @@ const MuseumsList = () => {
   return (
     <div className="museums-container">
       <h1 className="title">Museums and Historical Places</h1>
-      <AddMuseumForm username={username} refreshMuseums={fetchMuseums} />
+
+      {/* Add New Museum Button */}
+      <div
+  style={{
+    display: 'flex',
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'flex-start', // Align to the top
+    marginTop: '20px', // Add space from the top
+  }}
+>
+  <button
+    className={buttonStyle}
+    style={{
+      marginBottom: '20px',
+      padding: '10px 20px',
+      backgroundColor: '#000', // Black background
+      color: '#fff', // White text
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer',
+    }}
+    onClick={() => navigate('/add-museum')}
+  >
+    Add New Museum
+  </button>
+</div>
+
+
+      {/* Loading Indicator */}
       {loading ? (
         <div className="loader">Loading...</div>
       ) : (
@@ -60,13 +87,15 @@ const MuseumsList = () => {
           ))}
         </div>
       )}
-      
-      <Button className={buttonStyle}
+
+      {/* Back to Home Button */}
+      <button
+        className={buttonStyle}
         style={{ position: 'absolute', top: '10px', left: '10px' }}
         onClick={() => navigate('/home')}
       >
         Back to Home Page
-      </Button>
+      </button>
     </div>
   );
 };

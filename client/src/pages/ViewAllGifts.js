@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
 const ViewAllGifts = () => {
   const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,9 +46,11 @@ const ViewAllGifts = () => {
   return (
     <div style={{ padding: '20px' }}>
        <Link to="/home">
-          <button>Back</button>
-        </Link>
-      <h2>All Gifts</h2>
+        <button className={`${buttonStyle} mt-4`}>Back</button>
+      </Link>
+      {/* All Gifts Heading */}
+    <h2 style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '20px' }}>All Gifts</h2>
+
 
       {loading && <p>Loading gifts...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}

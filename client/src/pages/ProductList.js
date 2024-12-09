@@ -602,62 +602,96 @@ const handlePromoCodeCheck = () => {
       )}
   
       {/* Display Gifts */}
-      {loadingGifts ? (
-        <div className={`${fadeIn} text-center mt-4`}>Loading Gifts/Products...</div>
-      ) : filteredGifts.length > 0 ? (
-        <div className="gift-items-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {filteredGifts.map((gift) => (
-            <div key={gift._id} className={cardStyle}>
-              <ViewGiftItemCard
-                giftItem={gift}
-                userType={userType}
-                convertPrice={convertPrice(applyPromoDiscount(gift.price))}
-                selectedCurrency={selectedCurrency}
-              />
-              {(userType === "admin" || userType === "seller") && (
-                <div className="admin-buttons mt-2">
-                  <button
-                    onClick={() => setEditingId(gift._id) || setFormData(gift)}
-                    className={`${buttonStyle} mr-2 px-2 py-1`}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteGift(gift._id)}
-                    className={`${buttonStyle} px-2 py-1`}
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
-              {userType === "tourist" && (
-                <div className="buttons mt-2">
-                  <button
-                    onClick={() => openModal(gift._id)}
-                    className={`${buttonStyle} mr-2 px-2 py-1`}
-                  >
-                    Buy
-                  </button>
-                  <button
-                    onClick={() => handleAddToWishlist(gift.name)}
-                    className={`${buttonStyle} mr-2 px-2 py-1`}
-                  >
-                    Add to Wishlist
-                  </button>
-                  <button
-                    onClick={() => handleAddToCart(gift.name)}
-                    className={`${buttonStyle} px-2 py-1`}
-                  >
-                    Add to cart
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+<div className="gift-container mt-6">
+  {loadingGifts ? (
+    <div className="fade-in text-center text-gray-600">Loading Gifts/Products...</div>
+  ) : filteredGifts.length > 0 ? (
+    <div className="gift-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+      {filteredGifts.map((gift) => (
+        <div key={gift._id} className="gift-card rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          {/* Image Section */}
+          <div className="gift-image-container w-full h-100 bg-gray-100">
+            <img
+              src={gift.image || "default-image-url.jpg"}
+              alt={gift.name}
+              className="gift-image w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Content Section */}
+          <div className="gift-content p-4">
+            {/* Name */}
+            <h3 className="gift-title text-lg font-bold text-gray-800">{gift.name}</h3>
+            
+            {/* Description */}
+            <p className="gift-description text-gray-600 mt-2">{gift.description}</p>
+
+            {/* Quantity */}
+            <p className="gift-quantity text-gray-600 mt-2">
+              <span className="font-bold">Quantity:</span> {gift.quantity || "N/A"}
+            </p>
+
+            {/* Creator */}
+            <p className="gift-creator text-gray-600 mt-2">
+              <span className="font-bold">Creator:</span> {gift.seller || "Unknown"}
+            </p>
+
+            <p className="gift-price text-primary text-lg font-semibold mt-2">
+              {convertPrice(applyPromoDiscount(gift.price))} {selectedCurrency}
+            </p>
+
+            
+
+            {/* Admin or Seller Actions */}
+            {(userType === "admin" || userType === "seller") && (
+              <div className="admin-actions flex justify-between mt-4">
+                <button
+                  onClick={() => setEditingId(gift._id) || setFormData(gift)}
+                  className="btn-edit px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteGift(gift._id)}
+                  className="btn-delete px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+
+            {/* Tourist Actions */}
+            {userType === "tourist" && (
+              <div className="tourist-actions flex flex-col space-y-3 mt-4">
+                <button
+                  onClick={() => openModal(gift._id)}
+                  className="btn-buy px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
+                >
+                  Buy
+                </button>
+                <button
+                  onClick={() => handleAddToWishlist(gift.name)}
+                  className="btn-wishlist px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600"
+                >
+                  Add to Wishlist
+                </button>
+                <button
+                  onClick={() => handleAddToCart(gift.name)}
+                  className="btn-cart px-4 py-2 rounded bg-purple-500 text-white hover:bg-purple-600"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="text-center mt-4">No products found.</div>
-      )}
+      ))}
+    </div>
+  ) : (
+    <div className="text-center text-gray-600">No products found.</div>
+  )}
+</div>
+
     
   
 
