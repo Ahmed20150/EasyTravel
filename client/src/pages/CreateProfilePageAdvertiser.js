@@ -125,7 +125,7 @@ const CreateProfilePageAdvertiser = () => {
 
   return (
     <div>
-      <h2>{isEditingProfile ? 'Edit Advertiser Profile' : 'Create Advertiser Profile'}</h2>
+      {/* <h2>{isEditingProfile ? 'Edit Advertiser Profile' : 'Create Advertiser Profile'}</h2> */}
       <ProfileFormAdvertiser
         formData={formData}
         handleChange={handleChange}

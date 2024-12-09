@@ -87,7 +87,7 @@ const CreateProfilePageSeller = () => {
   
   return (
     <div>
-      <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2> 
+      {/* <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2>  */}
       <ProfileFormSeller
         formData={formData}
         handleChange={handleChange}

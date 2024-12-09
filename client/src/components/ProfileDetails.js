@@ -99,7 +99,7 @@ const ProfileDetails = ({ profile, onEditClick }) => {
           Edit Profile
         </Button>
         <Button
-          className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+          className={`${buttonStyle} w-40 py-3 text-lg rounded-lg bg-red-500`}
           onClick={() => handleRequest(profile.username, userType)}
         >
           Request Delete
