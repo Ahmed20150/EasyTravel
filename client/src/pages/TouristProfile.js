@@ -324,35 +324,154 @@ const TouristProfile = () => {
             <div>No tourist data available</div>
           )
         ) : (
-          <div>
-            <h1>{tourist.username}'s Profile</h1>
-            <p>Username: {tourist.username}</p>
-            <p>Email: {tourist.email}</p>
-            <p>Mobile Number: {tourist.mobileNumber}</p>
-            <p>Nationality: {tourist.nationality}</p>
-            <p>
-              Date of Birth:{" "}
-              {new Date(tourist.dateOfBirth).toLocaleDateString()}
-            </p>
-            <p>Occupation: {tourist.occupation}</p>
-            <p>Wallet: {tourist.wallet}</p>
-            <button onClick={() => setIsEditing(true)}>Edit Profile</button>
-            <button onClick={() => setIsPreferencesEditing(true)}>
-              Edit Preferences
-            </button>{" "}
-            {/* Edit preferences button */}
+      <div>
+        <div>
+          <h1>{tourist.username}'s Profile</h1>
+          <p><strong>Username:</strong> {tourist.username}</p>
+          <p><strong>Email:</strong> {tourist.email}</p>
+          <p><strong>Mobile Number:</strong> {tourist.mobileNumber}</p>
+          <p><strong>Nationality:</strong> {tourist.nationality}</p>
+          <p>
+            <strong>Date of Birth:</strong>{" "}
+            {new Date(tourist.dateOfBirth).toLocaleDateString()}
+          </p>
+          <p><strong>Occupation:</strong> {tourist.occupation}</p>
+          <p><strong>Wallet:</strong> {tourist.wallet}</p>
+          <div className="flex flex-wrap gap-4 mt-4">
             <button
-              className="delete-button"
-              onClick={() => {
-                handleRequest(tourist.username, userType);
-              }} // Pass the correct user details
+              onClick={() => setIsEditing(true)}
+              className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              Edit Profile
+            </button>
+            <button
+              onClick={() => setIsPreferencesEditing(true)}
+              className="py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600"
+            >
+              Edit Preferences
+            </button>
+            <button
+              className="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              onClick={() => handleRequest(tourist.username, userType)}
             >
               Request Delete
             </button>
             <Link to="/home">
-              <button>Back</button>
+              <button className="py-2 px-4 bg-gray-300 rounded-lg hover:bg-gray-400">
+                Back
+              </button>
             </Link>
           </div>
+        </div>
+
+        {isPreferencesEditing && tourist && (
+          <PreferenceSelector
+            username={tourist.username}
+            currentPreferences={tourist.preferences}
+            onPreferencesUpdate={handlePreferencesUpdate}
+          />
+        )}
+
+        <div className="wallet-points-section">
+          <h2 className="text-2xl font-bold mt-6">Wallet and Points</h2>
+          <p><strong>Wallet:</strong> {tourist.wallet}</p>
+          <p><strong>Points:</strong> {tourist.currentPoints}</p>
+          <button
+            onClick={handleRedeemPoints}
+            className="mt-4 py-2 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+          >
+            Redeem Points
+          </button>
+        </div>
+
+        <h2 className="text-2xl font-bold mt-6">Bookmarked Events:</h2>
+        <div className="itinerary-list">
+          {itineraries.length > 0 ? (
+            itineraries.map((itinerary) => (
+              <ItineraryCard
+                key={itinerary._id}
+                itinerary={itinerary}
+                onEdit={() => console.log("Edit", itinerary._id)}
+                onDelete={() => console.log("Delete", itinerary._id)}
+                userType={userType}
+                onBook={() => console.log("Book", itinerary._id)}
+                isBooked={false}
+                onUnbook={() => console.log("Unbook", itinerary._id)}
+                onActivationToggle={() =>
+                  console.log("Toggle Activation", itinerary._id)
+                }
+                onBookmark={handleBookmark}
+                isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                isProfilePage={isProfilePage}
+              />
+            ))
+          ) : (
+            <p>No bookmarked events</p>
+          )}
+        </div>
+
+        <h2 className="text-2xl font-bold mt-6">Notifications (Bookmarked, Changed, Activated):</h2>
+        <div className="itinerary-list">
+          {filteredBookmarkedItineraries.length > 0 ? (
+            filteredBookmarkedItineraries.map((eventId) => {
+              const itinerary = itineraries.find((item) => item._id === eventId);
+              return itinerary ? (
+                <ItineraryCard
+                  key={itinerary._id}
+                  itinerary={itinerary}
+                  onBookmark={handleBookmark}
+                  isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                  isProfilePage={isProfilePage}
+                />
+              ) : null;
+            })
+          ) : (
+            <p>
+              No bookmarked itineraries with 'changed' and 'activated' status
+            </p>
+          )}
+        </div>
+
+        <h2 className="text-2xl font-bold mt-6">Booked Itineraries (Within 2 Days):</h2>
+        <div className="itinerary-list">
+          {bookedItineraries.length > 0 ? (
+            bookedItineraries.map((itinerary) => (
+              <ItineraryCard
+                key={itinerary._id}
+                itinerary={itinerary}
+                onBookmark={handleBookmark}
+                isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                isProfilePage={isProfilePage}
+              />
+            ))
+          ) : (
+            <p>No booked itineraries within the next 2 days</p>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold mt-6">Promo Codes:</h2>
+          {filteredPromoCodes.length > 0 ? (
+            <ul>
+              {filteredPromoCodes.map((promo, index) => (
+                <li key={index} className="mb-4">
+                  <strong>Promo Code:</strong> {promo.promoCode} <br />
+                  <strong>Discount:</strong> {promo.discount}% <br />
+                  <strong>Expires on:</strong> {new Date(promo.expiryDate).toLocaleDateString()} <br />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No valid promo codes available</p>
+          )}
+        </div>
+
+        <div className="user-level-badge mt-6">
+          {userLevel === 1 && <img src={level1Image} alt="Level 1 Badge" />}
+          {userLevel === 2 && <img src={level2Image} alt="Level 2 Badge" />}
+          {userLevel === 3 && <img src={level3Image} alt="Level 3 Badge" />}
+        </div>
+      </div>
         )}
 
         {/* Show the PreferenceSelector component when editing preferences */}
