@@ -164,105 +164,109 @@ const ItineraryList = () => {
   }
 
   return (
-    <div className={`relative flex flex-col justify-center items-center h-screen bg-gray-100 ${fadeIn} p-6`}>
+    <div className={`relative flex flex-col items-center h-screen bg-gray-100 ${fadeIn} p-6 overflow-auto`}>
       <button
         className={`${buttonStyle} absolute top-4 left-4 py-2 px-4 rounded-lg`}
         onClick={() => navigate('/home')}
       >
         Back to Home Page
       </button>
-      <form
-        className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg"
-      >
-      <h1 className="text-3xl font-semibold mb-6 text-center">Itineraries</h1>
-
-      {/* Notifications */}
-      {userType === "tourGuide" && notifications.length > 0 && (
-        <div className="notifications mb-6 p-4 bg-white shadow-lg rounded-lg">
-          <div className="notifications-header flex justify-between items-center mb-4">
-            <h2 className="text-xl">Notifications</h2>
-            {/* Leave as original logic, remove setShowNotifications */}
+      <form className="w-full max-w-6xl p-8 bg-white shadow-lg rounded-lg">
+        <h1 className="text-3xl font-semibold mb-6 text-center">Itineraries</h1>
+  
+        {/* Notifications */}
+        {userType === "tourGuide" && notifications.length > 0 && (
+          <div className="notifications mb-6 p-4 bg-white shadow-lg rounded-lg">
+            <div className="notifications-header flex justify-between items-center mb-4">
+              <h2 className="text-xl">Notifications</h2>
+            </div>
+            <ul className="space-y-2">
+              {notifications.map((notification) => (
+                <li key={notification._id} className="text-lg">{notification.message}</li>
+              ))}
+            </ul>
           </div>
-          <ul className="space-y-2">
-            {notifications.map((notification) => (
-              <li key={notification._id} className="text-lg">{notification.message}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Create New Itinerary Button */}
-      <div className="button-container mb-6 flex justify-center">
-        {userType !== "admin" && (
-          <Button
-            className={`${buttonStyle} w-100 py-3 text-lg rounded-lg`}
-            onClick={handleCreate}
-          >
-            Create New Itinerary
-          </Button>
         )}
-      </div>
-
-      {/* Itinerary List */}
-      <div className="itinerary-list w-full max-w-4xl">
-        {itineraries.map((itinerary) => (
-          <Card key={itinerary._id} className="mb-6 p-6 shadow-lg rounded-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">{itinerary.name}</h3>
-              <span className={`badge ${itinerary.activated ? 'bg-green-500' : 'bg-gray-500'} text-white py-1 px-3 rounded`}>
-                {itinerary.activated ? "Active" : "Inactive"}
-              </span>
-            </div>
-            <div className="text-gray-700 mb-4">
-              <p><strong>Creator:</strong> {itinerary.creator}</p>
-              <p><strong>Details:</strong></p>
-              <p>- Timeline: {itinerary.timeline}</p>
-              <p>- Language: {itinerary.languageOfTour}</p>
-              <p>- Price: {itinerary.priceOfTour}</p>
-
-            </div>
-
-            {/* Admin Actions */}
-            {userType === "admin" && (
-              <div className="admin-actions space-y-4">
-                <p>Email: {creatorEmails[itinerary.creator] || "Not available"}</p>
-                <p>Flagged: {itinerary.flagged}</p>
-                <Button
-                  className="flag-button bg-red-500 text-white"
-                  onClick={() => handleFlag(itinerary._id, itinerary.creator)}
+  
+        {/* Create New Itinerary Button */}
+        <div className="button-container mb-6 flex justify-center">
+          {userType !== "admin" && (
+            <Button
+              className={`${buttonStyle} w-100 py-3 text-lg rounded-lg`}
+              onClick={handleCreate}
+            >
+              Create New Itinerary
+            </Button>
+          )}
+        </div>
+  
+        {/* Itinerary List */}
+        <div className="itinerary-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {itineraries.map((itinerary) => (
+            <Card key={itinerary._id} className="p-6 shadow-lg rounded-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">{itinerary.name}</h3>
+                <span
+                  className={`badge ${
+                    itinerary.activated ? 'bg-green-500' : 'bg-gray-500'
+                  } text-white py-1 px-3 rounded`}
                 >
-                  Flag
+                  {itinerary.activated ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+              <div className="text-gray-700 mb-4">
+                <p>
+                  <strong>Creator:</strong> {itinerary.creator}
+                </p>
+                <p>
+                  <strong>Details:</strong>
+                </p>
+                <p>- Timeline: {itinerary.timeline}</p>
+                <p>- Language: {itinerary.languageOfTour}</p>
+                <p>- Price: {itinerary.priceOfTour}</p>
+              </div>
+  
+              {/* Admin Actions */}
+              {userType === 'admin' && (
+                <div className="admin-actions space-y-4">
+                  <p>Email: {creatorEmails[itinerary.creator] || 'Not available'}</p>
+                  <p>Flagged: {itinerary.flagged}</p>
+                  <Button
+                    className="flag-button bg-red-500 text-white"
+                    onClick={() => handleFlag(itinerary._id, itinerary.creator)}
+                  >
+                    Flag
+                  </Button>
+                </div>
+              )}
+  
+              {/* User Actions */}
+              <div className="flex space-x-4 mt-6">
+                <Button
+                  className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+                  onClick={() => handleEdit(itinerary._id)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+                  onClick={() => handleDelete(itinerary._id)}
+                >
+                  Delete
+                </Button>
+                <Button
+                  className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
+                  onClick={() => handleToggleActivation(itinerary._id)}
+                >
+                  {itinerary.activated ? 'Deactivate' : 'Activate'}
                 </Button>
               </div>
-            )}
-
-            {/* User Actions */}
-            <div className="flex space-x-4 mt-6">
-              <Button
-                className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
-                onClick={() => handleEdit(itinerary._id)}
-              >
-                Edit
-              </Button>
-              <Button
-                className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
-                onClick={() => handleDelete(itinerary._id)}
-              >
-                Delete
-              </Button>
-              <Button
-                className={`${buttonStyle} w-40 py-3 text-lg rounded-lg`}
-                onClick={() => handleToggleActivation(itinerary._id)}
-              >
-                {itinerary.activated ? "Deactivate" : "Activate"}
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
       </form>
     </div>
   );
 };
-
-export default ItineraryList;
+  
+  export default ItineraryList;
