@@ -13,183 +13,7 @@ import { useCookies } from "react-cookie";
 
 Modal.setAppElement("#root");
 
-// Sample data for random generation
-const activityTypes = {
-  "Adventure": {
-    titles: [
-      "Desert Safari Experience",
-      "Mountain Hiking Adventure",
-      "Rock Climbing Expedition",
-      "Camel Trek Journey",
-      "Dune Buggy Adventure",
-      "Scuba Diving Discovery",
-      "Zip Line Adventure",
-      "White Water Rafting",
-      "Paragliding Experience",
-      "Cave Exploration"
-    ],
-    descriptions: [
-      "Experience the thrill of dune bashing, camel rides, and a traditional desert evening with barbecue and cultural performances.",
-      "Challenge yourself with a guided trek through scenic mountain trails offering breathtaking panoramic views.",
-      "Scale natural rock formations under expert guidance with all safety equipment provided.",
-      "Journey through the desert on camelback, experiencing traditional Bedouin lifestyle.",
-      "Race through desert dunes in powerful dune buggies for an adrenaline-pumping experience.",
-      "Discover vibrant marine life and coral reefs in crystal clear waters.",
-      "Soar through the air on our professional zip line course with stunning views.",
-      "Navigate exciting rapids with experienced guides in beautiful river settings.",
-      "Take to the skies with a tandem paragliding flight over spectacular landscapes.",
-      "Venture into mysterious caves with professional spelunking equipment."
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1542401886-65d6c61db217",
-      "https://images.unsplash.com/photo-1551632811-561732d1e306",
-      "https://images.unsplash.com/photo-1522163182402-834f871fd851",
-      "https://images.unsplash.com/photo-1580674684081-7617fbf3d745",
-      "https://images.unsplash.com/photo-1586375300773-8384e3e4916f",
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5",
-      "https://images.unsplash.com/photo-1622473590773-f588134b6ce7",
-      "https://images.unsplash.com/photo-1530866495561-96f0fb1d8691",
-      "https://images.unsplash.com/photo-1503264116251-35a269479413",
-      "https://images.unsplash.com/photo-1504391039613-b8c6c4c04f91"
-    ]
-  },
-  "Photography": {
-    titles: [
-      "Wildlife Photography Tour",
-      "City Lights Photo Walk",
-      "Landscape Photography Workshop",
-      "Street Photography Adventure",
-      "Sunset Photography Session",
-      "Architecture Photo Tour",
-      "Portrait Photography Class",
-      "Night Sky Photography",
-      "Food Photography Workshop",
-      "Nature Macro Photography"
-    ],
-    descriptions: [
-      "Capture stunning wildlife photos in their natural habitat with professional guidance.",
-      "Learn night photography techniques while exploring the city's most photogenic spots.",
-      "Master landscape photography in breathtaking natural settings.",
-      "Document urban life and culture through street photography techniques.",
-      "Capture the perfect golden hour shots at scenic locations.",
-      "Photograph historic and modern architecture with expert composition tips.",
-      "Learn professional portrait photography techniques with live models.",
-      "Photograph stars, planets, and the Milky Way with specialized equipment.",
-      "Master the art of food photography for stunning culinary shots.",
-      "Discover the tiny world of macro photography in nature settings."
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1520390138845-fd2d229dd553",
-      "https://images.unsplash.com/photo-1542332213-9b5a5a3fad35",
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-      "https://images.unsplash.com/photo-1520974735549-3f0d0d2e7272",
-      "https://images.unsplash.com/photo-1506744476757-2fa02eda7d51",
-      "https://images.unsplash.com/photo-1616578738046-8d6bbb4ee28e",
-      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e",
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba",
-      "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f",
-      "https://images.unsplash.com/photo-1550159930-40066082a4fc"
-    ]
-  },
-  "Cultural": {
-    titles: [
-      "Traditional Cooking Class",
-      "Historical Walking Tour",
-      "Local Art Workshop",
-      "Traditional Dance Class",
-      "Cultural Heritage Tour",
-      "Tea Ceremony Experience",
-      "Pottery Making Workshop",
-      "Local Market Tour",
-      "Traditional Music Session",
-      "Textile Weaving Class"
-    ],
-    descriptions: [
-      "Learn authentic local recipes and cooking techniques from expert chefs.",
-      "Explore historic sites and hidden gems with knowledgeable local guides.",
-      "Create traditional art pieces using authentic local techniques.",
-      "Learn traditional dance moves and their cultural significance.",
-      "Discover local heritage sites and their fascinating histories.",
-      "Experience the ancient art of tea ceremony with traditional masters.",
-      "Create your own pottery pieces using traditional methods.",
-      "Explore local markets and learn about traditional ingredients.",
-      "Learn to play traditional instruments and understand local music.",
-      "Master traditional weaving techniques on authentic looms."
-    ],
-    images: [
-      "https://images.unsplash.com/photo-1507048331197-7d4ac70811cf",
-      "https://images.unsplash.com/photo-1467377791767-c929b5dc9a23",
-      "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b",
-      "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4",
-      "https://images.unsplash.com/photo-1577083552431-6e5fd01988ec",
-      "https://images.unsplash.com/photo-1545579133-99bb5ab189bd",
-      "https://images.unsplash.com/photo-1532570204726-d530e9f9c886",
-      "https://images.unsplash.com/photo-1555507036-ab1f4038808a",
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d",
-      "https://images.unsplash.com/photo-1529074963764-98f42f7254b1"
-    ]
-  }
-};
-
-// Add this function to generate random activity data
-const generateRandomActivity = (category) => {
-  const categoryData = activityTypes[category] || activityTypes["Cultural"];
-  const randomIndex = Math.floor(Math.random() * categoryData.titles.length);
-  
-  return {
-    name: categoryData.titles[randomIndex],
-    description: categoryData.descriptions[randomIndex],
-    image: categoryData.images[randomIndex]
-  };
-};
-
-// Keep the activityTypes for generating titles and descriptions
-const activityEnhancements = {
-  "Adventure": [
-    {
-      titlePrefix: ["Thrilling", "Exciting", "Epic", "Ultimate"],
-      descriptionTemplate: "Experience the thrill of {activity} with expert guides. Perfect for adventure seekers looking for an unforgettable experience."
-    }
-  ],
-  "Photography": [
-    {
-      titlePrefix: ["Professional", "Scenic", "Artistic", "Creative"],
-      descriptionTemplate: "Capture stunning moments during this {activity} session. Perfect for both beginners and experienced photographers."
-    }
-  ],
-  "Cultural": [
-    {
-      titlePrefix: ["Traditional", "Authentic", "Local", "Heritage"],
-      descriptionTemplate: "Immerse yourself in the culture through this {activity} experience. Learn about local traditions and customs."
-    }
-  ],
-  "Default": [
-    {
-      titlePrefix: ["Amazing", "Wonderful", "Fantastic", "Memorable"],
-      descriptionTemplate: "Join us for an incredible {activity} experience that you'll never forget."
-    }
-  ]
-};
-
-const enhanceActivity = (activity) => {
-  const category = activity.category || "Default";
-  const enhancement = activityEnhancements[category] || activityEnhancements["Default"];
-  const { titlePrefix, descriptionTemplate } = enhancement[0];
-
-  // Generate random title prefix
-  const randomPrefix = titlePrefix[Math.floor(Math.random() * titlePrefix.length)];
-  const enhancedTitle = `${randomPrefix} ${activity.name}`;
-
-  // Generate description
-  const enhancedDescription = descriptionTemplate.replace("{activity}", activity.name);
-
-  return {
-    ...activity,
-    name: enhancedTitle,
-    description: activity.description || enhancedDescription,
-    rating: activity.rating || (Math.random() * (5 - 4) + 4).toFixed(1)
-  };
-};
+const DEFAULT_ACTIVITY_IMAGE = "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=749&auto=format&fit=crop";
 
 const ActivitiesPage = () => {
   const [activities, setActivities] = useState([]);
@@ -203,11 +27,8 @@ const ActivitiesPage = () => {
   const [selectedRating, setSelectedRating] = useState("All Ratings");
   const [priceRange, setPriceRange] = useState([0, 200]); // Example range in EUR
 
-  const categories = [
-    "All Categories",
-    ...Object.keys(activityTypes),
-    "Outdoor"
-  ];
+  const [categories, setCategories] = useState([]);
+
   const ratings = ["All Ratings", "4.5+", "4.0+", "3.5+", "3.0+"];
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -227,8 +48,20 @@ const ActivitiesPage = () => {
   // Add new state for booked activities
   const [bookedActivities, setBookedActivities] = useState([]);
 
+  // Add these new states
+  const [bookingStatuses, setBookingStatuses] = useState({});
+
+  // Add these new states
+  const [promoCodes, setPromoCodes] = useState([]);
+  const [enteredPromoCode, setEnteredPromoCode] = useState("");
+  const [discountedPrice, setDiscountedPrice] = useState(null);
+
   useEffect(() => {
     fetchActivities();
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
   // Add function to fetch user's booked activities
@@ -256,34 +89,31 @@ const ActivitiesPage = () => {
       const response = await axios.get("http://localhost:3000/activities");
       const currentDate = new Date();
       
-      const enhancedActivities = response.data
+      const filteredActivities = response.data
         .filter(activity => activity.flagged === "no")
         .filter(activity => new Date(activity.date) > currentDate)
-        .map(activity => {
-          if (!activity.name || !activity.image || !activity.description) {
-            const randomData = generateRandomActivity(activity.category);
-            return {
-              ...activity,
-              name: activity.name || randomData.name,
-              description: activity.description || randomData.description,
-              image: activity.image || randomData.image,
-              rating: activity.avgRating || "N/A"
-            };
-          }
-          return {
-            ...activity,
-            rating: activity.avgRating || "N/A"
-          };
-        });
+        .map(activity => ({
+          ...activity,
+          rating: activity.avgRating || "N/A"
+        }));
 
-      console.log("Enhanced activities:", enhancedActivities);
-      setActivities(enhancedActivities);
-      setFilteredActivities(enhancedActivities);
+      setActivities(filteredActivities);
+      setFilteredActivities(filteredActivities);
     } catch (error) {
       console.error("Error fetching activities:", error);
       toast.error("Failed to load activities");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/categories");
+      setCategories(["All Categories", ...response.data.map(category => category.name)]);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Failed to load categories");
     }
   };
 
@@ -296,14 +126,23 @@ const ActivitiesPage = () => {
           text: 'I found this interesting activity on EasyTravel',
           url: shareUrl
         });
-        toast.success('Shared successfully!');
+        toast.success('Shared successfully!', {
+          
+          autoClose: 3000,
+        });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        toast.success('Link copied to clipboard!');
+        toast.success('Link copied to clipboard!', {
+        
+          autoClose: 3000,
+        });
       }
     } catch (error) {
       console.error('Error sharing:', error);
-      toast.error('Failed to share');
+      toast.error('Failed to share', {
+        
+        autoClose: 3000,
+      });
     }
   };
 
@@ -328,10 +167,8 @@ const ActivitiesPage = () => {
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter(activity => 
-        activity.name.toLowerCase().includes(searchLower) ||
-        activityTypes[activity.category]?.titles.some(title => 
-          title.toLowerCase().includes(searchLower)
-        )
+        activity.name?.toLowerCase().includes(searchLower) ||
+        activity.category?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -440,7 +277,18 @@ const ActivitiesPage = () => {
   const handleBooking = async (paymentMethod) => {
     const username = Cookies.get("username");
     if (!username) {
-      toast.error("Please log in to book an activity");
+      toast.error("Please log in to book an activity", {
+      
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    if (!selectedDate || !selectedTime) {
+      toast.error("Please select both date and time", {
+  
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -451,66 +299,78 @@ const ActivitiesPage = () => {
         await handleCreditCardBooking();
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Booking failed");
+      toast.error(error.response?.data?.message || "Booking failed", {
+       
+        autoClose: 3000,
+      });
     }
   };
 
+  // Update the refreshData function to be more efficient
+  const refreshData = async () => {
+    try {
+      // Only fetch the specific activity that was updated
+      if (selectedActivityId) {
+        const response = await axios.get(`http://localhost:3000/activities/${selectedActivityId}`);
+        
+        // Update the specific activity in the activities array
+        setActivities(prevActivities => {
+          const updatedActivities = prevActivities.map(activity => 
+            activity._id === selectedActivityId ? { ...response.data } : activity
+          );
+          return updatedActivities;
+        });
+
+        // Update filtered activities as well
+        setFilteredActivities(prevFiltered => {
+          const updatedFiltered = prevFiltered.map(activity => 
+            activity._id === selectedActivityId ? { ...response.data } : activity
+          );
+          return updatedFiltered;
+        });
+
+        // Update booking status for this activity
+        await checkBookingStatus(selectedActivityId);
+      }
+    } catch (error) {
+      console.error('Error refreshing activity data:', error);
+      toast.error('Error updating activity information');
+    }
+  };
+
+  // Add this function to refresh all data
+  const refreshAllData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/activities");
+      const currentDate = new Date();
+      
+      const filteredActivities = response.data
+        .filter(activity => activity.flagged === "no")
+        .filter(activity => new Date(activity.date) > currentDate)
+        .map(activity => ({
+          ...activity,
+          rating: activity.avgRating || "N/A"
+        }));
+
+      setActivities(filteredActivities);
+      setFilteredActivities(filteredActivities);
+
+      // Check booking status for all activities
+      for (const activity of filteredActivities) {
+        await checkBookingStatus(activity._id);
+      }
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      toast.error('Error updating activities');
+    }
+  };
+
+  // Update handleWalletBooking
   const handleWalletBooking = async () => {
     try {
       const username = Cookies.get("username");
-      const activity = await axios.get(
-        `http://localhost:3000/activities/${selectedActivityId}`
-      );
-
-      const today = new Date();
-      const selectedDateObj = new Date(selectedDate);
-      if (selectedDateObj <= today) {
-        toast.error("The selected date must be after today's date.");
-        return;
-      }
-
-      // Update Activity Purchases
-      await axios.post(
-        `http://localhost:3000/activities/increment/${selectedActivityId}`
-      );
-
-      // Send Email Receipt
-      const user = await axios.get(
-        `http://localhost:3000/api/tourist/${username}`
-      );
-      const email = user.data.email;
-
-      const date = activity.data.date;
-      const time = activity.data.time;
-      const creator = activity.data.creator;
-      const text = `You have successfully booked an activity at the following Date: ${date}, and the corresponding Time: ${time}. The Creator ${creator} is eager to meet you! Don't be late!! Please check your account for the payment details.`;
       
-      await axios.post("http://localhost:3000/auth/sendPaymentEmail", {
-        email,
-        text,
-      });
-
-      toast.success("🎉 Activity booked successfully! Check your email for confirmation.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      closeModal();
-    } catch (error) {
-      console.error('Error during wallet booking:', error);
-      toast.error(error.response?.data?.message || "Failed to book with wallet");
-    }
-  };
-
-  const handleCreditCardBooking = async () => {
-    try {
-      const activity = await axios.get(
-        `http://localhost:3000/activities/${selectedActivityId}`
-      );
-
+      // Validate date selection
       const today = new Date();
       const selectedDateObj = new Date(selectedDate);
       if (selectedDateObj <= today) {
@@ -518,79 +378,270 @@ const ActivitiesPage = () => {
         return;
       }
 
-      // Add discount to the payment data
-      const finalPrice = discount > 0 
-        ? originalPrice * (1 - discount / 100)
-        : originalPrice;
+      // Validate required fields
+      if (!selectedDate || !selectedTime) {
+        toast.error("Please select both date and time for the booking");
+        return;
+      }
 
-      const response = await axios.post(
-        "http://localhost:3000/payment/create-checkout-session",
+      // Create activity booking
+      const bookingResponse = await axios.post(
+        "http://localhost:3000/activityBooking/createActivityBooking",
         {
-          itineraryId: selectedActivityId,
-          itineraryName: "Activity",
-          price: finalPrice,
-          selectedDate,
-          selectedTime,
-          promoCode,
-          discount
-        },
-        {
-          headers: { Authorization: `Bearer ${cookies.token}` }
+          touristUsername: username,
+          activityId: selectedActivityId,
+          bookingDate: selectedDate,
+          bookingTime: selectedTime
         }
       );
 
-      window.location.href = response.data.url;
+      if (bookingResponse.status === 201) {
+        // Update Activity Purchases
+        await axios.post(
+          `http://localhost:3000/activities/increment/${selectedActivityId}`
+        );
+
+        // Get activity details for email
+        const activity = await axios.get(
+          `http://localhost:3000/activities/${selectedActivityId}`
+        );
+
+        // Send confirmation email
+        const user = await axios.get(`http://localhost:3000/api/tourist/${username}`);
+        const email = user.data.email;
+
+        const emailText = `You have successfully booked an activity:
+          Date: ${new Date(selectedDate).toLocaleDateString()}
+          Time: ${selectedTime}
+          Activity: ${activity.data.name}
+          Creator: ${activity.data.creator}
+          
+          Don't be late! The creator is eager to meet you.
+          Please check your account for payment details.`;
+
+        await axios.post("http://localhost:3000/auth/sendPaymentEmail", {
+          email,
+          text: emailText,
+        });
+
+        toast.success("🎉 Activity booked successfully! Check your email for confirmation.", {
+       
+          autoClose: 5000,
+         
+        });
+        
+        await refreshAllData();
+        closeModal();
+      }
+    } catch (error) {
+      console.error('Error during wallet booking:', error);
+      toast.error(error.response?.data?.message || "Failed to book with wallet", {
+
+        autoClose: 3000,
+      });
+    }
+  };
+
+  // Update handleUnbook
+  const handleUnbook = async (activityId) => {
+    try {
+      const bookingStatus = bookingStatuses[activityId];
+      if (!bookingStatus?.isBooked) {
+        toast.error("No booking found", {
+       
+          autoClose: 3000,
+        });
+        return;
+      }
+
+      // Check if unbooking is allowed (48 hours rule)
+      const bookingDate = new Date(bookingStatus.bookingDate);
+      const now = new Date();
+      const hoursUntilBooking = (bookingDate - now) / (1000 * 60 * 60);
+
+      if (hoursUntilBooking < 48) {
+        toast.error("Cannot unbook activities within 48 hours of the booking date", {
+         
+          autoClose: 5000,
+        });
+        return;
+      }
+
+      await axios.delete(`http://localhost:3000/activityBooking/unbook/${bookingStatus.bookingId}`);
+      
+      toast.success("Activity unbooked successfully!", {
+       
+        autoClose: 3000,
+      });
+      
+      await refreshAllData();
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to unbook activity";
+      toast.error(errorMessage, {
+       
+        autoClose: 3000,
+      });
+    }
+  };
+
+  // Update handleCreditCardBooking
+  const handleCreditCardBooking = async () => {
+    try {
+      const username = Cookies.get("username");
+      
+      // Validate date selection
+      const today = new Date();
+      const selectedDateObj = new Date(selectedDate);
+      if (selectedDateObj <= today) {
+        toast.error("The selected date must be after today's date.");
+        return;
+      }
+
+      // Validate required fields
+      if (!selectedDate || !selectedTime) {
+        toast.error("Please select both date and time for the booking");
+        return;
+      }
+
+      // Get activity details for payment
+      const activity = await axios.get(
+        `http://localhost:3000/activities/${selectedActivityId}`
+      );
+
+      // Use discounted price if available
+      const finalPrice = discountedPrice || activity.data.price.max;
+
+      const bookingResponse = await axios.post(
+        "http://localhost:3000/activityBooking/createActivityBooking",
+        {
+          touristUsername: username,
+          activityId: selectedActivityId,
+          bookingDate: selectedDate,
+          bookingTime: selectedTime,
+          promoCode: enteredPromoCode,
+          discount: discount
+        }
+      );
+
+      if (bookingResponse.status === 201) {
+        await refreshAllData();
+        
+        const response = await axios.post(
+          "http://localhost:3000/payment/create-checkout-session",
+          {
+            itineraryId: selectedActivityId,
+            itineraryName: "Activity",
+            price: finalPrice,
+            selectedDate,
+            selectedTime,
+            bookingType: 'activity',
+            bookingId: bookingResponse.data.booking._id,
+            promoCode: enteredPromoCode,
+            discount: discount
+          },
+          {
+            headers: { Authorization: `Bearer ${cookies.token}` }
+          }
+        );
+
+        window.location.href = response.data.url;
+      }
     } catch (error) {
       console.error("Error during credit card booking:", error);
       toast.error(
         error.response?.data?.message || 
-        "An error occurred during the credit card payment. Please try again."
+        "An error occurred during booking. Please try again."
       );
     }
   };
 
   // Add this function to handle promo code
   const handlePromoCodeSubmit = async () => {
-    try {
-      const response = await axios.post("http://localhost:3000/api/validatePromoCode", {
-        code: promoCode
+    if (!enteredPromoCode) {
+      toast.error("Please enter a promo code", {
+        autoClose: 3000,
       });
-      
-      if (response.data.valid) {
-        setDiscount(response.data.discount);
-        toast.success(`Promo code applied! ${response.data.discount}% discount`);
-      } else {
-        toast.error("Invalid promo code");
-      }
-    } catch (error) {
-      console.error("Error validating promo code:", error);
-      toast.error("Error validating promo code");
-    }
-  };
-
-  // Add unbook function
-  const handleUnbook = async (activityId) => {
-    const username = Cookies.get("username");
-    if (!username) {
-      toast.error("Please log in first");
       return;
     }
 
     try {
-      await axios.post(`http://localhost:3000/api/unbookActivity`, {
-        username,
-        activityId
-      });
-
-      // Update local state
-      setBookedActivities(prev => prev.filter(id => id !== activityId));
-      toast.success("Activity unbooked successfully!");
+      const promo = promoCodes.find((promo) => promo.promoCode === enteredPromoCode);
       
-      // Refresh activities to update status
-      fetchActivities();
+      if (promo) {
+        const currentDate = new Date();
+        const expiryDate = new Date(promo.expiryDate);
+
+        if (currentDate <= expiryDate) {
+          const newPrice = originalPrice * (1 - promo.discount / 100);
+          setDiscountedPrice(newPrice);
+          setDiscount(promo.discount);
+          toast.success(`Promo code applied! ${promo.discount}% discount. New price: ${getCurrencySymbol(selectedCurrency)}${convertPrice(newPrice)}`, {
+            
+            autoClose: 5000,
+          });
+        } else {
+          toast.error("Promo code has expired", {
+           
+            autoClose: 3000,
+          });
+        }
+      } else {
+        toast.error("Invalid promo code", {
+          
+          autoClose: 3000,
+        });
+      }
     } catch (error) {
-      console.error("Error unbooking activity:", error);
-      toast.error(error.response?.data?.message || "Failed to unbook activity");
+      console.error("Error validating promo code:", error);
+      toast.error("Error validating promo code", {
+       
+        autoClose: 3000,
+      });
+    }
+  };
+
+  // Add function to check booking status
+  const checkBookingStatus = async (activityId) => {
+    const username = Cookies.get("username");
+    if (!username) return;
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/activityBooking/checkBooking/${activityId}/${username}`
+      );
+      setBookingStatuses(prev => ({
+        ...prev,
+        [activityId]: response.data
+      }));
+    } catch (error) {
+      console.error("Error checking booking status:", error);
+    }
+  };
+
+  // Add useEffect to check booking status when activities are loaded
+  useEffect(() => {
+    const checkAllBookings = async () => {
+      if (activities.length > 0) {
+        for (const activity of activities) {
+          await checkBookingStatus(activity._id);
+        }
+      }
+    };
+    checkAllBookings();
+  }, [activities]);
+
+  // Add this useEffect for fetching promo codes
+  useEffect(() => {
+    fetchPromoCodes();
+  }, []);
+
+  // Add the fetchPromoCodes function
+  const fetchPromoCodes = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/promo-codes/");
+      setPromoCodes(response.data || []);
+    } catch (err) {
+      console.error("Error fetching promo codes", err);
     }
   };
 
@@ -661,8 +712,8 @@ const ActivitiesPage = () => {
             </div>
 
             {/* Category Filter */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Category
               </label>
               <div className="relative">
@@ -799,13 +850,9 @@ const ActivitiesPage = () => {
               <div key={activity._id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative aspect-[4/3]">
                   <img
-                    src={activity.image || "https://placehold.co/600x400?text=Activity"}
-                    alt={activity.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://placehold.co/600x400?text=Activity";
-                    }}
+                    src={DEFAULT_ACTIVITY_IMAGE}
+                    alt={activity.name || "Activity"}
+                    className="w-full h-full object-cover rounded-t-lg"
                   />
                   <div className="absolute top-4 left-4 px-3 py-1 bg-black bg-opacity-75 text-white text-sm rounded-full">
                     {activity.category}
@@ -826,7 +873,9 @@ const ActivitiesPage = () => {
                   </div>
 
                   {/* Activity Title and Tags */}
-                  <h3 className="text-xl font-semibold mb-2">{activity.name || "Unnamed Activity"}</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {activity.name || "Unnamed Activity"}
+                  </h3>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {activity.tags?.map((tag, index) => (
                       <span 
@@ -893,14 +942,14 @@ const ActivitiesPage = () => {
                       </div>
                     </div>
                     <button 
-                      onClick={() => bookedActivities.includes(activity._id) 
+                      onClick={() => bookingStatuses[activity._id]?.isBooked 
                         ? handleUnbook(activity._id)
                         : openModal(activity._id)
                       }
                       className={`px-4 py-2 rounded-md transition-colors ${
                         !activity.isBookingOpen 
                           ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : bookedActivities.includes(activity._id)
+                          : bookingStatuses[activity._id]?.isBooked
                             ? "bg-red-500 text-white hover:bg-red-600"
                             : "bg-black text-white hover:bg-gray-800"
                       }`}
@@ -908,7 +957,7 @@ const ActivitiesPage = () => {
                     >
                       {!activity.isBookingOpen 
                         ? "Fully Booked" 
-                        : bookedActivities.includes(activity._id)
+                        : bookingStatuses[activity._id]?.isBooked
                           ? "Unbook Activity"
                           : "Book Now"
                       }
@@ -932,7 +981,7 @@ const ActivitiesPage = () => {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-xl"
+        className="max-w-md mx-auto mt-20 bg-white rounded-lg shadow-xl p-6"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
         <div className="space-y-6">
@@ -1031,8 +1080,8 @@ const ActivitiesPage = () => {
               <input
                 type="text"
                 placeholder="Enter promo code"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
+                value={enteredPromoCode}
+                onChange={(e) => setEnteredPromoCode(e.target.value)}
                 className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <button
@@ -1060,7 +1109,7 @@ const ActivitiesPage = () => {
                   <div className="flex justify-between font-bold border-t border-gray-200 pt-2">
                     <span>Final Price:</span>
                     <span>{getCurrencySymbol(selectedCurrency)}
-                      {convertPrice((originalPrice * (1 - discount / 100)).toFixed(2))}
+                      {convertPrice(discountedPrice)}
                     </span>
                   </div>
                 </>
@@ -1069,7 +1118,7 @@ const ActivitiesPage = () => {
           </div>
 
           {/* Payment Buttons */}
-          <div className="space-y-4 pt-4 border-t border-gray-200">
+          <div className="space-y-4 pt-4 border-t">
             <div className="flex justify-between gap-4">
               <button
                 onClick={() => handleBooking('wallet')}

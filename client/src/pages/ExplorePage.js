@@ -567,12 +567,12 @@ const ExplorePage = () => {
           selectedItineraryId,
         ]; // Update
 
-        // await axios.post("http://localhost:3000/booking/createBooking", {
-        //   touristUsername: username,
-        //   itineraryId: selectedItineraryId,
-        //   bookingDate: selectedDate,
-        //   bookingTime: selectedTime,
-        // });
+        await axios.post("http://localhost:3000/booking/createBooking", {
+          touristUsername: username,
+          activityId: activity.data._id,
+          bookingDate: selectedDate,
+          bookingTime: selectedTime,
+        });
 
         const user = await axios.get(
           `http://localhost:3000/api/tourist/${username}`

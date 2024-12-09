@@ -3,6 +3,14 @@ const mongoose = require("mongoose");
 //const reviewSchema = require("./review");
 
 const activitySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    // Not required, but should be a string if provided
+    validate: {
+      validator: (v) => !v || typeof v === "string",
+      message: "Name must be a string"
+    }
+  },
   creator: {
     type: String,
   },
