@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import { Button, TextInput, Label, Toast, Spinner, Card } from 'flowbite-react'; // Import Flowbite components
+import { HiCheck, HiX } from 'react-icons/hi'; // Import icons for success/error toast
 
 const CreatePromoCode = () => {
     const [promoCode, setPromoCode] = useState('');
@@ -8,28 +9,41 @@ const CreatePromoCode = () => {
     const [expiryDate, setExpiryDate] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Track loading state
 
     const navigate = useNavigate();
 
     const handlePromoCodeSubmit = async (e) => {
         e.preventDefault();
-    
+
+        // Check if the fields are valid
+        if (!promoCode || !discount || !expiryDate) {
+            setError('All fields are required!');
+            return;
+        }
+
+        setIsLoading(true); // Show loading spinner when submitting the form
+
         const formattedExpiryDate = new Date(expiryDate).toISOString();
-    
+
         try {
             const response = await fetch('http://localhost:3000/api/promo-codes/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ promoCode, discount: Number(discount), expiryDate: formattedExpiryDate }),
+                body: JSON.stringify({
+                    promoCode,
+                    discount: Number(discount),
+                    expiryDate: formattedExpiryDate,
+                }),
             });
-    
+
             const result = await response.json();
-    
+
             // If the response is not OK, throw an error with the message from the backend
             if (!response.ok) {
                 throw new Error(result.message || 'Failed to create promo code.');
             }
-    
+
             // If successful, show the success message from the backend
             setSuccess(result.message); // Display success message
             setError(''); // Clear any previous error messages
@@ -37,45 +51,99 @@ const CreatePromoCode = () => {
             // Handle error by setting the error message
             setError(error.message);
             setSuccess(''); // Clear any previous success messages
+        } finally {
+            setIsLoading(false); // Hide loading spinner after submission
         }
     };
 
     return (
-        <div className="container">
-            <h1>Create Promo Code</h1>
-            <button onClick={() => navigate(-1)}>Back</button> {/* Back Button */}
-            <form onSubmit={handlePromoCodeSubmit}>
-                <div>
-                    <label htmlFor="promoCode">Promo Code:</label>
-                    <input
-                        type="text"
-                        id="promoCode"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                    />
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+            <Card className="w-full max-w-md shadow-md">
+                <h2 className="text-2xl font-bold text-center mb-4">Create Promo Code</h2>
+
+                {/* Back Button */}
+                <Button onClick={() => navigate(-1)} color="gray" className="w-full mb-4">
+                    Back
+                </Button>
+
+                {/* Promo Code Form */}
+                <form onSubmit={handlePromoCodeSubmit} className="space-y-4">
+                    <div>
+                        <Label htmlFor="promoCode" value="Promo Code" />
+                        <TextInput
+                            id="promoCode"
+                            type="text"
+                            value={promoCode}
+                            onChange={(e) => setPromoCode(e.target.value)}
+                            placeholder="Enter promo code"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="discount" value="Discount (%)" />
+                        <TextInput
+                            id="discount"
+                            type="number"
+                            value={discount}
+                            onChange={(e) => setDiscount(e.target.value)}
+                            placeholder="Enter discount percentage"
+                            required
+                            min="1"
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="expiryDate" value="Expiry Date" />
+                        <TextInput
+                            id="expiryDate"
+                            type="date"
+                            value={expiryDate}
+                            onChange={(e) => setExpiryDate(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <Button type="submit" color="success" fullWidth disabled={isLoading}>
+                        {isLoading ? <Spinner aria-label="Loading spinner" /> : 'Create Promo Code'}
+                    </Button>
+                </form>
+            </Card>
+
+            {/* Display Toast Notifications for Success or Error */}
+            {error && (
+                <div className="absolute top-5 right-5">
+                    <Toast>
+                        <HiX className="h-5 w-5 text-red-500" />
+                        <div className="ml-3 text-sm font-normal">{error}</div>
+                        <Button
+                            className="ml-auto"
+                            size="xs"
+                            color="light"
+                            onClick={() => setError('')}
+                        >
+                            Close
+                        </Button>
+                    </Toast>
                 </div>
-                <div>
-                    <label htmlFor="discount">Discount (%):</label>
-                    <input
-                        type="number"
-                        id="discount"
-                        value={discount}
-                        onChange={(e) => setDiscount(e.target.value)}
-                    />
+            )}
+
+            {success && (
+                <div className="absolute top-5 right-5">
+                    <Toast>
+                        <HiCheck className="h-5 w-5 text-green-500" />
+                        <div className="ml-3 text-sm font-normal">{success}</div>
+                        <Button
+                            className="ml-auto"
+                            size="xs"
+                            color="light"
+                            onClick={() => setSuccess('')}
+                        >
+                            Close
+                        </Button>
+                    </Toast>
                 </div>
-                <div>
-                    <label htmlFor="expiryDate">Expiry Date:</label>
-                    <input
-                        type="date"
-                        id="expiryDate"
-                        value={expiryDate}
-                        onChange={(e) => setExpiryDate(e.target.value)}
-                    />
-                </div>
-                <button type="submit">Create Promo Code</button>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
+            )}
         </div>
     );
 };

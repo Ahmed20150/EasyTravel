@@ -1,19 +1,20 @@
-// src/PreferencePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Link} from 'react-router-dom';
-// import './PreferencePage.css'; // Import the CSS file for styling
+import { Link } from 'react-router-dom';
+import { Button, Input, Select, Card, Spinner, Toast, Modal } from 'flowbite-react'; // Import Modal from Flowbite
+import { buttonStyle } from '../styles/GeneralStyles';
 
-
-//TODO fix create prefrence, accepts only Shopping??
 const PreferencePage = () => {
   const [preferenceName, setPreferenceName] = useState('');
   const [preferences, setPreferences] = useState([]);
   const [updateOldName, setUpdateOldName] = useState('');
   const [updateNewName, setUpdateNewName] = useState('');
   const [deletePreferenceName, setDeletePreferenceName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageColor, setMessageColor] = useState('');
+  const [showToast, setShowToast] = useState(false); // State for toast visibility
+  const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // State for controlling modal visibility
 
   useEffect(() => {
     fetchPreferences();
@@ -21,62 +22,69 @@ const PreferencePage = () => {
 
   const fetchPreferences = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/preference'); // Update to your backend URL
+      const response = await axios.get('http://localhost:3000/getAllPreferences'); // Update to your backend URL
       setPreferences(response.data);
     } catch (error) {
       console.error("Error fetching preferences", error);
     }
   };
 
-  const createPreference = async () => {
-    try {
-      await axios.post('http://localhost:3000/api/preference', { name: preferenceName });
-      setSuccessMessage('Preference created!');
-      setErrorMessage('');
-      fetchPreferences();
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage('An unexpected error occurred while creating the preference.');
-      }
-      setSuccessMessage('');
-    }
+  const showToastMessage = (message, color) => {
+    setMessage(message);
+    setMessageColor(color);
+    setShowToast(true);
+
+    // Automatically hide the toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
   };
 
-  const deletePreference = async () => {
+  const createPreference = async () => {
+    setLoading(true);
+    
+    // Check if the preference already exists
+    if (preferences.some(preference => preference.name === preferenceName)) {
+      showToastMessage('This preference already exists!', 'failure');
+      setLoading(false);
+      return; // Stop further execution if preference exists
+    }
+    
     try {
-      await axios.delete(`http://localhost:3000/api/preference/${deletePreferenceName}`);
-      setSuccessMessage('Preference deleted!');
-      setErrorMessage('');
+      await axios.post('http://localhost:3000/api/preference', { name: preferenceName });
+      showToastMessage('Preference created!', 'success');
       fetchPreferences();
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage('An unexpected error occurred while deleting the preference.');
-      }
-      setSuccessMessage('');
+      showToastMessage('An unexpected error occurred while creating the preference.', 'failure');
     }
+    setLoading(false);
+  };
+  
+
+  const deletePreference = async () => {
+    setLoading(true);
+    try {
+      await axios.delete(`http://localhost:3000/api/preference/${deletePreferenceName}`);
+      showToastMessage('Preference deleted!', 'failure');
+      fetchPreferences();
+    } catch (error) {
+      showToastMessage('An error occurred while deleting the preference.', 'failure');
+    }
+    setLoading(false);
   };
 
   const updatePreference = async () => {
+    setLoading(true);
     try {
       await axios.put(`http://localhost:3000/api/preference/${updateOldName}`, { name: updateNewName });
-      setSuccessMessage('Preference updated!');
-      setErrorMessage('');
+      showToastMessage('Preference updated!', 'info');
       fetchPreferences();
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage('An unexpected error occurred while updating the preference.');
-      }
-      setSuccessMessage('');
+      showToastMessage('An error occurred while updating the preference.', 'failure');
     }
+    setLoading(false);
   };
 
-  
   const preferenceOptions = [
     'Historic Areas',
     'Beaches',
@@ -86,176 +94,123 @@ const PreferencePage = () => {
   ];
 
   return (
-    <div className="preferences-container">
-      <div className="form-section">
-        <h2>Create Preference</h2>
-        <Link to="/home"><button>Back</button></Link>
-        {/* <input
-          type="text"
-          placeholder="Enter preference name"
+    <div className="preferences-container max-w-4xl mx-auto p-4">
+<div className="absolute left-4 top-4">
+    <Link to="/home">
+      <Button className={buttonStyle}>Back</Button>
+    </Link>
+  </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-4 right-4">
+          <Toast>
+            <div className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-${messageColor}-500 text-white`}>
+              {/* Dynamic Icon based on message color */}
+              {messageColor === 'success' && <span>✔️</span>}
+              {messageColor === 'failure' && <span>❌</span>}
+              {messageColor === 'info' && <span>ℹ️</span>}
+            </div>
+            <div className="ml-3 text-sm font-normal">{message}</div>
+          </Toast>
+        </div>
+      )}
+
+      {/* Create Preference Section */}
+      <Card className="mb-8">
+        <h2 className="text-xl font-semibold">Create Preference</h2>
+        <Select
+          id="preference"
           value={preferenceName}
           onChange={(e) => setPreferenceName(e.target.value)}
-        /> */}
-          <select
-        id="preference"
-        value={preferenceName}
-        onChange={(e) => setPreferenceName(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '0.5rem 1rem',
-          border: '1px solid #ccc',
-          borderRadius: '0.375rem',
-          outline: 'none',
-          fontSize: '1rem',
-          marginBottom: '1rem',
-          appearance: 'none', // Removes default arrow, optional
-          backgroundColor: '#FFFFFF',
-          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 0.75rem center',
-          backgroundSize: '1rem',
-        }}
-      >
-        <option value="" disabled>
-          -- Select Preference --
-        </option>
-        {preferenceOptions.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-        <button onClick={createPreference}>Create Preferences</button>
-      </div>
-
-      <div className="form-section">
-        <h2>All Preferences</h2>
-        <button onClick={fetchPreferences}>Read Preferences</button>
-        <ul>
-          {preferences.map((preference) => (
-            <li key={preference._id}>{preference.name}</li>
+          className="w-full mb-4"
+        >
+          <option value="" disabled>-- Select Preference --</option>
+          {preferenceOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
           ))}
-        </ul>
-      </div>
+        </Select>
+        <Button onClick={createPreference} disabled={loading} className={buttonStyle}>
+          {loading ? <Spinner aria-label="Loading" /> : 'Create Preference'}
+        </Button>
+      </Card>
 
-      <div className="form-section">
-        <h2>Update Preference</h2>
-        {/* <input
-          type="text"
-          placeholder="Old preference name"
+      {/* Read All Preferences Button */}
+      <Card className="mb-8">
+        <Button onClick={() => setModalOpen(true)} className={`${buttonStyle} mb-4`} gradientDuoTone="greenToBlue">
+          Read All Preferences
+        </Button>
+      </Card>
+
+      {/* Display Preferences Modal */}
+      <Modal show={modalOpen} onClose={() => setModalOpen(false)}>
+        <Modal.Header>All Preferences</Modal.Header>
+        <Modal.Body>
+          {loading ? (
+            <Spinner aria-label="Loading preferences" />
+          ) : (
+            <ul>
+              {preferences.map((preference) => (
+                <li key={preference._id}>{preference.name}</li>
+              ))}
+            </ul>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => setModalOpen(false)} className={buttonStyle}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Update Preference Section */}
+      <Card className="mb-8">
+        <h2 className="text-xl font-semibold">Update Preference</h2>
+        <Select
+          id="old-preference"
           value={updateOldName}
           onChange={(e) => setUpdateOldName(e.target.value)}
-        /> */}
-           <select
-        id="preference"
-        value={updateOldName}
-        onChange={(e) => setUpdateOldName(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '0.5rem 1rem',
-          border: '1px solid #ccc',
-          borderRadius: '0.375rem',
-          outline: 'none',
-          fontSize: '1rem',
-          marginBottom: '1rem',
-          appearance: 'none', // Removes default arrow, optional
-          backgroundColor: '#FFFFFF',
-          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 0.75rem center',
-          backgroundSize: '1rem',
-        }}
-      >
-        <option value="" disabled>
-          -- Select Old Preference --
-        </option>
-        {preferenceOptions.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-        {/* <input
-          type="text"
-          placeholder="New preference name"
+          className="w-full mb-4"
+        >
+          <option value="" disabled>-- Select Old Preference --</option>
+          {preferenceOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </Select>
+        <Select
+          id="new-preference"
           value={updateNewName}
           onChange={(e) => setUpdateNewName(e.target.value)}
-        /> */}
-              <select
-        id="preference"
-        value={updateNewName}
-        onChange={(e) => setUpdateNewName(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '0.5rem 1rem',
-          border: '1px solid #ccc',
-          borderRadius: '0.375rem',
-          outline: 'none',
-          fontSize: '1rem',
-          marginBottom: '1rem',
-          appearance: 'none', // Removes default arrow, optional
-          backgroundColor: '#FFFFFF',
-          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 0.75rem center',
-          backgroundSize: '1rem',
-        }}
-      >
-        <option value="" disabled>
-          -- Select New Preference --
-        </option>
-        {preferenceOptions.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-        <button onClick={updatePreference}>Update Preferences</button>
-      </div>
+          className="w-full mb-4"
+        >
+          <option value="" disabled>-- Select New Preference --</option>
+          {preferenceOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </Select>
+        <Button onClick={updatePreference} disabled={loading} className={buttonStyle}>
+          {loading ? <Spinner aria-label="Loading" /> : 'Update Preference'}
+        </Button>
+      </Card>
 
-      <div className="form-section">
-        <h2>Delete Preference</h2>
-        {/* <input
-          type="text"
-          placeholder="Enter preference name to delete"
+      {/* Delete Preference Section */}
+      <Card className="mb-8">
+        <h2 className="text-xl font-semibold">Delete Preference</h2>
+        <Select
+          id="delete-preference"
           value={deletePreferenceName}
           onChange={(e) => setDeletePreferenceName(e.target.value)}
-        /> */}
-           <select
-        id="preference"
-        value={deletePreferenceName}
-        onChange={(e) => setDeletePreferenceName(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '0.5rem 1rem',
-          border: '1px solid #ccc',
-          borderRadius: '0.375rem',
-          outline: 'none',
-          fontSize: '1rem',
-          marginBottom: '1rem',
-          appearance: 'none', // Removes default arrow, optional
-          backgroundColor: '#FFFFFF',
-          backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%23999\' viewBox=\'0 0 16 16\'%3E%3Cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 011 0L8 10.293l5.354-5.647a.5.5 0 11.708.708l-6 6.3a.5.5 0 01-.708 0l-6-6.3a.5.5 0 010-.708z\'/%3E%3C/svg%3E%0A")',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 0.75rem center',
-          backgroundSize: '1rem',
-        }}
-      >
-        <option value="" disabled>
-          -- Select Preference --
-        </option>
-        {preferenceOptions.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-        <button onClick={deletePreference}>Delete Preferences</button>
-      </div>
-
-      {/* Display Error and Success Messages */}
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
+          className="w-full mb-4"
+        >
+          <option value="" disabled>-- Select Preference --</option>
+          {preferenceOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </Select>
+        <Button onClick={deletePreference} disabled={loading} className={buttonStyle}>
+          {loading ? <Spinner aria-label="Loading" /> : 'Delete Preference'}
+        </Button>
+      </Card>
     </div>
   );
 };
