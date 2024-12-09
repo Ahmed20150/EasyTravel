@@ -30,7 +30,11 @@ router.post('/create', async (req, res) => {
     }
 
     try {
-        // Create a new promo code
+        // Create a new promo code 
+        const existingPromoCode = await PromoCode.findOne({ promoCode });
+        if (existingPromoCode) {
+            return res.status(400).json({ message: 'This promo code already exists. Please try another one.' });
+        }
         const newPromoCode = new PromoCode({ promoCode, discount, expiryDate });
 
         // Log the promo code before saving
