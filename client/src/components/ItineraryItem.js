@@ -26,22 +26,22 @@ const ItineraryCard = ({
 
   return (
     <div className="itinerary-card">
-      <h2 className="itinerary-title">{itinerary.name}</h2>
-      <p className="itinerary-duration">Duration: {itinerary.duration} hours</p>
+      <h2 className="itinerary-title"><strong>Name : </strong>{itinerary.name}</h2>
+      <p className="itinerary-duration"><strong>Duration:</strong> {itinerary.duration} hours</p>
       <p className="itinerary-price">
-        Price: {selectedCurrency} {convertPrice(itinerary.priceOfTour)}
+       <strong>Price: </strong>  {convertPrice(itinerary.priceOfTour)} {selectedCurrency}
       </p>
-      <p className="itinerary-language">Language: {itinerary.languageOfTour}</p>
+      <p className="itinerary-language"><strong>Language : </strong>{itinerary.languageOfTour}</p>
       <p className="itinerary-timeline">
-        Timeline: {new Date(itinerary.timeline).toLocaleString()}
+       <strong>Timeline :</strong> {new Date(itinerary.timeline).toLocaleString()}
       </p>
-      <h3>Locations to Visit:</h3>
+      <h3><strong>Locations to Visit :</strong></h3>
       <ul className="locations-list">
         {itinerary.locationsToVisit.map((location, index) => (
           <li key={index}>{location}</li>
         ))}
       </ul>
-      <h3>Available Dates:</h3>
+      <h3><strong>Available Dates :</strong></h3>
       <ul className="dates-list">
         {itinerary.availableDates.map((date, index) => (
           <li key={index}>{new Date(date).toLocaleDateString()}</li>

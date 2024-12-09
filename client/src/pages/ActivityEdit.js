@@ -39,7 +39,7 @@ const ActivityEdit = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/categories');
+        const response = await axios.get('http://localhost:3000/categories');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);

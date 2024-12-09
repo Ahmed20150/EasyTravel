@@ -46,10 +46,10 @@ function Revenue() {
   const handleShowAllRevenueClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse, giftItemsResponse] = await Promise.all([
-        axios.get('http://localhost:3000/api/itineraries'),
-        axios.get('http://localhost:3000/api/museums'),
-        axios.get('http://localhost:3000/api/activities'),
-        axios.get('http://localhost:3000/api/giftitems'),
+        axios.get('http://localhost:3000/itineraries'),
+        axios.get('http://localhost:3000/museums'),
+        axios.get('http://localhost:3000/activities'),
+        axios.get('http://localhost:3000/gift'),
       ]);
   
       const itineraries = itinerariesResponse.data;
@@ -114,9 +114,9 @@ function Revenue() {
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
-        axios.get('http://localhost:3000/api/itineraries'),
-        axios.get('http://localhost:3000/api/museums'),
-        axios.get('http://localhost:3000/api/activities'),
+        axios.get('http://localhost:3000/itineraries'),
+        axios.get('http://localhost:3000/museums'),
+        axios.get('http://localhost:3000/activities'),
       ]);
   
       const itineraries = itinerariesResponse.data;
@@ -258,17 +258,23 @@ function Revenue() {
                >Back</Button>
       </Link>
       <div className="flex flex-col items-center justify-center mt-8" >
-      <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg ">
+        <h1 className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Financial Report</h1>
+      <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg flex-col justify-between ">
+        
         {/* Show All Revenue Button */}
         <Button
           className={buttonStyle}
           onClick={handleShowAllRevenueClick}
+          style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}
         >
           Show All Revenue
         </Button>
-
-
+        
+        {/* that is for the small filter for adv , tg  */}
+      {/* <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg  " >  */}
+        
         {userType !== 'admin'  && userType !== 'seller' && (
+        
         //{/* Filter Button with Dropdown */}
         <>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}>
@@ -321,37 +327,49 @@ function Revenue() {
           </ul>
         </div>
       )}
-      
+    
+      {/* </Card> */}    
 
       {/* Show total revenue and individual revenues */}
       {/* <Card href="#" className="w-full max-w-3xl text-3xl mt-8 p-8 shadow-lg "> */}
         {/* && userType !== 'advertiser' */}
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl mt-8">
       {userType !== 'seller' && (
-         <p>Itinerary Total Revenue: ${it_totalRevenue.toFixed(2)}</p>
+        <Card href="#" className="max-w-sm" >
+         <p>Itinerary Total Revenue : <strong>${it_totalRevenue.toFixed(2)}</strong></p>
+         </Card>
       )}
+   
 
 {userType !== 'seller'  && userType !== 'advertiser' && userType !== 'tourGuide' && (
-          <p>Museum Total Revenue: ${museum_totalRevenue.toFixed(2)}</p>
+        <Card href="#" className="max-w-sm" >
+          <p>Museum Total Revenue:<strong>${museum_totalRevenue.toFixed(2)}</strong> </p>
+          </Card>
       )}
        {/* && userType !== 'tourGuide' */}
        {userType !== 'seller'  &&  (
-        <p>Activity Total Revenue: ${act_totalRevenue.toFixed(2)}</p>
+        <Card href="#" className="max-w-sm" >
+        <p>Activity Total Revenue :<strong> ${act_totalRevenue.toFixed(2)}</strong></p>
+        </Card>
       )}
         
        {userType !== 'advertiser'  && userType !== 'tourGuide' && (
-          <p>Gift Item Total Revenue: ${gift_totalRevenue.toFixed(2)}</p>
+        <Card href="#" className="max-w-sm" >
+          <p>Gift Item Total Revenue: <strong>${gift_totalRevenue.toFixed(2)}</strong></p>
+         </Card> 
       )}
   
-
+  </div>  
      {userType === 'admin' && (
     <p>
+
       <strong>Total Revenue: ${totalRevenue.toFixed(2)}</strong>
     </p>
      )}
 {(userType === 'admin' || userType === 'seller') && (
   <Card href="#" className="w-full max-w-3xl mt-20 text-3xl p-8 shadow-lg " >
     {/* Filter Selection */}
-    <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Filter Products</h2>
+    <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}><strong>Filter Products</strong></h2>
     
     <div style={{ marginBottom: '20px' }}>
       <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
@@ -381,21 +399,25 @@ function Revenue() {
         <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
           Enter Month (1-12):
         </label>
-        <input
-          type="number"
-          value={month}
-          onChange={(e) => setMonth1(e.target.value)}
-          placeholder="Enter month"
-          min="1"
-          max="12"
-          style={{
-            width: '100%',
-            padding: '10px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            fontSize: '16px'
-          }}
-        />
+      <select
+         value={month}
+         onChange={(e) => setMonth1(e.target.value)}
+         style={{
+         width: '100%',
+         padding: '10px',
+         border: '1px solid #ccc',
+          borderRadius: '4px',
+          fontSize: '16px',
+         }}
+        >
+      <option value="" disabled>Select month</option>
+        {Array.from({ length: 12 }, (_, i) => (
+        <option key={i + 1} value={i + 1}>
+       {new Date(0, i).toLocaleString('en', { month: 'long' })}
+       </option>
+       ))}
+      </select>
+
       </div>
     )}
 
@@ -423,6 +445,7 @@ function Revenue() {
       <Button
         onClick={fetchGiftItems}
         className={buttonStyle3}
+        
         disabled={loading}
       >
         {loading ? 'Loading...' : 'Fetch Products'}
@@ -468,7 +491,7 @@ function Revenue() {
 )}
       </Card >  
     </div>
-    </div>
+   </div>
   ) ;
 }
 

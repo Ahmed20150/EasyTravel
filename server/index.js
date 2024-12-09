@@ -142,7 +142,7 @@ app.post("/api/category", async (req, res) => {
     }
 });
 
-app.get("/api/categories", async (req, res) => {
+app.get("/categories", async (req, res) => {
     try {
         const categories = await Category.find({});
         res.status(200).json(categories);
@@ -460,7 +460,7 @@ app.get('/api/activities', async (req, res) => {
 
 // get all itineraries
 
-app.get('/api/itineraries', async (req, res) => {
+app.get('/itineraries', async (req, res) => {
   try {
       const itinerarie = await itineraries.find({});
       res.status(200).json(itinerarie);
@@ -472,7 +472,7 @@ app.get('/api/itineraries', async (req, res) => {
 
 // get all museumsandhistoricalplaces
 
-app.get('/api/museums', async (req, res) => {
+app.get('/museums', async (req, res) => {
   try {
       const museums  = await museumsandhistoricalplaces.find({});
       res.status(200).json(museums);
@@ -514,7 +514,7 @@ app.post('/api/museums', async (req, res) => {
 });
 
 
-app.post('/api/activities', async (req, res) => {
+app.post('/activities', async (req, res) => {
   try {
       const acts  = await activities.create(req.body);
       res.status(200).json(acts);

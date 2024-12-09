@@ -102,6 +102,8 @@ const ItineraryList = () => {
                className={buttonStyle}
                >Back</Button>
       </Link> 
+      <div className="flex flex-col items-center justify-center mt-8">
+
       <h1 className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Itineraries</h1>
 
       {userType === "tourGuide" && notifications.length > 0 && (
@@ -144,9 +146,10 @@ const ItineraryList = () => {
 
       </div>
 
-      <div className="itinerary-list">
+      <div className="grid grid-cols-1 md:grid-cols-2  gap-8 w-full max-w-7xl mt-8">
+
         {itineraries.map((itinerary) => (
-          <Card href="#" className="h-99 w-99 text-2xl mb-8" key={itinerary._id}>
+          <Card href="#" className="w-full max-w-3xl mb-4 text-3xl p-8 shadow-lg "key={itinerary._id}>
             <ItineraryItem
               itinerary={itinerary}
               onDelete={(id) =>
@@ -164,9 +167,10 @@ const ItineraryList = () => {
             />
             {userType === "admin" && (
               <div className="admin-actions">
-                <p>Created by: {itinerary.creator}</p>
-                <p>Email: {creatorEmails[itinerary.creator] || "Not available"}</p>
-                <p className="mb-8">Flagged: {itinerary.flagged}</p>
+                <p><strong>Created by : </strong>{itinerary.creator}</p>
+                <p><strong>Email : </strong>{creatorEmails[itinerary.creator] || "Not available"}</p>
+                <p className="mb-8"><strong>Flagged : </strong> {itinerary.flagged}</p>
+                <div className=" flex flex-wrap gap-2 justify-center items-center">
                 <Button
                   
                   className={buttonStyle}
@@ -180,11 +184,13 @@ const ItineraryList = () => {
                 >
                   Flag
                 </Button>
+                </div>
               </div>
             )}
           </Card>
         ))}
       </div>
+    </div>
     </div>
   );
 };
