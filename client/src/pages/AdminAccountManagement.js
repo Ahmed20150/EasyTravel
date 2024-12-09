@@ -83,18 +83,18 @@ const AdminAccountManagement = () => {
                         <button className={`${dynamicButtonStyle} w-full`}>
                             Create New Tourism Governor
                         </button>
-                    </Link>
+                    </Link> 
                     <Link to="/create-promo-code">
-                        <button className={`${dynamicButtonStyle} w-full`}>
-                            Create Promo Code
-                        </button>
-                    </Link>
-                </div>
-
-                {/* User Statistics Section */}
-                <div className="flex justify-center mt-8">
-                    <UserStatistics />
-                </div>
+                            <button className={`${dynamicButtonStyle} w-full`}>
+                                Create Promo Code
+                            </button>
+                        </Link> 
+                   
+                        <div className="ml-4">
+                            <UserStatistics />
+                        </div>
+                    </div>
+                
             </div>
 
             {/* Back Button in Footer */}

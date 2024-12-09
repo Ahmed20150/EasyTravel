@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import { Button, Label, TextInput, Card, Toast } from 'flowbite-react';
 import { HiCheck, HiX } from 'react-icons/hi';
 
+// Apply the custom button style
+export const buttonStyle = "bg-black text-white font-bold hover:bg-gray-700 transition-colors duration-300";
+
 const AddTourismGoverner = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -57,13 +60,13 @@ const AddTourismGoverner = () => {
               required
             />
           </div>
-          <Button type="submit" gradientDuoTone="purpleToPink" className="w-full">
+          <Button type="submit" className={`${buttonStyle} w-full`}>
             Add Tourism Governer
           </Button>
         </form>
         <div className="mt-4">
           <Link to="/adminAccountManagement">
-            <Button color="gray" className="w-full">
+            <Button className={`${buttonStyle} w-full`}>
               Back
             </Button>
           </Link>
@@ -77,9 +80,8 @@ const AddTourismGoverner = () => {
             <HiCheck className="h-5 w-5 text-green-500" />
             <div className="ml-3 text-sm font-normal">{toastMessage}</div>
             <Button
-              className="ml-auto"
+              className={`${buttonStyle} ml-auto`}
               size="xs"
-              color="light"
               onClick={() => setShowSuccessToast(false)}
             >
               Close
@@ -94,9 +96,8 @@ const AddTourismGoverner = () => {
             <HiX className="h-5 w-5 text-red-500" />
             <div className="ml-3 text-sm font-normal">{toastMessage}</div>
             <Button
-              className="ml-auto"
+              className={`${buttonStyle} ml-auto`}
               size="xs"
-              color="light"
               onClick={() => setShowErrorToast(false)}
             >
               Close

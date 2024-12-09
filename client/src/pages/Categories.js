@@ -37,6 +37,18 @@ const Categories = () => {
   };
 
   const createCategory = async () => {
+    const invalidCategoryName = /[^a-zA-Z\s]/.test(categoryName); // Only allows letters and spaces
+    if (invalidCategoryName) {
+      toast.error("Category name should not contain numbers or special characters.");
+      return; // Stop the function if the name is invalid
+    }
+
+    const categoryExists = categories.some(category => category.name.toLowerCase() === categoryName.toLowerCase());
+    if (categoryExists) {
+      toast.error("This category is already created!");
+      return; // Stop the function if category already exists
+    }
+
     try {
       await axios.post("http://localhost:3000/api/category", { name: categoryName });
       toast.success("Category created successfully!");
@@ -76,15 +88,12 @@ const Categories = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Page Title */}
       <h1 className="text-2xl font-bold text-center mb-6">Manage Categories</h1>
 
-      {/* Back Button */}
       <Link to="/home">
         <Button className={`${buttonStyle} mb-5`}>Back</Button>
       </Link>
 
-      {/* Tabs */}
       <Tabs aria-label="Category Management" variant="fullWidth" className="mb-4">
         {/* Create Category Tab */}
         <Tabs.Item title="Create" icon={HiOutlinePlusCircle}>
@@ -110,7 +119,10 @@ const Categories = () => {
         <Tabs.Item title="Read" icon={HiOutlineViewList}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categories.map((category) => (
-              <Card key={category._id} className="text-center shadow-md">
+              <Card
+                key={category._id}
+                className="text-center shadow-md transition-transform transform hover:scale-105 hover:shadow-xl"
+              >
                 <h3 className="text-lg font-semibold">{category.name}</h3>
               </Card>
             ))}
@@ -120,18 +132,30 @@ const Categories = () => {
         {/* Update Category Tab */}
         <Tabs.Item title="Update" icon={HiOutlinePencilAlt}>
           <div className="space-y-4">
-            <TextInput
-              placeholder="Old category name"
+            <Label htmlFor="categorySelect" className="block text-lg font-semibold">
+              Select Category to Update
+            </Label>
+            <select
+              id="categorySelect"
               value={updateOldName}
               onChange={(e) => setUpdateOldName(e.target.value)}
-              className="mb-4"
-            />
+              className="w-full mb-4 p-2 border rounded-md"
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+
             <TextInput
               placeholder="New category name"
               value={updateNewName}
               onChange={(e) => setUpdateNewName(e.target.value)}
               className="mb-4"
             />
+
             <Button onClick={updateCategory} className="w-full">
               Update Category
             </Button>
@@ -141,20 +165,35 @@ const Categories = () => {
         {/* Delete Category Tab */}
         <Tabs.Item title="Delete" icon={HiOutlineTrash}>
           <div className="space-y-4">
-            <TextInput
-              placeholder="Enter category name to delete"
+            <Label htmlFor="categoryDeleteSelect" className="block text-lg font-semibold">
+              Select Category to Delete
+            </Label>
+            <select
+              id="categoryDeleteSelect"
               value={deleteCategoryName}
               onChange={(e) => setDeleteCategoryName(e.target.value)}
-              className="mb-4"
-            />
-            <Button color="failure" onClick={() => setIsDeleteModalOpen(true)} className="w-full">
+              className="w-full mb-4 p-2 border rounded-md"
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+
+            <Button
+              color="failure"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="w-full"
+              disabled={!deleteCategoryName}
+            >
               Delete Category
             </Button>
           </div>
         </Tabs.Item>
       </Tabs>
 
-      {/* Delete Confirmation Modal */}
       <Modal show={isDeleteModalOpen} size="md" onClose={() => setIsDeleteModalOpen(false)} popup>
         <Modal.Header />
         <Modal.Body>
@@ -175,7 +214,6 @@ const Categories = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Toast Notifications Container */}
       <ToastContainer />
     </div>
   );

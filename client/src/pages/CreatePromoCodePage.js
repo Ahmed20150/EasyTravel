@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Button, TextInput, Label, Toast, Spinner, Card } from 'flowbite-react'; // Import Flowbite components
 import { HiCheck, HiX } from 'react-icons/hi'; // Import icons for success/error toast
 
+
+import { buttonStyle } from "../styles/GeneralStyles";
+
 const CreatePromoCode = () => {
     const [promoCode, setPromoCode] = useState('');
     const [discount, setDiscount] = useState('');
@@ -39,7 +42,7 @@ const CreatePromoCode = () => {
 
             const result = await response.json();
 
-            // If the response is not OK, throw an error with the message from the backend
+            // If the response is not OK, handle the specific error message
             if (!response.ok) {
                 throw new Error(result.message || 'Failed to create promo code.');
             }
@@ -62,7 +65,10 @@ const CreatePromoCode = () => {
                 <h2 className="text-2xl font-bold text-center mb-4">Create Promo Code</h2>
 
                 {/* Back Button */}
-                <Button onClick={() => navigate(-1)} color="gray" className="w-full mb-4">
+                <Button
+                    onClick={() => navigate(-1)}
+                    className={`${buttonStyle} w-full mb-4`}
+                >
                     Back
                 </Button>
 
@@ -104,7 +110,11 @@ const CreatePromoCode = () => {
                         />
                     </div>
 
-                    <Button type="submit" color="success" fullWidth disabled={isLoading}>
+                    <Button
+                        type="submit"
+                        className={`${buttonStyle} w-full`}
+                        disabled={isLoading}
+                    >
                         {isLoading ? <Spinner aria-label="Loading spinner" /> : 'Create Promo Code'}
                     </Button>
                 </form>
@@ -117,9 +127,8 @@ const CreatePromoCode = () => {
                         <HiX className="h-5 w-5 text-red-500" />
                         <div className="ml-3 text-sm font-normal">{error}</div>
                         <Button
-                            className="ml-auto"
+                            className={`${buttonStyle} ml-auto`}
                             size="xs"
-                            color="light"
                             onClick={() => setError('')}
                         >
                             Close
@@ -134,9 +143,8 @@ const CreatePromoCode = () => {
                         <HiCheck className="h-5 w-5 text-green-500" />
                         <div className="ml-3 text-sm font-normal">{success}</div>
                         <Button
-                            className="ml-auto"
+                            className={`${buttonStyle} ml-auto`}
                             size="xs"
-                            color="light"
                             onClick={() => setSuccess('')}
                         >
                             Close

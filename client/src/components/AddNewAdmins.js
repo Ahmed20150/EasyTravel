@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { Button, Label, TextInput, Modal, Toast } from 'flowbite-react';
 import { HiOutlineCheck, HiOutlineX } from 'react-icons/hi';
 
+// Apply the custom button style
+export const buttonStyle = "bg-black text-white font-bold hover:bg-gray-700 transition-colors duration-300";
+
 const AddNewAdmins = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -59,14 +62,14 @@ const AddNewAdmins = () => {
             />
           </div>
 
-          <Button type="submit" gradientDuoTone="purpleToPink" className="w-full">
+          <Button type="submit" className={`${buttonStyle} w-full`}>
             Add Admin
           </Button>
         </form>
 
         <div className="mt-4">
           <Link to="/adminAccountManagement">
-            <Button color="gray" className="w-full">
+            <Button className={`${buttonStyle} w-full`}>
               Back
             </Button>
           </Link>
@@ -96,7 +99,9 @@ const AddNewAdmins = () => {
           <p className="text-sm text-gray-600">{errorMessage}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={() => setShowError(false)}>Close</Button>
+          <Button onClick={() => setShowError(false)} className={`${buttonStyle} w-full`}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

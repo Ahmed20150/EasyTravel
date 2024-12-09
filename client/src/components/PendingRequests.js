@@ -105,16 +105,19 @@ const PendingRequests = () => {
                 <Table.Cell>{guide.username}</Table.Cell>
                 <Table.Cell>{guide.status}</Table.Cell>
                 <Table.Cell>
-                  <Button onClick={() => handleShow(guide)} color="gray" size="sm" className="ml-2">
-                    Show
-                  </Button>
-                  <Button onClick={() => handleAccept('tour-guide', guide._id)} color="green" size="sm" className="ml-2">
+                <div className="flex space-x-2">
+                   <Button onClick={() => handleShow(guide)} color="gray" size="sm">
+                   Show
+                   </Button>
+                   <Button onClick={() => handleAccept('tour-guide', guide._id)} color="green" size="sm">
                     Accept
-                  </Button>
-                  <Button onClick={() => handleReject('tour-guide', guide._id)} color="red" size="sm" className="ml-2">
-                    Reject
-                  </Button>
-                </Table.Cell>
+                   </Button>
+                  <Button onClick={() => handleReject('tour-guide', guide._id)} color="red" size="sm">
+                   Reject
+                 </Button>
+               </div>
+              </Table.Cell>
+
               </Table.Row>
             ))}
           </Table.Body>
@@ -134,16 +137,18 @@ const PendingRequests = () => {
               <Table.Row key={ad._id}>
                 <Table.Cell>{ad.username}</Table.Cell>
                 <Table.Cell>{ad.status}</Table.Cell>
-                <Table.Cell>
-                  <Button onClick={() => handleShow(ad)} color="gray" size="sm" className="ml-2">
+                <Table.Cell> 
+                <div className="flex space-x-2">
+                  <Button onClick={() => handleShow(ad)} color="gray" size="sm" >
                     Show
                   </Button>
-                  <Button onClick={() => handleAccept('advertiser', ad._id)} color="green" size="sm" className="ml-2">
+                  <Button onClick={() => handleAccept('advertiser', ad._id)} color="green" size="sm" >
                     Accept
                   </Button>
-                  <Button onClick={() => handleReject('advertiser', ad._id)} color="red" size="sm" className="ml-2">
+                  <Button onClick={() => handleReject('advertiser', ad._id)} color="red" size="sm" >
                     Reject
-                  </Button>
+                  </Button> 
+                  </div>
                 </Table.Cell>
               </Table.Row>
             ))}
@@ -164,16 +169,18 @@ const PendingRequests = () => {
               <Table.Row key={seller._id}>
                 <Table.Cell>{seller.username}</Table.Cell>
                 <Table.Cell>{seller.status}</Table.Cell>
-                <Table.Cell>
-                  <Button onClick={() => handleShow(seller)} color="gray" size="sm" className="ml-2">
+                <Table.Cell> 
+                <div className="flex space-x-2">
+                  <Button onClick={() => handleShow(seller)} color="gray" size="sm">
                     Show
                   </Button>
-                  <Button onClick={() => handleAccept('seller', seller._id)} color="green" size="sm" className="ml-2">
+                  <Button onClick={() => handleAccept('seller', seller._id)} color="green" size="sm">
                     Accept
                   </Button>
-                  <Button onClick={() => handleReject('seller', seller._id)} color="red" size="sm" className="ml-2">
+                  <Button onClick={() => handleReject('seller', seller._id)} color="red" size="sm">
                     Reject
-                  </Button>
+                  </Button> 
+                  </div>
                 </Table.Cell>
               </Table.Row>
             ))}
@@ -185,56 +192,70 @@ const PendingRequests = () => {
         <Modal show={true} onClose={() => setSelectedUser(null)}>
           <Modal.Header>User Details</Modal.Header>
           <Modal.Body>
-            <div className="space-y-4">
-              {selectedUser.companyName ? ( // Check if the user is an advertiser
-                <>
-                  <p><strong>Company Name:</strong> {selectedUser.companyName}</p>
-                  <p><strong>Email:</strong> {selectedUser.email}</p>
-                  <p><strong>Hotline:</strong> {selectedUser.hotline}</p>
-                  <p><strong>Website:</strong> <a href={selectedUser.website} target="_blank" rel="noopener noreferrer">{selectedUser.website}</a></p>
-                  <p><strong>Profile Picture:</strong></p>
-                  <img src={selectedUser.profilePicture} alt={selectedUser.username} className="w-24 h-24 object-cover rounded-full" />
-                  <p><strong>Uploaded Document:</strong></p>
-                  <iframe
-                    src={`data:application/pdf;base64,${base64}`}
-                    width="100%"
-                    height="600px"
-                    title="PDF Viewer"
-                  />
-                </>
-              ) : selectedUser.mobileNumber ? ( // Check if the user is a seller
-                <>
-                  <p><strong>Username:</strong> {selectedUser.username}</p>
-                  <p><strong>Email:</strong> {selectedUser.email}</p>
-                  <p><strong>Mobile Number:</strong> {selectedUser.mobileNumber}</p>
-                  <img src={selectedUser.profilePicture} alt={selectedUser.username} className="w-24 h-24 object-cover rounded-full" />
-                  <p><strong>Uploaded Document:</strong></p>
-                  <iframe
-                    src={`data:application/pdf;base64,${base64}`}
-                    width="100%"
-                    height="600px"
-                    title="PDF Viewer"
-                  />
-                </>
-              ) : ( // Otherwise, it’s a tour guide
-                <>
-                  <p><strong>Username:</strong> {selectedUser.username}</p>
-                  <p><strong>Email:</strong> {selectedUser.email}</p>
-                  <p><strong>Date of Birth:</strong> {new Date(selectedUser.dateOfBirth).toLocaleDateString()}</p>
-                  <p><strong>Description:</strong> {selectedUser.description}</p>
-                  <p><strong>Mobile Number:</strong> {selectedUser.mobileNumber}</p>
-                  <img src={selectedUser.profilePicture} alt={selectedUser.username} className="w-24 h-24 object-cover rounded-full" />
-                  <p><strong>Uploaded Document:</strong></p>
-                  <iframe
-                    src={`data:application/pdf;base64,${base64}`}
-                    width="100%"
-                    height="600px"
-                    title="PDF Viewer"
-                  />
-                </>
-              )}
-            </div>
-          </Modal.Body>
+  <div className="space-y-4 relative">
+    {selectedUser.companyName ? ( // Check if the user is an advertiser
+      <>
+        <p><strong>Company Name:</strong> {selectedUser.companyName}</p>
+        <p><strong>Email:</strong> {selectedUser.email}</p>
+        <p><strong>Hotline:</strong> {selectedUser.hotline}</p>
+        <p><strong>Website:</strong> <a href={selectedUser.website} target="_blank" rel="noopener noreferrer">{selectedUser.website}</a></p>
+        
+        <p><strong>Profile Picture:</strong></p>
+        {/* Profile Picture at top-right */}
+        <div className="absolute top-2 right-2">
+          <img src={selectedUser.profilePicture} alt={selectedUser.username} className="w-24 h-24 object-cover rounded-full" />
+        </div>
+
+        <p><strong>Uploaded Document:</strong></p>
+        <iframe
+          src={`data:application/pdf;base64,${base64}`}
+          width="100%"
+          height="600px"
+          title="PDF Viewer"
+        />
+      </>
+    ) : selectedUser.mobileNumber ? ( // Check if the user is a seller
+      <>
+        <p><strong>Username:</strong> {selectedUser.username}</p>
+        <p><strong>Email:</strong> {selectedUser.email}</p>
+        <p><strong>Mobile Number:</strong> {selectedUser.mobileNumber}</p>
+        
+        <div className="absolute top-2 right-2">
+          <img src={selectedUser.profilePicture} alt={selectedUser.username} className="w-24 h-24 object-cover rounded-full" />
+        </div>
+
+        <p><strong>Uploaded Document:</strong></p>
+        <iframe
+          src={`data:application/pdf;base64,${base64}`}
+          width="100%"
+          height="600px"
+          title="PDF Viewer"
+        />
+      </>
+    ) : ( // Otherwise, it’s a tour guide
+      <>
+        <p><strong>Username:</strong> {selectedUser.username}</p>
+        <p><strong>Email:</strong> {selectedUser.email}</p>
+        <p><strong>Date of Birth:</strong> {new Date(selectedUser.dateOfBirth).toLocaleDateString()}</p>
+        <p><strong>Description:</strong> {selectedUser.description}</p>
+        <p><strong>Mobile Number:</strong> {selectedUser.mobileNumber}</p>
+        
+        <div className="absolute top-2 right-2">
+          <img src={selectedUser.profilePicture} alt={selectedUser.username} className="w-24 h-24 object-cover rounded-full" />
+        </div>
+
+        <p><strong>Uploaded Document:</strong></p>
+        <iframe
+          src={`data:application/pdf;base64,${base64}`}
+          width="100%"
+          height="600px"
+          title="PDF Viewer"
+        />
+      </>
+    )}
+  </div>
+</Modal.Body>
+
         </Modal>
       )}
     </div>

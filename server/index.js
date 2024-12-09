@@ -103,10 +103,10 @@ app.use('/review', Reviews);
 //connect Tourist_ Tour Guide_Advertiser_ Seller.routes.js to index.js
 app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
 app.use('/api', touristRoutes);
-app.use("/allmuseums", museumRoutes);
-app.use("/allactivities", activityRoutes);
-app.use("/allitineraries", itineraryRoutes);
-app.use("/allgiftitems", giftRoutes);
+app.use("/museums", museumRoutes);
+app.use("/activities", activityRoutes);
+app.use("/itineraries", itineraryRoutes);
+app.use("/gift", giftRoutes);
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
 app.use('/api/seller', sellerRoutes);
@@ -449,7 +449,7 @@ app.delete("/api/preference/:name", async (req, res) => {
 
 
 // get all activities 
-app.get('/allactivities', async (req, res) => {
+app.get('/activities', async (req, res) => {
   try {
       const activity = await activities.find({});
       res.status(200).json(activity);
@@ -461,7 +461,7 @@ app.get('/allactivities', async (req, res) => {
 
 // get all itineraries
 
-app.get('/allitineraries', async (req, res) => {
+app.get('/itineraries', async (req, res) => {
   try {
       const itinerarie = await itineraries.find({});
       res.status(200).json(itinerarie);
@@ -473,7 +473,7 @@ app.get('/allitineraries', async (req, res) => {
 
 // get all museumsandhistoricalplaces
 
-app.get('/allmuseums', async (req, res) => {
+app.get('/museums', async (req, res) => {
   try {
       const museums  = await museumsandhistoricalplaces.find({});
       res.status(200).json(museums);
