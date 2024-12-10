@@ -9,6 +9,7 @@ const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const Tourist = require("./models/tourist.model.js");
 
 
 // Middleware
@@ -122,7 +123,7 @@ app.use("/hotelOffer", hotelOffers);
 
 
 //getting all tourists
-app.get('alltourists', async (req, res) => {
+app.get('/alltourists', async (req, res) => {
     try {
         const tourists = await Tourist.find({});
         res.status(200).json(tourists);
