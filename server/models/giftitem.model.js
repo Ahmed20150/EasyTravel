@@ -16,6 +16,11 @@ const giftitemSchema = new mongoose.Schema({
   seller: { type: String, required: true },
   archived: { type: Boolean, default: false },
   reviews: [reviewSchema],
+},{
+  timestamps: {
+    createdAt: "date", // Custom field name for creation date
+    updatedAt: "dateUpdated", // Custom field name for update date
+  },
 });
 
 const GiftItem = mongoose.model("GiftItem", giftitemSchema);

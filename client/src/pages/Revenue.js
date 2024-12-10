@@ -194,6 +194,7 @@ function Revenue() {
     try {
       setError('');
       setLoading(true);
+      console.log("A7A")
       if (filterType === 'month') {
         // Validate month input
         if (!month || isNaN(month) || month < 1 || month > 12) {
@@ -204,6 +205,8 @@ function Revenue() {
           params: { month },
         });
         setGiftItems(response.data || []);
+        console.log("A7A pt1");
+
       } else if (filterType === 'date') {
         // Validate date input
         if (!date) {
@@ -214,10 +217,17 @@ function Revenue() {
           params: { date },
         });
         setGiftItems(response.data || []);
+        console.log("GIFT ITEMS", giftItems);
+        console.log("A7A pt2");
+
       } else if (filterType === 'product') {
         // Fetch all gift items along with their revenue
         const response = await axios.get(`http://localhost:3000/gift/filter/itemsWithRevenue`);
         setGiftItems(response.data || []);
+        console.log("A7A pt3");
+      }
+      else{
+        console.log("A7A pt4")
       }
     } catch (err) {
       console.error('Error fetching gift items:', err);
@@ -259,7 +269,7 @@ function Revenue() {
       </Link>
       <div className="flex flex-col items-center justify-center mt-8" >
         <h1 className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Financial Report</h1>
-      <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg flex-col justify-between ">
+      <Card className="w-full max-w-3xl text-3xl p-8 shadow-lg flex-col justify-between ">
         
         {/* Show All Revenue Button */}
         <Button
@@ -367,7 +377,7 @@ function Revenue() {
     </p>
      )}
 {(userType === 'admin' || userType === 'seller') && (
-  <Card href="#" className="w-full max-w-3xl mt-20 text-3xl p-8 shadow-lg " >
+  <Card  className="w-full max-w-3xl mt-20 text-3xl p-8 shadow-lg " >
     {/* Filter Selection */}
     <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}><strong>Filter Products</strong></h2>
     
