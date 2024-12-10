@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const GiftItem = require('./giftitem.model');
+
 
 const touristSchema = new mongoose.Schema(
   {
@@ -57,8 +59,7 @@ const touristSchema = new mongoose.Schema(
     cart: [
       {
         giftItem: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "GiftItem", // Reference to GiftItem model
+          type: GiftItem.schema, // Use the schema to store the entire GiftItem object
         },
         quantity: {
           type: Number,
