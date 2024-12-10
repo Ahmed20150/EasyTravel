@@ -225,8 +225,13 @@ const AddAddressPage = () => {
             <Table.Cell>{address.state}</Table.Cell>
             <Table.Cell>{address.postalCode}</Table.Cell>
             <Table.Cell>{address.country}</Table.Cell>
-            <Table.Cell>
-              
+             
+            <Table.Cell> 
+            <Button className={buttonStyle} onClick={() => handleSelectAddress(address)}>
+                    Select
+            </Button>            </Table.Cell>
+            
+            <Table.Cell> 
             <Button className={buttonStyle}onClick={() => handleEdit(address)}>Edit</Button>
             </Table.Cell>
             <Table.Cell>
@@ -236,7 +241,8 @@ const AddAddressPage = () => {
             <Table.Cell>
             <Button className={buttonStyle} onClick={() => handleSelectAddress(address)}>
                     Set as Default
-                  </Button>            </Table.Cell>
+                  </Button>            
+            </Table.Cell>
           </Table.Row>
         </Table.Body>
       </Table>

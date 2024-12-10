@@ -1,5 +1,5 @@
 // import './Cart.css'; 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useCurrency } from '../components/CurrencyContext'; 
@@ -56,12 +56,14 @@ function Cart() {
         return price.toFixed(2);
     };
 
-    const calculateTotalPrice = () => {
-        return cartItems.reduce((total, item) => {
-            const itemPrice = parseFloat(convertPrice(item.price));
-            return total + (isNaN(itemPrice) ? 0 : itemPrice);
-        }, 0).toFixed(2);
-    };
+const calculateTotalPrice = () => {
+    if (!cartItems || cartItems.length === 0) return 0;
+  
+    return cartItems.reduce((total, item) => {
+      const itemPrice = convertPrice(item.giftItem.price); // Convert price based on selected currency
+      return total + itemPrice * item.quantity;
+    }, 0);
+  };
 
     // Handle item removal
     const removeItem = async (itemId) => {
@@ -111,152 +113,85 @@ function Cart() {
 
     // Handle checkout
     const handleCheckout = () => {
-        // Navigate to checkout page or implement checkout logic
         navigate('/address');
     };
 
+    const totalPrice = useMemo(() => calculateTotalPrice(), [cartItems, exchangeRates, selectedCurrency]); 
+
     return (
         <div className="cart-container">
-            <h1>My Cart</h1>
+           <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
+      <h1  className="text-4xl font-bold ">My Cart</h1>
+      <div className="absolute top-4 left-4">
+        <Button
+          onClick={() => navigate("/home")}
+          className={buttonStyle}
+        >
+          Back
+        </Button>
+        </div>
+      </div>
 
             {isLoading ? (
                 <p>Loading...</p>
             ) : cartItems.length > 0 ? (
-                <ul>
-                    {cartItems.map((item, index) => (
-                        <li key={index}>
-                              <Card
-      className="max-w-sm"
-      imgAlt="Gift Image"
-      imgSrc={item.giftItem.image}
-    >
-      <a href="#">
-        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-          {item.giftItem.name}
-        </h5>
-      </a>
-      <div className="mb-5 mt-2.5 flex items-center">
-        <svg
-          className="h-5 w-5 text-yellow-300"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-        <svg
-          className="h-5 w-5 text-yellow-300"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-        <svg
-          className="h-5 w-5 text-yellow-300"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-        <svg
-          className="h-5 w-5 text-yellow-300"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-        <svg
-          className="h-5 w-5 text-yellow-300"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-        <span className="ml-3 mr-2 rounded bg-cyan-100 px-2.5 py-0.5 text-xs font-semibold text-cyan-800 dark:bg-cyan-200 dark:text-cyan-800">
-          5.0
-        </span>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="text-3xl font-bold text-gray-900 dark:text-white">{item.giftItem.price}</span>
-        <p>Quantity: {item.quantity}</p>
-        
-        <Button
-          onClick={() => updateItemQuantity(item.giftItem.name, item.quantity + 1)}
-          className={buttonStyle}
-        >
-          +
-        </Button>
+     <div className="flex flex-wrap justify-center gap-6">
+          {cartItems.map((item, index) => (
+            <Card
+              key={index}
+              className="w-72" // Fixed width for smaller cards
+              imgAlt={item.giftItem.name}
+              imgSrc={item.giftItem.image}
+            >
+              <div>
+                <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                  {item.giftItem.name}
+                </h5>
+              </div>
+              <div className="mb-5 mt-2.5 flex items-center">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {item.giftItem.price} {selectedCurrency}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-lg">Quantity: {item.quantity}</p>
+                
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={() => updateItemQuantity(item.giftItem.name, item.quantity + 1)}
+                    className={buttonStyle}
+                  >
+                    +
+                  </Button>
 
-        <Button
-            onClick={() => updateItemQuantity(item.name, item.quantity - 1)}
-          className={buttonStyle}
-        >
-          -
-        </Button>
-
-        <Button
-                                    onClick={() => removeItem(item.name)}
-                                    className={buttonStyle}
-                                >
-                                    Remove
-                                </Button>
-      </div>
-    </Card>
-
-
-
-
-
-
-
-                            <h2>{item.name}</h2>
-                            <p>Price: {convertPrice(item.price)} {selectedCurrency}</p>
-                            <div>
-                                <button
-                                    onClick={() => removeItem(item.name)}
-                                    className="remove-button"
-                                >
-                                    Remove
-                                </button>
-                                <button
-                                    onClick={() => updateItemQuantity(item.name, item.quantity + 1)}
-                                    className="update-button"
-                                >
-                                    +1
-                                </button>
-                                <button
-                                    onClick={() => updateItemQuantity(item.name, item.quantity - 1)}
-                                    className="update-button"
-                                >
-                                    -1
-                                </button>
-                                <p>Quantity: {item.quantity}</p>
-                                
-                            </div>
-                        </li>
-                    ))}
-                     <h2>Total Price: {calculateTotalPrice()} {selectedCurrency}</h2>
-                </ul>
+                  <Button
+                    onClick={() => updateItemQuantity(item.giftItem.name, item.quantity - 1)}
+                    className={buttonStyle}
+                  >
+                    -
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
                 
             ) : (
                 <p>Your Cart is empty</p>
             )}
 
-            <div className="back-button-container">
-                <button className="back-button" onClick={handleBack}>
-                    Back
-                </button>
-            </div>
+
+            <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
+        <h1 className="text-4xl font-bold">
+          Total Price: {convertPrice(totalPrice)} {selectedCurrency}
+        </h1>
+      </div>
 
             {/* Add Check Out Button here */}
-            <div className="checkout-button-container">
-                <button className="checkout-button" onClick={handleCheckout}>
+            <div className="flex justify-center mt-4 mb-7">
+                <Button className={buttonStyle} onClick={handleCheckout}>
                     Check Out
-                </button>
+                </Button>
             </div>
         </div>
     );
