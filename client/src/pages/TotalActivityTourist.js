@@ -6,10 +6,12 @@ const TotalTouristsReport = () => {
   const [totalTourists, setTotalTourists] = useState(null);
   const [allTourists, setAllTourists] = useState(null);
   const [error, setError] = useState(null);
+  const [showMonthlyReport, setShowMonthlyReport] = useState(false); // Controls display of monthly report
 
   // Handle the month selection change
   const handleMonthChange = (event) => {
     setMonth(event.target.value);
+    setShowMonthlyReport(false); // Reset display on month change
   };
 
   // Fetch total tourists for the selected month
@@ -25,6 +27,7 @@ const TotalTouristsReport = () => {
       );
       setTotalTourists(response.data.totalTourists);
       setError(null);
+      setShowMonthlyReport(true); // Show the monthly report
     } catch (error) {
       console.error("Error fetching tourist report:", error);
       setError("❌ Failed to fetch the tourist report. Please try again later.");
@@ -135,7 +138,7 @@ const TotalTouristsReport = () => {
         }}
         onMouseOver={(e) => (e.target.style.backgroundColor = "#333")} // Dark gray on hover
         onMouseOut={(e) => (e.target.style.backgroundColor = "#000")} // Black on mouse out
-        >
+      >
         View All Tourists
       </button>
 
@@ -155,7 +158,7 @@ const TotalTouristsReport = () => {
         </div>
       )}
 
-      {totalTourists !== null && (
+      {showMonthlyReport && totalTourists !== null && (
         <div
           style={{
             padding: "20px",
