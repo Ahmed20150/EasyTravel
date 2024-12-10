@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import NotificationsIcon from "@mui/icons-material/Notifications"; // Import Notifications Icon
-// import "../css/ActivityLists.css";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import * as styles from "../styles/HossStyles.js"; // Importing styles from HossStyles.js
+import { buttonStyle } from "../styles/GeneralStyles.js"; // Importing buttonStyle from GeneralStyles.js
 
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]);
@@ -115,15 +116,17 @@ const ActivityLists = () => {
   };
 
   return (
-    <div className="activity-list">
-      <h1>Activities</h1>
+    <div className={styles.pageContainer}> {/* Use the page container from HossStyles */}
+
+    
+      <h1 className={styles.header}>Activities</h1>
 
       {userType !== 'admin' && notifications.length > 0 && showNotifications && (
-        <div className="notifications">
-          <div className="notifications-header">
-            <h2>Your Notifications</h2>
+        <div className={styles.notificationContainer}>
+          <div className={styles.notificationHeader}>
+            <h2 className={styles.notificationTitle}>Your Notifications</h2>
             <button
-              className="close-button"
+              className={styles.closeButton}
               onClick={() => setShowNotifications(false)}
               aria-label="Close Notifications"
             >
@@ -143,51 +146,51 @@ const ActivityLists = () => {
 
       {!showNotifications && notifications.length > 0 && (
         <button
-          className="show-notifications-button"
+          className={styles.showNotificationsButton}
           onClick={() => setShowNotifications(true)}
         >
           <NotificationsIcon />
         </button>
       )}
 
-      <div className="button-container">
+      <div className={styles.buttonContainer}>
         {userType !== 'admin' && (
-          <button className="create-button" onClick={handleCreate}>
+          <button className={styles.giftFormButton} onClick={handleCreate}>
             Create New Activity
           </button>
         )}
         <Link to="/home">
-          <button>Back</button>
+          <button className={styles.giftFormButton}>Back</button>
         </Link>
       </div>
 
-      <div className="card-container">
+      <div className={styles.giftItemGrid}>
         {activities.map((activity) => (
-          <div className="card" key={activity._id}>
-            <h3 className="activity-category">{activity.category}</h3>
-            <p className="activity-location">{activity.location?.address}</p>
-            <p className="activity-price">
-              Price: <span className="price-min">${activity.price?.min}</span> -{" "}
-              <span className="price-max">${activity.price?.max}</span>
+          <div className={styles.cardBorderStyle} key={activity._id}> {/* Using the updated border style */}
+          <h3 className={styles.activityCategory}>{activity.category}</h3>
+            <p className={styles.activityLocation}>{activity.location?.address}</p>
+            <p className={styles.activityPrice}>
+              Price: <span className={styles.priceMin}>${activity.price?.min}</span> -{" "}
+              <span className={styles.priceMax}>${activity.price?.max}</span>
             </p>
 
             {userType === 'admin' && (
-              <div className="activity-details">
-                <p className="activity-creator">Creator: {activity.creator}</p>
-                <p className="activity-creator-email">Email: {activity.creatorEmail || "Not available"}</p>
-                <p className="activity-flagged">Flagged: {activity.flagged}</p>
+              <div className={styles.activityDetails}>
+                <p className={styles.activityCreator}>Creator: {activity.creator}</p>
+                <p className={styles.activityCreatorEmail}>Email: {activity.creatorEmail || "Not available"}</p>
+                <p className={styles.activityFlagged}>Flagged: {activity.flagged}</p>
               </div>
             )}
 
-            <div className="button-group">
+            <div className={styles.adminButtons}>
               <button
-                className="edit-button"
+                className={styles.giftFormButton}
                 onClick={() => handleEdit(activity._id)}
               >
                 Edit
               </button>
               <button
-                className="delete-button"
+                className={styles.giftFormButton}
                 onClick={() => handleDelete(activity._id)}
               >
                 Delete
@@ -195,9 +198,9 @@ const ActivityLists = () => {
 
               {userType === 'admin' && (
                 <button
-                  className="flag-button"
+                  className={styles.giftFormButton}
                   style={{ backgroundColor: "purple", color: "white" }}
-                  onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}  // Pass category for the notification message
+                  onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}
                 >
                   Flag
                 </button>

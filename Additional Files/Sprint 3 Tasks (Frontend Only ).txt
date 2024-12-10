@@ -9,7 +9,7 @@
 2. financial report , view itenraries, view events, view complaints - abdallah
 
 
-*Advertiser (Except View profile & financial report)*  - Hoss
+*Advertiser (Except View profile & financial report)*  - Hoss (1.-all gift/ products -2.view activities -3tourest report 4-change pass 5-main page)
 
 *Tourist*
 1. Cart, My complaints, manage address, wishlist, help - Gasser

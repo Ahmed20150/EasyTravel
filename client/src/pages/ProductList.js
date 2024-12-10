@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
 import { useCookies } from "react-cookie";
 import ViewGiftItemCard from "../components/ViewGiftItemCard";
@@ -9,10 +9,19 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";
 
+import * as styles from "../styles/HossStyles.js"; // Importing styles from HossStyles.js
+import { buttonStyle } from "../styles/GeneralStyles.js"; // Importing buttonStyle from GeneralStyles.js
+
+
+import { Link } from "react-router-dom";
+
+
 
 const ProductList = () => {
   const [gifts, setGifts] = useState([]);
   const [loadingGifts, setLoadingGifts] = useState(true);
+
+  
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedGiftId, setSelectedGiftId] = useState(null);
@@ -206,13 +215,14 @@ const handlePromoCodeCheck = () => {
   const promo = promoCodes.find((code) => code.promoCode === promoCode);
 
   if (promo && new Date(promo.expiryDate) > new Date()) {
-      setPromoDiscount(promo.discount); // Apply discount
-      alert(`Promo code applied! You get ${promo.discount}% off.`);
+    setPromoDiscount(promo.discount); // Apply discount
+    toast.success(`Promo code applied! You get ${promo.discount}% off.`); // Success toast
   } else {
-      setPromoDiscount(0); // No discount if invalid or expired
-      alert('Invalid or expired promo code.');
+    setPromoDiscount(0); // Reset discount if invalid or expired
+    toast.error('Invalid or expired promo code.'); // Error toast
   }
 };
+
 
     // Function to apply promo code discount to price
     const applyPromoDiscount = (price) => {
@@ -334,18 +344,20 @@ const handlePromoCodeCheck = () => {
   // Handle Add to Wishlist
   const handleAddToWishlist = async (giftName) => {
     if (!username) {
-      alert("user not found");
+      toast.error("User not found", { autoClose: 2000 });
       console.log("No username found in cookies");
       return;
     }
+  
 
     try {
       const response = await axios.patch(
         `http://localhost:3000/api/tourist/${username}/addToWishlist`,
         { giftName }
       );
-      alert("Added " + giftName + " to your wishlist");
-      console.log(response.data.message);
+        setTimeout(() => {
+          toast.success(`Added "${giftName}" to your wishlist!`, { autoClose: 2000 });
+        }, 1000);
 
       // Optionally, you can update the UI or inform the user that the gift was added to the wishlist
     } catch (error) {
@@ -356,22 +368,22 @@ const handlePromoCodeCheck = () => {
   // Handle Add to Cart
   const handleAddToCart = async (giftName) => {
     if (!username) {
-      alert("user not found");
+      toast.error("User not found", { autoClose: 2000 });
       console.log("No username found in cookies");
       return;
     }
-
+  
     try {
-      const response = await axios.patch(
+      await axios.patch(
         `http://localhost:3000/api/tourist/${username}/addToCart`,
         { giftName }
       );
-      alert("Added " + giftName + " to your Cart");
-      console.log(response.data.message);
-
-      // Optionally, you can update the UI or inform the user that the gift was added to the cart
+      setTimeout(() => {
+        toast.success(`Added "${giftName}" to your cart!`, { autoClose: 2000 });
+      }, 1000);
     } catch (error) {
-      console.error("Error adding gift to Cart:", error);
+      console.error("Error adding gift to cart:", error);
+      toast.error("Failed to add gift to cart.", { autoClose: 2000 });
     }
   };
 
@@ -416,67 +428,76 @@ const handlePromoCodeCheck = () => {
     return price.toFixed(2); // Return original price if no exchange rate found
   };
 
-  return (
-    <div className="product-list-container">
-      <ToastContainer/>
-      <h1>Gift Items</h1>
-      <ToastContainer/>
+   return (
+    <div className={styles.pageContainer}>
+      <ToastContainer />
+      <h1 className={styles.header}>Gift Items</h1>
       {userType === "tourist" && (
-        <>
-      <Link to="/productOrders">
-        <button style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          padding: "10px 20px",
-        }}>
-          View Your Orders
-        </button>
-        </Link></>)}
-      <Link to="/home">
-        <button className="back-button">Back</button>
-      </Link>
+        <Link to="/productOrders">
+          <button className={styles.promoCodeButton} style={{ position: "absolute", top: "10px", right: "10px", padding: "10px 20px" }}>
+            View Your Orders
+          </button>
+        </Link>
+      )}
 
-         {/* Promo Code Section */}
-         <div>
-                <label>
-                    Promo Code:
-                    <input
-                        type="text"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                    />
-                </label>
-                <button type="button" onClick={handlePromoCodeCheck}>
-                    Apply Promo Code
-                </button>
-            </div>
+      {/* Back button with buttonStyle applied */}
+        <Link to="/home">
+          <button
+            className={buttonStyle}
+            style={{
+              fontSize: '18px',         // Increase font size
+              padding: '12px 24px',     // Increase padding for larger button
+              borderRadius: '8px',      // Optional: smooth corners
+              fontWeight: 'bold',       // Optional: make text bold
+            }}
+          >
+            Back
+          </button>
+        </Link>
+
+
+      {/* Promo Code Section */}
+      <div className={styles.promoCodeContainer}>
+        <label>
+          Promo Code:
+          <input
+            type="text"
+            className={styles.promoCodeInput}
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value)}
+          />
+        </label>
+        <button className={styles.promoCodeButton} onClick={handlePromoCodeCheck}>
+          Apply Promo Code
+        </button>
+      </div>
 
       {/* Search and Filter Section */}
-      <div className="search-filter-sort">
+      <div className={styles.searchFilterSortContainer}>
         <input
           type="text"
+          className={styles.searchInput}
           placeholder="Search by product name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
-        <div className="price-filter">
+        <div className={styles.priceFilterContainer}>
           <input
             type="number"
+            className={styles.priceInput}
             placeholder="Min Price"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
           />
           <input
             type="number"
+            className={styles.priceInput}
             placeholder="Max Price"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
           />
         </div>
-
-        <div className="rating-sort">
+        <div className={styles.sortSelect}>
           <select
             onChange={(e) => setSortOrder(e.target.value)}
             value={sortOrder}
@@ -487,135 +508,69 @@ const handlePromoCodeCheck = () => {
         </div>
       </div>
 
-      {/* Gift Form (for Admin and Seller) */}
       {(userType === "admin" || userType === "seller") && (
-        <div className="gift-form">
-          <h2>{editingId ? "Update Gift Item" : "Add New Gift Item"}</h2>
-          <label htmlFor="gift-name">Name</label>
-          <input
-            id="gift-name"
-            type="text"
-            placeholder="Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-          {errors.name && <p className="error-message">{errors.name}</p>}
+  <div style={{ marginBottom: "20px" }}>
+    <Link to="/create-gift">
+      <button className={styles.giftFormButton}>
+        Create Gift
+      </button>
+    </Link>
+  </div>
+)}
 
-          <label htmlFor="gift-creator">Creator Name</label>
-          <input
-            id="gift-creator"
-            type="text"
-            placeholder="Creator Name"
-            value={userType === "seller" ? username : formData.seller}
-            onChange={(e) =>
-              setFormData({ ...formData, seller: e.target.value })
-            }
-            disabled={userType === "seller" || editingId} // Disable input for sellers
-          />
-          {errors.seller && <p className="error-message">{errors.seller}</p>}
+          {/* Display Gifts */}
+          {loadingGifts ? (
+            <div className={styles.loaderText}>Loading Gifts/Products...</div>
+          ) : filteredGifts.length > 0 ? (
+            <div className={styles.giftItemGrid}>
+              {filteredGifts.map((gift) => (
+                <div key={gift._id} className={styles.giftItemCard}>
+                  <ViewGiftItemCard
+                    giftItem={gift}
+                    userType={userType}
+                    convertPrice={convertPrice(applyPromoDiscount(gift.price))}
+                    selectedCurrency={selectedCurrency}
+                  />
+               {userType === 'admin' || userType === 'seller' ? (
+  <div className={styles.adminButtons}>
+    <Link to={`/edit-gift/${gift._id}`}>
+      <button
+        className={buttonStyle}
+        style={{
+          fontSize: '16px',
+          padding: '10px 20px',
+          margin: '5px',
+          backgroundColor: '#000000', //  for better visibility
+          color: 'white',
+          borderRadius: '8px', // Smooth corners
+        }}
+      >
+        Edit
+      </button>
+    </Link>
+    <button
+      className={buttonStyle}
+      style={{
+        fontSize: '16px',
+        padding: '10px 20px',
+        margin: '5px',
+        backgroundColor: '#000000', //   for better visibility
+        color: 'white',
+        borderRadius: '8px', // Smooth corners
+      }}
+      onClick={() => handleDeleteGift(gift._id)}
+    >
+      Delete
+    </button>
+  </div>
+) : null}
 
-          <label htmlFor="image-upload">Image</label>
-          <input
-            id="image-upload"
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    image: reader.result,
-                  }));
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
-          />
-          {errors.image && <p className="error-message">{errors.image}</p>}
 
-          <label htmlFor="gift-description">Description</label>
-          <input
-            id="gift-description"
-            type="text"
-            placeholder="Description"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-          />
-          {errors.description && (
-            <p className="error-message">{errors.description}</p>
-          )}
-
-          <label htmlFor="gift-price">Price</label>
-          <input
-            id="gift-price"
-            type="number"
-            placeholder="Price"
-            value={formData.price}
-            onChange={(e) =>
-              setFormData({ ...formData, price: Number(e.target.value) })
-            }
-          />
-          {errors.price && <p className="error-message">{errors.price}</p>}
-
-          <label htmlFor="gift-quantity">Quantity</label>
-          <input
-            id="gift-quantity"
-            type="number"
-            placeholder="Quantity"
-            value={formData.quantity}
-            onChange={(e) =>
-              setFormData({ ...formData, quantity: Number(e.target.value) })
-            }
-          />
-          {errors.quantity && (
-            <p className="error-message">{errors.quantity}</p>
-          )}
-
-          <button onClick={editingId ? handleUpdateGift : handleAddGift}>
-            {editingId ? "Update Gift" : "Add Gift"}
-          </button>
-        </div>
-      )}
-
-      {/* Display Gifts */}
-      {loadingGifts ? (
-        <div className="loader">Loading Gifts/Products...</div>
-      ) : filteredGifts.length > 0 ? (
-        <div className="gift-items-grid">
-          {filteredGifts.map((gift) => (
-            <div key={gift._id} className="gift-item-card">
-              <ViewGiftItemCard
-                giftItem={gift}
-                userType={userType}
-                convertPrice={convertPrice(applyPromoDiscount(gift.price))}
-                selectedCurrency={selectedCurrency}
-              />
-              {(userType === "admin" || userType === "seller") && (
-                <div className="admin-buttons">
-                  <button
-                    onClick={() => setEditingId(gift._id) || setFormData(gift)}
-                  >
-                    Edit
-                  </button>
-                  <button onClick={() => handleDeleteGift(gift._id)}>
-                    Delete
-                  </button>
-                </div>
-              )}
               {userType === "tourist" && (
-                <div className="buttons">
-                  <button onClick={() => openModal(gift._id)}>Buy</button>
-                  <button onClick={() => handleAddToWishlist(gift.name)}>
-                    Add to Wishlist
-                  </button>
-                  <button onClick={() => handleAddToCart(gift.name)}>
-                    Add to cart
-                  </button>
+                <div className={styles.productButtons}>
+                  <button className={buttonStyle} onClick={() => openModal(gift._id)}>Buy</button>
+                  <button className={buttonStyle} onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</button>
+                  <button className={buttonStyle} onClick={() => handleAddToCart(gift.name)}>Add to Cart</button>
                 </div>
               )}
             </div>
@@ -625,65 +580,28 @@ const handlePromoCodeCheck = () => {
         <div>No products found.</div>
       )}
 
-<Modal
+      {/* Modal for payment */}
+      <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        contentLabel="Example Modal"
+        contentLabel="Payment Method"
         style={{
-          overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.75)",
-          },
-          content: {
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            marginRight: "-50%",
-            transform: "translate(-50%, -50%)",
-            width: "60%", // Increase width
-            height: "80%", // Increase height
-            padding: "40px", // Increase padding
-          },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.75)" },
+          content: { width: "60%", height: "80%", margin: "auto", padding: "40px" },
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <h2>Payment Method</h2>
-          <h3 style={{ marginBottom: "40px" }}>
-            Please Choose your Payment Method
-          </h3>
-          <div style={{ display: "flex" }}>
-            
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
-          >
-            <button onClick={handleWalletPurchase}>by Wallet</button>
-            <button onClick={handleCreditCardPurchase}>by Credit Card</button>
-          </div>
-          <button style={{ marginTop: "50px" }} onClick={closeModal}>
-            Close
-          </button>
+        <div className={styles.modalContainer}>
+          <h2 className={styles.modalHeader}>Payment Method</h2>
+          <button className={styles.modalButton} onClick={handleWalletPurchase}>by Wallet</button>
+          <button className={styles.modalButton} onClick={handleCreditCardPurchase}>by Credit Card</button>
+          <button className={styles.modalButton} onClick={closeModal}>Close</button>
         </div>
       </Modal>
     </div>
-
-    
   );
 };
 
-export default ProductList;
+export default ProductList;   
 
 
+//last working ciode ...  for edit
