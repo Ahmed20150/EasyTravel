@@ -231,22 +231,30 @@ const TempHomePage = () => {
       )}
 
       {userType === "admin" && (
-        <>
+        <> 
           <Link to="/productList">
             <Button Name={buttonStyle}>All Gifts/Products</Button>
           </Link>
-          <Link to="/pendingRequestsPage">
-            <Button className={buttonStyle}>Pending Requests</Button>
-          </Link>
-          <Link to="/adminAccountManagement">
-            <Button className={buttonStyle}>Account Management</Button>
-          </Link>
-          <Link to="/Categorycontrol">
-            <Button className={buttonStyle}>Manage Categories</Button>
-          </Link>
-          <Link to="/preferences">
-            <Button className={buttonStyle}>Manage Prefrence Tags</Button>
-          </Link>
+        <HomeCard
+            title="Pending Requests"
+            description="Manage pending requests from guides, advertisers, and sellers for approval"
+            linkRoute="/pendingRequestsPage" 
+          />
+        <HomeCard
+            title="Account Management"
+            description="Oversee and manage user accounts, including creation, updates, and access control"
+            linkRoute="/adminAccountManagement"
+          />
+        <HomeCard
+            title="Manage Categories"
+            description="Organize and maintain categories to ensure streamlined content classification"
+            linkRoute="/Categorycontrol"
+          />
+        <HomeCard
+            title="Manage Prefrence Tags"
+            description="Customize and manage preference tags to enhance user personalization"
+            linkRoute="/preferences"
+          />
           <Link to="/revenue">
             <Button className={buttonStyle}>Financial Report</Button>
           </Link>

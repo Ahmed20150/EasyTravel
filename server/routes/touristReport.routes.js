@@ -16,7 +16,7 @@ router.get('/tourist-report', async (req, res) => {
       const startDate = new Date(`2020-${monthStr}-01T00:00:00Z`);
 
       
-      const endDate = new Date(`2020-${monthStr}-01T00:00:00Z`);
+      const endDate = new Date(`2025-${monthStr}-01T23:59:59.999Z`);
 
       // Adjust the endDate to be the last day of the month dynamically
       endDate.setMonth(endDate.getMonth() + 1);  // Move to the next month

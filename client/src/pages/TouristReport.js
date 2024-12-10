@@ -20,7 +20,7 @@ const TouristReport = () => {
     }
 
     try {
-      const response = await axios.get('http://localhost:3000/allreports/tourist-report?month=${month}');
+      const response = await axios.get(`http://localhost:3000/allreports/tourist-report?month=${month}`);
       setTotalTourists(response.data.totalTourists); 
       setError(null);
     } catch (error) {

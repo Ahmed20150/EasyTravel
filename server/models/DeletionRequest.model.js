@@ -17,7 +17,11 @@ const deletionRequestSchema = new mongoose.Schema({
         type: String,
         enum: ['Pending', 'Processed'], // Adjust status values as needed
         default: 'Pending',
-    },
+    }, 
+    email: {
+        type: String,
+        required: true,
+      }
 });
 
 module.exports = mongoose.model('DeletionRequest', deletionRequestSchema);
