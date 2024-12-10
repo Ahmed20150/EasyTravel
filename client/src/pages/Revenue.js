@@ -110,7 +110,6 @@ function Revenue() {
       console.error('Error fetching data:', error);
     }
   };
-  
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
@@ -152,7 +151,7 @@ function Revenue() {
           revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
         }));
       } else if (filter === 'date' && selectedDate) {
-        const selectedDateFormatted = new Date(selectedDate).toISOString().split('T')[0]; // Format selectedDate
+        const selectedDateFormatted = new Date(selectedDate).toISOString().split('T')[0]; // Format selectedDate 
   
         const activityResults = filteredActs
           .filter((act) => {
@@ -180,6 +179,33 @@ function Revenue() {
             category: itinerary.category,
             revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
             date: selectedDate,
+          }));
+  
+        filtered = [...activityResults, ...itineraryResults];
+      } else if (filter === 'month' && selectedMonth) {
+        // Format the selected month for filtering
+        const selectedMonthFormatted = `-${String(selectedMonth).padStart(2, '0')}-`; // Ensure MM is surrounded by dashes
+  
+        const activityResults = filteredActs
+          .filter((act) => act.date.includes(selectedMonthFormatted)) // Check if the date includes "-MM-"
+          .map((act) => ({
+            type: 'Activity',
+            name: act.name,
+            category: act.category,
+            revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
+            date: act.date,
+          }));
+  
+        const itineraryResults = filteredItineraries
+          .filter((itinerary) => {
+            return itinerary.availableDates.some(date => date.includes(selectedMonthFormatted));
+          })
+          .map((itinerary) => ({
+            type: 'Itinerary',
+            name: itinerary.name,
+            category: itinerary.category,
+            revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
+            date: itinerary.availableDates[0], // Assuming the first available date is representative
           }));
   
         filtered = [...activityResults, ...itineraryResults];
