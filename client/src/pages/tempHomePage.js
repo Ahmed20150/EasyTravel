@@ -8,8 +8,9 @@ import { useCurrency } from "../components/CurrencyContext";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import GeneralNavbar from "../components/GeneralNavbar";
 import { Navbar, Button, Card, Footer } from "flowbite-react";
-import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle, homeCardContainer, flexRowContainer, flexRowItem } from "../styles/gasserStyles"; 
 import HomeCard from "../components/HomeCard";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
 const TempHomePage = () => {
@@ -294,60 +295,95 @@ const TempHomePage = () => {
           </Link>
         </>
       )}
-      {userType === "tourist" && (
-        <>
-          <Link to="/ViewAllItinerary">
-            <Button className={buttonStyle}>Manage Events</Button>
-          </Link>
-          <Link to="/GiftList">
-            <Button className={buttonStyle}>Gift Shop</Button>
-          </Link>
-          <Link to="/Help">
-            <Button className={buttonStyle}>Help</Button>
-          </Link>
-        </>
-      )}
+
 
       {userType === "tourist" && (
-        <>
+        <div className={flexRowContainer}>
+          <div className={flexRowItem}>
           <Link to="/productList">
             <Button className={buttonStyle}>All Gifts/Products</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/ExplorePage">
             <Button className={buttonStyle}>Explore All Activities, Itineraries, Museums</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/ViewAllItinerary">
             <Button className={buttonStyle}>View Itineraries</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/GiftList">
             <Button className={buttonStyle}>Gift Shop</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/BookFLight">
             <Button className={buttonStyle}>Book Flight</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/BookHotel">
             <Button className={buttonStyle}>Book Hotel</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/bookTransport">
             <Button className={buttonStyle}>Book Transportation</Button>
           </Link>
+          </div>
+          <div className={flexRowItem}>
           <Link to="/Wishlist">
             <Button className={buttonStyle}>View Wishlist</Button>{" "}
           </Link>
-          <Link to="/complaint/create">
-            <Button className={buttonStyle}>File Complaint</Button>
-          </Link>
-          <Link to="/complaint/myList">
-            <Button className={buttonStyle}>My Complaints</Button>
-          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <HomeCard
+            title="View Wishlist"
+            description="View your wishlist and manage it."
+            linkRoute="/Wishlist"
+          />
+          </div>
+        
+          <div className={flexRowItem}>
+          <HomeCard
+            title="Complaints"
+            description="File or View your complaints and their status."
+            linkRoute="/complaintManagement"
+          />
+          </div>
+          <div className={flexRowItem}>
           <Link to="/cart">
-          <Button className={buttonStyle} >Go to Cart</Button>
+          <Button className={buttonStyle} ><ShoppingCartIcon/></Button>
           </Link>
-         
-          <Link to="/address">
-            <Button className={buttonStyle}>Manage Address Book</Button>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/ViewAllItinerary">
+            <Button className={buttonStyle}>Manage Events</Button>
           </Link>
-        </>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/GiftList">
+            <Button className={buttonStyle}>Gift Shop</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <HomeCard
+            title="Help"
+            description="Any Questions? We are here to help you!"
+            linkRoute="/Help"
+          />
+          </div>
+          <div className={flexRowItem}>
+          <HomeCard
+            title="Manage Address Book"
+            description="Manage your address book and add new addresses."
+            linkRoute="/address"
+          />
+        </div>
+        </div>
       )}
     </div>
     </div>

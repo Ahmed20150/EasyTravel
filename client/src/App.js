@@ -86,6 +86,7 @@ import TouristAddress from "./pages/TouristAddress";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ComplaintManagement from "./pages/ComplaintManagement";
 function App() {
   return (
     <div className="App">
@@ -201,7 +202,10 @@ function App() {
             <Route path="/Wishlist" element={<Wishlist />} /> 
             <Route path="/cart" element={<Cart />} />
             <Route path="/productOrders" element={<ProductOrders/>} />
-            
+
+
+            <Route path="/complaintManagement" element={<ComplaintManagement />} />
+
           
           </Routes>
         </BrowserRouter>

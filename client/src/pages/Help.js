@@ -1,9 +1,11 @@
 import StepbyStepGuide from "../components/StepbyStepGuide";
+//import all extra step styles from gasser styles
+
+
 
 const Help = () => {
     return ( 
         <div>
-            <h1>Help</h1>
             <StepbyStepGuide/>
         </div>
      );

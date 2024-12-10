@@ -4,7 +4,7 @@ import { Navbar, Button, Card, Footer } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { MapPin, Sun, ShoppingCart } from "lucide-react";
 import HomeBanner from "../components/HomeBanner";
-import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle, centerContent } from "../styles/gasserStyles"; 
 import beachImage from 'client\\src\\images\\Beach.jpeg';
 import BudgetFriendlyImage from 'client\\src\\images\\BudgetFriendly.jpeg';
 import FamilyFriendlyImage from 'client\\src\\images\\FamilyFriendly.png';

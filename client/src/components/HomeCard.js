@@ -40,7 +40,7 @@ HomeCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   linkRoute: PropTypes.string.isRequired,
-  imageSrc: PropTypes.string, // Optional: If no image is provided, a placeholder will be shown
+  imageSrc: PropTypes.string, 
 };
 
 // Define default props
