@@ -9,6 +9,7 @@ const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const Tourist = require("./models/tourist.model.js");
 
 
 // Middleware
