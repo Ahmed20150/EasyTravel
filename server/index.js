@@ -122,7 +122,7 @@ app.use("/hotelOffer", hotelOffers);
 
 
 //getting all tourists
-app.get('alltourists', async (req, res) => {
+app.get('/alltourists', async (req, res) => {
     try {
         const tourists = await Tourist.find({});
         res.status(200).json(tourists);
@@ -616,6 +616,6 @@ app.use('/api/seller', sellerRoutes);
 app.use('/api/send' , activityRouter);
 
 app.use('/allreports', touristReport);
-app.use("/api", totalTouristActivity);
+app.use("/", totalTouristActivity);
 
 app.use('/api/promo-codes', promoCodeRoutes);

@@ -20,7 +20,16 @@ const PreferencePage = () => {
   const [deletePreferenceName, setDeletePreferenceName] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
+// Predefined list of all possible preferences
+const availablePreferences = [
+  "Historic Areas",
+  "Beaches",
+  "Family-friendly",
+  "Shopping",
+  "Budget-friendly",
+  "Adventure",
+  "Cultural Events",
+];
   useEffect(() => {
     fetchPreferences();
   }, []);
@@ -37,48 +46,30 @@ const PreferencePage = () => {
 
   const createPreference = async () => {
     setLoading(true);
-  
-    // Check if the preference name is empty or contains only spaces
-    if (!preferenceName.trim()) {
-      toast.error("Preference name cannot be empty!");
-      setLoading(false);
-      return;
-    }
-  
-    // Check if the preference name is too short
-    if (preferenceName.length < 3) {
-      toast.error("Preference name must be at least 3 characters long.");
-      setLoading(false);
-      return;
-    }
-  
 
-    // Check if the preference already exists
-    if (preferences.some((preference) => preference.name.toLowerCase() === preferenceName.toLowerCase())) {
-      toast.error("This preference already exists!");
+    if (!preferenceName.trim()) {
+      toast.error("Please select a preference to create!");
       setLoading(false);
       return;
     }
-  
+
     try {
       await axios.post("http://localhost:3000/api/preference", { name: preferenceName });
       toast.success("Preference created successfully!");
       fetchPreferences();
-      setPreferenceName(""); // Clear input field
+      setPreferenceName(""); // Reset the dropdown
     } catch (error) {
       console.error("Error creating preference", error);
-  
-      // Check if the error is related to duplication at the backend level
-      if (error.response && error.response.data && error.response.data.message === "Duplicate preference") {
-        toast.error("This preference already exists!");
-      } else {
-        toast.error("An error occurred while creating the preference.");
-      }
+      toast.error("An error occurred while creating the preference.");
     }
     setLoading(false);
   };
-  
 
+  // Filter out preferences that already exist
+  const remainingPreferences = availablePreferences.filter(
+    (availablePreference) =>
+      !preferences.some((existingPreference) => existingPreference.name === availablePreference)
+  );
   const deletePreference = async () => {
     setLoading(true);
     try {
@@ -97,23 +88,21 @@ const PreferencePage = () => {
   const updatePreference = async () => {
     setLoading(true);
   
-    // Check if the new preference name is empty or contains only spaces
+    // Check if the new preference name is selected
     if (!updateNewName.trim()) {
-      toast.error("Preference name cannot be empty!");
+      toast.error("Please select a preference to update to!");
       setLoading(false);
       return;
     }
-  
-    // Check if the new preference name is too short
-    if (updateNewName.length < 3) {
-      toast.error("Preference name must be at least 3 characters long.");
-      setLoading(false);
-      return;
-    }
-  
   
     // Check if the new preference name already exists (but is not the same as the current preference being updated)
-    if (preferences.some((preference) => preference.name.toLowerCase() === updateNewName.toLowerCase() && preference.name !== updateOldName)) {
+    if (
+      preferences.some(
+        (preference) =>
+          preference.name.toLowerCase() === updateNewName.toLowerCase() &&
+          preference.name !== updateOldName
+      )
+    ) {
       toast.error("This preference already exists!");
       setLoading(false);
       return;
@@ -125,8 +114,8 @@ const PreferencePage = () => {
       });
       toast.success("Preference updated successfully!");
       fetchPreferences();
-      setUpdateOldName("");
-      setUpdateNewName("");
+      setUpdateOldName(""); // Reset the selected old name
+      setUpdateNewName(""); // Reset the selected new name
     } catch (error) {
       console.error("Error updating preference", error);
       toast.error("Failed to update preference. Preference not found.");
@@ -144,20 +133,25 @@ const PreferencePage = () => {
       </Link>
 
       <Tabs aria-label="Preference Management" variant="fullWidth" className="mb-4">
-        <Tabs.Item title="Create" icon={HiOutlinePlusCircle}>
+      <Tabs.Item title="Create" icon={HiOutlinePlusCircle}>
           <div className="space-y-4">
             <Label htmlFor="preferenceName" className="block text-lg font-semibold">
-              Enter Preference Name
+              Select Preference to Create
             </Label>
-            <TextInput
+            <Select
               id="preferenceName"
-              name="preferenceName"
-              placeholder="Enter preference name"
               value={preferenceName}
               onChange={(e) => setPreferenceName(e.target.value)}
               className="mb-4"
-            />
-            <Button onClick={createPreference} className="w-full" disabled={loading}>
+            >
+              <option value="">-- Select a Preference --</option>
+              {remainingPreferences.map((preference) => (
+                <option key={preference} value={preference}>
+                  {preference}
+                </option>
+              ))}
+            </Select>
+            <Button onClick={createPreference} className="w-full" disabled={loading || !preferenceName}>
               {loading ? "Creating..." : "Create Preference"}
             </Button>
           </div>
@@ -177,39 +171,61 @@ const PreferencePage = () => {
         </Tabs.Item>
 
         <Tabs.Item title="Update" icon={HiOutlinePencilAlt}>
-          <div className="space-y-4">
-            <Label htmlFor="updateOldName" className="block text-lg font-semibold">
-              Select Preference to Update
-            </Label>
-            <Select
-              id="updateOldName"
-              value={updateOldName}
-              onChange={(e) => setUpdateOldName(e.target.value)}
-              className="mb-4"
-            >
-              <option value="">Select a preference</option>
-              {preferences.map((preference) => (
-                <option key={preference._id} value={preference.name}>
-                  {preference.name}
-                </option>
-              ))}
-            </Select>
+  <div className="space-y-4">
+    {/* Old Preference Dropdown */}
+    <Label htmlFor="updateOldName" className="block text-lg font-semibold">
+      Select Preference to Update
+    </Label>
+    <Select
+      id="updateOldName"
+      value={updateOldName}
+      onChange={(e) => setUpdateOldName(e.target.value)}
+      className="mb-4"
+    >
+      <option value="">-- Select an Existing Preference --</option>
+      {preferences.map((preference) => (
+        <option key={preference._id} value={preference.name}>
+          {preference.name}
+        </option>
+      ))}
+    </Select>
 
-            <Label htmlFor="updateNewName" className="block text-lg font-semibold">
-              New Preference Name
-            </Label>
-            <TextInput
-              id="updateNewName"
-              placeholder="Enter new preference name"
-              value={updateNewName}
-              onChange={(e) => setUpdateNewName(e.target.value)}
-              className="mb-4"
-            />
-            <Button onClick={updatePreference} className="w-full" disabled={loading}>
-              {loading ? "Updating..." : "Update Preference"}
-            </Button>
-          </div>
-        </Tabs.Item>
+    {/* New Preference Dropdown */}
+    <Label htmlFor="updateNewName" className="block text-lg font-semibold">
+      Select New Preference Name
+    </Label>
+    <Select
+      id="updateNewName"
+      value={updateNewName}
+      onChange={(e) => setUpdateNewName(e.target.value)}
+      className="mb-4"
+    >
+      <option value="">-- Select a New Preference --</option>
+      {availablePreferences
+        .filter(
+          (availablePreference) =>
+            !preferences.some(
+              (preference) => preference.name === availablePreference
+            )
+        )
+        .map((preference) => (
+          <option key={preference} value={preference}>
+            {preference}
+          </option>
+        ))}
+    </Select>
+
+    {/* Update Button */}
+    <Button
+      onClick={updatePreference}
+      className="w-full"
+      disabled={loading || !updateOldName || !updateNewName}
+    >
+      {loading ? "Updating..." : "Update Preference"}
+    </Button>
+  </div>
+</Tabs.Item>
+
 
         <Tabs.Item title="Delete" icon={HiOutlineTrash}>
           <div className="space-y-4">

@@ -20,7 +20,7 @@ const TotalTouristsReport = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:3000/api/total-tourists?month=${month}`);
+      const response = await axios.get(`http://localhost:3000/total-tourists?month=${month}`);
       setTotalTourists(response.data.totalTourists);
       setError(null);
     } catch (error) {
@@ -33,7 +33,7 @@ const TotalTouristsReport = () => {
   // Fetch total tourists across all months
   const fetchAllTourists = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/total-tourists');
+      const response = await axios.get('http://localhost:3000/total-tourists');
       setAllTourists(response.data.totalTourists);
       setError(null);
     } catch (error) {
