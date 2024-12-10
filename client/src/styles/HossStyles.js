@@ -29,6 +29,11 @@ export const giftItemGrid = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-
 // Individual Gift Item Card
 export const giftItemCard = "border p-4 rounded-lg shadow-lg"; // Card style for individual gift item
 
+export const giftItemCardToggled = "border p-4 rounded-lg shadow-xl bg-gray-100 scale-105 transition-transform"; // Toggled style for the card
+
+
+
+
 // Admin & Product Action Buttons
 export const adminButtons = "flex gap-4 justify-between"; // Buttons for admin actions (Edit, Delete)
 export const productButtons = "flex gap-4 justify-between"; // Buttons for product actions (Buy, Add to Wishlist, Add to Cart)
@@ -162,3 +167,5 @@ export const toggleButton = {
     backgroundColor: 'lightgray',
     // etc.
   };
+
+

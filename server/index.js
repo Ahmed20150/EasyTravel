@@ -632,6 +632,6 @@ app.use('/api/seller', sellerRoutes);
 app.use('/api/send' , activityRouter);
 
 app.use('/allreports', touristReport);
-app.use("/api", totalTouristActivity);
+app.use("/", totalTouristActivity);
 
 app.use('/api/promo-codes', promoCodeRoutes);

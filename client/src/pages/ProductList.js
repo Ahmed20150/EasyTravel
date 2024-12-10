@@ -518,6 +518,8 @@ const handlePromoCodeCheck = () => {
   </div>
 )}
 
+
+
           {/* Display Gifts */}
           {loadingGifts ? (
             <div className={styles.loaderText}>Loading Gifts/Products...</div>
@@ -525,6 +527,7 @@ const handlePromoCodeCheck = () => {
             <div className={styles.giftItemGrid}>
               {filteredGifts.map((gift) => (
                 <div key={gift._id} className={styles.giftItemCard}>
+                  
                   <ViewGiftItemCard
                     giftItem={gift}
                     userType={userType}
@@ -563,6 +566,8 @@ const handlePromoCodeCheck = () => {
       Delete
     </button>
   </div>
+
+  
 ) : null}
 
 
@@ -604,4 +609,4 @@ const handlePromoCodeCheck = () => {
 export default ProductList;   
 
 
-//last working ciode ...  for edit
+//last working ciode ...  for edit .. .. .. .. .. .. . . 
