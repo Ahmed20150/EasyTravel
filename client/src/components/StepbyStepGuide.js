@@ -165,7 +165,7 @@ const StepbyStepGuide = () => {
 
             <Link to="/home"><Button className={`${buttonStyle} fixed top-4 left-4 z-50`}>back</Button></Link>
 
-
+<ToastContainer/>
         </div>
 
     );
