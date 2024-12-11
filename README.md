@@ -230,6 +230,32 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /api/checkBooking/:activityId/:username`: Check details of an existing booking for a tourist and activity.
   - `GET /api/pastBookings`: Retrieve past activity bookings for a specific tourist.
   - `GET /api/upcomingBookings`: Fetch upcoming activity bookings for a specific tourist.
+- **Admin**
+  - `POST /addGiftItem`: Add a new gift item with details like name, image, price, and quantity.
+  - `PUT /updateGiftItem/:id`: Update details of an existing gift item by its ID.
+  - `DELETE /deleteGiftItem/:id`: Delete a gift item by its ID.
+  - `POST /add-tourismGoverner`: Add a new Tourism Governer account with a username and password.
+  - `POST /add-admin`: Add a new Admin account with a username and password.
+  - `DELETE /delete-user/:username/:role`: Delete a user by username and role.
+  - `GET /viewAllUsers`: View all users from all schemas (Tourists, Sellers, etc.).
+  - `GET /viewRequests`: View all user deletion requests.
+  - `GET /pending-tour-guides`: Get pending tour guide requests.
+  - `GET /pending-advertisers`: Get pending advertiser requests.
+  - `GET /pending-sellers`: Get pending seller requests.
+  - `PUT /accept-tour-guide/:id`: Accept a pending tour guide request by its ID.
+  - `PUT /reject-tour-guide/:id`: Reject a tour guide by updating their status to "rejected."
+  - `PUT /accept-tour-guide/:id`: Accept a tour guide by updating their status to "accepted."
+  - `PUT /tourGuide/:id/accept-terms`: Update a tour guide's terms acceptance status.
+  - `PUT /reject-advertiser/:id`: Reject an advertiser by updating their status to "rejected."
+  - `PUT /accept-advertiser/:id`: Accept an advertiser by updating their status to "accepted."
+  - `PUT /advertiser/:id/accept-terms`: Update an advertiser's terms acceptance status.
+  - `PUT /reject-seller/:id`: Reject a seller by updating their status to "rejected."
+  - `PUT /accept-seller/:id`: Accept a seller by updating their status to "accepted."
+  - `PUT /seller/:id/accept-terms`: Update a seller's terms acceptance status.
+  - `GET /stats`: Retrieve statistics for all users, including total users and new users grouped by month.
+  - `GET /all-gifts`: Retrieve all gift items, including archived ones.
+  - `PATCH /all-gifts/archive/:id`: Toggle the archived status of a specific gift item.
+
 
 ## Tests  
 - **Postman Tests:**  
