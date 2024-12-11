@@ -9,6 +9,7 @@ const museumRoutes = require("./routes/museumsAndHistoricalPlaces.route.js");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+const Tourist = require("./models/tourist.model.js");
 
 
 // Middleware
@@ -105,7 +106,7 @@ app.use('/Request', Tourist_TourGuide_Advertiser_Seller);
 app.use('/api', touristRoutes);
 app.use("/museums", museumRoutes);
 app.use("/activities", activityRoutes);
-app.use("/itinerary", itineraryRoutes);
+app.use("/itineraries", itineraryRoutes);
 app.use("/gift", giftRoutes);
 app.use('/api', tourGuideRoutes);
 app.use('/api/Adv', advRoutes);
@@ -122,7 +123,7 @@ app.use("/hotelOffer", hotelOffers);
 
 
 //getting all tourists
-app.get('/api/tourists', async (req, res) => {
+app.get('/alltourists', async (req, res) => {
     try {
         const tourists = await Tourist.find({});
         res.status(200).json(tourists);
@@ -142,14 +143,16 @@ app.post("/api/category", async (req, res) => {
     }
 });
 
-app.get("/api/categories", async (req, res) => {
-    try {
-        const categories = await Category.find({});
-        res.status(200).json(categories);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+app.get("/getAllCategories", async (req, res) =>{
+  try{
+    const category = await Category.find({});
+    res.status(200).json(category);
+
+  }catch{
+    res.status(500).json({message:error.message});
+
+  }
+})
 
 app.put("/api/category/:name", async (req, res) => {
     try {
@@ -228,14 +231,13 @@ app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
 
-app.get("/api/preference", async (req, res) =>{
+app.get("/getAllPreferences", async (req, res) =>{
   try{
     const preference = await Preference.find({});
     res.status(200).json(preference);
 
   }catch{
     res.status(500).json({message:error.message});
-
   }
 })
 
@@ -448,7 +450,7 @@ app.delete("/api/preference/:name", async (req, res) => {
 
 
 // get all activities 
-app.get('/api/activities', async (req, res) => {
+app.get('/activities', async (req, res) => {
   try {
       const activity = await activities.find({});
       res.status(200).json(activity);
@@ -460,7 +462,7 @@ app.get('/api/activities', async (req, res) => {
 
 // get all itineraries
 
-app.get('/api/itineraries', async (req, res) => {
+app.get('/itineraries', async (req, res) => {
   try {
       const itinerarie = await itineraries.find({});
       res.status(200).json(itinerarie);
@@ -472,7 +474,7 @@ app.get('/api/itineraries', async (req, res) => {
 
 // get all museumsandhistoricalplaces
 
-app.get('/api/museums', async (req, res) => {
+app.get('/museums', async (req, res) => {
   try {
       const museums  = await museumsandhistoricalplaces.find({});
       res.status(200).json(museums);
@@ -490,6 +492,7 @@ app.get('/api/actt', async (req, res) => {
       res.status(500).json({ message: err.message });
   }
 });
+
 
 
 
@@ -547,7 +550,7 @@ app.put("/api/itineraries/:id", async (req, res) => {
 
 app.get('/api/giftitems', async (req, res) => {
   try {
-      const giftItems = await GiftItem.find(); // Assuming you have a GiftItem model
+      const giftItems = await GiftItem.find(); 
       res.json(giftItems);
   } catch (error) {
       res.status(500).json({ error: 'Failed to fetch gift items' });
@@ -613,7 +616,7 @@ app.use('/advertiser', advRoutes);
 app.use('/api/seller', sellerRoutes);
 app.use('/api/send' , activityRouter);
 
-app.use('/api/reports', touristReport);
-app.use("/api", totalTouristActivity);
+app.use('/allreports', touristReport);
+app.use("/", totalTouristActivity);
 
 app.use('/api/promo-codes', promoCodeRoutes);

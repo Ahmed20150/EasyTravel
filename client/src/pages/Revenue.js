@@ -47,13 +47,14 @@ function Revenue() {
   };
 
   
-  const handleShowAllRevenueClick = async () => {
+  const handleShowAllRevenueClick = async () => { 
+    console.log("Fetching revenue data...");
     try {
       const [itinerariesResponse, museumsResponse, actResponse, giftItemsResponse] = await Promise.all([
-        axios.get('http://localhost:3000/api/itineraries'),
-        axios.get('http://localhost:3000/api/museums'),
-        axios.get('http://localhost:3000/api/activities'),
-        axios.get('http://localhost:3000/api/giftitems'),
+        axios.get('http://localhost:3000/itineraries'),
+        axios.get('http://localhost:3000/museums'),
+        axios.get('http://localhost:3000/activities'),
+        axios.get('http://localhost:3000/gift'),
       ]);
   
       const itineraries = itinerariesResponse.data;
@@ -110,7 +111,7 @@ function Revenue() {
       setActTotalRevenue(act_revenue);
       setGiftTotalRevenue(gift_revenue);
       setTotalRevenue(it_revenue + museum_revenue + act_revenue + gift_revenue);
-    } catch (error) {
+    } catch (error) { 
       console.error('Error fetching data:', error);
     }
   };
@@ -118,9 +119,9 @@ function Revenue() {
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
-        axios.get('http://localhost:3000/api/itineraries'),
-        axios.get('http://localhost:3000/api/museums'),
-        axios.get('http://localhost:3000/api/activities'),
+        axios.get('http://localhost:3000/itineraries'),
+        axios.get('http://localhost:3000/museums'),
+        axios.get('http://localhost:3000/activities'),
       ]);
   
       const itineraries = itinerariesResponse.data;
