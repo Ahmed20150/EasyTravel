@@ -260,6 +260,11 @@ router.post("/create-checkout-session", async (req, res) => {
 - **categories**
   - `GET /`: Retrieve all categories from the database.
     
+- **file**
+  - `POST /upload`: Upload a file and save its metadata to the database.
+  - `DELETE /deleteAll`: Delete all records from the "uploads.chunks", "uploads.files", and "files" collections.
+  - `GET /getbasestring`: Fetch the base64 string of a file based on the provided username.
+    
 ## Tests  
 - **Postman Tests:**  
   Requests were tested using Postman collections for:
