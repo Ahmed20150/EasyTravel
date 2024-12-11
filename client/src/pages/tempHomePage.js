@@ -10,7 +10,6 @@ import GeneralNavbar from "../components/GeneralNavbar";
 import { Navbar, Button, Card, Footer } from "flowbite-react";
 import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn, stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles";
 import HomeCard from "../components/HomeCard";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
 
@@ -368,7 +367,6 @@ const TempHomePage = () => {
           </div>
 
           </>
-          
         )}
       </div>
     </div>
