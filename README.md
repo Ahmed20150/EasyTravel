@@ -4,6 +4,13 @@
 This application aims to enhance the user experience by seamlessly connecting tourists, advertisers, tour guides, sellers, and tourism governors. It simplifies processes such as activity and itinerary bookings, e-commerce product sales, and the management of complaints and notifications, all within a unified system. Designed as the backbone of an integrated travel and tourism platform, it streamlines both administrative tasks and user-facing operations.
 
 
+## Tech/Framework Used
+
+- **Backend Runtime:** Node.js
+- **Web Framework:** Express.js
+- **Database:** MongoDB
+- **Authentication:** JWT (Json Web Tokens)
+
 ## Installation
 
 1. **Clone the repository:**
@@ -62,6 +69,7 @@ This application aims to enhance the user experience by seamlessly connecting to
 6. **Revenue & Reporting**:
    - Generate detailed sales reports for Tour Guides and Advertisers.
    - Calculate and filter revenue by specific months or dates.
+
 
 
 ## Credits
