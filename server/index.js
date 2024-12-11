@@ -11,6 +11,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const Tourist = require("./models/tourist.model.js");
 
+const activityBookingRoutes = require('./routes/activityBooking.routes');
 
 // Middleware
 app.use(express.json({ limit: '50mb' }));
@@ -58,6 +59,7 @@ const Transportation=require("./routes/transportation.routes.js")
 const touristReport = require('./routes/touristReport.routes.js');
 const  totalTouristActivity = require("./routes/totalTouristActivity.routes.js");
 const addressRoutes = require('./routes/Address.routes.js');
+const categoryRoutes = require('./routes/category.routes');
 
 
 
@@ -74,7 +76,8 @@ app.use(cors());
 
 require('./config/db');
 
-
+// Routes
+app.use('/activityBooking', activityBookingRoutes);
 
 app.use('/api/files', fileRoutes);
 app.use('/auth', authRoutes);
@@ -117,7 +120,7 @@ app.use("/notifications", notificationRouter);
 app.use("/tourguide", tourGuideRoutes);
 app.use("/booking", bookingRoutes);
 app.use("/hotelOffer", hotelOffers);
-
+app.use('/categories', categoryRoutes);
 
 
 
@@ -635,4 +638,4 @@ app.use('/api/send' , activityRouter);
 app.use('/allreports', touristReport);
 app.use("/", totalTouristActivity);
 
-app.use('/api/promo-codes', promoCodeRoutes);
+app.use('/promo-codes', promoCodeRoutes);

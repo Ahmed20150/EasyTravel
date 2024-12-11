@@ -618,33 +618,33 @@ router.get("/tourist/:username/cart", authenticate, async (req, res) => {
 //Pay for gift with Wallet
 router.patch("/wallet/purchaseProduct", async (req, res) => {
   try {
-    const { username, totalPrice} = req.body;
+    const { username, totalPrice } = req.body;
 
     // Find the tourist by username
     const tourist = await Tourist.findOne({ username });
     if (!tourist) {
       return res.status(404).json({ message: "Tourist not found" });
     }
-        // Check if the tourist has enough balance
-        if (tourist.wallet < totalPrice) {
-          return res.status(400).json({ message: "Insufficient wallet balance" });
-        }
-    
-        // Update the tourist's wallet and bookedItineraries array
-        tourist.wallet -= totalPrice;
-    
-        // Save the updated tourist document
-        const updatedTourist = await tourist.save();
-    
-        res.status(200).json({
-          message: "Product purchased successfully",
-          wallet: updatedTourist.wallet,
-        });
-      } catch (error) {
-        console.error("Error purchasing product:", error);
-        res.status(500).json({ message: "Server error" });
+    // Check if the tourist has enough balance
+    if (tourist.wallet < totalPrice) {
+      return res.status(400).json({ message: "Insufficient wallet balance" });
+    }
 
-      }
+    // Update the tourist's wallet and bookedItineraries array
+    tourist.wallet -= totalPrice;
+
+    // Save the updated tourist document
+    const updatedTourist = await tourist.save();
+
+    res.status(200).json({
+      message: "Product purchased successfully",
+      wallet: updatedTourist.wallet,
+    });
+  } catch (error) {
+    console.error("Error purchasing product:", error);
+    res.status(500).json({ message: "Server error" });
+
+  }
 });
 
 
@@ -856,6 +856,60 @@ router.patch(
   }
 );
 
+// Add flight to tourist's booked flights
+router.put("/bookFlight", async (req, res) => {
+  try {
+    console.log("Raw request body:", req.body);
+    console.log("Content-Type:", req.headers["content-type"]);
 
+    const { username, newBookedFlightId } = req.body;
+    console.log("Parsed request:", { username, newBookedFlightId });
+
+    if (!username || !newBookedFlightId) {
+      console.log("Missing fields:", { username, newBookedFlightId });
+      return res.status(400).json({
+        message: "Missing required fields",
+        received: { username, newBookedFlightId },
+      });
+    }
+
+    // Get current tourist data
+    const tourist = await Tourist.findOne({ username: username });
+    console.log("Found tourist:", tourist);
+
+    if (!tourist) {
+      return res.status(404).json({
+        message: "noo",
+        username: username,
+      });
+    }
+
+    // Ensure BookedFlights is initialized as an array
+    const currentFlights = tourist.BookedFlights || [];
+    const updatedFlights = [...currentFlights, newBookedFlightId];
+
+    console.log("Current flights:", currentFlights);
+    console.log("Updated flights:", updatedFlights);
+
+    const updatedTourist = await Tourist.findOneAndUpdate(
+      { username },
+      { $set: { BookedFlights: updatedFlights } },
+      { new: true }
+    );
+
+    console.log("Updated tourist:", updatedTourist);
+
+    res.status(200).json({
+      message: "Flight booked successfully",
+      bookedFlights: updatedTourist.BookedFlights,
+    });
+  } catch (error) {
+    console.error("Detailed error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
 
 module.exports = router;

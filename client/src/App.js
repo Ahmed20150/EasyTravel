@@ -94,6 +94,9 @@ import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import AddMuseumPage from './pages/AddMuseumPage';
 
+import MuseumsPage from "./pages/MuseumsPage";
+import ActivitiesPage from "./pages/ActivitiesPage";
+import FeaturedItinerariesPage from "./pages/FeaturedItinerariesPage";
 
 function App() {
   return (
@@ -188,7 +191,7 @@ function App() {
               element={<SelectActivity />}
             />
             <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
-            <Route path="/museums" element={<MuseumsList />} />
+            <Route path="/museums" element={<MuseumsPage />} />
             <Route path="/Categorycontrol" element={<Categories />} />
             <Route path="/preferences" element={<PreferencePage />} />
             <Route path="/giftlist" element={<GiftList />} />
@@ -212,6 +215,8 @@ function App() {
             <Route path="/Wishlist" element={<Wishlist />} /> 
             <Route path="/cart" element={<Cart />} />
             <Route path="/productOrders" element={<ProductOrders/>} />
+            <Route path="/activities-featured" element={<ActivitiesPage />} />
+            <Route path="/featured-itineraries" element={<FeaturedItinerariesPage />} />
             
             <Route path="/create-gift" element={<CreateGift />} />
 
