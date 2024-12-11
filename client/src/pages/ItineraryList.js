@@ -29,7 +29,7 @@ const ItineraryList = () => {
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/itinerary");
+        const response = await axios.get("http://localhost:3000/itineraries");
         const filteredItineraries = userType === "admin"
           ? response.data
           : response.data.filter((itinerary) => itinerary.creator === username);
@@ -62,7 +62,7 @@ const ItineraryList = () => {
     const fetchNotifications = async () => {
       if (userType === "tourGuide") {
         try {
-          const response = await axios.get(`http://localhost:3000/itinerary/notifications/${username}`);
+          const response = await axios.get(`http://localhost:3000/itineraries/notifications/${username}`);
           setNotifications(response.data);
         } catch (error) {
           console.error("Failed to fetch notifications:", error.message);
