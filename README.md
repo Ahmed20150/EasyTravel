@@ -221,6 +221,15 @@ router.post("/create-checkout-session", async (req, res) => {
 
 - **Tourist_ Tour Guide_Advertiser_ Seller.route**
   - `POST /api/requestDelete/:username/:role`: Submit an account deletion request for a user based on their username and role.
+  
+- **activityBooking**
+  -`POST /api/createActivityBooking`: Create a new activity booking for a tourist.
+  -`GET /api/tourist/:username`: Fetch all activity bookings for a specific tourist.
+  -`DELETE /api/unbook/:bookingId`: Unbook an activity if the booking date is more than 48 hours away.
+  -`GET /api/check/:activityId/:username`: Check if a tourist has booked a specific activity.
+  -`GET /api/checkBooking/:activityId/:username`: Check details of an existing booking for a tourist and activity.
+  -`GET /api/pastBookings`: Retrieve past activity bookings for a specific tourist.
+  -`GET /api/upcomingBookings`: Fetch upcoming activity bookings for a specific tourist.
 
 ## Tests  
 - **Postman Tests:**  
