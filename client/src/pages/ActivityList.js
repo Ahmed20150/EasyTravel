@@ -194,7 +194,8 @@ const ActivityLists = () => {
                 onClick={() => handleDelete(activity._id)}
               >
                 Delete
-              </Button>
+              </button>
+
               {userType === 'admin' && (
                 <button
                   className={styles.giftFormButton}
@@ -202,20 +203,13 @@ const ActivityLists = () => {
                   onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}
                 >
                   Flag
-                </Button>
+                </button>
               )}
             </div>
-          </Table.Cell>
-        </Table.Row>
-      ))}
-    </Table.Body>
-  </Table>
-</div>
-
-      
+          </div>
+        ))}
       </div>
-     
-    // </div>
+    </div>
   );
 };
 

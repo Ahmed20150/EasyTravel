@@ -8,7 +8,6 @@ import ViewGiftItemCard from "../components/ViewGiftItemCard";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";
-import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
 
 import * as styles from "../styles/HossStyles.js"; // Importing styles from HossStyles.js
 import { buttonStyle } from "../styles/GeneralStyles.js"; // Importing buttonStyle from GeneralStyles.js
@@ -481,7 +480,6 @@ const handlePromoCodeCheck = () => {
           placeholder="Search by product name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-gray-300 rounded-md p-2"
         />
         <div className={styles.priceFilterContainer}>
           <input
@@ -490,7 +488,6 @@ const handlePromoCodeCheck = () => {
             placeholder="Min Price"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="border border-gray-300 rounded-md p-2"
           />
           <input
             type="number"
@@ -498,7 +495,6 @@ const handlePromoCodeCheck = () => {
             placeholder="Max Price"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="border border-gray-300 rounded-md p-2"
           />
         </div>
         <div className={styles.sortSelect}>
@@ -585,15 +581,9 @@ const handlePromoCodeCheck = () => {
             </div>
           ))}
         </div>
-      ))}
-    </div>
-  ) : (
-    <div className="text-center text-gray-600">No products found.</div>
-  )}
-</div>
-
-    
-  
+      ) : (
+        <div>No products found.</div>
+      )}
 
       {/* Modal for payment */}
       <Modal
