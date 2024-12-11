@@ -170,7 +170,7 @@ const FeaturedItinerariesPage = () => {
 
     const fetchItineraries = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/itinerary");
+            const response = await axios.get("http://localhost:3000/itineraries");
             const username = Cookies.get("username");
             const user = await axios.get(`http://localhost:3000/api/tourist/${username}`);
 
@@ -275,7 +275,7 @@ const FeaturedItinerariesPage = () => {
         setModalIsOpen(true);
 
         try {
-            const response = await axios.get(`http://localhost:3000/itinerary/${id}`);
+            const response = await axios.get(`http://localhost:3000/itineraries/${id}`);
             setAvailableDates(response.data.availableDates);
             setAvailableTimes(response.data.availableTimes);
             setOriginalPrice(response.data.priceOfTour); // Set original price
