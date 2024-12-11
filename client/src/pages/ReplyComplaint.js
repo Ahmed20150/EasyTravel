@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom"; // To access the complaint id from the URL
 import { Link } from 'react-router-dom';
-
+import { buttonStyle, cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import HomeBanner from "../components/HomeBanner";
 const ComplaintDetails = () => {
   const { complaintId } = useParams(); // Get the complaintId from the URL
   const [complaint, setComplaint] = useState(null);
@@ -91,113 +93,123 @@ const ComplaintDetails = () => {
     );
   }
 
+  
   return (
-    <div style={{
-      maxWidth: "900px",
-      margin: "auto",
-      padding: "20px",
-      backgroundColor: "#f9f9f9",
-      borderRadius: "8px",
-      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
-    }}>
-      <Link to="/complaint/view"><button>Back</button></Link>
-      <h2 style={{ fontSize: "2rem", color: "#333", textAlign: "center", marginBottom: "20px" }}>
-        Complaint Details
-      </h2>
+    <div>
+      <HomeBanner />
+      
+      {/* Back Button */}
+      <Link to="/complaint/view">
+        <Button
+        style={{ position: 'absolute', top: '30px', left: '10px' }}
+        className={buttonStyle}
+       >
+          Back
+        </Button>
+      </Link>
 
-      <div style={{ marginBottom: "15px" }}>
-        <strong style={{ fontWeight: "600", color: "#555", display: "block", marginBottom: "5px" }}>
-          Title:
-        </strong>
-        <p style={{ fontSize: "1rem", color: "#333", margin: 0 }}>
-          {complaint.title}
-        </p>
-      </div>
+      <div 
+        style={{
+          maxWidth: "1200px",
+          margin: "auto",
+          padding: "30px",
+          backgroundColor: "#fff",
+          borderRadius: "8px",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          marginTop: "200px"
+        }}
+      >
+        <div className="flex flex-col items-center justify-center">
 
-      <div style={{ marginBottom: "15px" }}>
-        <strong style={{ fontWeight: "600", color: "#555", display: "block", marginBottom: "5px" }}>
-          Date Issued:
-        </strong>
-        <p style={{ fontSize: "1rem", color: "#333", margin: 0 }}>
-          {new Date(complaint.dateIssued).toLocaleDateString()}
-        </p>
-      </div>
+          {/* Complaint Title */}
+          <h2 className="text-5xl font-bold mb-8 text-center text-gray-800">Complaint Details</h2>
 
-      <div style={{ marginBottom: "15px" }}>
-        <strong style={{ fontWeight: "600", color: "#555", display: "block", marginBottom: "5px" }}>
-          Status:
-        </strong>
-        <p style={{
-          fontSize: "1rem", 
-          color: complaint.status === "Pending" ? "orange" : "green",
-          fontWeight: "bold"
-        }}>
-          {complaint.status}
-        </p>
-      </div>
+          {/* Title Section */}
+          <div style={{ marginBottom: "20px", width: "100%" }}>
+            <strong className="text-gray-800 text-3xl">Title:</strong>
+            <p className="text-gray-800 text-2xl mt-2">{complaint.title}</p>
+          </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <strong style={{ fontWeight: "600", color: "#555", display: "block", marginBottom: "5px" }}>
-          Description:
-        </strong>
-        <p style={{ fontSize: "1rem", color: "#333", margin: 0 }}>
-          {complaint.body}
-        </p>
-      </div>
+          {/* Date Issued Section */}
+          <div style={{ marginBottom: "20px", width: "100%" }}>
+            <strong  className="text-gray-800 text-3xl">Date Issued:</strong>
+            <p className="text-gray-800 text-2xl mt-2">
+              {new Date(complaint.dateIssued).toLocaleDateString()}
+            </p>
+          </div>
 
-      <div style={{ marginBottom: "20px" }}>
-        <strong style={{ fontWeight: "600", color: "#555", display: "block", marginBottom: "5px" }}>
-          Reply:
-        </strong>
-        <textarea
-          style={{
-            width: "100%",
-            height: "100px",
-            padding: "10px",
-            fontSize: "1rem",
-            borderRadius: "5px",
-            border: "1px solid #ddd",
-            marginBottom: "10px",
-            resize: "vertical",
-          }}
-          value={reply}
-          onChange={handleReplyChange}
-        />
-        <button
-          onClick={handleSubmitReply}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "1rem",
-          }}
-        >
-          Submit Reply
-        </button>
-        {submitError && <p style={{ color: "red", marginTop: "10px" }}>{submitError}</p>}
-        {successMessage && <p style={{ color: "green", marginTop: "10px" }}>{successMessage}</p>}
-      </div>
+          {/* Status Section */}
+          <div style={{ marginBottom: "20px", width: "100%" }}>
+            <strong  className="text-gray-800 text-3xl">Status:</strong>
+            <p className={`text-2xl mt-2 font-semibold ${complaint.status === "Pending" ? "text-orange-600" : "text-green-600"}`}>
+              {complaint.status}
+            </p>
+          </div>
 
-      <div style={{ marginTop: "20px" }}>
-        <button
-          onClick={handleStatusToggle}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#007BFF",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "1rem",
-            marginRight: "10px",
-          }}
-        >
-          Mark as {complaint.status === "pending" ? "Resolved" : "Pending"}
-        </button>
-        {statusError && <p style={{ color: "red", marginTop: "10px" }}>{statusError}</p>}
+          {/* Description Section */}
+          <div style={{ marginBottom: "20px", width: "100%" }}>
+            <strong  className="text-gray-800 text-3xl">Description:</strong>
+            <p className="text-gray-800 text-2xl mt-2">{complaint.body}</p>
+          </div>
+
+          {/* Reply Section */}
+          <div style={{ marginBottom: "30px", width: "100%" }}>
+            <strong  className="text-gray-800 text-3xl">Reply:</strong>
+            <textarea
+              style={{
+                width: "100%",
+                height: "120px",
+                padding: "10px",
+                fontSize: "1rem",
+                borderRadius: "5px",
+                border: "1px solid #ddd",
+                marginTop: "10px",
+                resize: "vertical",
+              }}
+              value={reply}
+              onChange={handleReplyChange}
+            />
+            <Button
+              onClick={handleSubmitReply}
+              // style={{
+              //   padding: "12px 25px",
+              //   backgroundColor: "#4CAF50",
+              //   color: "white",
+              //   border: "none",
+              //   borderRadius: "5px",
+              //   cursor: "pointer",
+              //   fontSize: "1rem",
+              //   marginTop: "10px"
+              // }}
+              className={buttonStyle}
+            >
+              Submit Reply
+            </Button>
+            {submitError && <p style={{ color: "red", marginTop: "10px" }}>{submitError}</p>}
+            {successMessage && <p style={{ color: "green", marginTop: "10px" }}>{successMessage}</p>}
+          </div>
+
+          {/* Status Toggle Section */}
+          <div style={{ marginTop: "30px", width: "100%" }}>
+            <Button
+              onClick={handleStatusToggle}
+              // style={{
+              //   padding: "12px 25px",
+              //   backgroundColor: "#007BFF",
+              //   color: "white",
+              //   border: "none",
+              //   borderRadius: "5px",
+              //   cursor: "pointer",
+              //   fontSize: "1rem",
+              //   marginRight: "15px",
+              // }}
+              className={buttonStyle}
+            >
+              Mark as {complaint.status === "pending" ? "Resolved" : "Pending"}
+            </Button>
+            {statusError && <p style={{ color: "red", marginTop: "10px" }}>{statusError}</p>}
+          </div>
+        </div>
       </div>
     </div>
   );

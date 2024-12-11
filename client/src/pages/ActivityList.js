@@ -3,8 +3,10 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import NotificationsIcon from "@mui/icons-material/Notifications"; // Import Notifications Icon
-// import "../css/ActivityLists.css";
-
+//import "../css/ActivityLists.css";
+import { buttonStyle, buttonStyle2 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
+import { Navbar, Button, Table ,Card, Footer } from "flowbite-react";
+import HomeBanner from "../components/HomeBanner";
 const ActivityLists = () => {
   const [activities, setActivities] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -115,8 +117,22 @@ const ActivityLists = () => {
   };
 
   return (
+
+    
     <div className="activity-list">
-      <h1>Activities</h1>
+      <HomeBanner />
+
+      <Link to="/home">
+      <Button
+               style={{ position: 'absolute', top: '30px', left: '10px' }}
+               className={buttonStyle}
+               >Back</Button>
+      </Link> 
+      
+      <div className="flex flex-col items-center justify-center mt-8">  
+      
+      
+      <h1  className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Activities</h1>
 
       {userType !== 'admin' && notifications.length > 0 && showNotifications && (
         <div className="notifications">
@@ -156,57 +172,76 @@ const ActivityLists = () => {
             Create New Activity
           </button>
         )}
-        <Link to="/home">
-          <button>Back</button>
-        </Link>
+        
       </div>
-
-      <div className="card-container">
-        {activities.map((activity) => (
-          <div className="card" key={activity._id}>
-            <h3 className="activity-category">{activity.category}</h3>
-            <p className="activity-location">{activity.location?.address}</p>
-            <p className="activity-price">
-              Price: <span className="price-min">${activity.price?.min}</span> -{" "}
-              <span className="price-max">${activity.price?.max}</span>
-            </p>
-
-            {userType === 'admin' && (
-              <div className="activity-details">
-                <p className="activity-creator">Creator: {activity.creator}</p>
-                <p className="activity-creator-email">Email: {activity.creatorEmail || "Not available"}</p>
-                <p className="activity-flagged">Flagged: {activity.flagged}</p>
-              </div>
-            )}
-
-            <div className="button-group">
-              <button
-                className="edit-button"
+ </div>
+  <div className="overflow-x-auto">    
+  <Table striped>
+    <Table.Head>
+      <Table.HeadCell className="text-gray-800 text-xl mt-2">Category</Table.HeadCell>
+      <Table.HeadCell className="text-gray-800 text-xl mt-2">Address</Table.HeadCell>
+      <Table.HeadCell className="text-gray-800 text-xl mt-2">Price Range</Table.HeadCell>
+      {userType === 'admin' && (
+        <>
+          <Table.HeadCell className="text-gray-800 text-xl mt-2">Creator</Table.HeadCell>
+          <Table.HeadCell className="text-gray-800 text-xl mt-2">Email</Table.HeadCell>
+          <Table.HeadCell className="text-gray-800 text-xl mt-2">Flagged</Table.HeadCell>
+        </>
+      )}
+      <Table.HeadCell className="text-gray-800 text-xl mt-2">Actions</Table.HeadCell>
+    </Table.Head>
+    <Table.Body className="divide-y">
+      {activities.map((activity) => (
+        <Table.Row key={activity._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+            {activity.category}
+          </Table.Cell>
+          <Table.Cell>{activity.location?.address || "Not available"}</Table.Cell>
+          <Table.Cell>
+            ${activity.price?.min} - ${activity.price?.max}
+          </Table.Cell>
+          {userType === 'admin' && (
+            <>
+              <Table.Cell>{activity.creator}</Table.Cell>
+              <Table.Cell>{activity.creatorEmail || "Not available"}</Table.Cell>
+              <Table.Cell>{activity.flagged ? "Yes" : "No"}</Table.Cell>
+            </>
+          )}
+          <Table.Cell>
+            <div className="flex gap-2">
+              <Button
+                className={buttonStyle}
                 onClick={() => handleEdit(activity._id)}
               >
                 Edit
-              </button>
-              <button
-                className="delete-button"
+              </Button>
+              <Button
+                className={buttonStyle2}
                 onClick={() => handleDelete(activity._id)}
               >
                 Delete
-              </button>
-
+              </Button>
               {userType === 'admin' && (
-                <button
+                <Button
                   className="flag-button"
                   style={{ backgroundColor: "purple", color: "white" }}
-                  onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}  // Pass category for the notification message
+                  onClick={() => handleFlag(activity._id, activity.creatorEmail, activity.category)}
                 >
                   Flag
-                </button>
+                </Button>
               )}
             </div>
-          </div>
-        ))}
+          </Table.Cell>
+        </Table.Row>
+      ))}
+    </Table.Body>
+  </Table>
+</div>
+
+      
       </div>
-    </div>
+     
+    // </div>
   );
 };
 

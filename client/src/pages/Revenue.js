@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import { useCookies } from "react-cookie";
+
+import { buttonStyle, buttonStyle2,buttonStyle3 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
 import { Navbar, Button, Card, Footer } from "flowbite-react";
-import {
-  cardStyle,
-  buttonStyle,
-  walletSectionStyle,
-  itineraryListStyle,
-  promoCodeListStyle,
-  userLevelBadge,
-  fadeIn
-} from "../styles/AmrStyles"; // Import styles
+import HomeBanner from "../components/HomeBanner";
+import { Link } from "react-router-dom";
+
 function Revenue() {
   const [cookies] = useCookies(["userType", "username"]); 
   const userType = cookies.userType; 
@@ -115,7 +111,6 @@ function Revenue() {
       console.error('Error fetching data:', error);
     }
   };
-  
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
@@ -157,7 +152,7 @@ function Revenue() {
           revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
         }));
       } else if (filter === 'date' && selectedDate) {
-        const selectedDateFormatted = new Date(selectedDate).toISOString().split('T')[0]; // Format selectedDate
+        const selectedDateFormatted = new Date(selectedDate).toISOString().split('T')[0]; // Format selectedDate 
   
         const activityResults = filteredActs
           .filter((act) => {
@@ -188,6 +183,33 @@ function Revenue() {
           }));
   
         filtered = [...activityResults, ...itineraryResults];
+      } else if (filter === 'month' && selectedMonth) {
+        // Format the selected month for filtering
+        const selectedMonthFormatted = `-${String(selectedMonth).padStart(2, '0')}-`; // Ensure MM is surrounded by dashes
+  
+        const activityResults = filteredActs
+          .filter((act) => act.date.includes(selectedMonthFormatted)) // Check if the date includes "-MM-"
+          .map((act) => ({
+            type: 'Activity',
+            name: act.name,
+            category: act.category,
+            revenue: act.price.min * (1 - (act.specialDiscounts || 0) / 100) * (act.numofpurchases || 1),
+            date: act.date,
+          }));
+  
+        const itineraryResults = filteredItineraries
+          .filter((itinerary) => {
+            return itinerary.availableDates.some(date => date.includes(selectedMonthFormatted));
+          })
+          .map((itinerary) => ({
+            type: 'Itinerary',
+            name: itinerary.name,
+            category: itinerary.category,
+            revenue: itinerary.priceOfTour * (itinerary.numofpurchases || 1),
+            date: itinerary.availableDates[0], // Assuming the first available date is representative
+          }));
+  
+        filtered = [...activityResults, ...itineraryResults];
       }
   
       setFilterData(filtered);
@@ -199,6 +221,7 @@ function Revenue() {
     try {
       setError('');
       setLoading(true);
+      console.log("A7A")
       if (filterType === 'month') {
         // Validate month input
         if (!month || isNaN(month) || month < 1 || month > 12) {
@@ -209,6 +232,8 @@ function Revenue() {
           params: { month },
         });
         setGiftItems(response.data || []);
+        console.log("A7A pt1");
+
       } else if (filterType === 'date') {
         // Validate date input
         if (!date) {
@@ -219,10 +244,17 @@ function Revenue() {
           params: { date },
         });
         setGiftItems(response.data || []);
+        console.log("GIFT ITEMS", giftItems);
+        console.log("A7A pt2");
+
       } else if (filterType === 'product') {
         // Fetch all gift items along with their revenue
         const response = await axios.get(`http://localhost:3000/gift/filter/itemsWithRevenue`);
         setGiftItems(response.data || []);
+        console.log("A7A pt3");
+      }
+      else{
+        console.log("A7A pt4")
       }
     } catch (err) {
       console.error('Error fetching gift items:', err);
@@ -231,209 +263,273 @@ function Revenue() {
       setLoading(false);
     }
   };
-  
+  const outputStyle = {
+    marginTop: '40px',
+    textAlign: 'center',
+    fontSize: '18px',
+  };
 
+  const filteredDataStyle = {
+    marginTop: '20px',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    padding: '10px',
+    width: '80%',
+    maxWidth: '600px',
+    backgroundColor: '#f9f9f9',
+  };
 
   return (
-    <div className={`p-6 bg-gray-100 min-h-screen flex flex-col items-center ${fadeIn}`}>
-      {/* Back Button */}
-      <Button
-        className={`${buttonStyle} absolute top-4 left-4 py-2 px-4 rounded-lg`}
-        onClick={() => navigate("/home")}
-      >
-        Back
-      </Button>
-  
-      <div className="w-full max-w-lg p-6 bg-white shadow-lg rounded-lg mt-10">
-        <div className="flex flex-col items-center mb-6">
 
-  
-          {userType !== 'admin' && userType !== 'seller' && (
-            <>
-              {/* Filter Dropdown */}
-              <div className="w-full mb-4">
-                <select
-                  value={filter}
-                  onChange={(e) => setFilter(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                >
-                  <option value="">Select Filter</option>
-                  <option value="activity">Activity</option>
-                  <option value="itinerary">Itinerary</option>
-                  <option value="date">Date</option>
-                  <option value="month">Month</option>
-                </select>
-              </div>
-            </>
-          )}
-  
-          {/* Date Input for 'Date' Filter */}
-          {filter === 'date' && (
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg mb-4"
-            />
-          )}
-  
-          {/* Month Input for 'Month' Filter */}
-          {filter === 'month' && (
-            <input
-              type="number"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              min="1"
-              max="12"
-              placeholder="MM"
-              className="w-full p-3 border border-gray-300 rounded-lg mb-4"
-            />
-          )}
-  
-          {userType !== 'admin' && userType !== 'seller' && (
-            <Button
-              className={`${buttonStyle} py-3 text-lg w-full rounded-lg`}
-              onClick={handleFilterClick}
-            >
-              Filter
-            </Button>
-          )}
-        </div>
-  
-        {/* Render Filtered Data */}
-        {filterData.length > 0 && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-            <h3 className="text-2xl font-semibold mb-4">Filtered Data:</h3>
-            <ul>
-              {filterData.map((data, index) => (
-                <li key={index} className="mb-4">
-                  <strong>{data.type}</strong>: {data.name} | <em>Category: {data.category}</em> | Revenue: <strong>${data.revenue.toFixed(2)}</strong> {data.date && `| Date: ${formatDate(data.date)}`}
-                </li>
-              ))}
-            </ul>
-          </div>
+
+
+    
+     <div >
+      
+      
+      <HomeBanner/>
+       <Link to="/home">
+      <Button
+               style={{ position: 'absolute', top: '30px', left: '10px' }}
+               className={buttonStyle}
+               >Back</Button>
+      </Link>
+      <div className="flex flex-col items-center justify-center mt-8" >
+        <h1 className="text-4xl font-bold mb-8 mt-8 flex justify-center ">Financial Report</h1>
+      <Card className="w-full max-w-3xl text-3xl p-8 shadow-lg flex-col justify-between ">
+        
+        {/* Show All Revenue Button */}
+        <Button
+          className={buttonStyle}
+          onClick={handleShowAllRevenueClick}
+          style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}
+        >
+          Show All Revenue
+        </Button>
+        
+        {/* that is for the small filter for adv , tg  */}
+      {/* <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg  " >  */}
+        
+        {userType !== 'admin'  && userType !== 'seller' && (
+        
+        //{/* Filter Button with Dropdown */}
+        <>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="">Select Filter</option>
+          <option value="activity">Activity</option>
+          <option value="itinerary">Itinerary</option>
+          <option value="date">Date</option>
+          <option value="month">Month</option>
+        </select></>
         )}
-            {/* Show All Revenue Button */}
-            <Button
-            className={`${buttonStyle} py-3 text-lg w-full mb-4 rounded-lg`}
-            onClick={handleShowAllRevenueClick}
-          >
-            Show All Revenue
-          </Button>
-        {/* Display Total Revenues */}
-        <div className="mt-6">
-          {userType !== 'seller' && (
-            <p className="text-lg font-semibold">Itinerary Total Revenue: ${it_totalRevenue.toFixed(2)}</p>
-          )}
-  
-          {userType !== 'seller' && userType !== 'advertiser' && userType !== 'tourGuide' && (
-            <p className="text-lg font-semibold">Museum Total Revenue: ${museum_totalRevenue.toFixed(2)}</p>
-          )}
-  
-          {userType !== 'seller' && (
-            <p className="text-lg font-semibold">Activity Total Revenue: ${act_totalRevenue.toFixed(2)}</p>
-          )}
-  
-          {userType !== 'advertiser' && userType !== 'tourGuide' && (
-            <p className="text-lg font-semibold">Gift Item Total Revenue: ${gift_totalRevenue.toFixed(2)}</p>
-          )}
-  
-          {userType === 'admin' && (
-            <p className="text-xl font-semibold">
-              <strong>Total Revenue: ${totalRevenue.toFixed(2)}</strong>
-            </p>
-          )}
-        </div>
-  
-        {/* Filter Products for Admin/Seller */}
-        {(userType === 'admin' || userType === 'seller') && (
-          <div className="w-full max-w-lg p-6 mt-8 bg-white shadow-lg rounded-lg">
-            {/* Filter Selection */}
-            <h2 className="text-2xl font-semibold mb-4 text-center">Filter Products</h2>
-  
-            <div className="mb-4">
-              <label className="font-semibold text-gray-700 mb-2 block">Select Filter Type:</label>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg"
-              >
-                <option value="">Select Filter</option>
-                <option value="month">Month</option>
-                <option value="date">Date</option>
-                <option value="product">Products</option>
-              </select>
-            </div>
-  
-            {/* Month Input */}
-            {filterType === 'month' && (
-              <div className="mb-4">
-                <label className="font-semibold text-gray-700 mb-2 block">Enter Month (1-12):</label>
-                <input
-                  type="number"
-                  value={month}
-                  onChange={(e) => setMonth1(e.target.value)}
-                  placeholder="Enter month"
-                  min="1"
-                  max="12"
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                />
-              </div>
-            )}
-  
-            {/* Date Input */}
-            {filterType === 'date' && (
-              <div className="mb-4">
-                <label className="font-semibold text-gray-700 mb-2 block">Select Date:</label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate1(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                />
-              </div>
-            )}
-  
-            {/* Fetch Button */}
-            <div className="text-center mb-6">
-              <Button
-                onClick={fetchGiftItems}
-                className="w-full py-3 bg-purple-600 text-white rounded-lg shadow-lg hover:bg-purple-700"
-                disabled={loading}
-              >
-                {loading ? 'Loading...' : 'Fetch Products'}
-              </Button>
-            </div>
-  
-            {/* Error Handling */}
-            {error && (
-              <div className="text-red-600 text-center mb-4">{error}</div>
-            )}
-  
-            {/* Display Filtered Gift Items */}
-            <div>
-              <h3 className="text-xl font-semibold mb-4 text-center">Filtered Products</h3>
-              {giftItems.length > 0 ? (
-                <ul className="list-none">
-                  {giftItems.map((item) => (
-                    <li
-                      key={item._id}
-                      className="p-4 mb-4 border rounded-lg bg-gray-50 shadow-md"
-                    >
-                      <strong>Name:</strong> {item.name} | <strong>Revenue:</strong> ${item.revenue || 0}
-                      {item.date && ` | Date: ${new Date(item.date).toLocaleDateString()}`}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-center text-gray-600">No items found for the selected {filterType === 'month' ? 'month' : filterType === 'date' ? 'date' : 'product'}.</p>
-              )}
-            </div>
-          </div>
+
+        {/* Input for selecting a date only when 'Date' is selected in the dropdown */}
+        {filter === 'date' && (
+          <input 
+            type="date" 
+            value={selectedDate} 
+            onChange={(e) => setSelectedDate(e.target.value)} 
+          />
         )}
-      </div>
+
+        {/* Input for selecting a month only when 'Month' is selected in the dropdown */}
+        {filter === 'month' && (
+          <input
+            type="number"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            min="1"
+            max="12"
+            placeholder="MM"
+          />
+        )}
+        {userType !== 'admin'  && userType !== 'seller' && (
+        <Button
+          onClick={handleFilterClick}
+          className={buttonStyle3} >
+          Filter
+        </Button>)}
+      
+
+      {/* Render the filtered data */}
+      {filterData.length > 0 && (
+        <div style={filteredDataStyle}>
+          <h3>Filtered Data:</h3>
+          <ul>
+            {filterData.map((data, index) => (
+              <li key={index}>
+                <strong>{data.type}</strong>: {data.name} | <em>Category: {data.category}</em> | Revenue: <strong>${data.revenue.toFixed(2)}</strong> {data.date && `| Date: ${formatDate(data.date)}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    
+      {/* </Card> */}    
+
+      {/* Show total revenue and individual revenues */}
+      {/* <Card href="#" className="w-full max-w-3xl text-3xl mt-8 p-8 shadow-lg "> */}
+        {/* && userType !== 'advertiser' */}
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl mt-8">
+      {userType !== 'seller' && (
+        <Card href="#" className="max-w-sm" >
+         <p>Itinerary Total Revenue : <strong>${it_totalRevenue.toFixed(2)}</strong></p>
+         </Card>
+      )}
+   
+
+{userType !== 'seller'  && userType !== 'advertiser' && userType !== 'tourGuide' && (
+        <Card href="#" className="max-w-sm" >
+          <p>Museum Total Revenue:<strong>${museum_totalRevenue.toFixed(2)}</strong> </p>
+          </Card>
+      )}
+       {/* && userType !== 'tourGuide' */}
+       {userType !== 'seller'  &&  (
+        <Card href="#" className="max-w-sm" >
+        <p>Activity Total Revenue :<strong> ${act_totalRevenue.toFixed(2)}</strong></p>
+        </Card>
+      )}
+        
+       {userType !== 'advertiser'  && userType !== 'tourGuide' && (
+        <Card href="#" className="max-w-sm" >
+          <p>Gift Item Total Revenue: <strong>${gift_totalRevenue.toFixed(2)}</strong></p>
+         </Card> 
+      )}
+  
+  </div>  
+     {userType === 'admin' && (
+    <p>
+
+      <strong>Total Revenue: ${totalRevenue.toFixed(2)}</strong>
+    </p>
+     )}
+{(userType === 'admin' || userType === 'seller') && (
+  <Card  className="w-full max-w-3xl mt-20 text-3xl p-8 shadow-lg " >
+    {/* Filter Selection */}
+    <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}><strong>Filter Products</strong></h2>
+    
+    <div style={{ marginBottom: '20px' }}>
+      <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
+        Select Filter Type:
+      </label>
+      <select 
+        value={filterType} 
+        onChange={(e) => setFilterType(e.target.value)} 
+        style={{ 
+          width: '100%', 
+          padding: '10px', 
+          border: '1px solid #ccc', 
+          borderRadius: '4px', 
+          fontSize: '16px' 
+        }}
+      >
+        <option value="">Select Filter</option>
+        <option value="month">Month</option>
+        <option value="date">Date</option>
+        <option value="product">Products</option>
+      </select>
     </div>
-  );
+
+    {/* Month Input */}
+    {filterType === 'month' && (
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
+          Enter Month (1-12):
+        </label>
+      <select
+         value={month}
+         onChange={(e) => setMonth1(e.target.value)}
+         style={{
+         width: '100%',
+         padding: '10px',
+         border: '1px solid #ccc',
+          borderRadius: '4px',
+          fontSize: '16px',
+         }}
+        >
+      <option value="" disabled>Select month</option>
+        {Array.from({ length: 12 }, (_, i) => (
+        <option key={i + 1} value={i + 1}>
+       {new Date(0, i).toLocaleString('en', { month: 'long' })}
+       </option>
+       ))}
+      </select>
+
+      </div>
+    )}
+
+    {/* Date Input */}
+    {filterType === 'date' && (
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px', color: '#555' }}>
+          Select Date:
+        </label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate1(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '16px'
+          }}
+        />
+      </div>
+    )}
+    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <Button
+        onClick={fetchGiftItems}
+        className={buttonStyle3}
+        
+        disabled={loading}
+      >
+        {loading ? 'Loading...' : 'Fetch Products'}
+      </Button>
+    </div>
+
+    {/* Error Handling */}
+    {error && (
+      <div style={{ color: 'red', textAlign: 'center', marginBottom: '20px' }}>
+        {error}
+      </div>
+    )}
+
+    {/* Display Filtered Gift Items */}
+    <div style={{ marginTop: '20px' }}>
+      <h3 style={{ textAlign: 'center', color: '#333', marginBottom: '20px' }}>Filtered Products</h3>
+      {giftItems.length > 0 ? (
+        <ul style={{ listStyleType: 'none', padding: '0' }}>
+          {giftItems.map((item) => (
+            <li 
+              key={item._id} 
+              style={{ 
+                padding: '10px', 
+                marginBottom: '10px', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                backgroundColor: '#f9f9f9'
+              }}
+            >
+              <strong>Name:</strong> {item.name} | <strong>Revenue:</strong> ${item.revenue || 0}
+              {item.date && ` | Date: ${new Date(item.date).toLocaleDateString()}`}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ textAlign: 'center', color: '#666' }}>
+          No items found for the selected{' '}
+          {filterType === 'month' ? 'month' : filterType === 'date' ? 'date' : 'product'}.
+        </p>
+      )}
+    </div>
+  </Card>
+)}
+      </Card >  
+    </div>
+   </div>
+  ) ;
 }
 
 export default Revenue;

@@ -153,6 +153,14 @@ app.get("/getAllCategories", async (req, res) =>{
 
   }
 })
+app.get("/categories", async (req, res) => {
+    try {
+        const categories = await Category.find({});
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 app.put("/api/category/:name", async (req, res) => {
     try {
@@ -517,7 +525,7 @@ app.post('/api/museums', async (req, res) => {
 });
 
 
-app.post('/api/activities', async (req, res) => {
+app.post('/activities', async (req, res) => {
   try {
       const acts  = await activities.create(req.body);
       res.status(200).json(acts);

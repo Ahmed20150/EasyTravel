@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
-
+import { Link } from "react-router-dom";
+import { Table } from "flowbite-react"; // Import Table from Flowbite
+import GeneralNavbar from "../components/GeneralNavbar";
+import HomeBanner from "../components/HomeBanner";
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
 const MyComplaints = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
-  const username = cookies.username; // Access the username
+  const [cookies] = useCookies(["userType", "username"]);
+  const username = cookies.username;
+
   useEffect(() => {
     const fetchComplaints = async () => {
       if (!username) {
@@ -17,21 +21,17 @@ const MyComplaints = () => {
         setLoading(false);
         return;
       }
-    
+
       try {
         const response = await axios.get(`http://localhost:3000/complaint/view/${username}`);
-    
         if (response.data && Array.isArray(response.data.complaints)) {
-          setComplaints(response.data.complaints); // Make sure complaints is an array
+          setComplaints(response.data.complaints);
         } else {
           setError("No complaints found for this tourist.");
         }
-    
         setLoading(false);
       } catch (err) {
-        // Handle different error responses based on status code
         if (err.response) {
-          // This will display the error message returned from the backend
           setError(err.response.data.error || err.response.data.message || "Failed to fetch complaints.");
         } else {
           setError("An unknown error occurred.");
@@ -39,66 +39,60 @@ const MyComplaints = () => {
         setLoading(false);
       }
     };
-    
 
     fetchComplaints();
   }, [username]);
 
-  if (loading) {
-    return <p>Loading complaints...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: "red" }}>{error}</p>;
-  }
-
-  if (complaints.length === 0) {
-    return <p>No complaints found.</p>;
-  }
-
   return (
-    <div style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
-          <Link to="/home"><button>Back</button></Link>
-      <h2>My Complaints</h2>
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginTop: "20px",
-          textAlign: "left",
-        }}
-      >
-        <thead>
-          <tr>
-            <th style={{ borderBottom: "2px solid #ddd", padding: "10px" }}>Title</th>
-            <th style={{ borderBottom: "2px solid #ddd", padding: "10px" }}>Description</th>
-            <th style={{ borderBottom: "2px solid #ddd", padding: "10px" }}>Date Issued</th>
-            <th style={{ borderBottom: "2px solid #ddd", padding: "10px" }}>Status</th>
-            <th style={{ borderBottom: "2px solid #ddd", padding: "10px" }}>Reply</th>
-          </tr>
-        </thead>
-        <tbody>
-          {complaints.map((complaint) => (
-            <tr key={complaint._id}>
-              <td style={{ borderBottom: "1px solid #ddd", padding: "10px" }}>
-                {complaint.title}
-              </td>
-              <td style={{ borderBottom: "1px solid #ddd", padding: "10px" }}>
-                {complaint.body}
-              </td>
-              <td style={{ borderBottom: "1px solid #ddd", padding: "10px" }}>
-                {new Date(complaint.dateIssued).toLocaleDateString()}
-              </td>
-              <td style={{ borderBottom: "1px solid #ddd", padding: "10px" }}>
-                {complaint.status}
-              </td>
-              <td style={{ borderBottom: "1px solid #ddd", padding: "10px" }}>
-                {complaint.reply}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      <HomeBanner />
+      <Link to="/home">
+            <Button
+               style={{ position: 'absolute', top: '30px', left: '10px' }}
+               className={buttonStyle}
+               >Back</Button>
+            </Link>
+      <div className="overflow-x-auto p-4">
+        {loading ? (
+          <p>Loading complaints...</p>
+        ) : error ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : complaints.length === 0 ? (
+          <p>No complaints found.</p>
+        ) : (
+          <>
+           
+            <h2 className="text-2xl font-bold mb-4">My Complaints</h2>
+            <Table striped>
+              <Table.Head>
+                <Table.HeadCell>Title</Table.HeadCell>
+                <Table.HeadCell>Description</Table.HeadCell>
+                <Table.HeadCell>Date Issued</Table.HeadCell>
+                <Table.HeadCell>Status</Table.HeadCell>
+                <Table.HeadCell>Reply</Table.HeadCell>
+              </Table.Head>
+              <Table.Body className="divide-y">
+                {complaints.map((complaint) => (
+                  <Table.Row
+                    key={complaint._id}
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <Table.Cell className="font-medium text-gray-900 dark:text-white">
+                      {complaint.title}
+                    </Table.Cell>
+                    <Table.Cell>{complaint.body}</Table.Cell>
+                    <Table.Cell>
+                      {new Date(complaint.dateIssued).toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell>{complaint.status}</Table.Cell>
+                    <Table.Cell>{complaint.reply}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          </>
+        )}
+      </div>
     </div>
   );
 };
