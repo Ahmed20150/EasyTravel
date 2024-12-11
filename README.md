@@ -70,8 +70,8 @@ router.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&itineraryId=${itineraryId}&selectedDate=${encodeURIComponent(selectedDate)}&selectedTime=${encodeURIComponent(selectedTime)}`,
-      cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
+      success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}&itemType=itinerary&itemId=${itineraryId}&selectedDate=${encodeURIComponent(selectedDate)}&selectedTime=${encodeURIComponent(selectedTime)}`,
+      cancel_url: `http://localhost:5000/payment-cancel?itemType=itinerary`,
     });
 
     res.json({ url: session.url });
@@ -91,16 +91,40 @@ router.post("/create-checkout-session", async (req, res) => {
 **Routes Overview:**
 
 - **Authentication:**  
-  - `POST /auth/signUp`: Create a new user account  
-  - `POST /auth/login`: Login existing user  
-  - `POST /auth/forgotPassword`: Send OTP for password reset  
-  - `POST /auth/changeForgotPassword`: Change password after OTP verification
+  - `POST /signUp`: Create a new user account  
+  - `POST /login`: Login existing user  
+  - `POST /forgotPassword`: Send OTP for password reset  
+  - `POST /changeForgotPassword`: Change password after OTP verification
+  - `POST /changePassword`: Change the user's password
+  - `POST /verifyotp`: verifies an OTP for a given email by
+  - `POST /sendPaymentEmail`: Sends a payment receipt email after verifying the user
+  - `POST /send-email`: Sends a generic email to a specified recipient
 
 - **Tourists:**  
-  - `GET /api/tourists`: Fetch all tourists  
-  - `GET /api/tourists/:username`: Fetch a single tourist by username  
-  - `PUT /api/tourists/:username`: Update tourist profile  
-  - `PATCH /api/tourists/:username/addToWishlist`: Add gift to wishlist
+  - `GET /:username`: Fetch all tourists  
+  - `PUT /tourist/:username`: Updates the tourist's profile (email, mobile number, nationality, etc.).  
+  - `GET /tourist/:username/preferences`: Fetches the tourist's preferences.
+  - `GET /tourist/:username`: Fetches tourist data by username
+  - `PATCH /tourist/:username/preferences`: Updates the tourist's preferences.
+  - `GET /api/bookings/:username`: Fetches the tourist's bookings.
+  - `GET /bookmarkedEvents/:username`: Fetches the tourist's bookmarked events.
+  - `PATCH /bookmarkEvent`: Adds/removes an event from the tourist's bookmarked events.
+  - `POST /itineraries/fetch`: Retrieves itineraries based on event IDs.
+  - `PATCH /bookItinerary`: Books an itinerary if the tourist has sufficient balance in their wallet.
+  - `PATCH /unbookItinerary`: Unbooks an itinerary and refunds the wallet.
+  - `GET /checkWallet/:username/:itineraryId`: Checks if the tourist has enough wallet balance for a particular itinerary
+  - `GET /tourist/:username/wishlist`: Fetches the tourist's wishlist.
+  - `PATCH /tourist/:username/addToWishlist`: Adds a gift to the tourist's wishlist
+  - `PATCH /tourist/:username/removeFromWishlist`: Removes a gift from the wishlist
+  - `GET /tourist/:username/cart`: Fetches the tourist's cart with populated gift details.
+  - `PATCH /tourist/:username/addToCart`: Adds a gift item to the cart
+  - `PATCH /wallet/purchaseProduct`: Deducts the price from the tourist's wallet to purchase an item from the cart.
+  - `PUT /bookFlights`: Books a flight for the tourist by updating their BookedFlights
+  - `PUT /tourist/redeemPoints/:username`: Allows the tourist to redeem points for credit, which is added to their wallet.
+  - `PATCH /tourist/:username/removeFromCart`: Removes a gift item from the tourist's cart
+  - `PATCH /tourist/:username/updateItemQuantity`: Updates the quantity of an item in the cart
+  - `PATCH /tourist/:username/addToCartFromWishlist`: Adds a gift from wishlist to the cart
+  - `PUT /bookFlight`:Adds a flight to the tourist's booked flights
 
 - **Tour Guides:**  
   - `POST /api/profile`: Update tour guide profile info  
