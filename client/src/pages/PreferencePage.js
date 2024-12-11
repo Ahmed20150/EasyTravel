@@ -27,8 +27,6 @@ const availablePreferences = [
   "Family-friendly",
   "Shopping",
   "Budget-friendly",
-  "Adventure",
-  "Cultural Events",
 ];
   useEffect(() => {
     fetchPreferences();
