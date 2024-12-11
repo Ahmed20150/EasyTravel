@@ -167,10 +167,17 @@ router.post("/create-checkout-session", async (req, res) => {
   - `PATCH /increment-purchases/:itineraryId`: Increment the number of purchases for all activities in an itinerary.
   - `PATCH /decrement-purchases/:itineraryId`: Decrement the number of purchases for all activities in an itinerary
 
-- **Activities:**  
-  - `POST /activities`: Create a new activity  
-  - `GET /activities`: Fetch all activities  
-  - `PATCH /activities/:id`: Flag an activity
+- **Activities:**
+  -`POST /api/activities`: Create a new activity
+  -`GET /api/activities`: Fetch all activities
+  -`GET /api/activities/:id`: Fetch a specific activity by ID
+  -`PUT /api/activities/:id`: Update a specific activity by ID
+  -`DELETE /api/activities/:id`: Delete a specific activity by ID
+  -`DELETE /api/activities/deleteAll/:username`: Delete all activities by username
+  -`PATCH /api/activities/:id`: Flag an activity as inappropriate
+  -`GET /api/activities/notifications/:username`: Fetch notifications for a specific user
+  -`POST /api/activities/send-notification`: Send an email notification
+  -`POST /api/activities/increment/:id`: Increment the number of purchases for an activity by ID
 
 - **Museums & Historical Places:**  
   - `POST /museums`: Add new museum/historical place  
