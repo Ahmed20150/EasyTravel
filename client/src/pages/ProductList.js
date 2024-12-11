@@ -202,7 +202,7 @@ const handleCreditCardPurchase = async () => {
             setGifts(giftsResponse.data);
 
             // Fetch promo codes
-            const promoResponse = await axios.get('http://localhost:3000/api/promo-codes');
+            const promoResponse = await axios.get('http://localhost:3000/promo-codes');
             setPromoCodes(promoResponse.data || []);
         } catch (error) {
             console.error('Error fetching gifts or promo codes:', error);
@@ -457,7 +457,7 @@ const handlePromoCodeCheck = () => {
 
 
       {/* Promo Code Section */}
-      <div className={styles.promoCodeContainer}>
+      {/* <div className={styles.promoCodeContainer}>
         <label>
           Promo Code:
           <input
@@ -470,7 +470,7 @@ const handlePromoCodeCheck = () => {
         <button className={styles.promoCodeButton} onClick={handlePromoCodeCheck}>
           Apply Promo Code
         </button>
-      </div>
+      </div> */}
 
       {/* Search and Filter Section */}
       <div className={styles.searchFilterSortContainer}>

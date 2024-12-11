@@ -19,6 +19,7 @@ const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageCh
       handleChange(e);
     }
   };
+ 
 
   return (
     <div className="relative flex justify-center items-center h-screen bg-gray-100">
@@ -140,7 +141,9 @@ const ProfileFormSeller = ({ formData, handleChange, handleSubmit, handleImageCh
         >
           {buttonText}
         </button>
+        
       </form>
+      
     </div>
   );
 };

@@ -254,6 +254,8 @@ function Revenue() {
         console.log("A7A pt3");
       }
       else{
+        // const response = await  axios.get('http://localhost:3000/gift');
+        // setGiftItems(response.data || []);
         console.log("A7A pt4")
       }
     } catch (err) {
@@ -372,26 +374,26 @@ function Revenue() {
         {/* && userType !== 'advertiser' */}
      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl mt-8">
       {userType !== 'seller' && (
-        <Card href="#" className="max-w-sm" >
+        <Card className="max-w-sm" >
          <p>Itinerary Total Revenue : <strong>${it_totalRevenue.toFixed(2)}</strong></p>
          </Card>
       )}
    
 
 {userType !== 'seller'  && userType !== 'advertiser' && userType !== 'tourGuide' && (
-        <Card href="#" className="max-w-sm" >
+        <Card   className="max-w-sm" >
           <p>Museum Total Revenue:<strong>${museum_totalRevenue.toFixed(2)}</strong> </p>
           </Card>
       )}
        {/* && userType !== 'tourGuide' */}
        {userType !== 'seller'  &&  (
-        <Card href="#" className="max-w-sm" >
+        <Card  className="max-w-sm" >
         <p>Activity Total Revenue :<strong> ${act_totalRevenue.toFixed(2)}</strong></p>
         </Card>
       )}
         
        {userType !== 'advertiser'  && userType !== 'tourGuide' && (
-        <Card href="#" className="max-w-sm" >
+        <Card className="max-w-sm" >
           <p>Gift Item Total Revenue: <strong>${gift_totalRevenue.toFixed(2)}</strong></p>
          </Card> 
       )}
@@ -423,10 +425,10 @@ function Revenue() {
           fontSize: '16px' 
         }}
       >
-        <option value="">Select Filter</option>
+        <option value="">All Products</option>
         <option value="month">Month</option>
         <option value="date">Date</option>
-        <option value="product">Products</option>
+        
       </select>
     </div>
 

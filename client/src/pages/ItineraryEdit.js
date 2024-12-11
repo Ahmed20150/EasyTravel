@@ -48,7 +48,7 @@ const ItineraryEdit = () => {
         } else {
           // If no data in local storage, fetch from API
           const response = await axios.get(
-            `http://localhost:3000/itinerary/${id}`
+            `http://localhost:3000/itineraries/${id}`
           );
           console.log("Fetching itinerary from API:", response.data);
           const itinerary = response.data;
@@ -147,7 +147,7 @@ const ItineraryEdit = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/itinerary/${id}`,
+        `http://localhost:3000/itineraries/${id}`,
         updatedFormData
       );
       console.log("Itinerary updated successfully:", response.data);
@@ -225,6 +225,7 @@ const ItineraryEdit = () => {
               value={formData.locationsToVisit}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-md mb-4"
+              disabled
             />
           </div>
           {/* Selected Activities */}
@@ -282,7 +283,7 @@ const ItineraryEdit = () => {
 
           {/* More Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="col-span-1">
+            {/* <div className="col-span-1">
               <label className="block text-lg font-medium text-gray-700 mb-2">
                 Flagged:
               </label>
@@ -294,7 +295,7 @@ const ItineraryEdit = () => {
                 required
                 className="w-full p-3 border border-gray-300 rounded-md mb-4"
               />
-            </div>
+            </div> */}
 
             <div className="col-span-1">
               <label className="block text-lg font-medium text-gray-700 mb-2">

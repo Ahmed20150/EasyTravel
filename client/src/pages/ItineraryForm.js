@@ -130,7 +130,7 @@ const ItineraryForm = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/itinerary",
+        "http://localhost:3000/itineraries",
         updatedFormData
       );
 

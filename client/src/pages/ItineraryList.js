@@ -78,9 +78,9 @@ const ItineraryList = () => {
 
   const handleDelete = async (id) => {
     try {
-      const itinerary = await axios.get(`http://localhost:3000/itinerary/${id}`);
+      const itinerary = await axios.get(`http://localhost:3000/itineraries/${id}`);
       if (itinerary.data.touristsBooked.length === 0) {
-        await axios.delete(`http://localhost:3000/itinerary/${id}`);
+        await axios.delete(`http://localhost:3000/itineraries/${id}`);
         setItineraries(itineraries.filter((itinerary) => itinerary._id !== id));
       } else {
         alert(`Cannot delete an itinerary with ${itinerary.data.touristsBooked.length} bookings.`);
@@ -92,7 +92,7 @@ const ItineraryList = () => {
 
   const handleToggleActivation = async (id) => {
     try {
-      const response = await axios.put(`http://localhost:3000/itinerary/toggleActivation/${id}`);
+      const response = await axios.put(`http://localhost:3000/itineraries/toggleActivation/${id}`);
       setItineraries(
         itineraries.map((itinerary) =>
           itinerary._id === id
@@ -123,7 +123,7 @@ const ItineraryList = () => {
 
     if (email) {
       try {
-        await axios.post("http://localhost:3000/itinerary/sendNotification", {
+        await axios.post("http://localhost:3000/itineraries/sendNotification", {
           email,
           text: message,
         });
@@ -139,7 +139,7 @@ const ItineraryList = () => {
 
   const handleFlag = async (id, creator) => {
     try {
-      const response = await axios.patch(`http://localhost:3000/itinerary/${id}/flag`);
+      const response = await axios.patch(`http://localhost:3000/itineraries/${id}/flag`);
       setItineraries(
         itineraries.map((itinerary) =>
           itinerary._id === id ? { ...itinerary, flagged: "yes" } : itinerary

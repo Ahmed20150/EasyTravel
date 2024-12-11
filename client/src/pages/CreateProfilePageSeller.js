@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import ProfileFormSeller from '../components/ProfileFormSeller';
+import { buttonStyle } from '../styles/gasserStyles';
+import { Button } from 'flowbite-react';
 
 const CreateProfilePageSeller = () => {
   const location = useLocation();
@@ -70,11 +72,12 @@ const CreateProfilePageSeller = () => {
   };
 
   const handleCancelEdit = () => {
-    navigate('/home', { state: { username } });
+    navigate('/view-profileSeller', { state: { username } });
   };
 
   return (
     <div>
+      
       {/* <h2>{isEditingProfile ? 'Edit Profile' : 'Create Profile'}</h2>  */}
       <ProfileFormSeller
         formData={formData}
@@ -83,10 +86,16 @@ const CreateProfilePageSeller = () => {
         handleImageChange={handleImageChange}
         buttonText={isEditingProfile ? 'Edit Profile' : 'Create Profile'}
         isEditing={isEditingProfile}
+        className="mt-8"
       />
-      <button onClick={handleCancelEdit}>Cancel</button>
-
-
+<div className="flex justify-center mt-8 mb-8">
+  <Button
+    onClick={handleCancelEdit}
+    className={buttonStyle}
+  >
+    Cancel
+  </Button>
+</div>     
       </div>
   );
 };

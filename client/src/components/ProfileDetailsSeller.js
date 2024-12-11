@@ -11,7 +11,9 @@ import {
   promoCodeListStyle,
   userLevelBadge,
   fadeIn
-} from "../styles/AmrStyles"; // Import styles
+} from "../styles/AmrStyles"; 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProfileDetailsSeller = ({ profile, onEditClick }) => {
   const navigate = useNavigate(); // For navigation
@@ -20,13 +22,13 @@ const ProfileDetailsSeller = ({ profile, onEditClick }) => {
   const handleRequest = async (username, role) => {
     try {
       const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
-      window.alert(`Request sent successfully: ${response.data.message}`);
+      toast.success(`Request sent successfully: ${response.data.message}`);
     } catch (error) {
       console.error("Error deleting user:", error);
       if (error.response) {
-        alert(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-        alert("An unexpected error occurred: " + error.message);
+        toast.error("An unexpected error occurred: " + error.message);
       }
     }
   };
@@ -95,6 +97,7 @@ const ProfileDetailsSeller = ({ profile, onEditClick }) => {
           </Button>
         </div>
       </form>
+      <ToastContainer/>
     </div>
   );
 };
