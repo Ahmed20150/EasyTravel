@@ -138,8 +138,13 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /emailAdv/:username`: Fetch email of advertiser by username.
 
 - **Seller:**  
-  - `POST /api/seller/addGiftItem`: Add new gift item  
-  - `PATCH /api/seller/all-gifts/archive/:id`: Archive/unarchive a gift item
+  - `POST /addGiftItem`: Add a new gift item with details, price, and quantity.
+  - `PUT /updateGiftItem/:id`: Update an existing gift item's details.
+  - `DELETE /deleteGiftItem/:id`: Delete a gift item by its ID.
+  - `POST /profileSeller`: Create or update seller profile information.
+  - `GET /profileSeller/:username`: Fetch seller profile by username.
+  - `GET /all-gifts`: Get all gift items (including archived ones).
+  - `PATCH /all-gifts/archive/:id`: Toggle the archived status of a gift item.
 
 - **Itineraries:**  
   - `POST /itinerary`: Create new itinerary  
