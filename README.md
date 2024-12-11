@@ -14,7 +14,7 @@ The main motivation behind this project is to provide a comprehensive platform t
 - **Database:** MongoDB  
 - **Payments:** Stripe (Testing Environment)  
 - **Authentication:** JWT, bcrypt  
-- **File Uploads:** Multer (2/2)
+- **File Uploads:** Multer
 
 ## Features  
 - **User Roles:** Tourists, Tour Guides, Advertisers, Sellers, Admin, Tourism Governor.  
@@ -24,7 +24,7 @@ The main motivation behind this project is to provide a comprehensive platform t
 - **Hotel & Flight Booking:** Integration with external APIs for hotels (Amadeus test environment) and mock flight booking.  
 - **ACL & Deletion Requests:** Users can request account deletion. Admin checks conditions before approval.  
 - **Complaints & Notifications:** File complaints, mark resolved, send notifications.  
-- **Promo Codes & Points System:** Apply promo codes, gain loyalty points for purchases, redeem points for discounts. (5/5)
+- **Promo Codes & Points System:** Apply promo codes, gain loyalty points for purchases, redeem points for discounts.
 
 ## Code Examples
 
@@ -147,7 +147,7 @@ router.post("/create-checkout-session", async (req, res) => {
 2. Use an API client like Postman or a frontend interface to interact with routes.
 
 ## Contribute  
-Contributions are welcome! If you find a bug or want to add a feature, open an issue or submit a pull request. The project is not perfect; improvements, refactorings, and optimizations are encouraged. (1/1)
+Contributions are welcome! If you find a bug or want to add a feature, open an issue or submit a pull request. The project is not perfect; improvements, refactorings, and optimizations are encouraged.
 
 ## Credits  
 - **Documentation & Code Inspirations:**  
