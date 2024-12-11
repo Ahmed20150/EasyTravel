@@ -11,6 +11,10 @@ import {
   userLevelBadge,
   fadeIn
 } from "../styles/AmrStyles"; // Import styles
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 
 const TouristReport = () => {
   const [month, setMonth] = useState(''); // Store the selected month
@@ -27,17 +31,17 @@ const TouristReport = () => {
   // Function to fetch the total number of tourists for the selected month
   const fetchTouristData = async () => {
     if (!month || month < 1 || month > 12) {
-      setError('Please select a valid month (1-12).');
+      toast.error('Please select a valid month (1-12).');
       return;
     }
 
     try {
       const response = await axios.get(`http://localhost:3000/allreports/tourist-report?month=${month}`);
       setTotalTourists(response.data.totalTourists); 
-      setError(null);
+      toast.success("Results fetched successfully.");
     } catch (error) {
       console.error('Error fetching tourist report:', error);
-      setError('Failed to fetch the tourist report. Please try again later.');
+      toast.error(error.response?.data?.message || 'Failed to fetch the tourist report. Please try again later.');
       setTotalTourists(null);
     }
   };
@@ -48,10 +52,10 @@ const TouristReport = () => {
     try {
       const response = await axios.get('http://localhost:3000/allreports/tourist-report');
       setAllTourists(response.data.totalTourists); 
-      setError(null);
+      toast.success("Results fetched successfully.");
     } catch (error) {
       console.error('Error fetching total tourists:', error);
-      setError('Failed to fetch the total tourists. Please try again later.');
+      toast.error(error.response?.data?.message || 'Failed to fetch the tourist report. Please try again later.');
       setAllTourists(null);
     }
   };
@@ -135,6 +139,7 @@ const TouristReport = () => {
           </p>
         </div>
       )}
+      <ToastContainer/>
     </div>
   );
 };

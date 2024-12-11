@@ -19,7 +19,7 @@ const AddMuseumPage = () => {
 
   const handleFormSubmit = () => {
     // Refresh museums after adding a new one
-    navigate('/museums'); // Redirect back to the museums list page
+    navigate('/tourismGoverner/museums'); // Redirect back to the museums list page
   };
 
   if (!username) {

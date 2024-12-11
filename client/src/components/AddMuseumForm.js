@@ -94,7 +94,7 @@ const AddMuseumForm = ({ username, refreshMuseums }) => {
       })
       .catch((error) => {
         console.error("Error adding museum:", error);
-        setErrorMessage("Failed to add museum. Please try again."); // Set error message on failure
+        setErrorMessage("Failed to add museum. Museum Alrady exists"); // Set error message on failure
       });
   };
 
