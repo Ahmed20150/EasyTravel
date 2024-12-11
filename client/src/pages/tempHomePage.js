@@ -210,7 +210,7 @@ const TempHomePage = () => {
             <HomeCard
               title="Museums & Historical Places"
               description="View, Post & Manage Museums & Historical Places"
-              linkRoute="/museums"
+              linkRoute="/tourismGoverner/museums"
             />
           </>
 
@@ -309,7 +309,7 @@ const TempHomePage = () => {
             <Link to="/featured-itineraries">
               <Button className={buttonStyle}>Featured Itineraries</Button>
             </Link>
-            <Link to="/museums">
+            <Link to="/tourist/museums">
               <Button className={buttonStyle}>Museums & Historical Places</Button>
             </Link>
             <Link to="/ViewAllItinerary">

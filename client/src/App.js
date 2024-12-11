@@ -108,7 +108,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/add-museum" element={<AddMuseumPage />} />
-            <Route path="/museums" element={<MuseumsList />} />
+            <Route path="/tourismGoverner/museums" element={<MuseumsList />} />
 
             <Route path="/fileUpload" element={<FileUpload />} />
             <Route path="/signUp" element={<SignupPage />} />
@@ -191,7 +191,7 @@ function App() {
               element={<SelectActivity />}
             />
             <Route path="/itinerary/edit/:id" element={<ItineraryEdit />} />
-            <Route path="/museums" element={<MuseumsPage />} />
+            <Route path="/tourist/museums" element={<MuseumsPage />} />
             <Route path="/Categorycontrol" element={<Categories />} />
             <Route path="/preferences" element={<PreferencePage />} />
             <Route path="/giftlist" element={<GiftList />} />
