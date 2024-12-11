@@ -243,16 +243,16 @@ app.get("/getAllPreferences", async (req, res) =>{
 })
 
 
-// app.get("/getAllCategories", async (req, res) =>{
-//   try{
-//     const category = await Category.find({});
-//     res.status(200).json(category);
+app.get("/getAllCategories", async (req, res) =>{
+  try{
+    const category = await Category.find({});
+    res.status(200).json(category);
 
-//   }catch{
-//     res.status(500).json({message:error.message});
+  }catch{
+    res.status(500).json({message:error.message});
 
-//   }
-// })
+  }
+})
 
 
 
