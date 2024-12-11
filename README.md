@@ -146,11 +146,26 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /all-gifts`: Get all gift items (including archived ones).
   - `PATCH /all-gifts/archive/:id`: Toggle the archived status of a gift item.
 
-- **Itineraries:**  
-  - `POST /itinerary`: Create new itinerary  
-  - `GET /itinerary`: List all itineraries  
-  - `GET /itinerary/:id`: Fetch single itinerary detail  
-  - `PATCH /itinerary/:id/touristsBook`: Add booked tourist to itinerary
+- **Itineraries:**
+  - POST /: Create a new itinerary.
+  - GET /: Get all itineraries.
+  - GET /:id: Get a specific itinerary by its ID.
+  - GET /search: Search itineraries by name, category, or tags.
+  - PUT /loyaltyPoints: Update tourist's loyalty points based on payment.
+  - PUT /refundPoints: Refund loyalty points for a tourist.
+  - PUT /:id: Update an existing itinerary by its ID.
+  - PUT /toggleActivation/:id: Toggle the activation status of an itinerary.
+  - DELETE /:id: Delete an itinerary by its ID.
+  - PATCH /:id: Update the booking counter for an itinerary.
+  - PATCH /:id/touristsBook: Update the list of tourists booked for an itinerary.
+  - PUT /deactivateAll/:username: Deactivate all itineraries for a given username.
+  - DELETE /deleteAll/:username: Delete all itineraries for a given username.
+  - PATCH /:id/flag: Flag an itinerary and send a notification to its creator.
+  - GET /notifications/:username: Retrieve notifications for a specific user.
+  - POST /sendNotification: Send an email notification to a user.
+  - GET /search: Search for itineraries based on a query parameter.
+  - PATCH /increment-purchases/:itineraryId: Increment the number of purchases for all activities in an itinerary.
+  - PATCH /decrement-purchases/:itineraryId: Decrement the number of purchases for all activities in an itinerary
 
 - **Activities:**  
   - `POST /activities`: Create a new activity  
