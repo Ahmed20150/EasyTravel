@@ -179,10 +179,12 @@ router.post("/create-checkout-session", async (req, res) => {
   - `POST /api/activities/send-notification`: Send an email notification
   - `POST /api/activities/increment/:id`: Increment the number of purchases for an activity by ID
 
-- **Museums & Historical Places:**  
-  - `POST /museums`: Add new museum/historical place  
-  - `GET /museums`: Fetch all places
-  - `PUT /museums/:id`: Update a place
+- **Museums & Historical Places:**
+  - `POST /api/museums`: Create a new museum entry
+  - `GET /api/museums`: Get all museums
+  - `GET /api/museums/:id`: Get a single museum by ID
+  - `PUT /api/museums/:id`: Update a museum entry by ID
+  - `DELETE /api/museums/:id`: Delete a museum by ID
 
 - **Complaints:**  
   - `POST /complaint/create`: File a complaint  
