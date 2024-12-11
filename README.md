@@ -280,7 +280,7 @@ router.post("/create-checkout-session", async (req, res) => {
   - `POST /`: Search for hotel offers by city code and filters such as date, adults, price range, etc.
   - `PUT /bookHotels`: Update the tourist's booked hotels list with a new hotel ID.
 
--**notifications**
+- **notification**
   - `GET /:username`: Retrieve notifications for a user by their username.
     
 ## Tests  
