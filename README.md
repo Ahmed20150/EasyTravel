@@ -266,15 +266,22 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /getbasestring`: Fetch the base64 string of a file based on the provided username.
     
 - **gift**
-  - GET /search/:name: Search for gifts by name (case-insensitive) and exclude archived gifts.
-  - GET /: Get all non-archived gift items.
-  - GET /:id: Get a specific gift item by its ID.
-  - GET /filter/itemsWithRevenue: Get gift items with calculated revenue (optional filter by name).
-  - GET /filter/byDate: Get gift items with revenue, filtered by a specific date.
-  - GET /filter/byMonth: Get gift items with revenue, filtered by a specific month.
-  - POST /createGiftItem: Create a new gift item in the database.
-  - POST /purchase/:id: Increment the purchase count and decrease quantity by 1, and notify the seller if the gift is out of stock.
-  - POST /:id/review: Add a review to a specific gift item.
+  - `GET /search/:name`: Search for gifts by name (case-insensitive) and exclude archived gifts.
+  - `GET /`: Get all non-archived gift items.
+  - `GET /:id`: Get a specific gift item by its ID.
+  - `GET /filter/itemsWithRevenue`: Get gift items with calculated revenue (optional filter by name).
+  - `GET /filter/byDate`: Get gift items with revenue, filtered by a specific date.
+  - `GET /filter/byMonth`: Get gift items with revenue, filtered by a specific month.
+  - `POST /createGiftItem`: Create a new gift item in the database.
+  - `POST /purchase/:id`: Increment the purchase count and decrease quantity by 1, and notify the seller if the gift is out of stock.
+  - `POST /:id/review`: Add a review to a specific gift item.
+    
+- **Hotels**
+  - `POST /`: Search for hotel offers by city code and filters such as date, adults, price range, etc.
+  - `PUT /bookHotels`: Update the tourist's booked hotels list with a new hotel ID.
+
+-**notifications**
+  - `GET /:username`: Retrieve notifications for a user by their username.
     
 ## Tests  
 - **Postman Tests:**  
