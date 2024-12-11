@@ -83,3 +83,15 @@ This application aims to enhance the user experience by seamlessly connecting to
 - Stack Overflow
 - Official Node.js and Express documentation
 - MongoDB Mongoose documentation
+
+
+## Licenses
+
+### Apache License 2.0
+This project uses components licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).  
+You are free to use, modify, and distribute this software under the terms of this license.
+
+### Stripe
+This project integrates with the Stripe API for payment processing. Use of Stripe is subject to its [Terms of Service](https://stripe.com/legal) and [API License Agreement](https://stripe.com/legal#licenses).
+
+Please ensure you comply with the respective licenses when using this project.
