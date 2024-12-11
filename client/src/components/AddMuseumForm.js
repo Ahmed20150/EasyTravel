@@ -108,7 +108,7 @@ const AddMuseumForm = ({ username, refreshMuseums }) => {
 
   return (
     <form onSubmit={handleSubmit} className="add-museum-form">
-      <h3>Add New Museum</h3>
+      <h3></h3>
       {errorMessage && <div className="alert">{errorMessage}</div>}
       <input
         type="text"
@@ -175,8 +175,19 @@ const AddMuseumForm = ({ username, refreshMuseums }) => {
           id="image-upload" // Add an id for the file input
           required
         />
-        <label htmlFor="image-upload">Upload Image</label>
-        {newMuseum.picture && (
+ <label
+    htmlFor="image-upload"
+    style={{
+      backgroundColor: 'black',
+      color: 'white',
+      padding: '10px 20px',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      display: 'inline-block',
+    }}
+  >
+    Upload Image
+  </label>        {newMuseum.picture && (
           <img
             src={newMuseum.picture}
             alt="Uploaded Preview"
@@ -245,11 +256,23 @@ const AddMuseumForm = ({ username, refreshMuseums }) => {
             {tag}
           </label>
         ))}
+        
       </div>
 
-      <button type="submit" className="add-button">
-        Add Museum
-      </button>
+      <button 
+  type="submit" 
+  style={{
+    backgroundColor: 'black',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: '5px',
+    cursor: 'pointer'
+  }}
+>
+  Add Museum
+</button>
+
     </form>
   );
 };

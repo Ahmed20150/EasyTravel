@@ -28,7 +28,7 @@ const AddMuseumPage = () => {
 
   return (
     <div className="add-museum-page">
-      <h1 className="title">Add New Museum</h1>
+      <h1 className="title" style={{ color: 'black' }}>Add New Museum</h1>
       <AddMuseumForm 
         username={username} 
         refreshMuseums={handleFormSubmit} 

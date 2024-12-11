@@ -43,7 +43,7 @@ const MuseumsList = () => {
 
   return (
     <div className="museums-container">
-      <h1 className="title">Museums and Historical Places</h1>
+      <h1 className="title" style={{ color: 'black' }}>Museums and Historical Places</h1>
 
       {/* Add New Museum Button */}
       <div
