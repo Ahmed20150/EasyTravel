@@ -17,12 +17,12 @@ This application aims to enhance the user experience by seamlessly connecting to
     ```
     
 3. **Environment Setup:**
-    
-    - Create a `.env` file with MongoDB URI, JWT secret, email credentials, etc.
+   - Create a `.env` file with the following.
     
     ```bash
-    MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.mongodb.net/mydb?retryWrites=true&w=majority
-    JWT_SECRET=supersecret
+    CLIENT_URL=http://localhost:5000
+    REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_live_51QJzQkGhMAvFexjPfti0di5UA4qvwue5MEyCO6auJuOsigwq0Ru9j4doaqQN4pEOVVgZWNCt7QOTdHVCXaoiHsD400MT2p8Jf2
+    STRIPE_SECRET_KEY=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 
     ```
     
 4. **Start the Server:**
