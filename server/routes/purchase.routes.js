@@ -42,6 +42,43 @@ router.post("/createPurchase", async (req, res) => {
     }
   });
 
+  router.post("/cart/createPurchase", async (req, res) => {
+    try {
+      const { touristUsername, productIds,productId, productName, purchaseDate,quantity,totalPrice } = req.body;
+  
+      // Find the tourist by touristUsername
+      const tourist = await Tourist.findOne({ username: touristUsername });
+      if (!tourist) {
+        return res.status(404).json({ message: "Tourist not found" });
+      }
+  
+      // Find the itinerary by ID
+      const gift = await Gift.findById(productId);
+      if (!gift) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+  
+      // Create a new booking entry
+      const newPurchase = new Purchase({
+        touristUsername,
+        productId,
+        productIds,
+        productName,
+        purchaseDate,
+        quantity,
+        totalPrice
+      });
+  
+      // Save the booking to the database
+      await newPurchase.save();
+  
+      res.status(201).json({ message: "Purchase created successfully", purchase: newPurchase });
+    } catch (error) {
+      console.error("Error creating purchase:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
   router.get("/user/:username", async (req, res) => {
     const { username } = req.params;
   

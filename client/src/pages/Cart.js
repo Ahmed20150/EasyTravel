@@ -4,9 +4,16 @@ import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useCurrency } from '../components/CurrencyContext'; 
 import { useNavigate } from 'react-router-dom';
-import { Card , Button} from "flowbite-react";
+import { Card , Button, Modal} from "flowbite-react";
 import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle , centerContent} from "../styles/gasserStyles"; 
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Link } from 'react-router-dom';
 
 
 function Cart() {
@@ -16,6 +23,11 @@ function Cart() {
     const [isLoading, setIsLoading] = useState(true);
     const { selectedCurrency, exchangeRates } = useCurrency();
     const navigate = useNavigate();
+    const [openModal, setOpenModal] = useState(false);
+    const [addresses, setAddresses] = useState([]);
+    const [selectedAddressId, setSelectedAddressId] = useState(null);
+    const [selectedGiftId, setSelectedGiftId] = useState(null);
+
 
     // Fetch cart data from API
     useEffect(() => {
@@ -30,7 +42,8 @@ function Cart() {
 
                 const cart = response.data.cart;
                 if (Array.isArray(cart) && cart.length > 0) {
-                    console.log(cart[2]);
+                    console.log(cart[0]);
+                    setSelectedGiftId(cart[0].giftItem._id);         
                     setCartItems(cart);
                 } else {
                     setCartItems([]);
@@ -43,6 +56,18 @@ function Cart() {
         };
 
         fetchCart();
+    }, [username]);
+    
+
+    useEffect(() => {
+      if (username) {
+        axios
+          .get(`http://localhost:3000/api/tourists/${username}/addresses`)
+          .then((response) => setAddresses(response.data))
+          .catch(() => toast.info("Failed to fetch addresses"));
+      } else {
+        toast.info("User not logged in");
+      }
     }, [username]);
 
     // Convert price to selected currency
@@ -118,6 +143,123 @@ const calculateTotalPrice = () => {
 
     const totalPrice = useMemo(() => calculateTotalPrice(), [cartItems, exchangeRates, selectedCurrency]); 
 
+
+    const handleSelectAddress = (addressId) => {
+      setSelectedAddressId(addressId);
+      console.log(addressId)
+    };
+
+
+    const handleWalletPurchase = async () => {
+      try {
+        let gift;
+    
+        try {
+          gift = await axios.get(
+            `http://localhost:3000/gift/${selectedGiftId}`
+          );
+        } catch (error) {
+          console.error("Gift not found, searching for activity...", error);
+        }
+
+        if(selectedAddressId === null){
+          toast.error("Please Select your address before proceeding")
+          return;  
+        }
+  
+    
+        const today = new Date();
+        const productName = gift.data.name;
+        const purchaseDate = today;
+        const quantity = cartItems.length; 
+        const totalPrice = calculateTotalPrice();
+
+        await axios.patch("http://localhost:3000/api/wallet/purchaseProduct", {
+          username,
+          totalPrice
+        })
+
+  if(cartItems.length>0 && cartItems.length<=1){
+          const response = await axios.post("http://localhost:3000/purchase/createPurchase", {
+              touristUsername: username,
+              productId: selectedGiftId,
+              productName,
+              purchaseDate,
+              quantity,
+              totalPrice,
+              });
+  }
+  else if(cartItems.length>1){
+    const response = await axios.post("http://localhost:3000/purchase/cart/createPurchase", {
+      touristUsername: username,
+      productId: selectedGiftId,
+      productIds: cartItems,
+      productName,
+      purchaseDate,
+      quantity,
+      totalPrice,
+      });
+  }
+
+
+      toast.success("Product Purchased Successfully!");
+    
+      setOpenModal(false);
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Error Purchasing Product. Please try again.";
+        toast.error(errorMessage);
+      }
+    };
+
+  const handleCreditCardPurchase = async () => {
+     let gift;
+
+  
+     try {
+      gift = await axios.get(
+        `http://localhost:3000/gift/${selectedGiftId}`
+      );
+    } catch (error) {
+      console.error("Gift not found, searching for activity...", error);
+    }
+
+
+    if(selectedAddressId === null){
+      toast.error("Please Select your address before proceeding")
+      return;  
+    }
+      const today = new Date();
+      const productName = gift.data.name;
+      const purchaseDate = today;
+      const quantity = cartItems.length; //TODO make quantity required
+      const totalPrice = calculateTotalPrice();
+
+      try {
+          const response = await axios.post(
+            "http://localhost:3000/payment/product/create-checkout-session",
+            {
+              products: cartItems,
+            },
+          //   {
+          //     headers: { Authorization: `Bearer ${cookies.token}` },
+          //   }
+          );
+          console.log("RESPONSE : ", response);
+          window.location.href = response.data.url;
+        } catch (error) {
+          console.error("Error during credit card purchase:", error);
+          toast.error(
+            "An error occurred during the credit card purchase. Please try again."
+          );
+        }
+
+
+    setOpenModal(false);
+     
+    };
+  
     return (
         <div className="cart-container">
            <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
@@ -139,7 +281,7 @@ const calculateTotalPrice = () => {
           {cartItems.map((item, index) => (
             <Card
               key={index}
-              className="w-72" // Fixed width for smaller cards
+              className="w-80" // Fixed width for smaller cards
               imgAlt={item.giftItem.name}
               imgSrc={item.giftItem.image}
             >
@@ -154,7 +296,7 @@ const calculateTotalPrice = () => {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-lg">Quantity: {item.quantity}</p>
+                <p className="text-lg">Qty: x{item.quantity}</p>
                 
                 <div className="flex space-x-2">
                   <Button
@@ -169,6 +311,13 @@ const calculateTotalPrice = () => {
                     className={buttonStyle}
                   >
                     -
+                  </Button>
+                  
+                  <Button
+                    onClick={() => removeItem(item.giftItem.name)}
+                    className={buttonStyle}
+                  >
+                    Remove
                   </Button>
                 </div>
               </div>
@@ -189,10 +338,70 @@ const calculateTotalPrice = () => {
 
             {/* Add Check Out Button here */}
             <div className="flex justify-center mt-4 mb-7">
-                <Button className={buttonStyle} onClick={handleCheckout}>
+                <Button className={buttonStyle} onClick={setOpenModal}>
                     Check Out
                 </Button>
+
             </div>
+
+            <Modal
+        show={openModal}
+        position="Center"
+        onClose={() => setOpenModal(false)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'fixed',
+
+        }}
+      >
+        <Modal.Header>Payment Processing</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6 p-6">
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Choose an address for your order</FormLabel>
+            <RadioGroup
+              aria-label="shipping-address"
+              name="shipping-address"
+              value={selectedAddressId}
+              onChange={(e) => handleSelectAddress(e.target.value)}
+            >
+              {addresses.map((address) => (
+                <FormControlLabel
+                  key={address.id}
+                  value={address.street + address.street}
+                  control={<Radio />}
+                  label={
+                    <div>
+                      <strong>{address.label}</strong>: {address.street}, {address.city},{' '}
+                      {address.state}, {address.postalCode}, {address.country}
+                    </div>
+                  }
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+
+          <Link to ="/address"><Button className={`${buttonStyle} mt-4`}> Manage Addresses</Button></Link>
+          <div>
+                      <strong className="mb-7">Choose your Payment Method</strong>
+
+                      <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+    <Button className={buttonStyle} onClick={handleWalletPurchase}>by Wallet</Button>
+    <Button className={buttonStyle} onClick={handleCreditCardPurchase}>by Credit Card</Button>
+  </div>
+           </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button color="gray" onClick={() => setOpenModal(false)}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <ToastContainer/>
         </div>
     );
 }

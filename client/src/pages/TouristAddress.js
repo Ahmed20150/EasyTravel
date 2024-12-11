@@ -226,10 +226,10 @@ const AddAddressPage = () => {
             <Table.Cell>{address.postalCode}</Table.Cell>
             <Table.Cell>{address.country}</Table.Cell>
              
-            <Table.Cell> 
+            {/* <Table.Cell> 
             <Button className={buttonStyle} onClick={() => handleSelectAddress(address)}>
                     Select
-            </Button>            </Table.Cell>
+            </Button>            </Table.Cell> */}
             
             <Table.Cell> 
             <Button className={buttonStyle}onClick={() => handleEdit(address)}>Edit</Button>
@@ -374,7 +374,7 @@ const AddAddressPage = () => {
               <div className="flex justify-between">
                 <Button
                   type="submit"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  className={buttonStyle}
                 >
                   {editingAddress ? "Update Address" : "Add Address"}
                 </Button>
