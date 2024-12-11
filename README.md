@@ -219,6 +219,9 @@ router.post("/create-checkout-session", async (req, res) => {
   - `PUT /api/tourists/:username/addresses/:addressId`: Update an existing address for a specific tourist by ID.
   - `DELETE /api/tourists/:username/addresses/:label`: Delete an address for a specific tourist by its label.
 
+- **Tourist_ Tour Guide_Advertiser_ Seller.route**
+  - `POST /api/requestDelete/:username/:role`: Submit an account deletion request for a user based on their username and role.
+
 ## Tests  
 - **Postman Tests:**  
   Requests were tested using Postman collections for:
