@@ -34,3 +34,16 @@ This application aims to enhance the user experience by seamlessly connecting to
 5.  **Start the Client:**
     1. Open terminal in client folder (right click on client -> open in integrated terminal)
     2. write command: "npm start" (might need to write "npm i" in terminal first)
+
+
+## Credits
+
+**Developers:**
+
+- [ Names ]
+
+**Helpful sources:**
+
+- Stack Overflow
+- Official Node.js and Express documentation
+- MongoDB Mongoose documentation
