@@ -187,12 +187,12 @@ router.post("/create-checkout-session", async (req, res) => {
   - `DELETE /api/museums/:id`: Delete a museum by ID
 
 - **Complaints:**
-  - POST `/api/complaints/create`: File a new complaint
-  - PUT `/api/complaints/reply/:id`: Add a reply to a complaint
-  - GET `/api/complaints/view`: View all complaints
-  - GET `/api/complaints/view/:username`: View complaints by tourist username
-  - GET `/api/complaints/:id`: Get a complaint by ID
-  - PUT `/api/complaints/status/:id`: Update complaint status
+  - `POST /api/complaints/create`: File a new complaint
+  - `PUT /api/complaints/reply/:id`: Add a reply to a complaint
+  - `GET /api/complaints/view`: View all complaints
+  - `GET /api/complaints/view/:username`: View complaints by tourist username
+  - `GET /api/complaints/:id`: Get a complaint by ID
+  - `PUT /api/complaints/status/:id`: Update complaint status
 
 - **Promo Codes:**  
   - `POST /api/promocodes/create`: Create a new promo code
