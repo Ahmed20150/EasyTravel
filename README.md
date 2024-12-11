@@ -1,97 +1,160 @@
-# Title: Easytravel
+# Project Title  
+**Easytravel** (ACL Project)
 
-## Motivation
-This application aims to enhance the user experience by seamlessly connecting tourists, advertisers, tour guides, sellers, and tourism governors. It simplifies processes such as activity and itinerary bookings, e-commerce product sales, and the management of complaints and notifications, all within a unified system. Designed as the backbone of an integrated travel and tourism platform, it streamlines both administrative tasks and user-facing operations.
+## Motivation  
+The main motivation behind this project is to provide a comprehensive platform that integrates various aspects of tourism including itinerary management, hotel booking, transportation booking, gift store management, user authentication, complaint handling, and more. The goal is to create a seamless experience for tourists, tour guides, advertisers, sellers, and administrative staff, enabling a one-stop shop solution.
 
-
-## Tech/Framework Used
-
-- **Backend Runtime:** Node.js
-- **Web Framework:** Express.js
-- **Database:** MongoDB
-- **Authentication:** JWT (Json Web Tokens)
-
-## Installation
-
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/{your_username}/EasyTravel.git
-    ```
-    
-2. **Install Dependencies:**
-    ```bash
-    npm install
-    ```
-    
-3. **Environment Setup:**
-   - Create a `.env` file with the following.
-    
-    ```bash
-    CLIENT_URL=http://localhost:5000
-    REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_live_51QJzQkGhMAvFexjPfti0di5UA4qvwue5MEyCO6auJuOsigwq0Ru9j4doaqQN4pEOVVgZWNCt7QOTdHVCXaoiHsD400MT2p8Jf2
-    STRIPE_SECRET_KEY=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 
-    ```
-    
-4. **Start the Server:**
-    1. Open terminal in server folder (right click on server -> open in integrated terminal)
-    2. write command: "npm run dev" (might need to write "npm i" in terminal first)
-    
-    The server should start on `http://localhost:3000`. 
-
-5.  **Start the Client:**
-    1. Open terminal in client folder (right click on client -> open in integrated terminal)
-    2. write command: "npm start" (might need to write "npm i" in terminal first)
-
-## Features
-
-1. **User Management**:
-   - Create, update, and delete users with roles such as Tourist, Tour Guide, Advertiser, Seller, Tour Governor, and Admin.
-   - Provide password reset functionality via OTP.
-
-2. **Activity & Itinerary Booking**:
-   - Book, cancel, and view upcoming or past bookings for activities and itineraries.
-   - Allow users to rate and review activities, itineraries, and tour guides.
-
-3. **E-Commerce Features**:
-   - Add, update, and remove products with ease.
-   - Manage product inventory, orders, and cart functionality efficiently.
-   - Enable wishlist management for tourists.
-
-4. **Complaints & Content Flagging**:
-   - File complaints regarding activities and itineraries.
-   - Allow admins to respond to and resolve complaints.
-   - Facilitate flagging inappropriate activities and itineraries, with automated refunds and booking cancellations.
-
-5. **Notifications**:
-   - Send real-time notifications for flagged activities and itineraries.
-   - Deliver promotional email notifications, including discount codes and offers.
-
-6. **Revenue & Reporting**:
-   - Generate detailed sales reports for Tour Guides and Advertisers.
-   - Calculate and filter revenue by specific months or dates.
+## Code Style  
+- The code follows a modular approach by separating models, routes, and controllers.  
+- ESLint not configured, but basic conventions like using `async/await` and proper try/catch blocks are followed.
 
 
+## Tech/Framework Used  
+- **Backend:** Node.js, Express.js, Mongoose  
+- **Database:** MongoDB  
+- **Payments:** Stripe (Testing Environment)  
+- **Authentication:** JWT, bcrypt  
+- **File Uploads:** Multer (2/2)
 
-## Credits
+## Features  
+- **User Roles:** Tourists, Tour Guides, Advertisers, Sellers, Admin, Tourism Governor.  
+- **Itinerary Management:** Create, read, update, delete itineraries, flag inappropriate ones.  
+- **Activities:** CRUD operations, purchase count increments.  
+- **Gift Items:** Add to cart, wishlist, purchase and manage stock.  
+- **Hotel & Flight Booking:** Integration with external APIs for hotels (Amadeus test environment) and mock flight booking.  
+- **ACL & Deletion Requests:** Users can request account deletion. Admin checks conditions before approval.  
+- **Complaints & Notifications:** File complaints, mark resolved, send notifications.  
+- **Promo Codes & Points System:** Apply promo codes, gain loyalty points for purchases, redeem points for discounts. (5/5)
 
-**Developers:**
+## Code Examples
 
-- [ Names ]
+**Example: Adding a New Itinerary (POST /itinerary)**  
 
-**Helpful sources:**
+```javascript
+// itinerary.routes.js
+router.post("/", async (req, res) => {
+  try {
+    const newItinerary = new Itinerary(req.body);
+    const savedItinerary = await newItinerary.save();
+    res.status(201).json(savedItinerary);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+```
 
-- Stack Overflow
-- Official Node.js and Express documentation
-- MongoDB Mongoose documentation
+**Example: Booking an Itinerary & Payment with Stripe (payment.routes.js)**
+```javascript
+router.post("/create-checkout-session", async (req, res) => {
+  try {
+    const { itineraryId, itineraryName, price } = req.body;
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [{
+        price_data: {
+          currency: "eur",
+          product_data: { name: itineraryName },
+          unit_amount: Math.round(price * 100),
+        },
+        quantity: 1,
+      }],
+      mode: "payment",
+      success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}&itemId=${itineraryId}`,
+      cancel_url: `http://localhost:5000/payment-cancel`
+    });
+    res.json({ url: session.url });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+```  
+
+## Installation  
+1. Clone the repository: `git clone https://github.com/{your_username}/EasyTravel.git`  
+2. Install dependencies: `npm install`
+
+## API References  
+**Routes Overview:**
+
+- **Authentication:**  
+  - `POST /auth/signUp`: Create a new user account  
+  - `POST /auth/login`: Login existing user  
+  - `POST /auth/forgotPassword`: Send OTP for password reset  
+  - `POST /auth/changeForgotPassword`: Change password after OTP verification
+
+- **Tourists:**  
+  - `GET /api/tourists`: Fetch all tourists  
+  - `GET /api/tourists/:username`: Fetch a single tourist by username  
+  - `PUT /api/tourists/:username`: Update tourist profile  
+  - `PATCH /api/tourists/:username/addToWishlist`: Add gift to wishlist
+
+- **Tour Guides:**  
+  - `POST /api/profile`: Update tour guide profile info  
+  - `GET /api/profile/:username`: Fetch profile of tour guide
+
+- **Advertiser:**  
+  - `POST /advertiser/profileAdv`: Create/Update Advertiser profile  
+  - `GET /advertiser/emailAdv/:username`: Get advertiser email by username
+
+- **Seller:**  
+  - `POST /api/seller/addGiftItem`: Add new gift item  
+  - `PATCH /api/seller/all-gifts/archive/:id`: Archive/unarchive a gift item
+
+- **Itineraries:**  
+  - `POST /itinerary`: Create new itinerary  
+  - `GET /itinerary`: List all itineraries  
+  - `GET /itinerary/:id`: Fetch single itinerary detail  
+  - `PATCH /itinerary/:id/touristsBook`: Add booked tourist to itinerary
+
+- **Activities:**  
+  - `POST /activities`: Create a new activity  
+  - `GET /activities`: Fetch all activities  
+  - `PATCH /activities/:id`: Flag an activity
+
+- **Museums & Historical Places:**  
+  - `POST /museums`: Add new museum/historical place  
+  - `GET /museums`: Fetch all places
+  - `PUT /museums/:id`: Update a place
+
+- **Complaints:**  
+  - `POST /complaint/create`: File a complaint  
+  - `PUT /complaint/reply/:id`: Reply to complaint
+
+- **Promo Codes:**  
+  - `POST /api/promo-codes/create`: Create a promo code  
+  - `GET /api/promo-codes`: List all promo codes
+
+- **Payment (Stripe):**  
+  - `POST /payment/create-checkout-session`: Create Stripe checkout session  
+  - `GET /payment/verify-payment`: Verify payment status
+
+- **Booking (Itineraries, Hotels, Flights):**  
+  - `POST /booking/createBooking`: Create a new itinerary booking  
+  - `PUT /hotelOffer/bookHotels`: Book a hotel by updating tourist’s booked hotels  
+  - `PUT /api/bookFlights`: Add flight booking to tourist’s record
 
 
-## Licenses
+## Tests  
+- **Postman Tests:**  
+  Requests were tested using Postman collections for:
+  - Authentication (login, signup)  
+  - CRUD operations (Activities, Itineraries, Museums)  
+  - Payment endpoint with Stripe test keys  
+  - Complaints filing and replying
 
-### Apache License 2.0
-This project uses components licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).  
-You are free to use, modify, and distribute this software under the terms of this license.
+## How to Use  
+1. Run `npm start` to start the server on `http://localhost:3000/`.  
+2. Use an API client like Postman or a frontend interface to interact with routes.
 
-### Stripe
-This project integrates with the Stripe API for payment processing. Use of Stripe is subject to its [Terms of Service](https://stripe.com/legal) and [API License Agreement](https://stripe.com/legal#licenses).
+## Contribute  
+Contributions are welcome! If you find a bug or want to add a feature, open an issue or submit a pull request. The project is not perfect; improvements, refactorings, and optimizations are encouraged. (1/1)
 
-Please ensure you comply with the respective licenses when using this project.
+## Credits  
+- **Documentation & Code Inspirations:**  
+  - Official Mongoose and Express.js Documentation  
+  - YouTube tutorials from Traversy Media, Academind, and NetNinja (for general Node.js best practices)  
+  - Stripe Documentation for Payment Integration 
+
+## License  
+- **Stripe:** Used under Stripe’s licensing terms.  
+- **Apache 2.0 License:** The codebase can be considered under Apache 2.0 license to align with common open-source practices.  
