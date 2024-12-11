@@ -8,8 +8,9 @@ import { useCurrency } from "../components/CurrencyContext";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import GeneralNavbar from "../components/GeneralNavbar";
 import { Navbar, Button, Card, Footer } from "flowbite-react";
-import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn, stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles";
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle, homeCardContainer, flexRowContainer, flexRowItem } from "../styles/gasserStyles"; 
 import HomeCard from "../components/HomeCard";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
 
@@ -213,139 +214,112 @@ const TempHomePage = () => {
               linkRoute="/tourismGoverner/museums"
             />
           </>
-
         )}
 
-        {userType === "admin" && (
-          <>
-            <Link to="/productList">
-              <Button Name={buttonStyle}>All Gifts/Products</Button>
-            </Link>
-            <Link to="/pendingRequestsPage">
-              <Button className={buttonStyle}>Pending Requests</Button>
-            </Link>
-            <Link to="/adminAccountManagement">
-              <Button className={buttonStyle}>Account Management</Button>
-            </Link>
-            <Link to="/Categorycontrol">
-              <Button className={buttonStyle}>Manage Categories</Button>
-            </Link>
-            <Link to="/preferences">
-              <Button className={buttonStyle}>Manage Prefrence Tags</Button>
-            </Link>
-            <Link to="/revenue">
-              <Button className={buttonStyle}>Financial Report</Button>
-            </Link>
-            <Link to="/itinerary">
-              <Button className={buttonStyle}>View itineraries</Button>
-            </Link>
-            <Link to="/activities">
-              <Button className={buttonStyle}>View Events</Button>
-            </Link>
-            <Link to="/complaint/view">
-              <Button className={buttonStyle}>View Complaints</Button>
-            </Link>
-            <Link to="/all-gifts">
-              <Button className={buttonStyle}>Gift Archival</Button>
-            </Link>
-          </>
-        )}
+      {userType === "tourGuide" && (
+        <>
+          <Link to="/itinerary">
+            <Button className={buttonStyle}>View Itineraries</Button>
+          </Link>
+          <Link to="/revenue">
+            <Button className={buttonStyle}>Financial Report</Button>
+          </Link>
+          <Link to="/tourist-report">
+            <Button className={buttonStyle}>Tourist Report</Button>
+          </Link>
+        </>
+      )}
 
-        {userType === "advertiser" && (
-          <>
-            <Link to="/productList">
-              <Button className={buttonStyle}>All Gifts/Products</Button>
-            </Link>
-            <Link to="/activities">
-              <Button className={buttonStyle}>View Activities</Button>
-            </Link>
-            <Link to="/revenue">
-              <Button className={buttonStyle}>Financial Report</Button>
-            </Link>
-            <Link to="/totaltouristactivity">
-              <Button className={buttonStyle}>Tourist Report</Button>
-            </Link>
-          </>
-        )}
 
-        {userType === "seller" && (
-          <>
-            <Link to="/productList">
-              <Button className={buttonStyle}>All Gifts/Products</Button>
-            </Link>
-            <Link to="/revenue">
-              <Button className={buttonStyle}>Financial Report</Button>
-            </Link>
-            <Link to="/all-gifts">
-              <Button className={buttonStyle}>Gift Archival</Button>
-            </Link>
-          </>
-        )}
-
-        {userType === "tourGuide" && (
-          <>
-            <Link to="/itinerary">
-              <Button className={buttonStyle}>View Itineraries</Button>
-            </Link>
-            <Link to="/revenue">
-              <Button className={buttonStyle}>Financial Report</Button>
-            </Link>
-            <Link to="/tourist-report">
-              <Button className={buttonStyle}>Tourist Report</Button>
-            </Link>
-          </>
-        )}
-        {userType === "tourist" && (
-          <>
-            <Link to="/productList">
-              <Button className={buttonStyle}>All Gifts/Products</Button>
-            </Link>
-            <Link to="/ExplorePage">
-              <Button className={buttonStyle}>Explore All Activities, Itineraries</Button>
-            </Link>
-            <Link to="/activities-featured">
-              <Button className={buttonStyle}>Featured Activities</Button>
-            </Link>
-            <Link to="/featured-itineraries">
-              <Button className={buttonStyle}>Featured Itineraries</Button>
-            </Link>
-            <Link to="/tourist/museums">
-              <Button className={buttonStyle}>Museums & Historical Places</Button>
-            </Link>
-            <Link to="/ViewAllItinerary">
-              <Button className={buttonStyle}>View Itineraries</Button>
-            </Link>
-            <Link to="/GiftList">
-              <Button className={buttonStyle}>Gift Shop</Button>
-            </Link>
-            <Link to="/BookFLight">
-              <Button className={buttonStyle}>Book Flight</Button>
-            </Link>
-            <Link to="/BookHotel">
-              <Button className={buttonStyle}>Book Hotel</Button>
-            </Link>
-            <Link to="/bookTransport">
-              <Button className={buttonStyle}>Book Transportation</Button>
-            </Link>
-            <Link to="/Wishlist">
-              <Button className={buttonStyle}>View Wishlist</Button>{" "}
-            </Link>
-            <Link to="/complaint/create">
-              <Button className={buttonStyle}>File Complaint</Button>
-            </Link>
-            <Link to="/complaint/myList">
-              <Button className={buttonStyle}>My Complaints</Button>
-            </Link>
-            <Link to="/cart">
-              <Button className={buttonStyle} >Go to Cart</Button>
-            </Link>
-
-            <Link to="/address">
-              <Button className={buttonStyle}>Manage Address Book</Button>
-            </Link>
-          </>
-        )}
-      </div>
+      {userType === "tourist" && (
+        <div className={flexRowContainer}>
+          <div className={flexRowItem}>
+          <Link to="/productList">
+            <Button className={buttonStyle}>All Gifts/Products</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/ExplorePage">
+            <Button className={buttonStyle}>Explore All Activities, Itineraries, Museums</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/ViewAllItinerary">
+            <Button className={buttonStyle}>View Itineraries</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/GiftList">
+            <Button className={buttonStyle}>Gift Shop</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/BookFLight">
+            <Button className={buttonStyle}>Book Flight</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/BookHotel">
+            <Button className={buttonStyle}>Book Hotel</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/bookTransport">
+            <Button className={buttonStyle}>Book Transportation</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/Wishlist">
+            <Button className={buttonStyle}>View Wishlist</Button>{" "}
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <HomeCard
+            title="View Wishlist"
+            description="View your wishlist and manage it."
+            linkRoute="/Wishlist"
+          />
+          </div>
+        
+          <div className={flexRowItem}>
+          <HomeCard
+            title="Complaints"
+            description="File or View your complaints and their status."
+            linkRoute="/complaintManagement"
+          />
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/cart">
+          <Button className={buttonStyle} ><ShoppingCartIcon/></Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/ViewAllItinerary">
+            <Button className={buttonStyle}>Manage Events</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <Link to="/GiftList">
+            <Button className={buttonStyle}>Gift Shop</Button>
+          </Link>
+          </div>
+          <div className={flexRowItem}>
+          <HomeCard
+            title="Help"
+            description="Any Questions? We are here to help you!"
+            linkRoute="/Help"
+          />
+          </div>
+          <div className={flexRowItem}>
+          <HomeCard
+            title="Manage Address Book"
+            description="Manage your address book and add new addresses."
+            linkRoute="/address"
+          />
+        </div>
+        </div>
+      )}
+    </div>
     </div>
   );
 };

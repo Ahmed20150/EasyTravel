@@ -57,26 +57,39 @@ router.get("/verify-payment", async (req, res) => {
 
   router.post("/product/create-checkout-session", async (req, res) => {
     try {
-      const { productId, productName, price} = req.body;
-      console.log(process.env.STRIPE_SECRET_KEY);
+      const { products } = req.body;
+
+       console.log(process.env.STRIPE_SECRET_KEY);
   
+
+       if (!products || !Array.isArray(products) || products.length === 0) {
+        return res.status(400).json({ error: "No products provided." });
+    }
+
+    const lineItems = products.map(product => {
+      // Validate each product's required fields
+      if (!product.giftItem._id || !product.giftItem.name || !product.giftItem.price || !product.giftItem.quantity) {
+          throw new Error("Invalid product data. Each product must have productId, productName, price, and quantity.");
+      }
+
+      return {
+          price_data: {
+              currency: "eur", // Adjust currency as needed
+              product_data: {
+                  name: product.giftItem.name,         
+              },
+              unit_amount: Math.round(product.giftItem.price * 100), // Convert to cents
+          },
+          quantity: product.quantity, // Ensure quantity is a positive integer
+      };
+  });
+
       // Create a checkout session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
-        line_items: [
-          {
-            price_data: {
-              currency: "eur", // Adjust currency as needed
-              product_data: {
-                name: productName,
-              },
-              unit_amount: Math.round(price * 100), // Convert to cents
-            },
-            quantity: 1,
-          },
-        ],
+        line_items: lineItems,
         mode: "payment",
-        success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}&itemType=product&itemId=${productId}`,
+        success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}&itemType=product&itemId=${products[0].giftItem._id}`,
         cancel_url: `http://localhost:5000/payment-cancel?itemType=product`,
       });
   

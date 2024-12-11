@@ -673,7 +673,7 @@ router.patch("/tourist/:username/addToCart", authenticate, async (req, res) => {
     if (existingCartItem) {
       existingCartItem.quantity += 1;
     } else {
-      tourist.cart.push({ giftItem: giftItem._id, quantity: 1 });
+      tourist.cart.push({ giftItem: giftItem, quantity: 1 });
     }
 
     await tourist.save();

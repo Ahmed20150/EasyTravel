@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-import { Link } from "react-router-dom";
-import { Table } from "flowbite-react"; // Import Table from Flowbite
-import GeneralNavbar from "../components/GeneralNavbar";
-import HomeBanner from "../components/HomeBanner";
-import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
-import { Navbar, Button, Card, Footer } from "flowbite-react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Button, Card, Input, Label, Select, Checkbox, Modal, TextInput, Blockquote, Table } from "flowbite-react";// import "./AddcomplaintPage.css";
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle , centerContent} from "../styles/gasserStyles"; 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const MyComplaints = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,55 +44,67 @@ const MyComplaints = () => {
   }, [username]);
 
   return (
-    <div>
-      <HomeBanner />
-      <Link to="/home">
-            <Button
-               style={{ position: 'absolute', top: '30px', left: '10px' }}
-               className={buttonStyle}
-               >Back</Button>
-            </Link>
-      <div className="overflow-x-auto p-4">
-        {loading ? (
-          <p>Loading complaints...</p>
-        ) : error ? (
-          <p style={{ color: "red" }}>{error}</p>
-        ) : complaints.length === 0 ? (
-          <p>No complaints found.</p>
-        ) : (
-          <>
-           
-            <h2 className="text-2xl font-bold mb-4">My Complaints</h2>
-            <Table striped>
-              <Table.Head>
-                <Table.HeadCell>Title</Table.HeadCell>
-                <Table.HeadCell>Description</Table.HeadCell>
-                <Table.HeadCell>Date Issued</Table.HeadCell>
-                <Table.HeadCell>Status</Table.HeadCell>
-                <Table.HeadCell>Reply</Table.HeadCell>
-              </Table.Head>
-              <Table.Body className="divide-y">
-                {complaints.map((complaint) => (
-                  <Table.Row
-                    key={complaint._id}
-                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                  >
-                    <Table.Cell className="font-medium text-gray-900 dark:text-white">
-                      {complaint.title}
-                    </Table.Cell>
-                    <Table.Cell>{complaint.body}</Table.Cell>
-                    <Table.Cell>
-                      {new Date(complaint.dateIssued).toLocaleDateString()}
-                    </Table.Cell>
-                    <Table.Cell>{complaint.status}</Table.Cell>
-                    <Table.Cell>{complaint.reply}</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </>
-        )}
+    <div style={{ maxWidth: "900px", margin: "auto", padding: "20px" }}>
+ <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
+      <h1  className="text-4xl font-bold ">My Complaints</h1>
       </div>
+
+
+      <figure className="mx-auto max-w-screen-md text-center mb-5">
+      <svg
+        className="mx-auto mb-3 h-10 w-10 text-gray-400 dark:text-gray-600"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        viewBox="0 0 18 14"
+      >
+        <path d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z" />
+      </svg>
+      <Blockquote>
+        <p className="text-2xl font-medium italic text-gray-900 dark:text-white">
+          "At EasyTravel, Your feedback is highly appreciated and valued, and we Thank you for taking time to give us your thoughts about our website and service. If your status still pending, dont worry, it usually takes admins about 3-5 business days to handle complaints. So please be patient and we will get back to you as soon as possible."
+        </p>
+      </Blockquote>
+      <figcaption className="mt-6 flex items-center justify-center space-x-3">
+        <div className="flex items-center divide-x-2 divide-gray-500 dark:divide-gray-700">
+          <cite className="pr-3 font-medium text-gray-900 dark:text-white">Customer Service Department</cite>
+          <cite className="pl-3 text-sm text-gray-500 dark:text-gray-400">EasyTravel</cite>
+        </div>
+      </figcaption>
+    </figure>
+
+
+          <Link to="/home"><button>Back</button></Link>
+          {complaints.map((complaint) => (
+<>
+
+<Table>
+        <Table.Head>
+          <Table.HeadCell>Complaint Title</Table.HeadCell>
+          <Table.HeadCell>Complaint Body</Table.HeadCell>
+          <Table.HeadCell>Date Issued</Table.HeadCell>
+          <Table.HeadCell>Status</Table.HeadCell>
+          <Table.HeadCell>Reply</Table.HeadCell>
+          <Table.HeadCell>
+            <span className="sr-only">Edit</span>
+          </Table.HeadCell>
+        </Table.Head>
+        <Table.Body className="divide-y">
+          <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+              {complaint.title}
+            </Table.Cell>
+            <Table.Cell>{complaint.body}</Table.Cell>
+            <Table.Cell> {new Date(complaint.dateIssued).toLocaleDateString()}</Table.Cell>
+            <Table.Cell>{complaint.status}</Table.Cell>
+            <Table.Cell>{complaint.status === 'pending' ? 'Reply is pending...' : complaint.reply}</Table.Cell>
+           
+          </Table.Row>
+        </Table.Body>
+      </Table>
+            </>
+
+          ))}
     </div>
   );
 };

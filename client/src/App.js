@@ -98,6 +98,7 @@ import MuseumsPage from "./pages/MuseumsPage";
 import ActivitiesPage from "./pages/ActivitiesPage";
 import FeaturedItinerariesPage from "./pages/FeaturedItinerariesPage";
 
+import ComplaintManagement from "./pages/ComplaintManagement";
 function App() {
   return (
     <div className="App">
@@ -221,6 +222,9 @@ function App() {
             <Route path="/create-gift" element={<CreateGift />} />
 
             <Route path="/edit-gift/:id" element={<EditGift />} /> New route for editing gift
+
+
+            <Route path="/complaintManagement" element={<ComplaintManagement />} />
 
           
           </Routes>

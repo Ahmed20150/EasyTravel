@@ -5,6 +5,10 @@ import {Link} from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import { useSearchParams } from 'react-router-dom';
 import { toast , ToastContainer} from 'react-toastify';
+import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle , centerContent} from "../styles/gasserStyles"; 
+import { Card , Button, Modal} from "flowbite-react";
+import { useNavigate } from 'react-router-dom';
+
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -14,6 +18,8 @@ const PaymentSuccess = () => {
   const params = new URLSearchParams(location.search);
   const sessionId = params.get('session_id');
   const itemType = params.get('itemType');
+
+  const navigate = useNavigate();
   
   // Use a ref to track whether the effect has run
   const effectRan = useRef(false);
@@ -131,16 +137,32 @@ const PaymentSuccess = () => {
 
   return (
     <div style={{display:"flex", flexDirection: "column"}}>
-      
-      <h1>Payment Successful!</h1>
+      <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
+      <h1  className="text-4xl font-bold ">Payment Successful!</h1>
       <p>Your {itemType} has been booked.</p>
+      <div className="absolute top-4 left-4">
+        <Button
+          onClick={() => navigate("/home")}
+          className={buttonStyle}
+        >
+          Back
+        </Button>
+        </div>
+      </div>
+
       <ToastContainer/>
 
-      {itemType === "itinerary" ? (
-        <Link to="/ViewAllItinerary"><button>Continue</button></Link>
-      ) : (
-        <Link to="/productList"><button>Continue</button></Link>
-      )}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+  {itemType === "itinerary" ? (
+    <Link to="/ViewAllItinerary">
+      <Button className={buttonStyle}>Continue</Button>
+    </Link>
+  ) : (
+    <Link to="/productList">
+      <Button className={buttonStyle}>Continue</Button>
+    </Link>
+  )}
+</div>
     </div>
   );
 };

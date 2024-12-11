@@ -9,7 +9,11 @@ const purchaseSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    productName:{
+    productIds: {
+      type: Array,
+      required: false
+    },
+    productName: {
         type: String,
         required: true
     },

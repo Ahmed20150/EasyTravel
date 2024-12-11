@@ -1,9 +1,13 @@
+
 // import './Wishlist.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useCurrency } from '../components/CurrencyContext';
+import { Card, Button } from 'flowbite-react';
+import { buttonStyle, cardStyle, smallCardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+
 
 function Wishlist() {
     const [cookies] = useCookies(["username"]);
@@ -124,24 +128,24 @@ function Wishlist() {
 
     return (
         <div className="App">
-            <div className="heart">❤</div>
-            <div className="wishlist">My Wishlist</div>
+             <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-2">
+            <h1 className="heart">❤</h1>
+            <h1 className="wishlist">My Wishlist</h1>
+            </div>
+
 
             {isLoading ? (
                 <p>Loading...</p>
             ) : wishlistItems.length > 0 ? (
                 <ul>
+                    <div className="flex justify-center gap-8 ">
                     {wishlistItems.map((item, index) => (
-                        <li key={index}>
-                            <h2>{item}</h2>
+                            <>
                             {giftDetails[item] ? (
-                                <div className="gift-details">
-                                    <img
-                                        src={giftDetails[item].image}
-                                        alt={item}
-                                        className="gift-image"
-                                        style={{ width: '100px' }} // Set the width to 100px
-                                    />
+                                <Card className={`${smallCardStyle} w-56`}
+                                imgAlt="Historic Areas"
+                                imgSrc={giftDetails[item].image}>
+                                   <h2>{item}</h2>
 
                                     <p>Description: {giftDetails[item].description}</p>
                                     <p>
@@ -149,32 +153,36 @@ function Wishlist() {
                                         {convertPrice(giftDetails[item].price)}{" "}
                                         {selectedCurrency}
                                     </p>
-                                </div>
+                                    <Button
+                                onClick={() => removeItem(item)}
+                                className={buttonStyle}
+                            >
+                                Remove
+                            </Button>
+                            <Button
+                                onClick={() => addToCart(item)}
+                                className={buttonStyle}
+                            >
+                                Add to Cart
+                            </Button>
+                                </Card>
+                      
                             ) : (
                                 <p>Loading details...</p>
                             )}
-                            <button
-                                onClick={() => removeItem(item)}
-                                className="remove-button"
-                            >
-                                Remove
-                            </button>
-                            <button
-                                onClick={() => addToCart(item)}
-                                className="add-to-cart-button"
-                            >
-                                Add to Cart
-                            </button>
-                        </li>
+                         
+                         </>
+                 
                     ))}
+                           </div>
                 </ul>
             ) : (
                 <p>Your Wishlist is empty</p>
             )}
 
-            <div className="button1">
+            <div className="absolute top-4 left-4">
                 <Link to="/home">
-                    <button className="back-button1">Back</button>
+                    <Button className={buttonStyle}>Back</Button>
                 </Link>
             </div>
         </div>
