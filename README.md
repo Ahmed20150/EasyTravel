@@ -186,22 +186,31 @@ router.post("/create-checkout-session", async (req, res) => {
   - `PUT /api/museums/:id`: Update a museum entry by ID
   - `DELETE /api/museums/:id`: Delete a museum by ID
 
-- **Complaints:**  
-  - `POST /complaint/create`: File a complaint  
-  - `PUT /complaint/reply/:id`: Reply to complaint
+- **Complaints:**
+  - POST `/api/complaints/create`: File a new complaint
+  - PUT `/api/complaints/reply/:id`: Add a reply to a complaint
+  - GET `/api/complaints/view`: View all complaints
+  - GET `/api/complaints/view/:username`: View complaints by tourist username
+  - GET `/api/complaints/:id`: Get a complaint by ID
+  - PUT `/api/complaints/status/:id`: Update complaint status
 
 - **Promo Codes:**  
-  - `POST /api/promo-codes/create`: Create a promo code  
-  - `GET /api/promo-codes`: List all promo codes
+  - `POST /api/promocodes/create`: Create a new promo code
+  - `GET /api/promocodes`: Get all promo codes
+  - `DELETE /api/promocodes/:id`: Delete a promo code by ID
 
 - **Payment (Stripe):**  
-  - `POST /payment/create-checkout-session`: Create Stripe checkout session  
-  - `GET /payment/verify-payment`: Verify payment status
+  - `POST /api/payments/create-checkout-session`: Create a checkout session for an itinerary payment.
+  - `GET /api/payments/verify-payment`: Verify the status of a payment using the session ID.
+  - `POST /api/payments/product/create-checkout-session`: Create a checkout session for purchasing products.
 
-- **Booking (Itineraries, Hotels, Flights):**  
-  - `POST /booking/createBooking`: Create a new itinerary booking  
-  - `PUT /hotelOffer/bookHotels`: Book a hotel by updating tourist’s booked hotels  
-  - `PUT /api/bookFlights`: Add flight booking to tourist’s record
+- **Booking (Itineraries, Hotels, Flights):**
+  - `POST /api/bookings/createBooking`: Create a new booking for a tourist and itinerary.
+  - `GET /api/bookings/getBooking/:id`: Retrieve a booking by its unique ID.
+  - `GET /api/bookings/getBooking/:itineraryId/:touristUsername`: Retrieve a booking by itinerary ID and tourist username.
+  - `DELETE /api/bookings/deleteBooking/:itineraryId/:touristUsername`: Delete a booking by itinerary ID and tourist username.
+  - `GET /api/bookings/pastBookings`: Fetch past bookings for a tourist (based on username).
+  - `GET /api/bookings/upcomingBookings`: Fetch upcoming bookings for a tourist (based on username)
 
 
 ## Tests  
