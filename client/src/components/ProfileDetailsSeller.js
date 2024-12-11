@@ -18,13 +18,9 @@ const ProfileDetailsSeller = ({ profile, onEditClick }) => {
   const [cookies] = useCookies(["userType", "username"]); // Get userType and username from cookies
   const userType = cookies.userType; // Access the userType
   const handleRequest = async (username, role) => {
-    //const input = { username, role };
     try {
-      // Construct the URL with the username and role as query parameters
       const response = await axios.post(`http://localhost:3000/Request/requestDelete/${username}/${role}`);
-      // Update state to remove the deleted user
       window.alert(`Request sent successfully: ${response.data.message}`);
-      // Filter out the deleted user from the UI
     } catch (error) {
       console.error("Error deleting user:", error);
       if (error.response) {

@@ -76,6 +76,7 @@ import CreateComplaint from "./pages/CreateComplaint";
 import MyComplaints from "./pages/MyComplaints";
 import CreatePromoCode from "./pages/CreatePromoCodePage";
 
+
 import bootstrap from "bootstrap";
 import ViewAllGifts from "./pages/ViewAllGifts";
 
@@ -86,6 +87,9 @@ import TouristAddress from "./pages/TouristAddress";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import AddMuseumPage from './pages/AddMuseumPage';
+
+
 function App() {
   return (
     <div className="App">
@@ -95,6 +99,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/add-museum" element={<AddMuseumPage />} />
+            <Route path="/museums" element={<MuseumsList />} />
 
             <Route path="/fileUpload" element={<FileUpload />} />
             <Route path="/signUp" element={<SignupPage />} />
