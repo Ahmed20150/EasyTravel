@@ -2,7 +2,7 @@
 **Easytravel** (ACL Project)
 
 ## Motivation  
-The main motivation behind this project is to provide a comprehensive platform that integrates various aspects of tourism including itinerary management, hotel booking, transportation booking, gift store management, user authentication, complaint handling, and more. The goal is to create a seamless experience for tourists, tour guides, advertisers, sellers, and administrative staff, enabling a one-stop shop solution.
+This application aims to enhance the user experience by seamlessly connecting tourists, advertisers, tour guides, sellers, and tourism governors. It simplifies processes such as activity and itinerary bookings, e-commerce product sales, and the management of complaints and notifications, all within a unified system. Designed as the backbone of an integrated travel and tourism platform, it streamlines both administrative tasks and user-facing operations.
 
 ## Code Style  
 - The code follows a modular approach by separating models, routes, and controllers.  
