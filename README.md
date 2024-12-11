@@ -31,13 +31,17 @@ This application aims to enhance the user experience by seamlessly connecting to
 **Example: Adding a New Itinerary (POST /itinerary)**  
 
 ```javascript
-// itinerary.routes.js
+// CREATE
 router.post("/", async (req, res) => {
   try {
     const newItinerary = new Itinerary(req.body);
     const savedItinerary = await newItinerary.save();
     res.status(201).json(savedItinerary);
   } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).send({ errors });
+    }
     res.status(500).json({ error: error.message });
   }
 });
@@ -47,23 +51,33 @@ router.post("/", async (req, res) => {
 ```javascript
 router.post("/create-checkout-session", async (req, res) => {
   try {
-    const { itineraryId, itineraryName, price } = req.body;
+    const { itineraryId, itineraryName, price, selectedDate, selectedTime } = req.body;
+    console.log(process.env.STRIPE_SECRET_KEY);
+
+    // Create a checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: [{
-        price_data: {
-          currency: "eur",
-          product_data: { name: itineraryName },
-          unit_amount: Math.round(price * 100),
+      line_items: [
+        {
+          price_data: {
+            currency: "eur", // Adjust currency as needed
+            product_data: {
+              name: itineraryName,
+            },
+            unit_amount: Math.round(price * 100), // Convert to cents
+          },
+          quantity: 1,
         },
-        quantity: 1,
-      }],
+      ],
       mode: "payment",
-      success_url: `http://localhost:5000/payment-success?session_id={CHECKOUT_SESSION_ID}&itemId=${itineraryId}`,
-      cancel_url: `http://localhost:5000/payment-cancel`
+      success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}&itineraryId=${itineraryId}&selectedDate=${encodeURIComponent(selectedDate)}&selectedTime=${encodeURIComponent(selectedTime)}`,
+      cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
     });
+
     res.json({ url: session.url });
+    // res.redirect(303, session.url);
   } catch (error) {
+    console.error("Error creating checkout session:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
