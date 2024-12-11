@@ -211,7 +211,13 @@ router.post("/create-checkout-session", async (req, res) => {
   - `DELETE /api/bookings/deleteBooking/:itineraryId/:touristUsername`: Delete a booking by itinerary ID and tourist username.
   - `GET /api/bookings/pastBookings`: Fetch past bookings for a tourist (based on username).
   - `GET /api/bookings/upcomingBookings`: Fetch upcoming bookings for a tourist (based on username)
-
+    
+- **Address**
+  - `POST /api/tourists/:username/addresses`: Add a new address for a specific tourist.
+  - `GET /api/tourists/:username/addresses`: Retrieve all addresses of a specific tourist.
+  - `PUT /api/tourists/:username/addresses/:addressId/default`: Set an address as the default for a specific tourist.
+  - `PUT /api/tourists/:username/addresses/:addressId`: Update an existing address for a specific tourist by ID.
+  - `DELETE /api/tourists/:username/addresses/:label`: Delete an address for a specific tourist by its label.
 
 ## Tests  
 - **Postman Tests:**  
