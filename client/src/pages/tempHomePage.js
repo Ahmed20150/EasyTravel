@@ -12,6 +12,7 @@ import { buttonStyle, cardStyle, linkStyle, centerVertically, fadeIn,stepStyle, 
 import HomeCard from "../components/HomeCard";
 
 
+
 const TempHomePage = () => {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(true);
@@ -159,45 +160,59 @@ const TempHomePage = () => {
 
 <HomeCard
             title="Change Password"
-            description="Change your password and keep your account secure!"
+            description="Change your password showNotifications && notifications.length >and keep your account secure!"
             linkRoute="/changePassword"
           />
 
-      {userType !== "admin" &&
-        notifications.length > 0 &&
-        showNotifications && (
-          <div className="notifications">
-            <div className="notifications-header">
-              <h2>Your Notifications</h2>
-              <Button className={buttonStyle}
-                onClick={() => setShowNotifications(false)}
-                aria-label="Close Notifications"
-              >
-                &times;
-              </Button>
-            </div>
+{userType !== "admin" && (
+  <>
+    {/* Notifications Button (Increased size) */}
+    {!showNotifications && (
+      <button
+        className="absolute top-[1.7cm] right-4 z-10 p-4 text-3xl" // Increased padding and font size
+        onClick={() => setShowNotifications(true)}
+        aria-label="Open Notifications"
+      >
+        <NotificationsIcon style={{ fontSize: '2rem' }} /> {/* Adjust the icon size */}
+      </button>
+    )}
+
+    {/* Notifications Popup (Centered) */}
+    {showNotifications && (
+      <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto">
+          <div className="flex justify-between items-center border-b pb-2 mb-2">
+            <h2 className="text-lg font-semibold">Your Notifications</h2>
+            <button
+              className="text-gray-600"
+              onClick={() => setShowNotifications(false)}
+              aria-label="Close Notifications"
+            >
+              &times;
+            </button>
+          </div>
+          {notifications.length > 0 ? (
             <ul>
               {notifications.map((notification, index) => (
-                <li key={index}>
+                <li key={index} className="mb-2">
                   <p>{notification.message}</p>
-                  <p>
-                    <small>
-                      {new Date(notification.timestamp).toLocaleString()}
-                    </small>
+                  <p className="text-sm text-gray-500">
+                    {new Date(notification.timestamp).toLocaleString()}
                   </p>
                 </li>
               ))}
             </ul>
-          </div>
-        )}
+          ) : (
+            <p>No notifications available.</p>
+          )}
+        </div>
+      </div>
+    )}
+  </>
+)}
 
-      {!showNotifications && notifications.length > 0 && (
-        <Button className={buttonStyle}
-          onClick={() => setShowNotifications(true)}
-        >
-          <NotificationsIcon />
-        </Button>
-      )}
+
+     
 
       {userType !== "admin" && userType !== "tourismGoverner" && (
                 <HomeCard
@@ -264,22 +279,30 @@ const TempHomePage = () => {
         </>
       )}
 
-      {userType === "advertiser" && (
-        <>
-          <Link to="/productList">
-            <Button className={buttonStyle}>All Gifts/Products</Button>
-          </Link>
-          <Link to="/activities">
-            <Button className={buttonStyle}>View Activities</Button>
-          </Link>
-          <Link to="/revenue">
-            <Button className={buttonStyle}>Financial Report</Button>
-          </Link>
-          <Link to="/totaltouristactivity">
-            <Button className={buttonStyle}>Tourist Report</Button>
-          </Link>
-        </>
-      )}
+{userType === "advertiser" && (
+  <>
+    <HomeCard
+      title="All Gifts/Products"
+      description="Browse all available gifts and products."
+      linkRoute="/productList"
+    />
+    <HomeCard
+      title="View Activities"
+      description="Check out the activities you can participate in."
+      linkRoute="/activities"
+    />
+    <HomeCard
+      title="Financial Report"
+      description="View your financial report and revenue insights."
+      linkRoute="/revenue"
+    />
+    <HomeCard
+      title="Tourist Report"
+      description="View reports on tourist activities and trends."
+      linkRoute="/totaltouristactivity"
+    />
+  </>
+)}
 
       {userType === "seller" && (
         <>
@@ -382,3 +405,4 @@ const TempHomePage = () => {
 };
 
 export default TempHomePage;
+  

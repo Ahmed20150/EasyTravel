@@ -42,6 +42,7 @@ const TouristReport = () => {
     }
   };
 
+
   // Function to fetch the total number of tourists for all itineraries
   const fetchAllTourists = async () => {
     try {

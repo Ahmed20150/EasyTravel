@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext"; // Assuming CurrencyContext.js is in components folder
+import { imageContainer, imageStyle } from "../styles/HossStyles"; // Import your styles from HossStyles.js
+
 // import "../css/ProductList.css";
 
 const ViewGiftItemCard = ({ giftItem, userType }) => {
@@ -26,11 +28,13 @@ const ViewGiftItemCard = ({ giftItem, userType }) => {
   return (
     <div className="gift-item-card" onClick={handleClick}>
       {giftItem.image && (
-        <img
-          className="gift-item-image"
-          src={giftItem.image}
-          alt={giftItem.name}
-        />
+        <div className={imageContainer}>
+          <img
+            className={imageStyle} // Apply the imageStyle class here
+            src={giftItem.image}
+            alt={giftItem.name}
+          />
+        </div>
       )}
       <div className="gift-item-details">
         <h2 className="gift-item-title">{giftItem.name}</h2>

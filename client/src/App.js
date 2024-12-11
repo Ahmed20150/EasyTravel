@@ -46,6 +46,11 @@ import ViewUpcomingEvents from "./pages/ViewUpcomingEvents";
 import BookTransportation from "./components/BookTransportation";
 import ExplorePage from "./pages/ExplorePage";
 import ProductList from "./pages/ProductList";
+import CreateGift from "./pages/CreateGift";
+
+import EditGift from './pages/EditGift'; // Import the EditGift page
+
+
 import ViewGiftItemCard from "./components/ViewGiftItemCard";
 import GiftItemDetail from "./pages/GiftItemDetail";
 import PaymentSuccess from "./pages/PaymentSuccess";
@@ -208,6 +213,10 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/productOrders" element={<ProductOrders/>} />
             
+            <Route path="/create-gift" element={<CreateGift />} />
+
+            <Route path="/edit-gift/:id" element={<EditGift />} /> New route for editing gift
+
           
           </Routes>
         </BrowserRouter>

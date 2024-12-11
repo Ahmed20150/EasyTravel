@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
+
+
 const ViewAllGifts = () => {
   const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(false);

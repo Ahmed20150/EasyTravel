@@ -1,7 +1,8 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
-// import "../css/ProductList.css"; // Updated CSS file
+import * as HossStyles from "../styles/HossStyles"; // Importing styles from HossStyles.js
+import { buttonStyle } from "../styles/GeneralStyles"; // Importing buttonStyle from GeneralStyles.js
 
 const GiftItemDetail = () => {
   const location = useLocation();
@@ -17,49 +18,55 @@ const GiftItemDetail = () => {
   };
 
   if (!giftItem) {
-    return <div className="loading">Loading...</div>;
+    return <div className={HossStyles.loaderText}>Loading...</div>;
   }
 
   return (
-    <div className="gift-item-detail">
-      <button className="back-button" onClick={() => navigate(-1)}>
+    <div className={HossStyles.pageContainer}>
+
+      
+      <button
+        className={`${buttonStyle} mb-6`} // Applying buttonStyle from GeneralStyles
+        onClick={() => navigate(-1)}
+      >
         &larr; Back
       </button>
-      <div className="gift-item-header">
-        <img
-          src={giftItem.image}
-          alt={giftItem.name}
-          className="gift-item-image"
-        />
-        <div className="gift-item-info">
-          <h1>{giftItem.name}</h1>
-          <p className="gift-item-price">
+      <div className={HossStyles.giftItemCardContainer}>
+        <div className={HossStyles.giftItemImageContainer}>
+          <img
+            src={giftItem.image}
+            alt={giftItem.name}
+            className={HossStyles.imageStyle}
+          />
+        </div>
+        <div className={HossStyles.giftItemDetails}>
+          <h1 className="text-3xl font-semibold mb-4">{giftItem.name}</h1>
+          <p className={HossStyles.giftItemPrice}>
             {convertPrice(giftItem.price)} {selectedCurrency}
           </p>
-          <p className="gift-item-description">{giftItem.description}</p>
+          <p className={HossStyles.giftItemDescription}>{giftItem.description}</p>
           {userType === "admin" || userType === "seller" ? (
             <>
-              <p className="gift-item-quantity">
-                Quantity: {giftItem.quantity}
-              </p>
-              <p className="gift-item-purchases">Sales: {giftItem.purchases}</p>
+              <p className="mb-2">Quantity: {giftItem.quantity}</p>
+              <p className="mb-2">Sales: {giftItem.purchases}</p>
             </>
           ) : null}
-          <p className="gift-item-seller">Seller: {giftItem.seller}</p>
+          <p className="mb-2">Seller: {giftItem.seller}</p>
         </div>
       </div>
-      <div className="gift-item-reviews">
-        <h2>Customer Reviews</h2>
+
+      <div className={HossStyles.reviewContainer}>
+        <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
         {giftItem.reviews && giftItem.reviews.length > 0 ? (
           giftItem.reviews.map((review, index) => (
-            <div key={index} className="review-card">
-              <div className="review-header">
-                <p className="review-author">
+            <div key={index} className={HossStyles.reviewCard}>
+              <div className={HossStyles.reviewHeader}>
+                <p className={HossStyles.reviewAuthor}>
                   <strong>{review.username}</strong>
                 </p>
-                <p className="review-rating">Rating: {review.rating} ⭐</p>
+                <p className={HossStyles.reviewRating}>Rating: {review.rating} ⭐</p>
               </div>
-              <p className="review-content">{review.review}</p>
+              <p className={HossStyles.reviewContent}>{review.review}</p>
             </div>
           ))
         ) : (

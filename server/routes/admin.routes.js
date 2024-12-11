@@ -15,10 +15,10 @@ router.use(express.json());
 
 // Admin: Add a new gift item with its details, price, and available quantity
 router.post('/addGiftItem', async (req, res) => {
-    const { name, image, description, price, purchases,quantity, date, seller} = req.body;
+    const { name, image, description, price, purchases,quantity, seller} = req.body;
 
     try {
-        // Creating a new GiftItem with purchases and date fields included
+        // Creating a new GiftItem with purchases field included
         const newGiftItem = new GiftItem({
             name,
             image,
@@ -26,7 +26,6 @@ router.post('/addGiftItem', async (req, res) => {
             price,
             purchases: purchases || 0,  // Defaults to 0 if not provided
             quantity,
-            date,
             seller,
         });
        

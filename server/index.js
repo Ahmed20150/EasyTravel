@@ -143,16 +143,6 @@ app.post("/api/category", async (req, res) => {
     }
 });
 
-app.get("/getAllCategories", async (req, res) =>{
-  try{
-    const category = await Category.find({});
-    res.status(200).json(category);
-
-  }catch{
-    res.status(500).json({message:error.message});
-
-  }
-})
 app.get("/categories", async (req, res) => {
     try {
         const categories = await Category.find({});
@@ -249,6 +239,17 @@ app.get("/getAllPreferences", async (req, res) =>{
   }
 })
 
+
+// app.get("/getAllCategories", async (req, res) =>{
+//   try{
+//     const category = await Category.find({});
+//     res.status(200).json(category);
+
+//   }catch{
+//     res.status(500).json({message:error.message});
+
+//   }
+// })
 
 
 
@@ -595,7 +596,14 @@ app.get('/api/giftitems/all', async (req, res) => {
   }
 });
 
-
+app.get('alltourists', async (req, res) => {
+  try {
+      const tourists = await Tourist.find({});
+      res.status(200).json(tourists);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+});        app.use('/allreports', touristReport);
 
 
 

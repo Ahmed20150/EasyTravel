@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
 import { useCurrency } from "../components/CurrencyContext";
 import { useCookies } from "react-cookie";
 import ViewGiftItemCard from "../components/ViewGiftItemCard";
@@ -10,10 +10,19 @@ import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";
 import { fadeIn, buttonStyle ,promoCodeListStyle,cardStyle } from "../styles/HipaStyles"; // Import styles
 
+import * as styles from "../styles/HossStyles.js"; // Importing styles from HossStyles.js
+import { buttonStyle } from "../styles/GeneralStyles.js"; // Importing buttonStyle from GeneralStyles.js
+
+
+import { Link } from "react-router-dom";
+
+
 
 const ProductList = () => {
   const [gifts, setGifts] = useState([]);
   const [loadingGifts, setLoadingGifts] = useState(true);
+
+  
   
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedGiftId, setSelectedGiftId] = useState(null);
@@ -23,7 +32,6 @@ const ProductList = () => {
     description: "",
     price: "",
     quantity: "",
-    date: "",
     seller: "",
   });
 
@@ -146,7 +154,6 @@ const handleCreditCardPurchase = async () => {
     description: "",
     price: "",
     quantity: "",
-    date: "",
     seller: "",
   });
 
@@ -154,7 +161,7 @@ const handleCreditCardPurchase = async () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [sortOrder, setSortOrder] = useState("asc"); // Sorting by ratings (asc/desc)
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const { selectedCurrency, exchangeRates } = useCurrency();
   const [cookies] = useCookies(["userType", "username"]);
@@ -209,13 +216,14 @@ const handlePromoCodeCheck = () => {
   const promo = promoCodes.find((code) => code.promoCode === promoCode);
 
   if (promo && new Date(promo.expiryDate) > new Date()) {
-      setPromoDiscount(promo.discount); // Apply discount
-      alert(`Promo code applied! You get ${promo.discount}% off.`);
+    setPromoDiscount(promo.discount); // Apply discount
+    toast.success(`Promo code applied! You get ${promo.discount}% off.`); // Success toast
   } else {
-      setPromoDiscount(0); // No discount if invalid or expired
-      alert('Invalid or expired promo code.');
+    setPromoDiscount(0); // Reset discount if invalid or expired
+    toast.error('Invalid or expired promo code.'); // Error toast
   }
 };
+
 
     // Function to apply promo code discount to price
     const applyPromoDiscount = (price) => {
@@ -234,7 +242,8 @@ const handlePromoCodeCheck = () => {
       newErrors.description = "Description is required.";
     if (!formData.price) newErrors.price = "Price is required.";
     if (!formData.quantity) newErrors.quantity = "Quantity is required.";
-    if (!formData.date) newErrors.date = "Date is required.";
+    if (userType === "admin" && !formData.seller)
+      newErrors.seller = "Seller name is required for admins.";
     if (userType === "admin" && !formData.seller)
       newErrors.seller = "Seller name is required for admins.";
 
@@ -258,9 +267,10 @@ const handlePromoCodeCheck = () => {
         description: "",
         price: "",
         quantity: "",
-        date: "",
         seller: "",
       });
+
+      toast.success("Gift added successfully!"); // Show success toast
     } catch (error) {
       console.error("Error adding gift:", error);
     }
@@ -290,9 +300,10 @@ const handlePromoCodeCheck = () => {
         description: "",
         price: "",
         quantity: "",
-        date: "",
         seller: "",
       });
+
+      toast.success("Gift updated successfully!"); // Show success toast
     } catch (error) {
       console.error("Error updating gift:", error);
     }
@@ -303,6 +314,8 @@ const handlePromoCodeCheck = () => {
     try {
       await axios.delete(`http://localhost:3000/admin/deleteGiftItem/${id}`);
       setGifts(gifts.filter((gift) => gift._id !== id));
+
+      toast.success("Gift deleted successfully!"); // Show success toast
     } catch (error) {
       console.error("Error deleting gift:", error);
     }
@@ -332,18 +345,20 @@ const handlePromoCodeCheck = () => {
   // Handle Add to Wishlist
   const handleAddToWishlist = async (giftName) => {
     if (!username) {
-      alert("user not found");
+      toast.error("User not found", { autoClose: 2000 });
       console.log("No username found in cookies");
       return;
     }
+  
 
     try {
       const response = await axios.patch(
         `http://localhost:3000/api/tourist/${username}/addToWishlist`,
         { giftName }
       );
-      alert("Added " + giftName + " to your wishlist");
-      console.log(response.data.message);
+        setTimeout(() => {
+          toast.success(`Added "${giftName}" to your wishlist!`, { autoClose: 2000 });
+        }, 1000);
 
       // Optionally, you can update the UI or inform the user that the gift was added to the wishlist
     } catch (error) {
@@ -354,22 +369,22 @@ const handlePromoCodeCheck = () => {
   // Handle Add to Cart
   const handleAddToCart = async (giftName) => {
     if (!username) {
-      alert("user not found");
+      toast.error("User not found", { autoClose: 2000 });
       console.log("No username found in cookies");
       return;
     }
-
+  
     try {
-      const response = await axios.patch(
+      await axios.patch(
         `http://localhost:3000/api/tourist/${username}/addToCart`,
         { giftName }
       );
-      alert("Added " + giftName + " to your Cart");
-      console.log(response.data.message);
-
-      // Optionally, you can update the UI or inform the user that the gift was added to the cart
+      setTimeout(() => {
+        toast.success(`Added "${giftName}" to your cart!`, { autoClose: 2000 });
+      }, 1000);
     } catch (error) {
-      console.error("Error adding gift to Cart:", error);
+      console.error("Error adding gift to cart:", error);
+      toast.error("Failed to add gift to cart.", { autoClose: 2000 });
     }
   };
 
@@ -414,56 +429,64 @@ const handlePromoCodeCheck = () => {
     return price.toFixed(2); // Return original price if no exchange rate found
   };
 
-  return (
-    <div className="product-list-container">
-      <h1 className="text-center text-2xl font-bold mb-4">Gift Items</h1>
+   return (
+    <div className={styles.pageContainer}>
       <ToastContainer />
+      <h1 className={styles.header}>Gift Items</h1>
       {userType === "tourist" && (
-        <div className="relative">
-          <Link to="/productOrders">
-            <button className={`${buttonStyle} absolute top-4 right-4 px-4 py-2`}>
-              View Your Orders
-            </button>
-          </Link>
-        </div>
+        <Link to="/productOrders">
+          <button className={styles.promoCodeButton} style={{ position: "absolute", top: "10px", right: "10px", padding: "10px 20px" }}>
+            View Your Orders
+          </button>
+        </Link>
       )}
-      <Link to="/home">
-        <button className={`${buttonStyle} mt-4`}>Back</button>
-      </Link>
-  
+
+      {/* Back button with buttonStyle applied */}
+        <Link to="/home">
+          <button
+            className={buttonStyle}
+            style={{
+              fontSize: '18px',         // Increase font size
+              padding: '12px 24px',     // Increase padding for larger button
+              borderRadius: '8px',      // Optional: smooth corners
+              fontWeight: 'bold',       // Optional: make text bold
+            }}
+          >
+            Back
+          </button>
+        </Link>
+
+
       {/* Promo Code Section */}
-      <div className={`${promoCodeListStyle} mt-6`}>
-        <label className="block text-sm font-semibold">
+      <div className={styles.promoCodeContainer}>
+        <label>
           Promo Code:
           <input
             type="text"
+            className={styles.promoCodeInput}
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value)}
-            className="border border-gray-300 rounded-md p-2 mt-1 w-full"
           />
         </label>
-        <button
-          type="button"
-          onClick={handlePromoCodeCheck}
-          className={`${buttonStyle} mt-2 px-4 py-2`}
-        >
+        <button className={styles.promoCodeButton} onClick={handlePromoCodeCheck}>
           Apply Promo Code
         </button>
       </div>
-  
+
       {/* Search and Filter Section */}
-      <div className="search-filter-sort mt-6 flex flex-col gap-4">
+      <div className={styles.searchFilterSortContainer}>
         <input
           type="text"
+          className={styles.searchInput}
           placeholder="Search by product name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border border-gray-300 rounded-md p-2"
         />
-  
-        <div className="price-filter flex gap-4">
+        <div className={styles.priceFilterContainer}>
           <input
             type="number"
+            className={styles.priceInput}
             placeholder="Min Price"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
@@ -471,219 +494,96 @@ const handlePromoCodeCheck = () => {
           />
           <input
             type="number"
+            className={styles.priceInput}
             placeholder="Max Price"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             className="border border-gray-300 rounded-md p-2"
           />
         </div>
-  
-        <select
-          onChange={(e) => setSortOrder(e.target.value)}
-          value={sortOrder}
-          className="border border-gray-300 rounded-md p-2"
-        >
-          <option value="asc">Sort by Rating (Low to High)</option>
-          <option value="desc">Sort by Rating (High to Low)</option>
-        </select>
-      </div>
-  
-      {/* Gift Form (for Admin and Seller) */}
-      {(userType === "admin" || userType === "seller") && (
-        <div className={`${promoCodeListStyle} mt-6`}>
-          <h2 className="text-xl font-bold mb-4">
-            {editingId ? "Update Gift Item" : "Add New Gift Item"}
-          </h2>
-          <div className="flex flex-col gap-4">
-            <label>
-              Name
-              <input
-                type="text"
-                placeholder="Name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="border border-gray-300 rounded-md p-2"
-              />
-            </label>
-            {errors.name && <p className="error-message">{errors.name}</p>}
-  
-            <label>
-              Creator Name
-              <input
-                type="text"
-                placeholder="Creator Name"
-                value={userType === "seller" ? username : formData.seller}
-                onChange={(e) =>
-                  setFormData({ ...formData, seller: e.target.value })
-                }
-                disabled={userType === "seller" || editingId}
-                className="border border-gray-300 rounded-md p-2"
-              />
-            </label>
-            {errors.seller && <p className="error-message">{errors.seller}</p>}
-            
-            <label htmlFor="image-upload">Image</label>
-          <input
-            id="image-upload"
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setFormData({ ...formData, image: reader.result });
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
-          />
-          {errors.image && <p className="error-message">{errors.image}</p>}
-
-          <label htmlFor="gift-description">Description</label>
-          <input
-            id="gift-description"
-            type="text"
-            placeholder="Description"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-          />
-          {errors.description && (
-            <p className="error-message">{errors.description}</p>
-          )}
-
-          <label htmlFor="gift-price">Price</label>
-          <input
-            id="gift-price"
-            type="number"
-            placeholder="Price"
-            value={formData.price}
-            onChange={(e) =>
-              setFormData({ ...formData, price: Number(e.target.value) })
-            }
-          />
-          {errors.price && <p className="error-message">{errors.price}</p>}
-
-          <label htmlFor="gift-quantity">Quantity</label>
-          <input
-            id="gift-quantity"
-            type="number"
-            placeholder="Quantity"
-            value={formData.quantity}
-            onChange={(e) =>
-              setFormData({ ...formData, quantity: Number(e.target.value) })
-            }
-          />
-          {errors.quantity && (
-            <p className="error-message">{errors.quantity}</p>
-          )}
-
-          <label htmlFor="gift-date">Date</label>
-          <input
-            id="gift-date"
-            type="date"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-          />
-          {errors.date && <p className="error-message">{errors.date}</p>}
-
-            
-            <button
-              onClick={editingId ? handleUpdateGift : handleAddGift}
-              className={`${buttonStyle} px-4 py-2`}
-            >
-              {editingId ? "Update Gift" : "Add Gift"}
-            </button>
-          </div>
+        <div className={styles.sortSelect}>
+          <select
+            onChange={(e) => setSortOrder(e.target.value)}
+            value={sortOrder}
+          >
+            <option value="asc">Sort by Rating (Low to High)</option>
+            <option value="desc">Sort by Rating (High to Low)</option>
+          </select>
         </div>
-      )}
+      </div>
+
+      {(userType === "admin" || userType === "seller") && (
+  <div style={{ marginBottom: "20px" }}>
+    <Link to="/create-gift">
+      <button className={styles.giftFormButton}>
+        Create Gift
+      </button>
+    </Link>
+  </div>
+)}
+
+
+
+          {/* Display Gifts */}
+          {loadingGifts ? (
+            <div className={styles.loaderText}>Loading Gifts/Products...</div>
+          ) : filteredGifts.length > 0 ? (
+            <div className={styles.giftItemGrid}>
+              {filteredGifts.map((gift) => (
+                <div key={gift._id} className={styles.giftItemCard}>
+                  
+                  <ViewGiftItemCard
+                    giftItem={gift}
+                    userType={userType}
+                    convertPrice={convertPrice(applyPromoDiscount(gift.price))}
+                    selectedCurrency={selectedCurrency}
+                  />
+               {userType === 'admin' || userType === 'seller' ? (
+  <div className={styles.adminButtons}>
+    <Link to={`/edit-gift/${gift._id}`}>
+      <button
+        className={buttonStyle}
+        style={{
+          fontSize: '16px',
+          padding: '10px 20px',
+          margin: '5px',
+          backgroundColor: '#000000', //  for better visibility
+          color: 'white',
+          borderRadius: '8px', // Smooth corners
+        }}
+      >
+        Edit
+      </button>
+    </Link>
+    <button
+      className={buttonStyle}
+      style={{
+        fontSize: '16px',
+        padding: '10px 20px',
+        margin: '5px',
+        backgroundColor: '#000000', //   for better visibility
+        color: 'white',
+        borderRadius: '8px', // Smooth corners
+      }}
+      onClick={() => handleDeleteGift(gift._id)}
+    >
+      Delete
+    </button>
+  </div>
+
   
-      {/* Display Gifts */}
-<div className="gift-container mt-6">
-  {loadingGifts ? (
-    <div className="fade-in text-center text-gray-600">Loading Gifts/Products...</div>
-  ) : filteredGifts.length > 0 ? (
-    <div className="gift-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-      {filteredGifts.map((gift) => (
-        <div key={gift._id} className="gift-card rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-          {/* Image Section */}
-          <div className="gift-image-container w-full h-100 bg-gray-100">
-            <img
-              src={gift.image || "default-image-url.jpg"}
-              alt={gift.name}
-              className="gift-image w-full h-full object-cover"
-            />
-          </div>
+) : null}
 
-          {/* Content Section */}
-          <div className="gift-content p-4">
-            {/* Name */}
-            <h3 className="gift-title text-lg font-bold text-gray-800">{gift.name}</h3>
-            
-            {/* Description */}
-            <p className="gift-description text-gray-600 mt-2">{gift.description}</p>
 
-            {/* Quantity */}
-            <p className="gift-quantity text-gray-600 mt-2">
-              <span className="font-bold">Quantity:</span> {gift.quantity || "N/A"}
-            </p>
-
-            {/* Creator */}
-            <p className="gift-creator text-gray-600 mt-2">
-              <span className="font-bold">Creator:</span> {gift.seller || "Unknown"}
-            </p>
-
-            <p className="gift-price text-primary text-lg font-semibold mt-2">
-              {convertPrice(applyPromoDiscount(gift.price))} {selectedCurrency}
-            </p>
-
-            
-
-            {/* Admin or Seller Actions */}
-            {(userType === "admin" || userType === "seller") && (
-              <div className="admin-actions flex justify-between mt-4">
-                <button
-                  onClick={() => setEditingId(gift._id) || setFormData(gift)}
-                  className="btn-edit px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteGift(gift._id)}
-                  className="btn-delete px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-
-            {/* Tourist Actions */}
-            {userType === "tourist" && (
-              <div className="tourist-actions flex flex-col space-y-3 mt-4">
-                <button
-                  onClick={() => openModal(gift._id)}
-                  className="btn-buy px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600"
-                >
-                  Buy
-                </button>
-                <button
-                  onClick={() => handleAddToWishlist(gift.name)}
-                  className="btn-wishlist px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600"
-                >
-                  Add to Wishlist
-                </button>
-                <button
-                  onClick={() => handleAddToCart(gift.name)}
-                  className="btn-cart px-4 py-2 rounded bg-purple-500 text-white hover:bg-purple-600"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            )}
-          </div>
+              {userType === "tourist" && (
+                <div className={styles.productButtons}>
+                  <button className={buttonStyle} onClick={() => openModal(gift._id)}>Buy</button>
+                  <button className={buttonStyle} onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</button>
+                  <button className={buttonStyle} onClick={() => handleAddToCart(gift.name)}>Add to Cart</button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       ))}
     </div>
@@ -695,63 +595,28 @@ const handlePromoCodeCheck = () => {
     
   
 
-<Modal
+      {/* Modal for payment */}
+      <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        contentLabel="Example Modal"
+        contentLabel="Payment Method"
         style={{
-          overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.75)",
-          },
-          content: {
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            marginRight: "-50%",
-            transform: "translate(-50%, -50%)",
-            width: "60%", // Increase width
-            height: "80%", // Increase height
-            padding: "40px", // Increase padding
-          },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.75)" },
+          content: { width: "60%", height: "80%", margin: "auto", padding: "40px" },
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <h2>Payment Method</h2>
-          <h3 style={{ marginBottom: "40px" }}>
-            Please Choose your Payment Method
-          </h3>
-          <div style={{ display: "flex" }}>
-            
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: "30px",
-            }}
-          >
-            <button onClick={handleWalletPurchase}>by Wallet</button>
-            <button onClick={handleCreditCardPurchase}>by Credit Card</button>
-          </div>
-          <button style={{ marginTop: "50px" }} onClick={closeModal}>
-            Close
-          </button>
+        <div className={styles.modalContainer}>
+          <h2 className={styles.modalHeader}>Payment Method</h2>
+          <button className={styles.modalButton} onClick={handleWalletPurchase}>by Wallet</button>
+          <button className={styles.modalButton} onClick={handleCreditCardPurchase}>by Credit Card</button>
+          <button className={styles.modalButton} onClick={closeModal}>Close</button>
         </div>
       </Modal>
     </div>
-
-    
   );
 };
 
-export default ProductList;
+export default ProductList;   
+
+
+//last working ciode ...  for edit .. .. .. .. .. .. . . 

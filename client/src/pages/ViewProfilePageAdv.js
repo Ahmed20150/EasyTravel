@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import ProfileDetails from '../components/ProfileDetailsAdvertiser';
 
+
+
 const ViewProfileAdvPage = () => {
   const location = useLocation(); // Access location object
   const navigate = useNavigate(); // Initialize navigate
