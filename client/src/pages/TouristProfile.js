@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PreferenceSelector from '../components/PreferenceSelector';  // Import the new component
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link , useNavigate} from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import ItineraryCard from "../components/ItineraryItem";
 import TouristForm from "../components/TouristForm";
@@ -10,7 +10,19 @@ import level1Image from "../images/Level_1.avif"; // Adjust the path as needed
 import level2Image from "../images/Level_2.avif"; // Adjust the path as needed
 import level3Image from "../images/Level_3.webp"; // Adjust the path as needed
 
+import { Navbar, Button, Card, Footer } from "flowbite-react";
+import {
+  cardStyle,
+  buttonStyle,
+  walletSectionStyle,
+  itineraryListStyle,
+  promoCodeListStyle,
+  userLevelBadge,
+  fadeIn
+} from "../styles/AmrStyles"; // Import styles
+
 const TouristProfile = () => {
+  const navigate = useNavigate(); // For navigation
     const [cookies] = useCookies(["userType", "username"]);
     const userType = cookies.userType;
     const [tourist, setTourist] = useState(null);
@@ -311,7 +323,13 @@ const TouristProfile = () => {
     if (error) return <div>{error}</div>;
 
     return (
-      <div>
+      <div className="relative flex justify-center items-center h-screen bg-gray-100">
+          <button
+          className="absolute top-4 left-4 py-2 px-4 bg-black text-white rounded-lg shadow hover:bg-gray-600"
+          onClick={() => navigate('/home')}
+        >
+          Back to Home Page
+        </button>
         {isEditing ? (
           tourist ? (
             <TouristForm
@@ -321,261 +339,142 @@ const TouristProfile = () => {
               setIsEditing={setIsEditing}
             />
           ) : (
-            <div>No tourist data available</div>
+            <div className="text-center text-gray-500">No tourist data available</div>
           )
         ) : (
-      <div>
-        <div>
-          <h1>{tourist.username}'s Profile</h1>
-          <p><strong>Username:</strong> {tourist.username}</p>
-          <p><strong>Email:</strong> {tourist.email}</p>
-          <p><strong>Mobile Number:</strong> {tourist.mobileNumber}</p>
-          <p><strong>Nationality:</strong> {tourist.nationality}</p>
-          <p>
-            <strong>Date of Birth:</strong>{" "}
-            {new Date(tourist.dateOfBirth).toLocaleDateString()}
-          </p>
-          <p><strong>Occupation:</strong> {tourist.occupation}</p>
-          <p><strong>Wallet:</strong> {tourist.wallet}</p>
-          <div className="flex flex-wrap gap-4 mt-4">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              Edit Profile
-            </button>
-            <button
-              onClick={() => setIsPreferencesEditing(true)}
-              className="py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600"
-            >
-              Edit Preferences
-            </button>
-            <button
-              className="py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600"
-              onClick={() => handleRequest(tourist.username, userType)}
-            >
-              Request Delete
-            </button>
-            <Link to="/home">
-              <button className="py-2 px-4 bg-gray-300 rounded-lg hover:bg-gray-400">
-                Back
+          <div className="w-full max-w-4xl p-8 bg-white shadow-lg rounded-lg">
+            {/* Profile Section */}
+            <h1 className="text-3xl font-bold mb-6 text-center">
+              {tourist.username}'s Profile
+            </h1>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <p>
+                <strong>Username:</strong> {tourist.username}
+              </p>
+              <p>
+                <strong>Email:</strong> {tourist.email}
+              </p>
+              <p>
+                <strong>Mobile Number:</strong> {tourist.mobileNumber}
+              </p>
+              <p>
+                <strong>Nationality:</strong> {tourist.nationality}
+              </p>
+              <p>
+                <strong>Date of Birth:</strong>{" "}
+                {new Date(tourist.dateOfBirth).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Occupation:</strong> {tourist.occupation}
+              </p>
+              <p>
+                <strong>Wallet:</strong> {tourist.wallet}
+              </p>
+            </div>
+    
+            {/* Action Buttons */}
+            <div className="flex justify-between space-x-4 mb-6">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="w-full py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
+              >
+                Edit Profile
               </button>
-            </Link>
+              <button
+                onClick={() => setIsPreferencesEditing(true)}
+                className="w-full py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600"
+              >
+                Edit Preferences
+              </button>
+              <button
+                onClick={() => handleRequest(tourist.username, userType)}
+                className="w-full py-3 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+              >
+                Request Delete
+              </button>
+            </div>
+    
+            {/* Wallet and Points Section */}
+            <div className="p-4 bg-gray-100 rounded-lg mb-6">
+              <h2 className="text-xl font-semibold mb-4">Wallet and Points</h2>
+              <p>
+                <strong>Wallet:</strong> {tourist.wallet}
+              </p>
+              <p>
+                <strong>Points:</strong> {tourist.currentPoints}
+              </p>
+              <button
+                onClick={handleRedeemPoints}
+                className="mt-4 w-full py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600"
+              >
+                Redeem Points
+              </button>
+            </div>
+    
+            {/* Bookmarked Events Section */}
+            <h2 className="text-xl font-semibold mb-4">Bookmarked Events</h2>
+            <div className="itinerary-list">
+              {itineraries.length > 0 ? (
+                itineraries.map((itinerary) => (
+                  <ItineraryCard
+                    key={itinerary._id}
+                    itinerary={itinerary}
+                    onBookmark={handleBookmark}
+                    isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                    isProfilePage={isProfilePage}
+                  />
+                ))
+              ) : (
+                <p className="text-gray-500">No bookmarked events</p>
+              )}
+            </div>
+    
+            {/* Notifications Section */}
+            <h2 className="text-xl font-semibold mt-6 mb-4">
+              Notifications (Bookmarked, Changed, Activated)
+            </h2>
+            <div className="itinerary-list">
+              {filteredBookmarkedItineraries.length > 0 ? (
+                filteredBookmarkedItineraries.map((eventId) => {
+                  const itinerary = itineraries.find((item) => item._id === eventId);
+                  return itinerary ? (
+                    <ItineraryCard
+                      key={itinerary._id}
+                      itinerary={itinerary}
+                      onBookmark={handleBookmark}
+                      isBookmarked={bookmarkedEvents.includes(itinerary._id)}
+                      isProfilePage={isProfilePage}
+                    />
+                  ) : null;
+                })
+              ) : (
+                <p className="text-gray-500">
+                  No bookmarked itineraries with 'changed' and 'activated' status
+                </p>
+              )}
+            </div>
+    
+            {/* Promo Codes Section */}
+            <h2 className="text-xl font-semibold mt-6 mb-4">Promo Codes</h2>
+            <div className="p-4 bg-gray-100 rounded-lg">
+              {filteredPromoCodes.length > 0 ? (
+                <ul className="space-y-4">
+                  {filteredPromoCodes.map((promo, index) => (
+                    <li key={index}>
+                      <strong>Promo Code:</strong> {promo.promoCode} <br />
+                      <strong>Discount:</strong> {promo.discount}% <br />
+                      <strong>Expires on:</strong>{" "}
+                      {new Date(promo.expiryDate).toLocaleDateString()}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No valid promo codes available</p>
+              )}
+            </div>
           </div>
-        </div>
-
-        {isPreferencesEditing && tourist && (
-          <PreferenceSelector
-            username={tourist.username}
-            currentPreferences={tourist.preferences}
-            onPreferencesUpdate={handlePreferencesUpdate}
-          />
-        )}
-
-        <div className="wallet-points-section">
-          <h2 className="text-2xl font-bold mt-6">Wallet and Points</h2>
-          <p><strong>Wallet:</strong> {tourist.wallet}</p>
-          <p><strong>Points:</strong> {tourist.currentPoints}</p>
-          <button
-            onClick={handleRedeemPoints}
-            className="mt-4 py-2 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-          >
-            Redeem Points
-          </button>
-        </div>
-
-        <h2 className="text-2xl font-bold mt-6">Bookmarked Events:</h2>
-        <div className="itinerary-list">
-          {itineraries.length > 0 ? (
-            itineraries.map((itinerary) => (
-              <ItineraryCard
-                key={itinerary._id}
-                itinerary={itinerary}
-                onEdit={() => console.log("Edit", itinerary._id)}
-                onDelete={() => console.log("Delete", itinerary._id)}
-                userType={userType}
-                onBook={() => console.log("Book", itinerary._id)}
-                isBooked={false}
-                onUnbook={() => console.log("Unbook", itinerary._id)}
-                onActivationToggle={() =>
-                  console.log("Toggle Activation", itinerary._id)
-                }
-                onBookmark={handleBookmark}
-                isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                isProfilePage={isProfilePage}
-              />
-            ))
-          ) : (
-            <p>No bookmarked events</p>
-          )}
-        </div>
-
-        <h2 className="text-2xl font-bold mt-6">Notifications (Bookmarked, Changed, Activated):</h2>
-        <div className="itinerary-list">
-          {filteredBookmarkedItineraries.length > 0 ? (
-            filteredBookmarkedItineraries.map((eventId) => {
-              const itinerary = itineraries.find((item) => item._id === eventId);
-              return itinerary ? (
-                <ItineraryCard
-                  key={itinerary._id}
-                  itinerary={itinerary}
-                  onBookmark={handleBookmark}
-                  isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                  isProfilePage={isProfilePage}
-                />
-              ) : null;
-            })
-          ) : (
-            <p>
-              No bookmarked itineraries with 'changed' and 'activated' status
-            </p>
-          )}
-        </div>
-
-        <h2 className="text-2xl font-bold mt-6">Booked Itineraries (Within 2 Days):</h2>
-        <div className="itinerary-list">
-          {bookedItineraries.length > 0 ? (
-            bookedItineraries.map((itinerary) => (
-              <ItineraryCard
-                key={itinerary._id}
-                itinerary={itinerary}
-                onBookmark={handleBookmark}
-                isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                isProfilePage={isProfilePage}
-              />
-            ))
-          ) : (
-            <p>No booked itineraries within the next 2 days</p>
-          )}
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-bold mt-6">Promo Codes:</h2>
-          {filteredPromoCodes.length > 0 ? (
-            <ul>
-              {filteredPromoCodes.map((promo, index) => (
-                <li key={index} className="mb-4">
-                  <strong>Promo Code:</strong> {promo.promoCode} <br />
-                  <strong>Discount:</strong> {promo.discount}% <br />
-                  <strong>Expires on:</strong> {new Date(promo.expiryDate).toLocaleDateString()} <br />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No valid promo codes available</p>
-          )}
-        </div>
-
-        <div className="user-level-badge mt-6">
-          {userLevel === 1 && <img src={level1Image} alt="Level 1 Badge" />}
-          {userLevel === 2 && <img src={level2Image} alt="Level 2 Badge" />}
-          {userLevel === 3 && <img src={level3Image} alt="Level 3 Badge" />}
-        </div>
-      </div>
-        )}
-
-        {/* Show the PreferenceSelector component when editing preferences */}
-        {isPreferencesEditing && tourist && (
-          <PreferenceSelector
-            username={tourist.username}
-            currentPreferences={tourist.preferences}
-            onPreferencesUpdate={handlePreferencesUpdate}
-          />
-        )}
-         <div className="wallet-points-section">
-        <h2>Wallet and Points</h2>
-        <p>Wallet: {tourist.wallet}</p>
-        <p>Points: {tourist.currentPoints}</p>
-        <button onClick={handleRedeemPoints}>Redeem Points</button>
-      </div>
-        <h2>Bookmarked Events:</h2>
-        <div className="itinerary-list">
-          {itineraries.length > 0 ? (
-            itineraries.map((itinerary) => (
-              <ItineraryCard
-                key={itinerary._id}
-                itinerary={itinerary}
-                onEdit={() => console.log("Edit", itinerary._id)}
-                onDelete={() => console.log("Delete", itinerary._id)}
-                userType={userType}
-                onBook={() => console.log("Book", itinerary._id)}
-                isBooked={false}
-                onUnbook={() => console.log("Unbook", itinerary._id)}
-                onActivationToggle={() =>
-                  console.log("Toggle Activation", itinerary._id)
-                }
-                onBookmark={handleBookmark}
-                isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                isProfilePage={isProfilePage}
-              />
-            ))
-          ) : (
-            <p>No bookmarked events</p>
-          )}
-        </div>
-
-        <h2>Notifications (Bookmarked, Changed, Activated):</h2>
-        <div className="itinerary-list">
-          {filteredBookmarkedItineraries.length > 0 ? (
-            filteredBookmarkedItineraries.map((eventId) => {
-              const itinerary = itineraries.find(
-                (item) => item._id === eventId
-              );
-              return itinerary ? (
-                <ItineraryCard
-                  key={itinerary._id}
-                  itinerary={itinerary}
-                  onBookmark={handleBookmark}
-                  isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                  isProfilePage={isProfilePage}
-                />
-              ) : null;
-            })
-          ) : (
-            <p>
-              No bookmarked itineraries with 'changed' and 'activated' status
-            </p>
-          )}
-        </div>
-
-        <h2>Booked Itineraries (Within 2 Days):</h2>
-        <div className="itinerary-list">
-          {bookedItineraries.length > 0 ? (
-            bookedItineraries.map((itinerary) => (
-              <ItineraryCard
-                key={itinerary._id}
-                itinerary={itinerary}
-                onBookmark={handleBookmark}
-                isBookmarked={bookmarkedEvents.includes(itinerary._id)}
-                isProfilePage={isProfilePage}
-              />
-            ))
-          ) : (
-            <p>No booked itineraries within the next 2 days</p>
-          )}
-        </div>
-        <div>
-        <h2>Promo Codes:</h2>
-        {filteredPromoCodes.length > 0 ? (
-          <ul>
-            {filteredPromoCodes.map((promo, index) => (
-              <li key={index}>
-                <strong>Promo Code:</strong> {promo.promoCode} <br />
-                <strong>Discount:</strong> {promo.discount}% <br />
-                <strong>Expires on:</strong> {new Date(promo.expiryDate).toLocaleDateString()} <br />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No valid promo codes available</p>
         )}
       </div>
-      <div className="user-level-badge">
-        {userLevel === 1 && <img src={level1Image} alt="Level 1 Badge" />}
-        {userLevel === 2 && <img src={level2Image} alt="Level 2 Badge" />}
-        {userLevel === 3 && <img src={level3Image} alt="Level 3 Badge" />}
-      </div>
-    </div>
     );
 };
 
