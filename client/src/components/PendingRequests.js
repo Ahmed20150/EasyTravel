@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { Button, Card, Modal, Table } from 'flowbite-react'; 
+import { Button, Card, Modal, Table,Spinner } from 'flowbite-react'; 
 import {buttonStyle} from '../styles/GeneralStyles';
 
 const PendingRequests = () => {
@@ -12,9 +12,11 @@ const PendingRequests = () => {
   const [selectedUser, setSelectedUser] = useState(null); // State to hold the selected user data
   const [base64, setBase64] = useState(''); // holds base64 of uploaded pdf document
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state 
 
   useEffect(() => {
-    const fetchPendingRequests = async () => {
+    const fetchPendingRequests = async () => { 
+     setLoading(true); // Start loading
       try {
         const [guidesResponse, advertisersResponse, sellersResponse] = await Promise.all([
           axios.get('http://localhost:3000/admin/pending-tour-guides'),
@@ -26,6 +28,8 @@ const PendingRequests = () => {
         setPendingSellers(sellersResponse.data);
       } catch (error) {
         console.error('Error fetching pending requests:', error);
+      } finally {
+        setLoading(false); // Stop loading after fetching
       }
     };
 
@@ -90,7 +94,12 @@ const PendingRequests = () => {
       <Link to="/home">
         <Button className={buttonStyle}>Back</Button>
       </Link>
-
+      {loading ? ( // Show loading spinner while fetching data
+        <div className="flex justify-center mt-10">
+          <Spinner size="lg" aria-label="Loading pending requests..." />
+        </div>
+      ) : ( 
+        <>
       <div className="mt-6">
         <h2 className="text-2xl font-semibold mb-4">Pending Tour Guides</h2>
         <Table>
@@ -257,6 +266,8 @@ const PendingRequests = () => {
 </Modal.Body>
 
         </Modal>
+      )} 
+      </> 
       )}
     </div>
   );
