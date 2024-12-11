@@ -230,6 +230,7 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /api/checkBooking/:activityId/:username`: Check details of an existing booking for a tourist and activity.
   - `GET /api/pastBookings`: Retrieve past activity bookings for a specific tourist.
   - `GET /api/upcomingBookings`: Fetch upcoming activity bookings for a specific tourist.
+    
 - **Admin**
   - `POST /addGiftItem`: Add a new gift item with details like name, image, price, and quantity.
   - `PUT /updateGiftItem/:id`: Update details of an existing gift item by its ID.
@@ -256,7 +257,9 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /all-gifts`: Retrieve all gift items, including archived ones.
   - `PATCH /all-gifts/archive/:id`: Toggle the archived status of a specific gift item.
 
-
+- **categories**
+  - `GET /`: Retrieve all categories from the database.
+    
 ## Tests  
 - **Postman Tests:**  
   Requests were tested using Postman collections for:
