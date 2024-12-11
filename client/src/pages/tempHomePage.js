@@ -247,10 +247,34 @@ const TempHomePage = () => {
             description="Customize and manage preference tags to enhance user personalization"
             linkRoute="/preferences"
           />
+          <HomeCard
+            title="Financial Report"
+            description="View detailed revenue reports"
+            linkRoute="/revenue"
+          />
+          <HomeCard
+            title="View itineraries"
+            description="Customize and manage Itineraries "
+            linkRoute="/itinerary"
+          />
+          <HomeCard
+            title="View Events"
+            description="Customize and manage Events"
+            linkRoute="/activities"
+          />
+          <HomeCard
+            title="View Complaints"
+            description="Customize and manage Users Complaints "
+            linkRoute="/complaint/view"
+          />
+
+
+{/* 
+
             <Link to="/revenue">
               <Button className={buttonStyle}>Financial Report</Button>
-            </Link>
-            <Link to="/itinerary">
+            </Link> */}
+            {/* <Link to="/itinerary">
               <Button className={buttonStyle}>View itineraries</Button>
             </Link>
             <Link to="/activities">
@@ -258,7 +282,7 @@ const TempHomePage = () => {
             </Link>
             <Link to="/complaint/view">
               <Button className={buttonStyle}>View Complaints</Button>
-            </Link>
+            </Link> */}
             <Link to="/all-gifts">
               <Button className={buttonStyle}>Gift Archival</Button>
             </Link>

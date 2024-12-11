@@ -30,6 +30,7 @@ function Revenue() {
   const [giftItems, setGiftItems] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -45,6 +46,8 @@ function Revenue() {
   
   const handleShowAllRevenueClick = async () => { 
     console.log("Fetching revenue data...");
+    setIsLoading(true);
+
     try {
       const [itinerariesResponse, museumsResponse, actResponse, giftItemsResponse] = await Promise.all([
         axios.get('http://localhost:3000/itineraries'),
@@ -107,9 +110,12 @@ function Revenue() {
       setActTotalRevenue(act_revenue);
       setGiftTotalRevenue(gift_revenue);
       setTotalRevenue(it_revenue + museum_revenue + act_revenue + gift_revenue);
-    } catch (error) { 
+    } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
+  
   };
   const handleFilterClick = async () => {
     try {
@@ -303,8 +309,9 @@ function Revenue() {
           className={buttonStyle}
           onClick={handleShowAllRevenueClick}
           style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}
+          disabled={isLoading}
         >
-          Show All Revenue
+          {isLoading ? 'Loading...' : 'Show All Revenue'}
         </Button>
         
         {/* that is for the small filter for adv , tg  */}
