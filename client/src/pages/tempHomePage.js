@@ -284,15 +284,21 @@ const TempHomePage = () => {
 
         {userType === "tourGuide" && (
           <>
-            <Link to="/itinerary">
-              <Button className={buttonStyle}>View Itineraries</Button>
-            </Link>
-            <Link to="/revenue">
-              <Button className={buttonStyle}>Financial Report</Button>
-            </Link>
-            <Link to="/tourist-report">
-              <Button className={buttonStyle}>Tourist Report</Button>
-            </Link>
+            <HomeCard
+            title="View Itineraries"
+            description="Create and view your Itineraries"
+            linkRoute="/itinerary"
+          />
+          <HomeCard
+            title="Financial Report"
+            description="Get a glimpse on your financial report"
+            linkRoute="/revenue"
+          />
+          <HomeCard
+            title="Tourist Report"
+            description="View how your tourists are acting"
+            linkRoute="/tourist-report"
+          />
           </>
         )}
         {userType === "tourist" && (
