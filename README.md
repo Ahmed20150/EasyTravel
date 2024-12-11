@@ -127,10 +127,10 @@ router.post("/create-checkout-session", async (req, res) => {
   - `PUT /bookFlight`:Adds a flight to the tourist's booked flights
 
 - **Tour Guides:**  
-- `POST /profile`: Update tour guide profile info.
-- `GET /profile/:username`: Fetch tour guide profile by username.
-- `GET /tourguide/username/:username`: Find tour guide by username.
-- `GET /email/:username`: Fetch email of tour guide by username.
+  - `POST /profile`: Update tour guide profile info.
+  - `GET /profile/:username`: Fetch tour guide profile by username.
+  - `GET /tourguide/username/:username`: Find tour guide by username.
+  - `GET /email/:username`: Fetch email of tour guide by username.
 
 - **Advertiser:**  
   - `POST /profileAdv`: Update or create advertiser profile info, including company profile PDF and picture.
