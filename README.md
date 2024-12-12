@@ -7,6 +7,7 @@ This application aims to enhance the user experience by seamlessly connecting to
 ## Code Style  
 - The code follows a modular approach by separating models, routes, and controllers.  
 - ESLint not configured, but basic conventions like using `async/await` and proper try/catch blocks are followed.
+- The code uses javascript and is class based
 
 
 ## Tech/Framework Used  
