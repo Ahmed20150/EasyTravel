@@ -85,7 +85,9 @@ router.post("/create-checkout-session", async (req, res) => {
 
 ## Installation  
 1. Clone the repository: `git clone https://github.com/{your_username}/EasyTravel.git`  
-2. Install dependencies: `npm install`
+2. npm install express (if prompted with an express error) (server)
+3. npm install moongose (if prompted with an express error) (server)
+4. npm install react-scripts --legacy-peer-deps (client)
 
 ## API References  
 **Routes Overview:**
@@ -311,8 +313,8 @@ router.post("/create-checkout-session", async (req, res) => {
   - Complaints filing and replying
 
 ## How to Use  
-1. Run `npm start` to start the server on `http://localhost:3000/`.  
-2. Use an API client like Postman or a frontend interface to interact with routes.
+1. Run `npm run dev` to start the server on `http://localhost:3000/`.  
+2. Use an API client like Postman or a frontend interface to interact with routes (client side can be run using "npm start") .
 
 ## Contribute  
 Contributions are welcome! If you find a bug or want to add a feature, open an issue or submit a pull request. The project is not perfect; improvements, refactorings, and optimizations are encouraged.
