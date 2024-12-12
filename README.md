@@ -85,8 +85,8 @@ router.post("/create-checkout-session", async (req, res) => {
 
 ## Installation  
 1. Clone the repository: `git clone https://github.com/{your_username}/EasyTravel.git`  
-2. npm install express (if prompted with an express error) (server)
-3. npm install moongose (if prompted with an express error) (server)
+2. npm install express --legacy-peer-deps (if prompted with an express error) (server)
+3. npm install moongose --legacy-peer-deps(if prompted with an express error) (server)
 4. npm install react-scripts --legacy-peer-deps (client)
 
 ## API References  
