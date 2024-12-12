@@ -116,7 +116,7 @@ const Categories = () => {
         </Tabs.Item>
 
         {/* Read Categories Tab */}
-        <Tabs.Item title="Read" icon={HiOutlineViewList}>
+        <Tabs.Item title="View" icon={HiOutlineViewList}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categories.map((category) => (
               <Card

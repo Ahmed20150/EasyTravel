@@ -12,13 +12,19 @@ import {
   userLevelBadge,
   fadeIn
 } from "../styles/AmrStyles"; // Import styles
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
+
+
 const ItineraryForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [cookies] = useCookies(["username"]);
   const [errors, setErrors] = useState({});
   const [activityCategories, setActivityCategories] = useState([]);
-
+  const [categories, setCategories] = useState([]);
 
   // Initial form state matching the exact schema requirements
   const [formData, setFormData] = useState({
@@ -112,6 +118,8 @@ const ItineraryForm = () => {
         [name]: value,
       }));
     }
+
+    console.log(formData)
   };
 
   const handleSubmit = async (e) => {
@@ -120,7 +128,7 @@ const ItineraryForm = () => {
 
     try {
       // Transform activities to match the itinerary schema
-      alert(`username: ${cookies.username}`);
+      toast.success("Itinerary Created Succesfully!");
       const updatedFormData = {
         ...formData,
         activities: selectedActivities.map((activity) => ({
@@ -139,7 +147,7 @@ const ItineraryForm = () => {
     } catch (err) {
       if (err.response && err.response.status === 400) {
         setErrors(err.response.data.errors);
-        alert(`Error updating activity: ${err.response.data.errors}`);
+        toast.error(`Error updating activity: ${err.response.data.errors}`);
       } else {
         console.error("An error occurred:", err);
       }
@@ -148,54 +156,28 @@ const ItineraryForm = () => {
 
 
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/getAllCategories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories", error);
+      alert("Failed to fetch categories.");
+    }
+  };
+
+  const [selectedCategory, setSelectedCategory] = useState("");
   return (
     <form onSubmit={handleSubmit} className="min-h-screen flex justify-center items-start bg-gray-100 p-6">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-3xl font-semibold mb-6">Create New Itinerary</h2>
   
-        {/* Itinerary Name */}
-        <div className="mb-4">
-          <label className="block text-lg font-medium text-gray-700 mb-2">Itinerary Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md"
-          />
-          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-        </div>
-  
-        {/* Category */}
-        <div className="mb-4">
-          <label className="block text-lg font-medium text-gray-700 mb-2">Category:</label>
-          <input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md"
-          />
-          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
-        </div>
-  
-        {/* Tags */}
-        <div className="mb-4">
-          <label className="block text-lg font-medium text-gray-700 mb-2">Tags (comma-separated):</label>
-          <input
-            type="text"
-            name="tags"
-            value={formData.tags.join(",")}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md"
-          />
-        </div>
-  
-        {/* Locations & Activities */}
-        <div className="mb-4">
+           {/* Locations & Activities */}
+           <div className="mb-4">
           <label className="block text-lg font-medium text-gray-700 mb-2">Locations to Visit (comma-separated):</label>
           <input
             type="text"
@@ -223,6 +205,57 @@ const ItineraryForm = () => {
           ))}
         </ul>
   
+
+
+
+        {/* Itinerary Name */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Itinerary Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        </div>
+  
+        {/* Category */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Category:</label>
+         
+          <select
+              id="categorySelect"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full mb-4 p-2 border rounded-md"
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+        </div>
+  
+        {/* Tags */}
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Tags (comma-separated):</label>
+          <input
+            type="text"
+            name="tags"
+            value={formData.tags.join(",")}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md"
+          />
+        </div>
+  
+     
         {/* Timeline */}
         <div className="mb-4">
           <label className="block text-lg font-medium text-gray-700 mb-2">Timeline:</label>
@@ -355,6 +388,7 @@ const ItineraryForm = () => {
           </button>
         </div>
       </div>
+      <ToastContainer/>
     </form>
   );
 };

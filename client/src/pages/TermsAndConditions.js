@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import TermsAndConditionsContent from '../components/TermsAndConditionsContent';
 import { Cookies} from 'react-cookie';
+import { Button } from 'flowbite-react';
+import { buttonStyle } from '../styles/gasserStyles';
 
 const TermsAndConditions = () => {
     const [error, setError] = useState('');
@@ -41,9 +43,45 @@ const TermsAndConditions = () => {
     return (
         <div>
             <TermsAndConditionsContent />
-            <button onClick={handleAccept}>Accept Terms</button>
-            <button onClick={handleReject}>Reject Terms</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '20px',
+                marginTop: '40px',
+                marginBottom: '40px'
+            }}>
+                <Button
+                    className={buttonStyle}
+                    onClick={handleAccept}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#4CAF50',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontSize: '1em'
+                    }}
+                >
+                    Accept Terms
+                </Button>
+                <Button
+                    className={buttonStyle}
+                    onClick={handleReject}
+                    style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#f44336',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontSize: '1em'
+                    }}
+                >
+                    Decline
+                </Button>
+            </div>            {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
     );
 };

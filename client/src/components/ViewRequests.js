@@ -61,19 +61,23 @@ const UserList = () => {
 
       {/* User cards container */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map((user) => (
-          <Card key={user.username} className="shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800">{user.username}</h2>
-            <p className="text-gray-600">Role: {user.role}</p>
-            <Button
-              color="failure"
-              onClick={() => openDeleteModal(user)}
-              className="mt-4"
-            >
-              Delete
-            </Button>
-          </Card>
-        ))}
+      {users.length === 0 ? (
+    <p className="text-center col-span-full text-gray-500">No user requests found.</p>
+  ) : (
+    users.map((user) => (
+      <Card key={user.username} className="shadow-md p-4">
+        <h2 className="text-xl font-semibold text-gray-800">{user.username}</h2>
+        <p className="text-gray-600">Role: {user.role}</p>
+        <Button
+          color="failure"
+          onClick={() => openDeleteModal(user)}
+          className="mt-4"
+        >
+          Delete
+        </Button>
+      </Card>
+    ))
+  )}
       </div>
 
       {/* Confirmation Modal */}

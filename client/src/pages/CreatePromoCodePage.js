@@ -30,7 +30,7 @@ const CreatePromoCode = () => {
         const formattedExpiryDate = new Date(expiryDate).toISOString();
 
         try {
-            const response = await fetch('http://localhost:3000/api/promo-codes/create', {
+            const response = await fetch('http://localhost:3000/promo-codes/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

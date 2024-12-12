@@ -166,7 +166,6 @@ const ItineraryEdit = () => {
   const handleChooseActivities = () => {
     // Store the current formData in local storage
     localStorage.setItem("formData", JSON.stringify(formData));
-    alert("Activities saved to local storage!");
     const locationsQuery = formData.locationsToVisit.join(",");
     const selectedActivityIds = formData.activities.map(
       (activity) => activity._id // Ensure you are mapping to the correct property
@@ -216,7 +215,7 @@ const ItineraryEdit = () => {
             </Button>
           </div>
           <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2">
+            {/* <label className="block text-lg font-medium text-gray-700 mb-2">
               Locations to Visit (comma-separated):
             </label>
             <input
@@ -226,7 +225,7 @@ const ItineraryEdit = () => {
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-md mb-4"
               disabled
-            />
+            /> */}
           </div>
           {/* Selected Activities */}
           <div>

@@ -4,9 +4,12 @@ import {useNavigate} from 'react-router-dom';
 import { useCookies } from "react-cookie";
 
 import { buttonStyle, buttonStyle2,buttonStyle3 ,cardStyle ,navbarStyle } from "../styles/AbdallahStyles"; 
-import { Navbar, Button, Card, Footer } from "flowbite-react";
+import { Navbar, Button, Card, Footer, Spinner } from "flowbite-react";
 import HomeBanner from "../components/HomeBanner";
 import { Link } from "react-router-dom";
+import { useEffect } from 'react';
+
+
 
 function Revenue() {
   const [cookies] = useCookies(["userType", "username"]); 
@@ -42,8 +45,10 @@ function Revenue() {
     return `${month}-${day}-${year}`;
   };
 
-  
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleShowAllRevenueClick = async () => { 
+    setIsLoading(true); // Start loading
     console.log("Fetching revenue data...");
     try {
       const [itinerariesResponse, museumsResponse, actResponse, giftItemsResponse] = await Promise.all([
@@ -109,8 +114,17 @@ function Revenue() {
       setTotalRevenue(it_revenue + museum_revenue + act_revenue + gift_revenue);
     } catch (error) { 
       console.error('Error fetching data:', error);
-    }
+    }finally {
+      setIsLoading(false); // End loading
+  }
   };
+
+  useEffect(() => {
+    handleShowAllRevenueClick();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []); // Empty dependency array to run once on mount
+
+
   const handleFilterClick = async () => {
     try {
       const [itinerariesResponse, museumsResponse, actResponse] = await Promise.all([
@@ -254,8 +268,8 @@ function Revenue() {
         console.log("A7A pt3");
       }
       else{
-        // const response = await  axios.get('http://localhost:3000/gift');
-        // setGiftItems(response.data || []);
+        const response = await  axios.get('http://localhost:3000/gift');
+        setGiftItems(response.data || []);
         console.log("A7A pt4")
       }
     } catch (err) {
@@ -301,13 +315,24 @@ function Revenue() {
       <Card className="w-full max-w-3xl text-3xl p-8 shadow-lg flex-col justify-between ">
         
         {/* Show All Revenue Button */}
-        <Button
-          className={buttonStyle}
-          onClick={handleShowAllRevenueClick}
-          style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}
-        >
-          Show All Revenue
-        </Button>
+       
+
+        {isLoading && (
+                    <div style={{  position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, 60%)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000, }}>
+                        <Spinner />
+                    </div>
+                )}
         
         {/* that is for the small filter for adv , tg  */}
       {/* <Card href="#" className="w-full max-w-3xl text-3xl p-8 shadow-lg  " >  */}

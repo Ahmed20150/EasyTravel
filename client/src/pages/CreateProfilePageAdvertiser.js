@@ -124,7 +124,16 @@ const CreateProfilePageAdvertiser = () => {
   };
 
   return (
-    <div>
+    <div  style={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh', // Ensure the container takes at least the full viewport height
+      backgroundColor: '#f0f2f5', // Light background for contrast
+      marginTop: '20px',
+      boxSizing: 'border-box',
+    }}>
       {/* <h2>{isEditingProfile ? 'Edit Advertiser Profile' : 'Create Advertiser Profile'}</h2> */}
       <ProfileFormAdvertiser
         formData={formData}

@@ -49,7 +49,7 @@ const UserList = () => {
 
             {/* Show loading spinner while fetching users */}
             {loading ? (
-                <div className="flex justify-center">
+                <div className="flex justify-center ml-16 mt-40">
                     <Spinner size="lg" aria-label="Loading users..." />
                 </div>
             ) : (

@@ -30,10 +30,10 @@ const UserStatistics = () => {
     };
 
     return (
-        <div>
+        <div className = "w-full">
             {/* Button to open modal */}
             <button
-                className={`${dynamicButtonStyle} w-full`} // Apply the dynamic button style
+                className = {`${dynamicButtonStyle} w-full`} // Apply the dynamic button style
                 onClick={handleViewStats}
             >
                 View Number of Users
