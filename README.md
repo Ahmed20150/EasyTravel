@@ -22,9 +22,7 @@ This application aims to enhance the user experience by seamlessly connecting to
 - **User Roles:** Tourists, Tour Guides, Advertisers, Sellers, Admin, Tourism Governor.  
 - **Activity/Itinerary Management:** Create, read, update, delete , flag inappropriate ones.  
 - **Activities:** CRUD operations, purchase count increments.  
-- **Gift Items:** Add to cart, wishlist, purchase and manage stock.  
-- **Hotel & Flight Booking:** Integration with external APIs for hotels (Amadeus test environment) and mock flight booking.  
-- **ACL & Deletion Requests:** Users can request account deletion. Admin checks conditions before approval.  
+- **Gift Items:** Add to cart, wishlist, purchase and manage stock.
 - **Complaints & Notifications:** File complaints, mark resolved, send notifications.  
 - **Promo Codes & Points System:** Apply promo codes, gain loyalty points for purchases, redeem points for discounts.
 
