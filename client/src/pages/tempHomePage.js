@@ -349,9 +349,9 @@ const TempHomePage = () => {
             <Link to="/productList">
               <Button className={buttonStyle}>All Gifts/Products</Button>
             </Link>
-            <Link to="/ExplorePage">
+            {/* <Link to="/ExplorePage">
               <Button className={buttonStyle}>Explore All Activities, Itineraries</Button>
-            </Link>
+            </Link> */}
             <Link to="/activities-featured">
               <Button className={buttonStyle}>Featured Activities</Button>
             </Link>
@@ -361,12 +361,12 @@ const TempHomePage = () => {
             <Link to="/tourist/museums">
               <Button className={buttonStyle}>Museums & Historical Places</Button>
             </Link>
-            <Link to="/ViewAllItinerary">
+            {/* <Link to="/ViewAllItinerary">
               <Button className={buttonStyle}>View Itineraries</Button>
-            </Link>
-            <Link to="/GiftList">
+            </Link> */}
+            {/* <Link to="/GiftList">
               <Button className={buttonStyle}>Gift Shop</Button>
-            </Link>
+            </Link> */}
             <Link to="/BookFLight">
               <Button className={buttonStyle}>Book Flight</Button>
             </Link>

@@ -27,6 +27,10 @@ function Cart() {
     const [addresses, setAddresses] = useState([]);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [selectedGiftId, setSelectedGiftId] = useState(null);
+    const [enteredPromoCode, setEnteredPromoCode] = useState("");
+    const [promoCodeDiscount, setPromoCodeDiscount] = useState(0);
+    const [discountFlag, setDiscountFlag] = useState(false);
+    const [totalPriceDisplay, setTotalPriceDisplay] = useState(0);
 
 
     // Fetch cart data from API
@@ -81,8 +85,14 @@ function Cart() {
         return price.toFixed(2);
     };
 
-const calculateTotalPrice = () => {
+const calculateTotalPrice = (promoCode) => {
     if (!cartItems || cartItems.length === 0) return 0;
+    if(!promoCode===0) {
+      return cartItems.reduce((total, item) => {
+        const itemPrice = convertPrice(item.giftItem.price); // Convert price based on selected currency
+        return (total + itemPrice * item.quantity) * (1-promoCode);
+      }, 0);
+    }
   
     return cartItems.reduce((total, item) => {
       const itemPrice = convertPrice(item.giftItem.price); // Convert price based on selected currency
@@ -141,7 +151,7 @@ const calculateTotalPrice = () => {
         navigate('/address');
     };
 
-    const totalPrice = useMemo(() => calculateTotalPrice(), [cartItems, exchangeRates, selectedCurrency]); 
+    let totalPrice = useMemo(() => calculateTotalPrice(promoCodeDiscount), [cartItems, exchangeRates, selectedCurrency]); 
 
 
     const handleSelectAddress = (addressId) => {
@@ -172,7 +182,9 @@ const calculateTotalPrice = () => {
         const productName = gift.data.name;
         const purchaseDate = today;
         const quantity = cartItems.length; 
-        const totalPrice = calculateTotalPrice();
+        const totalPrice = discountFlag ? totalPriceDisplay : calculateTotalPrice();
+
+        console.log("PRICE: ", totalPrice)
 
         await axios.patch("http://localhost:3000/api/wallet/purchaseProduct", {
           username,
@@ -205,7 +217,15 @@ const calculateTotalPrice = () => {
       toast.success("Product Purchased Successfully!");
     
       setOpenModal(false);
-      } catch (error) {
+
+      await axios.delete(`http://localhost:3000/api/${username}/deleteCart`);
+      
+      setTimeout(() => {
+        navigate("/payment-success");
+      }, 3000); 
+    
+    
+    } catch (error) {
         const errorMessage =
           error.response?.data?.message ||
           "Error Purchasing Product. Please try again.";
@@ -241,6 +261,7 @@ const calculateTotalPrice = () => {
             "http://localhost:3000/payment/product/create-checkout-session",
             {
               products: cartItems,
+              totalPriceDisplay,
             },
           //   {
           //     headers: { Authorization: `Bearer ${cookies.token}` },
@@ -259,9 +280,47 @@ const calculateTotalPrice = () => {
     setOpenModal(false);
      
     };
+
+    // const fetchPromoCodes = async () => {
+    //   try {
+    //     const response = await axios.get("http://localhost:3000/promo-codes");
+    //     setPromoCodes(response.data || []);
+    //   } catch (err) {
+    //     console.error("Error fetching promo codes", err);
+    //   }
+    // };
+
+    const applyPromoCode = async (promoCode) => {
+    
+      const response = await axios.get("http://localhost:3000/promo-codes");
+      console.log(response.data)
+      const promo = response.data.find((promo) => promo.promoCode === promoCode);
+      if (promo) {
+        const currentDate = new Date();
+        const expiryDate = new Date(promo.expiryDate);
+  
+        if (currentDate <= expiryDate) {
+          setPromoCodeDiscount( promo.discount / 100);
+          calculateTotalPrice(promoCodeDiscount);
+          setTotalPriceDisplay(totalPrice * (1-promo.discount / 100));
+          
+          toast.success(`Promo code applied! You saved ${promo.discount}%`);
+          setDiscountFlag(true);
+        } else {
+          toast.error("Promo code has expired.");
+          setPromoCodeDiscount(0);
+          setDiscountFlag(false);
+        }
+      } else {
+        toast.error("Invalid promo code.");
+      }
+    
+    
+    
+    } 
   
     return (
-        <div className="cart-container">
+        <div className="flex flex-col cart-container">
            <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
       <h1  className="text-4xl font-bold ">My Cart</h1>
       <div className="absolute top-4 left-4">
@@ -323,27 +382,74 @@ const calculateTotalPrice = () => {
               </div>
             </Card>
           ))}
+  
         </div>
                 
             ) : (
-                <p>Your Cart is empty</p>
-            )}
+              <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
+
+              <h1  className="text-4xl font-bold ">Oops! Your Cart is Empty</h1>
+              <h1  className="text-2xl font-bold ">Visit our Shop and fill your cart with souveniers from all around the world!!</h1>
 
 
-            <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
-        <h1 className="text-4xl font-bold">
-          Total Price: {convertPrice(totalPrice)} {selectedCurrency}
-        </h1>
-      </div>
-
-            {/* Add Check Out Button here */}
-            <div className="flex justify-center mt-4 mb-7">
-                <Button className={buttonStyle} onClick={setOpenModal}>
-                    Check Out
+              <div className="flex justify-center mt-4 mb-7">
+                <Button className={buttonStyle} onClick={() => navigate("/productList")}>
+                    Go to Shop
                 </Button>
 
             </div>
+              </div>
 
+            )}
+
+
+
+{cartItems.length > 0 ? (
+    <>
+        {/* Total Price Section */}
+        <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">
+            <h1 className="text-4xl font-bold">
+                Total Price: {discountFlag
+                    ? `${selectedCurrency}${totalPriceDisplay.toFixed(2)}`
+                    : `${selectedCurrency}${totalPrice.toFixed(2)}`}
+            </h1>
+        </div>
+
+        {/* Promo Code Section */}
+        <div className="flex justify-center mt-4 mb-7">
+            <input
+                type="text"
+                placeholder="Enter Promo Code"
+                value={enteredPromoCode}
+                onChange={(e) => setEnteredPromoCode(e.target.value)}
+                className="border-2 border-gray-300 p-2 mr-6"
+            />
+            <Button
+                className={buttonStyle}
+                onClick={()=>applyPromoCode(enteredPromoCode)}
+            >
+                Add Promo Code
+            </Button>
+        </div>
+
+        {/* Proceed to Checkout Button */}
+        <div className="flex justify-center mt-4 mb-7">
+            <Button
+                className={buttonStyle}
+                onClick={() => setOpenModal(true)}
+            >
+                Check Out
+            </Button>
+        </div>
+    </>
+) : (
+    <div>
+    </div>
+)}
+
+
+
+  
             <Modal
         show={openModal}
         position="Center"

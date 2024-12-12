@@ -24,7 +24,7 @@ const PaymentSuccess = () => {
   // Use a ref to track whether the effect has run
   const effectRan = useRef(false);
 
-  useEffect(() => {
+  useEffect( () => {
     // Prevent running twice
     if (effectRan.current === false) {
       if(itemType === "itinerary"){
@@ -33,12 +33,21 @@ const PaymentSuccess = () => {
         verifyProductPayment();
       }
 
+      emptyCart();
+
       // Mark the effect as having run
       return () => {
         effectRan.current = true;
       };
     }
   }, [itemType]); // Add itemType to dependency array to ensure correct behavior if it changes
+
+  async function emptyCart(){
+  
+    await axios.delete(`http://localhost:3000/api/${username}/deleteCart`);
+  }
+
+
 
   async function verifyItineraryPayment(){
     try {

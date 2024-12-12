@@ -16,6 +16,13 @@ const PaymentCancel = () => {
   const params = new URLSearchParams(location.search);
   const itemType = params.get('itemType');
   const navigate = useNavigate();
+
+
+
+
+
+
+
   return (
     <div style={{display:"flex", flexDirection: "column"}}>
       <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-10">

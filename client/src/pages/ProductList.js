@@ -11,9 +11,10 @@ import Modal from "react-modal";
 
 import * as styles from "../styles/HossStyles.js"; // Importing styles from HossStyles.js
 import { buttonStyle } from "../styles/GeneralStyles.js"; // Importing buttonStyle from GeneralStyles.js
-
+import { Button } from "flowbite-react";
 
 import { Link } from "react-router-dom";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
 
@@ -434,11 +435,20 @@ const handlePromoCodeCheck = () => {
       <h1 className={styles.header}>Gift Items</h1>
       {userType === "tourist" && (
         <Link to="/productOrders">
-          <button className={styles.promoCodeButton} style={{ position: "absolute", top: "10px", right: "10px", padding: "10px 20px" }}>
+          <button className={styles.promoCodeButton} style={{ position: "absolute", top: "10px", right: "10px", padding: "10px 20px", marginTop: "65px" }}>
             View Your Orders
           </button>
         </Link>
       )}
+
+<div className="fixed top-4 right-4">
+    <Link to="/cart">
+        <Button className={buttonStyle}>
+            <ShoppingCartIcon />
+        </Button>
+    </Link>
+</div>
+
 
       {/* Back button with buttonStyle applied */}
         <Link to="/home">
@@ -573,9 +583,9 @@ const handlePromoCodeCheck = () => {
 
               {userType === "tourist" && (
                 <div className={styles.productButtons}>
-                  <button className={buttonStyle} onClick={() => openModal(gift._id)}>Buy</button>
-                  <button className={buttonStyle} onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</button>
-                  <button className={buttonStyle} onClick={() => handleAddToCart(gift.name)}>Add to Cart</button>
+                  <Button className={buttonStyle} onClick={() => openModal(gift._id)}>Buy</Button>
+                  <Button className={buttonStyle} onClick={() => handleAddToWishlist(gift.name)}>Add to Wishlist</Button>
+                  <Button className={buttonStyle} onClick={() => handleAddToCart(gift.name)}>Add to Cart</Button>
                 </div>
               )}
             </div>

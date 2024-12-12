@@ -615,6 +615,25 @@ router.get("/tourist/:username/cart", authenticate, async (req, res) => {
   }
 });
 
+router.delete('/:username/deleteCart', authenticate, async (req, res) => {
+  try {
+
+      // Find the user by username
+      const user = await Tourist.findOne({ username: req.params.username });
+      if (!user) {
+          return res.status(404).json({ message: 'User not found.' });
+      }
+
+      user.cart = []
+      await user.save();
+
+      res.status(200).json({ message: 'Cart has been emptied successfully.' });
+  } catch (error) {
+      console.error('Error emptying cart:', error);
+      res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+});
+
 //Pay for gift with Wallet
 router.patch("/wallet/purchaseProduct", async (req, res) => {
   try {
