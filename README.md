@@ -327,4 +327,5 @@ Contributions are welcome! If you find a bug or want to add a feature, open an i
 
 ## License  
 - **Stripe:** Used under Stripe’s licensing terms.  
-- **Apache 2.0 License:** The codebase can be considered under Apache 2.0 license to align with common open-source practices.  
+- **Apache 2.0 License:** The codebase can be considered under Apache 2.0 license to align with common open-source practices.
+- **Amadeus API:** This project utilizes the Amadeus API in accordance with its terms and conditions. All usage adheres to the licensing rules and guidelines specified by Amadeus IT Group, as outlined in their official documentation
