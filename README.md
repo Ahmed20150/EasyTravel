@@ -282,6 +282,13 @@ router.post("/create-checkout-session", async (req, res) => {
 
 - **notification**
   - `GET /:username`: Retrieve notifications for a user by their username.
+- **Purchase**
+ - `POST /createPurchase`: Creates a new purchase for a tourist based on product and user details.
+ - `POST /cart/createPurchase`: Adds a new purchase for multiple products in a cart for a tourist.
+ - `GET /user/:username`: Retrieves all purchases made by a specific tourist.
+ - `DELETE /deletePurchase/:productId/:username`: Deletes a pending purchase by a tourist and refunds the wallet amount.
+- **review**
+  - `POST /create`: Create a new review for a specific type (e.g., product, tourist) with a rating and comment.
     
 ## Tests  
 - **Postman Tests:**  
