@@ -168,68 +168,68 @@ router.post("/create-checkout-session", async (req, res) => {
   - `PATCH /decrement-purchases/:itineraryId`: Decrement the number of purchases for all activities in an itinerary
 
 - **Activities:**
-  - `POST /api/activities`: Create a new activity
-  - `GET /api/activities`: Fetch all activities
-  - `GET /api/activities/:id`: Fetch a specific activity by ID
-  - `PUT /api/activities/:id`: Update a specific activity by ID
-  - `DELETE /api/activities/:id`: Delete a specific activity by ID
-  - `DELETE /api/activities/deleteAll/:username`: Delete all activities by username
-  - `PATCH /api/activities/:id`: Flag an activity as inappropriate
-  - `GET /api/activities/notifications/:username`: Fetch notifications for a specific user
-  - `POST /api/activities/send-notification`: Send an email notification
-  - `POST /api/activities/increment/:id`: Increment the number of purchases for an activity by ID
+  - `POST /`: Create a new activity
+  - `GET /`: Fetch all activities
+  - `GET /:id`: Fetch a specific activity by ID
+  - `PUT /:id`: Update a specific activity by ID
+  - `DELETE /:id`: Delete a specific activity by ID
+  - `DELETE /deleteAll/:username`: Delete all activities by username
+  - `PATCH /:id`: Flag an activity as inappropriate
+  - `GET /notifications/:username`: Fetch notifications for a specific user
+  - `POST /send-notification`: Send an email notification
+  - `POST /increment/:id`: Increment the number of purchases for an activity by ID
 
 - **Museums & Historical Places:**
-  - `POST /api/museums`: Create a new museum entry
-  - `GET /api/museums`: Get all museums
-  - `GET /api/museums/:id`: Get a single museum by ID
-  - `PUT /api/museums/:id`: Update a museum entry by ID
-  - `DELETE /api/museums/:id`: Delete a museum by ID
+  - `POST /`: Create a new museum entry
+  - `GET /`: Get all museums
+  - `GET /:id`: Get a single museum by ID
+  - `PUT /:id`: Update a museum entry by ID
+  - `DELETE /:id`: Delete a museum by ID
 
 - **Complaints:**
-  - `POST /api/complaints/create`: File a new complaint
-  - `PUT /api/complaints/reply/:id`: Add a reply to a complaint
-  - `GET /api/complaints/view`: View all complaints
-  - `GET /api/complaints/view/:username`: View complaints by tourist username
-  - `GET /api/complaints/:id`: Get a complaint by ID
-  - `PUT /api/complaints/status/:id`: Update complaint status
+  - `POST /create`: File a new complaint
+  - `PUT /reply/:id`: Add a reply to a complaint
+  - `GET /view`: View all complaints
+  - `GET /view/:username`: View complaints by tourist username
+  - `GET /:id`: Get a complaint by ID
+  - `PUT /status/:id`: Update complaint status
 
 - **Promo Codes:**  
-  - `POST /api/promocodes/create`: Create a new promo code
-  - `GET /api/promocodes`: Get all promo codes
-  - `DELETE /api/promocodes/:id`: Delete a promo code by ID
+  - `POST /create`: Create a new promo code
+  - `GET /`: Get all promo codes
+  - `DELETE /:id`: Delete a promo code by ID
 
 - **Payment (Stripe):**  
-  - `POST /api/payments/create-checkout-session`: Create a checkout session for an itinerary payment.
-  - `GET /api/payments/verify-payment`: Verify the status of a payment using the session ID.
-  - `POST /api/payments/product/create-checkout-session`: Create a checkout session for purchasing products.
+  - `POST /create-checkout-session`: Create a checkout session for an itinerary payment.
+  - `GET /verify-payment`: Verify the status of a payment using the session ID.
+  - `POST /product/create-checkout-session`: Create a checkout session for purchasing products.
 
 - **Booking (Itineraries, Hotels, Flights):**
-  - `POST /api/bookings/createBooking`: Create a new booking for a tourist and itinerary.
-  - `GET /api/bookings/getBooking/:id`: Retrieve a booking by its unique ID.
-  - `GET /api/bookings/getBooking/:itineraryId/:touristUsername`: Retrieve a booking by itinerary ID and tourist username.
-  - `DELETE /api/bookings/deleteBooking/:itineraryId/:touristUsername`: Delete a booking by itinerary ID and tourist username.
-  - `GET /api/bookings/pastBookings`: Fetch past bookings for a tourist (based on username).
-  - `GET /api/bookings/upcomingBookings`: Fetch upcoming bookings for a tourist (based on username)
+  - `POST /createBooking`: Create a new booking for a tourist and itinerary.
+  - `GET /getBooking/:id`: Retrieve a booking by its unique ID.
+  - `GET /getBooking/:itineraryId/:touristUsername`: Retrieve a booking by itinerary ID and tourist username.
+  - `DELETE /deleteBooking/:itineraryId/:touristUsername`: Delete a booking by itinerary ID and tourist username.
+  - `GET /pastBookings`: Fetch past bookings for a tourist (based on username).
+  - `GET /upcomingBookings`: Fetch upcoming bookings for a tourist (based on username)
     
 - **Address**
-  - `POST /api/tourists/:username/addresses`: Add a new address for a specific tourist.
-  - `GET /api/tourists/:username/addresses`: Retrieve all addresses of a specific tourist.
-  - `PUT /api/tourists/:username/addresses/:addressId/default`: Set an address as the default for a specific tourist.
-  - `PUT /api/tourists/:username/addresses/:addressId`: Update an existing address for a specific tourist by ID.
-  - `DELETE /api/tourists/:username/addresses/:label`: Delete an address for a specific tourist by its label.
+  - `POST /tourists/:username/addresses`: Add a new address for a specific tourist.
+  - `GET /tourists/:username/addresses`: Retrieve all addresses of a specific tourist.
+  - `PUT /tourists/:username/addresses/:addressId/default`: Set an address as the default for a specific tourist.
+  - `PUT /tourists/:username/addresses/:addressId`: Update an existing address for a specific tourist by ID.
+  - `DELETE /tourists/:username/addresses/:label`: Delete an address for a specific tourist by its label.
 
 - **Tourist_ Tour Guide_Advertiser_ Seller.route**
-  - `POST /api/requestDelete/:username/:role`: Submit an account deletion request for a user based on their username and role.
+  - `POST /requestDelete/:username/:role`: Submit an account deletion request for a user based on their username and role.
   
 - **activityBooking**
-  - `POST /api/createActivityBooking`: Create a new activity booking for a tourist.
-  - `GET /api/tourist/:username`: Fetch all activity bookings for a specific tourist.
-  - `DELETE /api/unbook/:bookingId`: Unbook an activity if the booking date is more than 48 hours away.
-  - `GET /api/check/:activityId/:username`: Check if a tourist has booked a specific activity.
-  - `GET /api/checkBooking/:activityId/:username`: Check details of an existing booking for a tourist and activity.
-  - `GET /api/pastBookings`: Retrieve past activity bookings for a specific tourist.
-  - `GET /api/upcomingBookings`: Fetch upcoming activity bookings for a specific tourist.
+  - `POST /createActivityBooking`: Create a new activity booking for a tourist.
+  - `GET /tourist/:username`: Fetch all activity bookings for a specific tourist.
+  - `DELETE /unbook/:bookingId`: Unbook an activity if the booking date is more than 48 hours away.
+  - `GET /check/:activityId/:username`: Check if a tourist has booked a specific activity.
+  - `GET /checkBooking/:activityId/:username`: Check details of an existing booking for a tourist and activity.
+  - `GET /pastBookings`: Retrieve past activity bookings for a specific tourist.
+  - `GET /upcomingBookings`: Fetch upcoming activity bookings for a specific tourist.
     
 - **Admin**
   - `POST /addGiftItem`: Add a new gift item with details like name, image, price, and quantity.
@@ -293,11 +293,6 @@ router.post("/create-checkout-session", async (req, res) => {
   - `GET /search`: Search for itineraries, activities, or museums by name, category, or tags.
 - **totalTouristActivity**
   - `GET /total-tourists`: Retrieve the total number of tourists, optionally filtered by a specific month.
-- **tourguide**
-  - POST /profile: Create or update a tour guide's profile with personal and professional details.
-  - GET /profile/:username: Retrieve a tour guide's profile information by username.
-  - GET /tourguide/username/:username: Find a tour guide's full details by username.
-  - GET /email/:username: Retrieve the email address of a tour guide by username.
     
 - **touristReport**
   - `GET /tourist-report`: Retrieve the total number of tourists either for a specific month or across all itineraries.
