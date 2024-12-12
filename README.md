@@ -305,7 +305,7 @@ router.post("/create-checkout-session", async (req, res) => {
     
 ## Tests  
 - **Postman Tests:**  
-  Requests were tested using Postman collections for:
+   tests were conducted using Postman for the following:
   - Authentication (login, signup)  
   - CRUD operations (Activities, Itineraries, Museums)  
   - Payment endpoint with Stripe test keys  
