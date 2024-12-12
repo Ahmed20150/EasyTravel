@@ -98,19 +98,19 @@ export default function Login() {
       setloggedInUserCookie("username", username, { path: "/", maxAge: 1000 }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires)
       setloggedInUserTypeCookie("userType", userType, {
         path: "/",
-        maxAge: 1000,
+        maxAge: 10000,
       }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires)
       setAcceptedTermsCookie("acceptedTerms", acceptedTerms, {
         path: "/",
-        maxAge: 1000,
+        maxAge: 10000,
       }); // set "username" cookie = username, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires)
       setOccupationCookie("occupation", occupation, {
         path: "/",
-        maxAge: 1000,
+        maxAge: 10000,
       }); // set "occupation" cookie = occupation, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires)
       setNationalityCookie("nationality", nationality, {
         path: "/",
-        maxAge: 1000,
+        maxAge: 10000,
       }); // set "occupation" cookie = occupation, "path=/" means cookie is accessible from all pages, maxAge = x seconds (amount of time before cookie expires)
 
       if (userType === "admin" || userType === "tourismGoverner") {

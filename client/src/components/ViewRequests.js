@@ -17,6 +17,7 @@ const UserList = () => {
     try {
       const response = await axios.get("http://localhost:3000/admin/viewRequests");
       setUsers(response.data); // Store fetched users in state
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -62,9 +63,8 @@ const UserList = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {users.map((user) => (
           <Card key={user.username} className="shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800">{user.role}</h2>
-            <p className="text-gray-600">Username: {user.username}</p>
-            <p className="text-gray-600">Email: {user.email}</p>
+            <h2 className="text-xl font-semibold text-gray-800">{user.username}</h2>
+            <p className="text-gray-600">Role: {user.role}</p>
             <Button
               color="failure"
               onClick={() => openDeleteModal(user)}
