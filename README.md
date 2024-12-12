@@ -298,6 +298,9 @@ router.post("/create-checkout-session", async (req, res) => {
   - GET /profile/:username: Retrieve a tour guide's profile information by username.
   - GET /tourguide/username/:username: Find a tour guide's full details by username.
   - GET /email/:username: Retrieve the email address of a tour guide by username.
+    
+- **touristReport**
+  - `GET /tourist-report`: Retrieve the total number of tourists either for a specific month or across all itineraries.
   
     
 ## Tests  
