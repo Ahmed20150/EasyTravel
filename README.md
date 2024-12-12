@@ -290,7 +290,7 @@ router.post("/create-checkout-session", async (req, res) => {
 - **review**
   - `POST /create`: Create a new review for a specific type (e.g., product, tourist) with a rating and comment.
 - **search**
-    -`GET /search`: Search for itineraries, activities, or museums by name, category, or tags.
+  -`GET /search`: Search for itineraries, activities, or museums by name, category, or tags.
     
 ## Tests  
 - **Postman Tests:**  
