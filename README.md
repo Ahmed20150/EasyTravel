@@ -301,6 +301,10 @@ router.post("/create-checkout-session", async (req, res) => {
     
 - **touristReport**
   - `GET /tourist-report`: Retrieve the total number of tourists either for a specific month or across all itineraries.
+    
+- **transportation**
+  - POST /add: Create a new transportation request with the provided details.
+  - GET /advertiser-usernames: Retrieve a list of all advertiser usernames
   
     
 ## Tests  
