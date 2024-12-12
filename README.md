@@ -290,7 +290,15 @@ router.post("/create-checkout-session", async (req, res) => {
 - **review**
   - `POST /create`: Create a new review for a specific type (e.g., product, tourist) with a rating and comment.
 - **search**
-  -`GET /search`: Search for itineraries, activities, or museums by name, category, or tags.
+  - `GET /search`: Search for itineraries, activities, or museums by name, category, or tags.
+- **totalTouristActivity**
+  - `GET /total-tourists`: Retrieve the total number of tourists, optionally filtered by a specific month.
+- **tourguide**
+  - POST /profile: Create or update a tour guide's profile with personal and professional details.
+  - GET /profile/:username: Retrieve a tour guide's profile information by username.
+  - GET /tourguide/username/:username: Find a tour guide's full details by username.
+  - GET /email/:username: Retrieve the email address of a tour guide by username.
+  
     
 ## Tests  
 - **Postman Tests:**  
