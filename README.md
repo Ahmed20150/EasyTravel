@@ -10,11 +10,11 @@ This application aims to enhance the user experience by seamlessly connecting to
 
 
 ## Tech/Framework Used  
-- **Frontend:** React.js
+- **Frontend:** React.js, tailwindcss, flowbite, materialui
 - **Backend:** Node.js, Express.js, Mongoose  
 - **Database:** MongoDB  
 - **Payments:** Stripe (Testing Environment)  
-- **Authentication:** JWT, bcrypt  
+- **Authentication:** JWT, bcrypt, jscookies 
 - **File Uploads:** Multer
 
 ## Features  
