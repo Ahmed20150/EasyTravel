@@ -711,6 +711,7 @@ const FeaturedItinerariesPage = () => {
                         <option value="English">English</option>
                         <option value="Spanish">Spanish</option>
                         <option value="French">French</option>
+                        <option value="German">German</option>
                     </select>
 
                     {/* Sort Dropdown */}
@@ -824,6 +825,18 @@ const FeaturedItinerariesPage = () => {
                                     <div className="mb-6">
                                         <h4 className="text-lg font-semibold mb-2">Timeline</h4>
                                         <p className="text-gray-600">{itinerary.timeline}</p>
+                                    </div>
+
+                                       {/* Date */}
+                                       <div className="mb-6">
+                                        <h4 className="text-lg font-semibold mb-2">Date</h4>
+                                        <p className="text-gray-600">{itinerary.availableDates}</p>
+                                    </div>
+
+                                        {/* Language */}
+                                        <div className="mb-6">
+                                        <h4 className="text-lg font-semibold mb-2">Language</h4>
+                                        <p className="text-gray-600">{itinerary.languageOfTour}</p>
                                     </div>
 
                                     {/* Location and Duration Info */}
