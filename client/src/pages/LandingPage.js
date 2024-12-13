@@ -19,6 +19,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import EasyTravelLogo from '../images/EasyTravel Transparent logo.png';
 import MiniEasyTravelLogo from '../images/EasyTravel Mini Logo Transparent.png';
+import HomeCard from "../components/HomeCard";
 
 
 
@@ -54,37 +55,19 @@ const TempLandingPage = () => {
                         <p className="text-xl mb-6">Explore the world's most beautiful destinations with ease.</p>
                         
                         {/* Button Container */}
-                        <div className="flex flex-col max-w-xs mx-auto space-y-4">
-                            {/* Get Started Button */}
-                            <Link to="/login" className={linkStyle}>
-                                <Button className={buttonStyle}>
-                                    Get Started
-                                </Button>
-                            </Link>
-
-                            {/* Navigation Buttons */}
-                            <Link to="/guest-itinerary" className="w-full">
-                                <button className={navigationButtonStyle}>
-                                    Featured Itineraries
-                                </button>
-                            </Link>
-
-                            <Link to="/activities-featured" className="w-full">
-                                <button className={navigationButtonStyle}>
-                                    Featured Activities
-                                </button>
-                            </Link>
-
-                            <Link to="/tourist/museums" className="w-full">
-                                <button className={navigationButtonStyle}>
-                                    Museums
-                                </button>
-                            </Link>
-                        </div>
+                        <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col max-w-xs mx-auto space-y-20">
+                {/* Get Started Button */}
+                <Link to="/login" className={linkStyle}>
+                    <Button className={buttonStyle}>
+                        Get Started
+                    </Button>
+                </Link>
                     </div>
                 </div>
             </div>
-
+            </div>
+            </div>
             <section className="py-20 bg-gray-100">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">Why Choose EasyTravel?</h2>
@@ -150,6 +133,32 @@ const TempLandingPage = () => {
 
                 </div>
             </section>
+
+            <section className="py-20 bg-gray-100">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">Jump right in!</h2>
+                                   
+          <div className="flex gap-20 ml-60">
+                            <HomeCard 
+                                title="Featured Itineraries"
+                                description="Explore our curated list of itineraries that take you to the most beautiful destinations around the world."
+                                linkRoute="/guest-itinerary"
+                                />
+
+                              <HomeCard 
+                                title="Featured Activities"
+                                description="Discover the best activities and attractions in our top destinations."
+                                linkRoute="/activities-featured"
+                                />
+
+                                <HomeCard 
+                                title="Museums"
+                                description="Explore the world's most famous museums and art galleries."
+                                linkRoute="/tourist/museums"
+                                />
+</div>
+</div>
+</section>
             
 
             <section className="py-20 bg-gray-100">
