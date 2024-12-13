@@ -116,6 +116,7 @@ export default function Login() {
       if (userType === "admin" || userType === "tourismGoverner") {
         toast.success("Successful Login!");
         setTimeout(() => {
+          sessionStorage.setItem('fromLogin', 'true');
           navigate("/home", { state: { username } });
         }, 2000);
         return;
@@ -151,6 +152,7 @@ export default function Login() {
       if (firstTimeLogin === false) {
         // forward to home page (add to it view profile page)
         setTimeout(() => {
+          sessionStorage.setItem('fromLogin', 'true');
           navigate("/home", { state: { username } });
         }, 2000);
       } else if (firstTimeLogin === true) {
@@ -158,6 +160,7 @@ export default function Login() {
 
         if (userType === "tourist") {
           setTimeout(() => {
+            sessionStorage.setItem('fromLogin', 'true');
             navigate("/home");
           }, 2000);
         } else {

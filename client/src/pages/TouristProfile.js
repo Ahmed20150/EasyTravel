@@ -323,8 +323,7 @@ const TouristProfile = () => {
     if (error) return <div>{error}</div>;
 
     return (
-      <div className="relative flex justify-center items-center h-screen bg-gray-100">
-          <button
+      <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 p-4">          <button
           className="absolute top-4 left-4 py-2 px-4 bg-black text-white rounded-lg shadow hover:bg-gray-600"
           onClick={() => navigate('/home')}
         >

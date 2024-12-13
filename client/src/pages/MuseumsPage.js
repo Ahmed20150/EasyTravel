@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -88,6 +88,12 @@ const MuseumsPage = () => {
 
   const tags = ["All Tags", "Monuments", "Museums", "Religious Sites", "Palaces/Castles"];
 
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate('/');
+  };
+
   useEffect(() => {
     fetchMuseums();
   }, []);
@@ -170,8 +176,27 @@ const MuseumsPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 relative">
       <ToastContainer />
+      <button 
+        onClick={handleBack}
+        className="absolute left-4 top-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center"
+      >
+        <svg 
+          className="w-5 h-5 mr-2" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth="2" 
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Back
+      </button>
       <h1 className="text-3xl font-bold text-center text-gray-900">
         Historical Places & Museums
       </h1>

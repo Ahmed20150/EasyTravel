@@ -1,6 +1,8 @@
 import axios from "axios";
+import { Button } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { buttonStyle } from "../styles/gasserStyles";
 
 const ActivityDetails = () => {
   const { id } = useParams();
@@ -101,6 +103,8 @@ const ActivityDetails = () => {
           )}
         </div>
       </div>
+
+      <Link to="/activities-featured"><Button className={buttonStyle}>Back</Button> </Link>
     </div>
   );
 };

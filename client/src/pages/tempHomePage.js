@@ -51,6 +51,18 @@ const TempHomePage = () => {
     }
   }, [userType, username]);
 
+  useEffect(() => {
+    // Check if coming from login page
+    const fromLogin = sessionStorage.getItem('fromLogin');
+    
+    if (fromLogin === 'true') {
+        // Clear the flag
+        sessionStorage.removeItem('fromLogin');
+        // Refresh the page
+        window.location.reload();
+    }
+  }, []); // Empty dependency array means this runs once when component mounts
+
   async function fetchData() {
     const accessToken = Cookies.get("token");
     const acceptedTerms = Cookies.get("acceptedTerms");
@@ -122,302 +134,151 @@ const TempHomePage = () => {
     setSelectedCurrency(event.target.value);
   };
 
+  // Update the button style definition
+  const buttonStyle = "bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors w-full text-center";
+
   return (
     <div className={fadeIn}>
-            <GeneralNavbar />
-            
-      <h1 className="flex items-center justify-center space-between gap-36 mb-12 mt-10">
-        Welcome {username}, you are a {userType}!!
-      </h1>
+        <GeneralNavbar />
+        
+        <h1 className="text-2xl font-bold text-center mb-8 mt-16">
+            Welcome {username}, you are a {userType}!!
+        </h1>
 
-    <div className="flex items-center justify-center space-between gap-36">
-      {userType === "tourist" && (
-        <div
-          className="currency-selector"
-          style={{
-            position: "absolute",
-            top: "70px", // Adjust as needed
-            left: "20px", // Adjust as needed
-            zIndex: 1000, // Ensure it stays on top of other elements
-          }}
-        >
-          <h2>Select Currency:</h2>
-          <select value={selectedCurrency} onChange={handleCurrencyChange}>
-            {Object.keys(exchangeRates).map((currency) => (
-              <option key={currency} value={currency}>
-                {currency}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col space-y-4 max-w-md mx-auto mt-8">
+            {/* Tourist Buttons */}
+            {userType === "tourist" && (
+                <>
+                    <button onClick={handleViewProfile} className={buttonStyle}>
+                        View Profile
+                    </button>
+
+                    <Link to="/viewUpcomingEvents" className="w-full">
+                        <button className={buttonStyle}>Upcoming Events</button>
+                    </Link>
+
+                    <Link to="/viewPastEvents" className="w-full">
+                        <button className={buttonStyle}>Past Events</button>
+                    </Link>
+
+                    <Link to="/tourist/museums" className="w-full">
+                        <button className={buttonStyle}>Museums</button>
+                    </Link>
+
+                    <Link to="/ProductList" className="w-full">
+                        <button className={buttonStyle}>Gift Shop</button>
+                    </Link>
+
+                    <Link to="/BookFLight" className="w-full">
+                        <button className={buttonStyle}>Book Flight</button>
+                    </Link>
+
+                    <Link to="/BookHotel" className="w-full">
+                        <button className={buttonStyle}>Book Hotel</button>
+                    </Link>
+
+                    <Link to="/bookTransport" className="w-full">
+                        <button className={buttonStyle}>Book Transportation</button>
+                    </Link>
+
+                    <Link to="/cart" className="w-full">
+                        <button className={buttonStyle}>Shopping Cart</button>
+                    </Link>
+
+                    <Link to="/address" className="w-full">
+                        <button className={buttonStyle}>Address Book</button>
+                    </Link>
+
+                    <Link to="/Help" className="w-full">
+                        <button className={buttonStyle}>Help</button>
+                    </Link>
+                </>
+            )}
+
+            {/* Admin Buttons */}
+            {userType === "admin" && (
+                <>
+                    <Link to="/productList" className="w-full">
+                        <button className={buttonStyle}>Products</button>
+                    </Link>
+                    <Link to="/pendingRequestsPage" className="w-full">
+                        <button className={buttonStyle}>Pending Requests</button>
+                    </Link>
+                    <Link to="/adminAccountManagement" className="w-full">
+                        <button className={buttonStyle}>Account Management</button>
+                    </Link>
+                </>
+            )}
+
+            {/* Tour Guide Buttons */}
+            {userType === "tourGuide" && (
+                <>
+                    <button onClick={handleViewProfile} className={buttonStyle}>
+                        View Profile
+                    </button>
+                    <Link to="/itinerary" className="w-full">
+                        <button className={buttonStyle}>View Itineraries</button>
+                    </Link>
+                    <Link to="/revenue" className="w-full">
+                        <button className={buttonStyle}>Financial Report</button>
+                    </Link>
+                    <Link to="/tourist-report" className="w-full">
+                        <button className={buttonStyle}>Tourist Report</button>
+                    </Link>
+                </>
+            )}
+
+            {/* Tourism Governor Buttons */}
+            {userType === "tourismGoverner" && (
+                <>
+                    <Link to="/tourismGoverner/museums" className="w-full">
+                        <button className={buttonStyle}>Museums & Historical Places</button>
+                    </Link>
+                    <Link to="/add-museum" className="w-full">
+                        <button className={buttonStyle}>Add Museum</button>
+                    </Link>
+                </>
+            )}
+
+            {/* Seller Buttons */}
+            {userType === "seller" && (
+                <>
+                    <button onClick={handleViewProfile} className={buttonStyle}>
+                        View Profile
+                    </button>
+                    <Link to="/productList" className="w-full">
+                        <button className={buttonStyle}>All Gifts/Products</button>
+                    </Link>
+                    <Link to="/revenue" className="w-full">
+                        <button className={buttonStyle}>Financial Report</button>
+                    </Link>
+                    <Link to="/all-gifts" className="w-full">
+                        <button className={buttonStyle}>Gift Archival</button>
+                    </Link>
+                </>
+            )}
+
+            {/* Advertiser Buttons */}
+            {userType === "advertiser" && (
+                <>
+                    <button onClick={handleViewProfile} className={buttonStyle}>
+                        View Profile
+                    </button>
+                    <Link to="/productList" className="w-full">
+                        <button className={buttonStyle}>All Gifts/Products</button>
+                    </Link>
+                    <Link to="/activities" className="w-full">
+                        <button className={buttonStyle}>View Activities</button>
+                    </Link>
+                    <Link to="/revenue" className="w-full">
+                        <button className={buttonStyle}>Financial Report</button>
+                    </Link>
+                    <Link to="/totaltouristactivity" className="w-full">
+                        <button className={buttonStyle}>Tourist Report</button>
+                    </Link>
+                </>
+            )}
         </div>
-      )}
-
-      {userType === "admin" && userEmail && (
-        <p>Your email: {userEmail}</p> // Display the email for admin users
-      )}
-      {/* <Button className={buttonStyle} onClick={handleLogout}>Logout</Button> */}
-    
-
-<HomeCard
-            title="Change Password"
-            description="Change your password showNotifications && notifications.length >and keep your account secure!"
-            linkRoute="/changePassword"
-          />
-
-{userType !== "admin" && (
-  <>
-    {/* Notifications Button (Increased size) */}
-    {!showNotifications && (
-      <button
-        className="absolute top-[1.7cm] right-4 z-10 p-4 text-3xl" // Increased padding and font size
-        onClick={() => setShowNotifications(true)}
-        aria-label="Open Notifications"
-      >
-        <NotificationsIcon style={{ fontSize: '2rem' }} /> {/* Adjust the icon size */}
-      </button>
-    )}
-
-    {/* Notifications Popup (Centered) */}
-    {showNotifications && (
-      <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto">
-          <div className="flex justify-between items-center border-b pb-2 mb-2">
-            <h2 className="text-lg font-semibold">Your Notifications</h2>
-            <button
-              className="text-gray-600"
-              onClick={() => setShowNotifications(false)}
-              aria-label="Close Notifications"
-            >
-              &times;
-            </button>
-          </div>
-          {notifications.length > 0 ? (
-            <ul>
-              {notifications.map((notification, index) => (
-                <li key={index} className="mb-2">
-                  <p>{notification.message}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(notification.timestamp).toLocaleString()}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No notifications available.</p>
-          )}
-        </div>
-      </div>
-    )}
-  </>
-)}
-
-
-     
-
-      {userType !== "admin" && userType !== "tourismGoverner" && (
-                <HomeCard
-                title="View profile"
-                description="View the latest updates of your profile"
-                onClick={handleViewProfile}
-              />
-        // <Button className={buttonStyle} onClick={handleViewProfile}>View profile</Button>
-      )}
-
-
-      {userType === "tourismGoverner" && (
-        <>
-
-          <HomeCard
-            title="Museums & Historical Places"
-            description="View, Post & Manage Museums & Historical Places"
-            linkRoute="/museums"
-          />
-</>
-
-      )}
-
-      {userType === "admin" && (
-        <> 
-          <Link to="/productList">
-            <Button Name={buttonStyle}>All Gifts/Products</Button>
-          </Link>
-        <HomeCard
-            title="Pending Requests"
-            description="Manage pending requests from guides, advertisers, and sellers for approval"
-            linkRoute="/pendingRequestsPage" 
-          />
-        <HomeCard
-            title="Account Management"
-            description="Oversee and manage user accounts, including creation, updates, and access control"
-            linkRoute="/adminAccountManagement"
-          />
-        <HomeCard
-            title="Manage Categories"
-            description="Organize and maintain categories to ensure streamlined content classification"
-            linkRoute="/Categorycontrol"
-          />
-        <HomeCard
-            title="Manage Prefrence Tags"
-            description="Customize and manage preference tags to enhance user personalization"
-            linkRoute="/preferences"
-          />
-          <Link to="/revenue">
-            <Button className={buttonStyle}>Financial Report</Button>
-          </Link>
-          <Link to="/itinerary">
-            <Button className={buttonStyle}>View itineraries</Button>
-          </Link>
-          <Link to="/activities">
-            <Button className={buttonStyle}>View Events</Button>
-          </Link>
-          <Link to="/complaint/view">
-            <Button className={buttonStyle}>View Complaints</Button>
-          </Link>
-          <Link to="/all-gifts">
-            <Button className={buttonStyle}>Gift Archival</Button>
-          </Link>
-        </>
-      )}
-
-{userType === "advertiser" && (
-  <>
-    <HomeCard
-      title="All Gifts/Products"
-      description="Browse all available gifts and products."
-      linkRoute="/productList"
-    />
-    <HomeCard
-      title="View Activities"
-      description="Check out the activities you can participate in."
-      linkRoute="/activities"
-    />
-    <HomeCard
-      title="Financial Report"
-      description="View your financial report and revenue insights."
-      linkRoute="/revenue"
-    />
-    <HomeCard
-      title="Tourist Report"
-      description="View reports on tourist activities and trends."
-      linkRoute="/totaltouristactivity"
-    />
-  </>
-)}
-
-      {userType === "seller" && (
-        <>
-          <HomeCard
-            title="All Gifts/Products"
-            description="Browse and manage your entire product catalog."
-            linkRoute="/productList"
-          />
-          <HomeCard
-            title="Financial Report"
-            description="View detailed financial reports of your sales and revenue."
-            linkRoute="/revenue"
-          />
-          <HomeCard
-            title="Gift Archival"
-            description="Access and manage archived gifts and products."
-            linkRoute="/all-gifts"
-          />
-        </>
-      )}
-
-
-      {userType === "tourGuide" && (
-        <>
-        <HomeCard
-            title="View Itineraries"
-            description="Create and view your Itineraries"
-            linkRoute="/itinerary"
-          />
-          <HomeCard
-            title="Financial Report"
-            description="Get a glimpse on your financial report"
-            linkRoute="/revenue"
-          />
-          <HomeCard
-            title="Tourist Report"
-            description="View how your tourists are acting"
-            linkRoute="/tourist-report"
-          />
-        </>
-      )}
-      {userType === "tourist" && (
-          <>
-            <Link to="/productList">
-              <Button className={buttonStyle}>All Gifts/Products</Button>
-            </Link>
-            {/* <Link to="/ExplorePage">
-              <Button className={buttonStyle}>Explore All Activities, Itineraries</Button>
-            </Link> */}
-            <Link to="/activities-featured">
-              <Button className={buttonStyle}>Featured Activities</Button>
-            </Link>
-            <Link to="/featured-itineraries">
-              <Button className={buttonStyle}>Featured Itineraries</Button>
-            </Link>
-            <Link to="/tourist/museums">
-              <Button className={buttonStyle}>Museums & Historical Places</Button>
-            </Link>
-            {/* <Link to="/ViewAllItinerary">
-              <Button className={buttonStyle}>View Itineraries</Button>
-            </Link> */}
-            {/* <Link to="/GiftList">
-              <Button className={buttonStyle}>Gift Shop</Button>
-            </Link> */}
-            <Link to="/BookFLight">
-              <Button className={buttonStyle}>Book Flight</Button>
-            </Link>
-            <Link to="/BookHotel">
-              <Button className={buttonStyle}>Book Hotel</Button>
-            </Link>
-            <Link to="/bookTransport">
-              <Button className={buttonStyle}>Book Transportation</Button>
-            </Link>
-            <div>
-            <HomeCard
-            title="View Wishlist"
-            description="View your wishlist and manage it."
-            linkRoute="/Wishlist"
-          />
-          </div>
-          <div>
-             <HomeCard
-            title="Complaints"
-            description="File or View your complaints and their status."
-            linkRoute="/complaintManagement"
-          />
-          </div>
-
-          <div>
-          <HomeCard
-            title="Shopping Cart"
-            description="View your cart and proceed to checkout."
-            linkRoute="/cart"
-          />
-          </div>
-
-          <div>
-          <HomeCard
-            title="Help"
-            description="Any Questions? We are here to help you!"
-            linkRoute="/Help"
-          />
-          </div>
-
-            <div>
-            <HomeCard
-            title="Manage Address Book"
-            description="Manage your address book and add new addresses."
-            linkRoute="/address"
-          />
-          </div>
-
-          </>
-        )}
-    </div>
     </div>
   );
 };
