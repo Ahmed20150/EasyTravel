@@ -451,11 +451,7 @@ const ViewUpcomingEvents = () => {
         ) : itineraryBookings.length === 0 && activityBookings.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-500 text-xl mb-4">No upcoming events found</div>
-            <Link to="/ExplorePage">
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                Explore Available Events
-              </button>
-            </Link>
+           
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -483,13 +479,7 @@ const ViewUpcomingEvents = () => {
         )}
 
         {/* Back Button */}
-        <div className="mt-8 text-center">
-          <Link to="/ExplorePage">
-            <button className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors">
-              Back to Explore
-            </button>
-          </Link>
-        </div>
+       
       </div>
     </div>
   );
