@@ -78,7 +78,7 @@ const ViewPastEvents = () => {
         const itineraryDetails = {};
         for (const booking of response.data) {
           const itineraryResponse = await axios.get(
-            `http://localhost:3000/itinerary/${booking.itineraryId}`
+            `http://localhost:3000/itineraries/${booking.itineraryId}`
           );
           itineraryDetails[booking.itineraryId] = itineraryResponse.data;
         }
@@ -382,7 +382,7 @@ const ViewPastEvents = () => {
                           Review Itinerary
                         </button>
                         <button
-                          onClick={() => handleReviewButtonClick(itinerary.creator, "tourguide")}
+                          onClick={() => handleReviewButtonClick(itinerary.creator, "tourGuide")}
                           className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 text-sm font-medium"
                         >
                           Review Guide
