@@ -171,7 +171,7 @@ const calculateTotalPrice = (promoCode) => {
         } catch (error) {
           console.error("Gift not found, searching for activity...", error);
         }
-
+        
         if(selectedAddressId === null){
           toast.error("Please Select your address before proceeding")
           return;  
@@ -212,7 +212,8 @@ const calculateTotalPrice = (promoCode) => {
       totalPrice,
       });
   }
-
+  
+    await axios.post(`http://localhost:3000/gift/purchase/${gift.data._id}`);
 
       toast.success("Product Purchased Successfully!");
     

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, TextInput, Label, Toast, Spinner, Card } from 'flowbite-react'; // Import Flowbite components
 import { HiCheck, HiX } from 'react-icons/hi'; // Import icons for success/error toast
-
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 import { buttonStyle } from "../styles/GeneralStyles";
 
@@ -21,7 +22,7 @@ const CreatePromoCode = () => {
 
         // Check if the fields are valid
         if (!promoCode || !discount || !expiryDate) {
-            setError('All fields are required!');
+            toast.error('All fields are required!');
             return;
         }
 
@@ -48,11 +49,11 @@ const CreatePromoCode = () => {
             }
 
             // If successful, show the success message from the backend
-            setSuccess(result.message); // Display success message
+            toast.success(result.message); // Display success message
             setError(''); // Clear any previous error messages
         } catch (error) {
             // Handle error by setting the error message
-            setError(error.message);
+            toast.error(error.message);
             setSuccess(''); // Clear any previous success messages
         } finally {
             setIsLoading(false); // Hide loading spinner after submission
@@ -61,6 +62,7 @@ const CreatePromoCode = () => {
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+            <ToastContainer />
             <Card className="w-full max-w-md shadow-md">
                 <h2 className="text-2xl font-bold text-center mb-4">Create Promo Code</h2>
 

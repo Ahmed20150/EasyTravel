@@ -11,7 +11,7 @@ const ViewItineraryCard = ({ itinerary, openModal }) => {
   // Fetch promo codes from the server
   const fetchPromoCodes = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/promo-codes");
+      const response = await axios.get("http://localhost:3000/promo-codes");
       setPromoCodes(response.data || []);
     } catch (err) {
       console.error("Error fetching promo codes", err);

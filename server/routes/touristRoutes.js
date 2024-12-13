@@ -3,7 +3,7 @@ const router = express.Router();
 const Tourist = require("../models/tourist.model");
 const Itinerary = require("../models/itinerary.model");
 const GiftItem = require('../models/giftitem.model');
-
+const  Booking=require('../models/booking.model');
 // Middleware for authentication (if needed)
 const authenticate = (req, res, next) => {
   // Your authentication logic here
@@ -42,7 +42,7 @@ router.get("/tourist/:username/preferences", authenticate, async (req, res) => {
 
 
 
-router.get("/api/bookings/:username", async (req, res) => {
+router.get("/bookings/:username", async (req, res) => {
   const { username } = req.params;
 
   try {
@@ -572,7 +572,7 @@ router.put(
       }
 
       // Deduct the points from the tourist's account
-      tourist.points -= points;
+      tourist.currentPoints -= points;
 
       // Calculate the amount to add to the wallet
       const dollarsToAdd = Math.floor(points / 10000) * 10;

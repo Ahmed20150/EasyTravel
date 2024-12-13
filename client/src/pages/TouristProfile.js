@@ -38,10 +38,11 @@ const TouristProfile = () => {
       const [bookedItineraries, setBookedItineraries] = useState([]); // New state for booked itineraries
       const isProfilePage = true;
       const [userLevel, setUserLevel] = useState(null); // State to store user level
-
+      const [isBirthday,setisBirthday] = useState(false); 
 
       const fetchUserLevel = async (username) => {
         try {
+          
           const response = await axios.get(
             `http://localhost:3000/api/tourist/${username}`
           );
@@ -72,7 +73,7 @@ const TouristProfile = () => {
       const fetchPromoCodes = async () => {  // New function to fetch promo codes
         try {
           const response = await axios.get(
-            "http://localhost:3000/api/promo-codes"
+            "http://localhost:3000/promo-codes"
           );
           setPromoCodes(response.data || []);
         } catch (err) {
@@ -222,7 +223,7 @@ const TouristProfile = () => {
     
       console.log(
         filteredPromoCodes.length > 0
-          ? `Available promo codes: ${filteredPromoCodes}`
+          ? `Available promo codes: ${filteredPromoCodes[0].promoCode}`
           : "No available promo codes for today."
       );
     
@@ -243,26 +244,25 @@ const TouristProfile = () => {
         }
       };
     
-      if (tourist && filteredPromoCodes.length > 0) {
+      if (tourist ) {
         // Check if today is the tourist's birthday
         const today = new Date();
         const birthday = new Date(tourist.dateOfBirth);
     
         if (today.getDate() === birthday.getDate() && today.getMonth() === birthday.getMonth()) {
-          const promoDetails = filteredPromoCodes
-            .map(
-              (promo) =>
-                `Promo Code: ${promo.promoCode}\nDiscount: ${promo.discount}%\nExpires on: ${new Date(promo.expiryDate).toLocaleDateString()}\n`
-            )
-            .join("\n\n");
-    
-          const subject = "Happy Birthday! Here are your Promo Codes";
-          const text = `Dear ${tourist.username},\n\nHappy Birthday! 🎉\n\nWe have some special promo codes for you:\n\n${promoDetails}\n\nEnjoy your special day!`;
-    
+          setisBirthday(true);
+          
+          console.log('birthday')
+          const subject = "Happy Birthday! Here are your Promo Code";
+          const text = `Dear ${tourist.username},\n\nHappy Birthday! 🎉\n\nWe have some special promo codes for you:\n\nBF50\n\nEnjoy your special day!`;
+          
           // Send the email with promo details
           sendEmail(tourist.email, subject, text)
             .then((response) => console.log(`Email sent: ${response}`))
             .catch((error) => console.error("Error sending email:", error));
+        }
+        else{
+          console.log('not today')
         }
       }
     }, [tourist, filteredPromoCodes]);
@@ -456,23 +456,16 @@ const TouristProfile = () => {
             {/* Promo Codes Section */}
             <h2 className="text-xl font-semibold mt-6 mb-4">Promo Codes</h2>
             <div className="p-4 bg-gray-100 rounded-lg">
-              {filteredPromoCodes.length > 0 ? (
-                <ul className="space-y-4">
-                  {filteredPromoCodes.map((promo, index) => (
-                    <li key={index}>
-                      <strong>Promo Code:</strong> {promo.promoCode} <br />
-                      <strong>Discount:</strong> {promo.discount}% <br />
-                      <strong>Expires on:</strong>{" "}
-                      {new Date(promo.expiryDate).toLocaleDateString()}
-                    </li>
-                  ))}
-                </ul>
+              {isBirthday ? (
+               <div>Happy Birthday! Your promo code is BF5O</div>
+                
               ) : (
                 <p className="text-gray-500">No valid promo codes available</p>
               )}
             </div>
           </div>
         )}
+        
       </div>
     );
 };
