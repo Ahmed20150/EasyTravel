@@ -15,13 +15,12 @@ import { useCurrency } from "../components/CurrencyContext";
 Modal.setAppElement("#root");
 
 const CATEGORY_IMAGES = {
-    "Historic": "https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=2070", // Ancient Egypt/Pyramids
-    "Cultural": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=2070", // Cultural Experience
-    "default": "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?q=80&w=2070"   // General Tourism
+    "Historic": "https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=2070", 
+    "Cultural": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=2070", 
+    "default": "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?q=80&w=2070"   
 };
 
 const getImageForItinerary = (category) => {
-    // Return the category-specific image or default if category doesn't match
     return CATEGORY_IMAGES[category] || CATEGORY_IMAGES.default;
 };
 
@@ -160,26 +159,22 @@ const FeaturedItinerariesPage = () => {
         }
     };
 
-    useEffect(() => {
-        fetchItineraries();
-    }, []);
-
-    useEffect(() => {
-        applyFilters();
-    }, [filterCriteria, itineraries, searchItinerary]);
-
     const fetchItineraries = async () => {
         try {
             const response = await axios.get("http://localhost:3000/itineraries");
             const username = Cookies.get("username");
             const user = await axios.get(`http://localhost:3000/api/tourist/${username}`);
 
+            const bookedItineraryIds = user.data.bookedItineraries.map(itinerary => itinerary._id);
+
             // Filter only activated itineraries
             const activatedItineraries = response.data.filter(
                 (itinerary) =>
-                    itinerary.activated ||
-                    user.data.bookedItineraries.includes(itinerary._id)
+                    itinerary.activated && !bookedItineraryIds.includes(itinerary._id)
             );
+
+         
+
 
             // Store the activated itineraries in state
             setItineraries(activatedItineraries);
@@ -196,6 +191,16 @@ const FeaturedItinerariesPage = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchItineraries();
+    }, []);
+
+    useEffect(() => {
+        applyFilters();
+    }, [filterCriteria, itineraries, searchItinerary]);
+
+
 
     const applyFilters = () => {
         let filtered = [...itineraries];
@@ -368,15 +373,15 @@ const FeaturedItinerariesPage = () => {
 
             // Update Activity Purchases
             await axios.patch(
-                `http://localhost:3000/itinerary/decrement-purchases/${selectedItineraryId}`
+                `http://localhost:3000/itineraries/decrement-purchases/${selectedItineraryId}`
             );
 
-            const itinerary = await axios.get(`http://localhost:3000/itinerary/${id}`);
+            const itinerary = await axios.get(`http://localhost:3000/itineraries/${id}`);
             const touristsBook = itinerary.data.touristsBooked.filter(
                 (user) => user !== username
             );
 
-            await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
+            await axios.patch(`http://localhost:3000/itineraries/${id}/touristsBook`, {
                 touristsBooked: touristsBook,
             });
 
@@ -400,7 +405,7 @@ const FeaturedItinerariesPage = () => {
 
             toast.success("Unbooking Successful, Amount is refunded to your wallet");
             const price = itinerary.data.priceOfTour;
-            await axios.put("http://localhost:3000/itinerary/refundPoints", {
+            await axios.put("http://localhost:3000/itineraries/refundPoints", {
                 price,
                 username,
             });
@@ -427,19 +432,19 @@ const FeaturedItinerariesPage = () => {
 
             // Update Activity Purchases
             await axios.patch(
-                `http://localhost:3000/itinerary/increment-purchases/${selectedItineraryId}`
+                `http://localhost:3000/itineraries/increment-purchases/${selectedItineraryId}`
             );
 
             const newBookedItineraries = [...bookedItineraries, selectedItineraryId];
 
             // Update tourists booked list
             const itinerary = await axios.get(
-                `http://localhost:3000/itinerary/${selectedItineraryId}`
+                `http://localhost:3000/itineraries/${selectedItineraryId}`
             );
             const touristsBook = [...itinerary.data.touristsBooked, username];
 
             await axios.patch(
-                `http://localhost:3000/itinerary/${selectedItineraryId}/touristsBook`,
+                `http://localhost:3000/itineraries/${selectedItineraryId}/touristsBook`,
                 {
                     touristsBooked: touristsBook,
                 }
@@ -468,7 +473,7 @@ const FeaturedItinerariesPage = () => {
             const email = user.data.email;
             const pickupLocation = itinerary.data.pickupLocation;
             const dropoffLocation = itinerary.data.dropoffLocation;
-            const price = itinerary.data.priceOfTour;
+            const price =  discountedPrice ? discountedPrice : itinerary.data.priceOfTour;
 
             const text = `You have successfully booked an itinerary from ${pickupLocation} to ${dropoffLocation}. Your payment of ${price} Euro(s) by Wallet was successfully received. Please check your account for payment details.`;
             
@@ -478,7 +483,7 @@ const FeaturedItinerariesPage = () => {
             });
 
             // Update loyalty points
-            await axios.put("http://localhost:3000/itinerary/loyaltyPoints", {
+            await axios.put("http://localhost:3000/itineraries/loyaltyPoints", {
                 price,
                 username,
             });
@@ -501,7 +506,7 @@ const FeaturedItinerariesPage = () => {
         }
 
         const itinerary = await axios.get(
-            `http://localhost:3000/itinerary/${selectedItineraryId}`
+            `http://localhost:3000/itineraries/${selectedItineraryId}`
         );
 
         try {
@@ -510,7 +515,7 @@ const FeaturedItinerariesPage = () => {
                 {
                     itineraryId: selectedItineraryId,
                     itineraryName: "Itinerary",
-                    price: itinerary.data.priceOfTour,
+                    price: discountedPrice ? discountedPrice : itinerary.data.priceOfTour,
                     selectedDate,
                     selectedTime,
                 },
@@ -542,7 +547,7 @@ const FeaturedItinerariesPage = () => {
     const refreshAllData = async () => {
         try {
             // Fetch fresh itineraries data
-            const response = await axios.get("http://localhost:3000/itinerary");
+            const response = await axios.get("http://localhost:3000/itineraries");
             const currentDate = new Date();
             
             const upcomingItineraries = response.data
@@ -626,6 +631,8 @@ const FeaturedItinerariesPage = () => {
             });
         }
     };
+
+    
 
     return (
         <div className="min-h-screen bg-gray-50">

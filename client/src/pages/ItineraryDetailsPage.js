@@ -1,6 +1,9 @@
 import axios from "axios";
+import { Button } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { buttonStyle } from "../styles/gasserStyles";
+import { Link } from "react-router-dom";
 
 const ItineraryDetailsPage = () => {
   const { id } = useParams();
@@ -11,7 +14,7 @@ const ItineraryDetailsPage = () => {
   useEffect(() => {
     const fetchItinerary = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/itinerary/${id}`);
+        const response = await axios.get(`http://localhost:3000/itineraries/${id}`);
         setItinerary(response.data);
         setError("");
       } catch (err) {
@@ -101,6 +104,7 @@ const ItineraryDetailsPage = () => {
           </div>
         </div>
       </div>
+      <Link to = "/featured-itineraries"><Button className={buttonStyle}> Back </Button> </Link>
     </div>
   );
 };

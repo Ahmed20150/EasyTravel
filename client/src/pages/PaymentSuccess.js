@@ -163,7 +163,7 @@ const PaymentSuccess = () => {
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
   {itemType === "itinerary" ? (
-    <Link to="/ViewAllItinerary">
+    <Link to="/featured-itineraries">
       <Button className={buttonStyle}>Continue</Button>
     </Link>
   ) : (

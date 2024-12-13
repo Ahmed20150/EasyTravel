@@ -42,7 +42,7 @@ const PaymentCancel = () => {
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
   {itemType === "itinerary" ? (
-    <Link to="/ViewAllItinerary">
+    <Link to="/featured-itineraries">
       <Button className={buttonStyle}>Continue</Button>
     </Link>
   ) : (
@@ -52,18 +52,7 @@ const PaymentCancel = () => {
   )}
 </div>
     </div>
-    // <div style={{display:"flex", flexDirection: "column"}}>
-    //   <h1>Payment Cancelled</h1>
-    //   <p>Your payment was not completed.</p>
 
-    //   {itemType === "itinerary" ? (
-    //     <Link to="/ViewAllItinerary"><button>Continue</button></Link>
-    //   ) : (
-    //     <Link to="/productList"><button>Continue</button></Link>
-    //   )} 
-
-
-    // </div>
   );
 };
 

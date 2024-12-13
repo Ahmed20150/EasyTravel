@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie';
 import { useCurrency } from '../components/CurrencyContext';
 import { Card, Button } from 'flowbite-react';
 import { buttonStyle, cardStyle, smallCardStyle, linkStyle, centerVertically, fadeIn,stepStyle, stepIconStyle, stepTitleStyle, stepDescriptionStyle } from "../styles/gasserStyles"; 
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 
 function Wishlist() {
@@ -129,9 +130,17 @@ function Wishlist() {
     return (
         <div className="App">
              <div className="flex flex-col items-center text-3xl font-bold mb-8 mt-2">
-            <h1 className="heart">❤</h1>
-            <h1 className="wishlist">My Wishlist</h1>
+            <h1 className="mt-7">❤</h1>
+            <h1 className="mt-7">My Wishlist</h1>
             </div>
+
+            <div className="fixed top-4 right-4">
+    <Link to="/cart">
+        <Button className={buttonStyle}>
+            <ShoppingCartIcon />
+        </Button>
+    </Link>
+</div>
 
 
             {isLoading ? (
@@ -177,7 +186,12 @@ function Wishlist() {
                            </div>
                 </ul>
             ) : (
-                <p>Your Wishlist is empty</p>
+                <div className="flex flex-col items-center justify-center min-h-screen">
+                <h2 className="flex flex-col items-center text-2xl font-bold mb-7 mt-2">Oops! Your Wishlist is empty!</h2> 
+                <h2 className="flex flex-col items-center text-2xl font-bold mb-7 mt-2"> Visit our gift shop and find your dream products!!</h2>
+
+                <Link to="/productList"><Button className={buttonStyle}>Go to Shop</Button></Link>
+                </div>
             )}
 
             <div className="absolute top-4 left-4">

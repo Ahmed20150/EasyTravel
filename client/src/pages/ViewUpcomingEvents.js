@@ -71,7 +71,7 @@ const ViewUpcomingEvents = () => {
 
         // Fetch itinerary details
         const itineraryPromises = itineraryResponse.data.map(booking => 
-          axios.get(`http://localhost:3000/itinerary/${booking.itineraryId}`)
+          axios.get(`http://localhost:3000/itineraries/${booking.itineraryId}`)
         );
         
         const itineraryDetailsResponses = await Promise.all(itineraryPromises);
@@ -130,6 +130,8 @@ const ViewUpcomingEvents = () => {
         return;
       }
 
+      const itineraryId = booking.data.itineraryId;
+
       const bookingTime24Hour = convertTo24HourFormat(booking.data.bookingTime);
       const bookingDate = new Date(booking.data.bookingDate).toISOString().split("T")[0];
       const currentDateTime = new Date();
@@ -142,14 +144,14 @@ const ViewUpcomingEvents = () => {
         return;
       }
 
-      await axios.patch(`http://localhost:3000/itinerary/decrement-purchases/${selectedItineraryId}`);
+      await axios.patch(`http://localhost:3000/itineraries/decrement-purchases/${selectedItineraryId}`);
 
-      const itinerary = await axios.get(`http://localhost:3000/itinerary/${id}`);
+      const itinerary = await axios.get(`http://localhost:3000/itineraries/${itineraryId}`);
       const touristsBook = itinerary.data.touristsBooked.filter(
         (user) => user !== username
       );
 
-      await axios.patch(`http://localhost:3000/itinerary/${id}/touristsBook`, {
+      await axios.patch(`http://localhost:3000/itineraries/${itineraryId}/touristsBook`, {
         touristsBooked: touristsBook,
       });
 
@@ -165,10 +167,10 @@ const ViewUpcomingEvents = () => {
         selectedItineraryId,
       });
 
-      await axios.delete(`http://localhost:3000/booking/deleteBooking/${id}/${username}`);
+      await axios.delete(`http://localhost:3000/booking/deleteBooking/${itineraryId}/${username}`);
       
       const price = itinerary.data.priceOfTour;
-      await axios.put("http://localhost:3000/itinerary/refundPoints", {
+      await axios.put("http://localhost:3000/itineraries/refundPoints", {
         price,
         username,
       });
